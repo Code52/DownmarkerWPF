@@ -11,6 +11,7 @@
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
                 <MenuItem x:Name="NewDocument" Header="New" />
+                <MenuItem x:Name="OpenDocument" Header="Open" />
                 <Separator />
                 <MenuItem x:Name="Exit" Header="Exit" />
             </MenuItem>

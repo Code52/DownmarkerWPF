@@ -2,6 +2,7 @@
 using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.MDI;
+using Microsoft.Win32;
 
 namespace MarkPad.Shell
 {
@@ -25,6 +26,17 @@ namespace MarkPad.Shell
         public void NewDocument()
         {
             MDI.Open(documentCreator());
+        }
+
+        public void OpenDocument()
+        {
+            var ofd = new OpenFileDialog();
+            if (ofd.ShowDialog() != true)
+                return;
+
+            var doc = documentCreator();
+            doc.Open(ofd.FileName);
+            MDI.Open(doc);
         }
     }
 }

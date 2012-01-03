@@ -1,11 +1,12 @@
-﻿using Caliburn.Micro;
+﻿using System.IO;
+using Caliburn.Micro;
 using MarkdownSharp;
 
 namespace MarkPad.Document
 {
     internal class DocumentViewModel : Screen
     {
-        private readonly string title;
+        private string title;
         private readonly string original;
         private string document;
 
@@ -16,11 +17,18 @@ namespace MarkPad.Document
             Document = "";
         }
 
+        public void Open(string filename)
+        {
+            var text = File.ReadAllText(filename);
+            title = new FileInfo(filename).Name;
+            document = text;
+        }
+
         private void OnDocumentChanged()
         {
-            NotifyOfPropertyChange(() => this.Render);
-            NotifyOfPropertyChange(() => this.HasChanges);
-            NotifyOfPropertyChange(() => this.DisplayName);
+            NotifyOfPropertyChange(() => Render);
+            NotifyOfPropertyChange(() => HasChanges);
+            NotifyOfPropertyChange(() => DisplayName);
         }
 
         public string Document
