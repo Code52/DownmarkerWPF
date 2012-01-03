@@ -57,6 +57,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Implementation\DialogMessageService.cs" />
     <Compile Include="Implementation\DialogService.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />

@@ -125,9 +125,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="Markdown.xshd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="Syntax\Markdown.xshd" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Document\DocumentView.xaml">

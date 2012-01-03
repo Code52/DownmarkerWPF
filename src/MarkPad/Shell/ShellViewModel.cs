@@ -18,6 +18,12 @@ namespace MarkPad.Shell
             this.documentCreator = documentCreator;
         }
 
+        public override string DisplayName
+        {
+            get { return "MarkPad"; }
+            set { }
+        }
+
         public MDIViewModel MDI { get; private set; }
 
         public void Exit()
