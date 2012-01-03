@@ -11,7 +11,8 @@
     <RootNamespace>MarkPad</RootNamespace>
     <AssemblyName>MarkPad</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -137,6 +138,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MarkPad.Services\MarkPad.Services.csproj">
+      <Project>{8088D80C-14AF-4618-B12A-F47C2771EBDD}</Project>
+      <Name>MarkPad.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MarkPad.XAML\MarkPad.XAML.csproj">
       <Project>{F5C76E3F-AC91-477D-86DE-778850F3E14B}</Project>
       <Name>MarkPad.XAML</Name>

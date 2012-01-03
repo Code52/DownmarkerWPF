@@ -41,6 +41,8 @@ namespace MarkPad
 
             builder.RegisterModule<EventAggregationAutoSubscriptionModule>();
 
+            builder.RegisterModule<MarkPad.Services.ServicesModule>();
+
             container = builder.Build();
         }
 

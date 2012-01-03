@@ -1,19 +1,23 @@
 ﻿using System.IO;
 using Caliburn.Micro;
 using MarkdownSharp;
-using Microsoft.Win32;
+using MarkPad.Services.Interfaces;
 
 namespace MarkPad.Document
 {
     internal class DocumentViewModel : Screen
     {
+        private readonly IDialogService dialogService;
+
         private string title;
         private string original;
         private string document;
-        private string _filename;
+        private string filename;
 
-        public DocumentViewModel()
+        public DocumentViewModel(IDialogService dialogService)
         {
+            this.dialogService = dialogService;
+
             title = "New Document";
             original = "";
             Document = "";
@@ -21,33 +25,35 @@ namespace MarkPad.Document
 
         public void Open(string filename)
         {
-            _filename = filename;
+            this.filename = filename;
             var text = File.ReadAllText(filename);
             title = new FileInfo(filename).Name;
             document = text;
             original = text;
         }
+
         public void Save()
         {
             if (!HasChanges)
                 return;
 
-            if (string.IsNullOrEmpty(_filename))
+            if (string.IsNullOrEmpty(filename))
             {
-                var saveDialog = new SaveFileDialog();
-                if (saveDialog.ShowDialog() == false)
+                var path = dialogService.GetFileSavePath("Choose a location to save the document.", "*.md", "Markdown Files (*.md)|*.md|All Files (*.*)|*.*");
+
+                if (string.IsNullOrEmpty(path))
                     return;
 
-                _filename = saveDialog.FileName;
-                title = new FileInfo(_filename).Name;
+                filename = path;
+                title = new FileInfo(filename).Name;
             }
 
-            File.WriteAllText(_filename, Document);
+            File.WriteAllText(filename, Document);
             original = document;
 
             OnDocumentChanged();
         }
-        
+
         private void OnDocumentChanged()
         {
             NotifyOfPropertyChange(() => Render);

@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{F95A6BBE-B
 		src\GlobalAssemblyInfo.cs = src\GlobalAssemblyInfo.cs
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.Services", "src\MarkPad.Services\MarkPad.Services.csproj", "{8088D80C-14AF-4618-B12A-F47C2771EBDD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,16 @@ Global
 		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Release|x86.ActiveCfg = Release|Any CPU
+		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
