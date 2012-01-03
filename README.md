@@ -1,8 +1,12 @@
-DownmarkerWPF
+# DownmarkerWPF
 
-## About
+This codebase contains the DownmarkerWPF project. 
 
-This codebase contains the Downmarker project ported to use WPF. Downmarker is an editor for Markdown - a widely used syntax for formatting plain text to convert to blogs, comments, and in other places like on Stack Overflow.
+## About DownmarkerWPF
+
+Downmarker is an editor for Markdown - a widely used syntax for formatting plain text to convert to blogs, comments, and in other places like on Stack Overflow.
+
+Our aim is to create a useably, stylish new version of the project utilising Microsoft's WPF technology to provide a fresh UI for creating files that we can use to create blog posts for this, and other blogs using Markdown.
 
 ## Contributing
 
