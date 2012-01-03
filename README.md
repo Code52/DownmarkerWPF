@@ -13,6 +13,7 @@ Our aim is to create a useably, stylish new version of the project utilising Mic
 If you want to contribute to the project, check out the [Issues](https://github.com/Code52/DownmarkerWPF/issues) tab. 
 
 You can:
+
  - Raise an issue
  - Suggest a feature for the application
 
