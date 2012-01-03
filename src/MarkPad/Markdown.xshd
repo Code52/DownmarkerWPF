@@ -1,0 +1,12 @@
+﻿<SyntaxDefinition name="Markdown"
+        xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <Color name="Comment" foreground="Green" />
+  <Color name="String" foreground="Blue" />
+
+  <!-- This is the main ruleset. -->
+  <RuleSet>
+    <Span fontWeight="bold" begin="\*\*" end="\*\*" />
+    <Span fontStyle="italic" begin="\*" end="\*" />
+
+  </RuleSet>
+</SyntaxDefinition>
