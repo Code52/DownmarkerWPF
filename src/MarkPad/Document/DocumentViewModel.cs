@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit.Document;
 using MarkdownSharp;
@@ -12,8 +11,6 @@ namespace MarkPad.Document
         private readonly IDialogService dialogService;
 
         private string title;
-        private string original;
-        private TextDocument textDocument;
         private string filename;
 
         public DocumentViewModel(IDialogService dialogService)
@@ -21,24 +18,25 @@ namespace MarkPad.Document
             this.dialogService = dialogService;
 
             title = "New Document";
-            original = "";
-            textDocument = new TextDocument();
+            Original = "";
+            Document = new TextDocument();
         }
-
 
         public void Open(string filename)
         {
             this.filename = filename;
-            var text = File.ReadAllText(filename);
             title = new FileInfo(filename).Name;
-            textDocument.Text = text;
-            original = text;
+
+            var text = File.ReadAllText(filename);
+            Document.Text = text;
+            Original = text;
         }
 
         public void Update()
         {
-            
-            OnDocumentChanged();
+            NotifyOfPropertyChange(() => Render);
+            NotifyOfPropertyChange(() => HasChanges);
+            NotifyOfPropertyChange(() => DisplayName);
         }
 
         public void Save()
@@ -58,27 +56,11 @@ namespace MarkPad.Document
             }
 
             File.WriteAllText(filename, Document.Text);
-            original = textDocument.Text;
-
-            OnDocumentChanged();
+            Original = Document.Text;
         }
 
-        private void OnDocumentChanged()
-        {
-            NotifyOfPropertyChange(() => Render);
-            NotifyOfPropertyChange(() => HasChanges);
-            NotifyOfPropertyChange(() => DisplayName);
-        }
-
-        public TextDocument Document
-        {
-            get { return textDocument; }
-            set
-            {
-                textDocument = value;
-                OnDocumentChanged();
-            }
-        }
+        public TextDocument Document { get; set; }
+        public string Original { get; set; }
 
         public string Render
         {
@@ -92,16 +74,12 @@ namespace MarkPad.Document
 
         public bool HasChanges
         {
-            get
-            {
-                return original != Document.Text;
-            }
+            get { return Original != Document.Text; }
         }
 
         public override string DisplayName
         {
             get { return title + (HasChanges ? " *" : ""); }
-            set { }
         }
     }
 }
