@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad", "src\MarkPad\MarkPad.csproj", "{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{6F8AB8C3-0DD5-4067-AF67-60086386308B}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.XAML", "src\MarkPad.XAML\MarkPad.XAML.csproj", "{F5C76E3F-AC91-477D-86DE-778850F3E14B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{F95A6BBE-B8AE-4CCA-A0ED-949C14833B85}"
+	ProjectSection(SolutionItems) = preProject
+		tools\EmbedAssemblies.targets = tools\EmbedAssemblies.targets
+		src\GlobalAssemblyInfo.cs = src\GlobalAssemblyInfo.cs
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Debug|x86.ActiveCfg = Debug|x86
+		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Debug|x86.Build.0 = Debug|x86
+		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Release|Any CPU.ActiveCfg = Release|x86
+		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Release|Mixed Platforms.Build.0 = Release|x86
+		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Release|x86.ActiveCfg = Release|x86
+		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Release|x86.Build.0 = Release|x86
+		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
