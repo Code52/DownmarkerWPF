@@ -16,6 +16,8 @@ namespace MarkPad.Shell
             this.dialogService = dialogService;
             this.MDI = mdi;
             this.documentCreator = documentCreator;
+
+            this.ActivateItem(mdi);
         }
 
         public override string DisplayName

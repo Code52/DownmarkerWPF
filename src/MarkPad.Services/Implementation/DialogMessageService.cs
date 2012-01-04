@@ -66,7 +66,7 @@ namespace MarkPad.Services.Implementation
                     td.MainIcon = TaskDialogIcon.Error;
                     break;
                 case DialogMessageIcon.Question:
-                    td.MainIcon = TaskDialogIcon.Shield;
+                    td.MainIcon = TaskDialogIcon.Warning;
                     break;
                 case DialogMessageIcon.Warning:
                     td.MainIcon = TaskDialogIcon.Warning;

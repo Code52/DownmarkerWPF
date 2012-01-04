@@ -39,17 +39,17 @@ namespace MarkPad.Document
             NotifyOfPropertyChange(() => DisplayName);
         }
 
-        public void Save()
+        public bool Save()
         {
             if (!HasChanges)
-                return;
+                return true;
 
             if (string.IsNullOrEmpty(filename))
             {
                 var path = dialogService.GetFileSavePath("Choose a location to save the document.", "*.md", "Markdown Files (*.md)|*.md|All Files (*.*)|*.*");
 
                 if (string.IsNullOrEmpty(path))
-                    return;
+                    return false;
 
                 filename = path;
                 title = new FileInfo(filename).Name;
@@ -57,6 +57,8 @@ namespace MarkPad.Document
 
             File.WriteAllText(filename, Document.Text);
             Original = Document.Text;
+
+            return true;
         }
 
         public TextDocument Document { get; set; }
@@ -80,6 +82,36 @@ namespace MarkPad.Document
         public override string DisplayName
         {
             get { return title + (HasChanges ? " *" : ""); }
+        }
+
+        public override void CanClose(System.Action<bool> callback)
+        {
+            if (!HasChanges)
+            {
+                callback(true);
+                return;
+            }
+
+            var saveResult = dialogService.ShowConfirmationWithCancel("MarkPad", "Do you want to save changes to `" + title + "`?", "");
+            bool result = false;
+
+            // true = Yes
+            if (saveResult == true)
+            {
+                result = Save();
+            }
+            // false = No
+            else if (saveResult == false)
+            {
+                result = true;
+            }
+            // no result = Cancel
+            else if (!saveResult.HasValue)
+            {
+                result = false;
+            }
+
+            callback(result);
         }
     }
 }
