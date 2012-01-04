@@ -1,11 +1,6 @@
-﻿using System.Windows;
-
-namespace MarkPad
+﻿namespace MarkPad
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
+    public partial class App
     {
         public App()
         {

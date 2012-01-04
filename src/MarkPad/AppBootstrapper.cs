@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using Autofac;
 using Caliburn.Micro;
 using MarkPad.Framework;
@@ -18,11 +17,9 @@ namespace MarkPad
 
         private void SetupLogging()
         {
-            LoggingConfiguration config = new LoggingConfiguration();
+            var debuggerTarget = new DebuggerTarget { Layout = "[${level:uppercase=true}] (${logger}) ${message}" };
 
-            DebuggerTarget debuggerTarget = new DebuggerTarget();
-            debuggerTarget.Layout = "[${level:uppercase=true}] (${logger}) ${message}";
-
+            var config = new LoggingConfiguration();
             config.AddTarget("debugger", debuggerTarget);
             config.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, debuggerTarget));
 
@@ -41,7 +38,7 @@ namespace MarkPad
 
             builder.RegisterModule<EventAggregationAutoSubscriptionModule>();
 
-            builder.RegisterModule<MarkPad.Services.ServicesModule>();
+            builder.RegisterModule<Services.ServicesModule>();
 
             container = builder.Build();
         }
@@ -54,13 +51,6 @@ namespace MarkPad
 #endif
             Application.Exit += OnExit;
         }
-
-        protected override void OnStartup(object sender, StartupEventArgs e)
-        {
-            base.OnStartup(sender, e);
-        }
-
-        #region Autofac Stuff
 
         private static void SetupCaliburnMicroDefaults(ContainerBuilder builder)
         {
@@ -113,7 +103,5 @@ namespace MarkPad
         {
             container.InjectProperties(instance);
         }
-
-        #endregion
     }
 }
