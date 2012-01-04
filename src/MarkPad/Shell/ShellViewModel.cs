@@ -2,6 +2,7 @@
 using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.MDI;
+using MarkPad.Publish;
 using MarkPad.Services.Interfaces;
 
 namespace MarkPad.Shell
@@ -9,11 +10,13 @@ namespace MarkPad.Shell
     internal class ShellViewModel : Conductor<IScreen>
     {
         private readonly IDialogService dialogService;
+        private readonly IWindowManager _windowManager;
         private readonly Func<DocumentViewModel> documentCreator;
 
-        public ShellViewModel(IDialogService dialogService, MDIViewModel mdi, Func<DocumentViewModel> documentCreator)
+        public ShellViewModel(IDialogService dialogService, MDIViewModel mdi, IWindowManager windowManager, Func<DocumentViewModel> documentCreator)
         {
             this.dialogService = dialogService;
+            _windowManager = windowManager;
             this.MDI = mdi;
             this.documentCreator = documentCreator;
         }
@@ -66,6 +69,8 @@ namespace MarkPad.Shell
 
         public void Publish()
         {
+            _windowManager.ShowDialog(new PublishViewModel());
+
             var doc = MDI.ActiveItem as DocumentViewModel;
             if (doc != null)
             {
