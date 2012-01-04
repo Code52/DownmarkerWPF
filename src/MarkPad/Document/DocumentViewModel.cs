@@ -3,6 +3,7 @@ using Caliburn.Micro;
 using ICSharpCode.AvalonEdit.Document;
 using MarkdownSharp;
 using MarkPad.Services.Interfaces;
+using Ookii.Dialogs.Wpf;
 
 namespace MarkPad.Document
 {
@@ -92,7 +93,11 @@ namespace MarkPad.Document
                 return;
             }
 
-            var saveResult = dialogService.ShowConfirmationWithCancel("MarkPad", "Do you want to save changes to `" + title + "`?", "");
+            var saveResult = dialogService.ShowConfirmationWithCancel("MarkPad", "Save modifications.", "Do you want to save your changes to '" + title + "'?",
+                new ButtonExtras(ButtonType.Yes, "Save", "The file will be saved to " + Path.GetFullPath(filename)),
+                new ButtonExtras(ButtonType.No, "Close", "Close the document without saving the modifications"),
+                new ButtonExtras(ButtonType.Cancel, "Cancel", "Don't close the document")
+            );
             bool result = false;
 
             // true = Yes
