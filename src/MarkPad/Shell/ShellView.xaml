@@ -6,11 +6,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     mc:Ignorable="d" 
 >
-    
+
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
-                <MenuItem x:Name="NewDocument" Header="New" />
+                <MenuItem  x:Name="NewDocument" Header="New Page" />
+                <MenuItem Header="New">
+                    <MenuItem x:Name="NewJekyllDocument" Header="Jekyll Page" />
+                </MenuItem>
                 <MenuItem x:Name="OpenDocument" Header="Open" />
                 <MenuItem x:Name="SaveDocument" Header="Save" />
                 <MenuItem x:Name="SaveAllDocuments" Header="Save All" />
@@ -18,7 +21,7 @@
                 <MenuItem x:Name="Exit" Header="Exit" />
             </MenuItem>
         </Menu>
-        
+
         <ContentControl x:Name="MDI" />
     </DockPanel>
 
