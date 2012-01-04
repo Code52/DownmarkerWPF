@@ -11,7 +11,8 @@
     <RootNamespace>MarkPad</RootNamespace>
     <AssemblyName>MarkPad</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile></TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -47,6 +48,9 @@
     <Reference Include="Caliburn.Micro">
       <HintPath>..\..\packages\Caliburn.Micro.1.2.0\lib\Net40\Caliburn.Micro.dll</HintPath>
     </Reference>
+    <Reference Include="CookComputing.XmlRpcV2">
+      <HintPath>..\..\packages\xmlrpcnet.2.5.0\lib\net20\CookComputing.XmlRpcV2.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.AvalonEdit">
       <HintPath>..\..\packages\AvalonEdit.4.1.0.8000\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
@@ -59,6 +63,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Caliburn.Micro.1.2.0\lib\Net40\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -95,6 +100,16 @@
       <DependentUpon>MDIView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MDI\MDIViewModel.cs" />
+    <Compile Include="Metaweblog\BlogInfo.cs" />
+    <Compile Include="Metaweblog\Category.cs" />
+    <Compile Include="Metaweblog\CategoryInfo.cs" />
+    <Compile Include="Metaweblog\Enclosure.cs" />
+    <Compile Include="Metaweblog\IMetaWeblog.cs" />
+    <Compile Include="Metaweblog\MediaObject.cs" />
+    <Compile Include="Metaweblog\MediaObjectInfo.cs" />
+    <Compile Include="Metaweblog\Post.cs" />
+    <Compile Include="Metaweblog\Source.cs" />
+    <Compile Include="Metaweblog\UserInfo.cs" />
     <Compile Include="Shell\ShellViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

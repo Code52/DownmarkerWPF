@@ -1,8 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit.Document;
+using MarkPad.Metaweblog;
 using MarkdownSharp;
 using MarkPad.Services.Interfaces;
+using CookComputing.XmlRpc;
 
 namespace MarkPad.Document
 {
@@ -80,6 +83,22 @@ namespace MarkPad.Document
         public override string DisplayName
         {
             get { return title + (HasChanges ? " *" : ""); }
+        }
+
+        public void Publish()
+        {
+            var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
+            ((IXmlRpcProxy) proxy).Url = "http://localhost:51930/blogapi";
+
+            var post = new Post
+                           {
+                               permalink = "testing1123",
+                               title = "testing this post",
+                               dateCreated = DateTime.Now,
+                               description = Document.Text,
+                               categories = new string[0],
+                           };
+            proxy.AddPost("0", "test", "test", post, true);
         }
     }
 }

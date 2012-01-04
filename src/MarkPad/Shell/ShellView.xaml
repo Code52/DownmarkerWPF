@@ -14,6 +14,8 @@
                 <MenuItem x:Name="OpenDocument" Header="Open" />
                 <MenuItem x:Name="SaveDocument" Header="Save" />
                 <MenuItem x:Name="SaveAllDocuments" Header="Save All" />
+                <!--<Separator />
+                <MenuItem x:Name="Publish" Header="Publish" />-->
                 <Separator />
                 <MenuItem x:Name="Exit" Header="Exit" />
             </MenuItem>
