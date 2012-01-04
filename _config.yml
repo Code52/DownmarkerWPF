@@ -1,0 +1,8 @@
+permalink: /:title.html
+auto: true
+markdown: rdiscount
+appname: MarkPad
+username: Code52
+reponame: DownmarkerWPF
+accent: 05ce00
+description: A WPF Markdown editor inspired by <a href="https://bitbucket.org/wcoenen/downmarker">Downmarker</a>. Read the original brief on <a href="http://code52.org">Code52</a>
