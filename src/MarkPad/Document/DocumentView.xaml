@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:shared="http://schemas.markpad.net/winfx/xaml/shared" xmlns:cal="http://www.caliburnproject.org"
-    mc:Ignorable="d" 
+    xmlns:awe="clr-namespace:Awesomium.Windows.Controls;assembly=Awesomium.Windows.Controls" mc:Ignorable="d" 
     d:DesignHeight="300" d:DesignWidth="300"
 >
     <Grid>
@@ -21,9 +21,18 @@
             Document="{Binding Document}"
             cal:Message.Attach="[Event TextChanged]=[Action Update]"
             Grid.Column="0"
+            Margin="10" 
             VerticalAlignment="Stretch"
-            HorizontalAlignment="Stretch" />
+            HorizontalAlignment="Stretch" Padding="10">
+            <avalonEdit:TextEditor.Effect>
+                <DropShadowEffect BlurRadius="5" Color="Black" ShadowDepth="0" Opacity="0.5" />
+            </avalonEdit:TextEditor.Effect>
+        </avalonEdit:TextEditor>
 
-        <WebBrowser Grid.Column="1" shared:WebBrowserUtility.BindableContent="{Binding Render}" />
+        <awe:WebControl Margin="10" Grid.Column="1" HorizontalAlignment="Stretch" shared:WebBrowserUtility.BindableContent="{Binding Render}">
+            <awe:WebControl.Effect>
+                <DropShadowEffect BlurRadius="5" Color="Black" ShadowDepth="0" Opacity="0.5" />
+            </awe:WebControl.Effect>
+        </awe:WebControl>
     </Grid>
 </UserControl>

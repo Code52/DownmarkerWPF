@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using Awesomium.Windows.Controls;
 
 namespace MarkPad.XAML.AttachedProperties
 {
@@ -24,7 +25,7 @@ namespace MarkPad.XAML.AttachedProperties
 
         public static void BindableContentPropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            WebBrowser browser = o as WebBrowser;
+            WebControl browser = o as WebControl;
             if (browser == null)
                 return;
 
@@ -32,7 +33,7 @@ namespace MarkPad.XAML.AttachedProperties
             if (string.IsNullOrEmpty(content))
                 content = " ";
 
-            browser.NavigateToString(content);
+            browser.LoadHTML(content);
         }
 
     }
