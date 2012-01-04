@@ -3,26 +3,43 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-    mc:Ignorable="d" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro" mc:Ignorable="d" 
 >
+    <i:Interaction.Behaviors>
+        <Behaviours:BorderlessWindowBehavior/>
+    </i:Interaction.Behaviors>
 
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colours.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
+
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+	<Window.Background>
+		<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+			<GradientStop Color="#FFDEDEDE" Offset="0"/>
+			<GradientStop Color="White" Offset="0.295"/>
+		</LinearGradientBrush>
+	</Window.Background>
     <DockPanel>
-        <Menu DockPanel.Dock="Top">
-            <MenuItem Header="File">
-                <MenuItem  x:Name="NewDocument" Header="New Page" />
-                <MenuItem Header="New">
-                    <MenuItem x:Name="NewJekyllDocument" Header="Jekyll Page" />
-                </MenuItem>
-                <MenuItem x:Name="OpenDocument" Header="Open" />
-                <MenuItem x:Name="SaveDocument" Header="Save" />
-                <MenuItem x:Name="SaveAllDocuments" Header="Save All" />
-                <Separator />
-                <MenuItem x:Name="Exit" Header="Exit" />
-            </MenuItem>
-        </Menu>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" VerticalAlignment="Top" Margin="10">
+            <Button  x:Name="NewDocument" Content="NEW" Style="{DynamicResource ChromelessButtonStyle}" FontFamily="Segoe UI Semibold" FontSize="16" Margin="0,0,20,0" />
+            <Button x:Name="NewJekyllDocument" Content="NEW JEKYLL PAGE" Style="{DynamicResource ChromelessButtonStyle}" FontFamily="Segoe UI Semibold" FontSize="16" Margin="0,0,20,0" />
+            <Button x:Name="OpenDocument" Content="OPEN" Style="{DynamicResource ChromelessButtonStyle}" FontFamily="Segoe UI Semibold" FontSize="16" Margin="0,0,20,0" />
+            <Button x:Name="SaveDocument" Content="SAVE" Style="{DynamicResource ChromelessButtonStyle}" FontFamily="Segoe UI Semibold" FontSize="16" Margin="0,0,20,0" />
+            <Button x:Name="SaveAllDocuments" Content="SAVE ALL" Style="{DynamicResource ChromelessButtonStyle}" FontFamily="Segoe UI Semibold" FontSize="16" Margin="0,0,20,0" />
+        </StackPanel>
 
-        <ContentControl x:Name="MDI" />
+        <ContentControl x:Name="MDI" Margin="10,0,10,10" />
     </DockPanel>
 
 </Window>
