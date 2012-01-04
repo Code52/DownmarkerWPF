@@ -12,13 +12,15 @@ namespace MarkPad.Document
     internal class DocumentViewModel : Screen
     {
         private readonly IDialogService dialogService;
+        private readonly ISettingsService _settings;
 
         private string title;
         private string filename;
 
-        public DocumentViewModel(IDialogService dialogService)
+        public DocumentViewModel(IDialogService dialogService, ISettingsService settings)
         {
             this.dialogService = dialogService;
+            _settings = settings;
 
             title = "New Document";
             Original = "";
@@ -88,7 +90,7 @@ namespace MarkPad.Document
         public void Publish()
         {
             var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
-            ((IXmlRpcProxy) proxy).Url = "http://localhost:51930/blogapi";
+            ((IXmlRpcProxy) proxy).Url = _settings.Get<string>("BlogUrl");
 
             var post = new Post
                            {
@@ -98,7 +100,7 @@ namespace MarkPad.Document
                                description = Document.Text,
                                categories = new string[0],
                            };
-            proxy.AddPost("0", "test", "test", post, true);
+            proxy.AddPost("0", _settings.Get<string>("Username"), _settings.Get<string>("Password"), post, true);
         }
     }
 }
