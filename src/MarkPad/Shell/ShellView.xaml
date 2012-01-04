@@ -25,20 +25,26 @@
         </ResourceDictionary>
     </Window.Resources>
 	<Window.Background>
-		<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-			<GradientStop Color="#FFDEDEDE" Offset="0"/>
-			<GradientStop Color="White" Offset="0.295"/>
+        <LinearGradientBrush MappingMode="Absolute" StartPoint="0,0" EndPoint="0,150">
+			<GradientStop Color="#FFDEDEDE"/>
+			<GradientStop Color="White" Offset="1"/>
 		</LinearGradientBrush>
 	</Window.Background>
     <DockPanel>
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" VerticalAlignment="Top" Margin="10">
-            <Button  x:Name="NewDocument" Content="NEW" Style="{DynamicResource ChromelessButtonStyle}" FontFamily="Segoe UI Semibold" FontSize="16" Margin="0,0,20,0" />
-            <Button x:Name="NewJekyllDocument" Content="NEW JEKYLL PAGE" Style="{DynamicResource ChromelessButtonStyle}" FontFamily="Segoe UI Semibold" FontSize="16" Margin="0,0,20,0" />
-            <Button x:Name="OpenDocument" Content="OPEN" Style="{DynamicResource ChromelessButtonStyle}" FontFamily="Segoe UI Semibold" FontSize="16" Margin="0,0,20,0" />
-            <Button x:Name="SaveDocument" Content="SAVE" Style="{DynamicResource ChromelessButtonStyle}" FontFamily="Segoe UI Semibold" FontSize="16" Margin="0,0,20,0" />
-            <Button x:Name="SaveAllDocuments" Content="SAVE ALL" Style="{DynamicResource ChromelessButtonStyle}" FontFamily="Segoe UI Semibold" FontSize="16" Margin="0,0,20,0" />
-        </StackPanel>
-
+        <Grid DockPanel.Dock="Top">
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Margin="30,10,30,10">
+                <Button  x:Name="NewDocument" Content="NEW" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
+                <Button x:Name="NewJekyllDocument" Content="NEW JEKYLL PAGE" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
+                <Button x:Name="OpenDocument" Content="OPEN" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
+                <Button x:Name="SaveDocument" Content="SAVE" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
+                <Button x:Name="SaveAllDocuments" Content="SAVE ALL" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Orientation="Horizontal">
+                <Button Style="{DynamicResource ChromelessButtonStyle}" Content="0" FontFamily="Marlett" />
+                <Button Style="{DynamicResource ChromelessButtonStyle}" Content="1" FontFamily="Marlett" />
+                <Button Style="{DynamicResource ChromelessButtonStyle}" Content="r" FontFamily="Marlett" />
+            </StackPanel>
+        </Grid>
         <ContentControl x:Name="MDI" Margin="10,0,10,10" />
     </DockPanel>
 
