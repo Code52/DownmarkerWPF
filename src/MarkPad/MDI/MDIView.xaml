@@ -18,43 +18,12 @@
             <Setter Property="MinWidth" Value="5" />
             <Setter Property="MinHeight" Value="5" />
             <Setter Property="Background" Value="White" />
-            <Setter Property="Foreground" Value="Green" />
             <Setter Property="FontSize" Value="26.67" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TabItem">
                         <ContentPresenter x:Name="root" ContentSource="Header" />
-                        <!--<Grid x:Name="root"
-                          Margin="0,0,15,0">
-                            <Label x:Name="unselected"
-                               Margin="0"
-                               Content="{TemplateBinding Header}"
-                               FontSize="26.667">
-                                <Label.Foreground>
-                                    <SolidColorBrush Color="{DynamicResource Gray11}" />
-                                </Label.Foreground>
-                            </Label>
-                            <Label x:Name="selected"
-                               Margin="0"
-                               Content="{TemplateBinding Header}"
-                               FontSize="26.667"
-                               Opacity="0">
-                                <Label.Foreground>
-                                    <SolidColorBrush Color="{DynamicResource AccentColor}" />
-                                </Label.Foreground>
-                            </Label>
-                            <Label x:Name="hover"
-                               Margin="0"
-                               Content="{TemplateBinding Header}"
-                               FontSize="26.667"
-                               Opacity="0">
-                                <Label.Foreground>
-                                    <SolidColorBrush Color="{DynamicResource Gray3}" />
-                                </Label.Foreground>
-                            </Label>
-                        </Grid>-->
                         <ControlTemplate.Triggers>
-
                             <Trigger Property="IsSelected" Value="true">
                                 <Setter Property="Foreground">
                                     <Setter.Value>
