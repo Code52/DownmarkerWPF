@@ -55,6 +55,7 @@ namespace MarkPad.Document
 
                 filename = path;
                 title = new FileInfo(filename).Name;
+                NotifyOfPropertyChange(() => DisplayName);
             }
 
             File.WriteAllText(filename, Document.Text);
