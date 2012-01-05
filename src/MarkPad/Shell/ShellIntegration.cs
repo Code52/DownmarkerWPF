@@ -1,28 +1,39 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Shell;
 using Caliburn.Micro;
 using MarkPad.Events;
+using MarkPad.Services.Interfaces;
 
 namespace MarkPad.Shell
 {
     public class ShellIntegration : IHandle<FileOpenEvent>, IDisposable
     {
-        private string recent = "Recent";
-        private JumpList jumpList;
+        private readonly ISettingsService settingsService;
+        private readonly JumpList jumpList;
 
-        public ShellIntegration(IEventAggregator eventAggregator)
+        public ShellIntegration(IEventAggregator eventAggregator, ISettingsService settingsService)
         {
+            this.settingsService = settingsService;
             eventAggregator.Subscribe(this);
 
             jumpList = GetJumpList();
-            jumpList.ShowRecentCategory = true;
-            jumpList.ShowFrequentCategory = true;
-            
-            var firstFile = new JumpPath { Path = @"D:\Code\github\code52\code52website\_posts\2011-12-31-introduction.md"};
-            jumpList.JumpItems.Add(firstFile);
 
-            JumpList.AddToRecentCategory(@"D:\Code\github\code52\code52website\_posts\2012-01-02-downmarker.md");
+            foreach (var f in settingsService.GetRecentFiles())
+            {
+                var path = new JumpTask
+                {
+                    Arguments = f,
+                    IconResourcePath = Assembly.GetEntryAssembly().CodeBase,
+                    ApplicationPath = Assembly.GetEntryAssembly().CodeBase,
+                    Title = new FileInfo(f).Name,
+                    CustomCategory = "Recent"
+                };
+                jumpList.JumpItems.Add(path);
+            }
+
             jumpList.Apply();
         }
 
@@ -31,13 +42,15 @@ namespace MarkPad.Shell
             var list = JumpList.GetJumpList(Application.Current);
             if (list != null) return list;
 
-            list = new JumpList();
+            list = new JumpList { ShowFrequentCategory = false, ShowRecentCategory = false };
+
             JumpList.SetJumpList(Application.Current, list);
             return list;
         }
 
         public void Handle(FileOpenEvent message)
         {
+            settingsService.AddRecentFile(message.Path);
             JumpList.AddToRecentCategory(message.Path);
 
             jumpList.Apply();
