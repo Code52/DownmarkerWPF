@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Autofac;
@@ -52,9 +53,10 @@ namespace MarkPad
         protected override void PrepareApplication()
         {
             Application.Startup += OnStartup;
-#if (!DEBUG)
-            Application.DispatcherUnhandledException += OnUnhandledException;
-#endif
+
+            if (!Debugger.IsAttached)
+                Application.DispatcherUnhandledException += OnUnhandledException;
+
             Application.Exit += OnExit;
         }
 

@@ -3,12 +3,13 @@ using System.IO;
 using System.Windows.Shell;
 using Caliburn.Micro;
 using MarkPad.Document;
+using MarkPad.Framework.Events;
 using MarkPad.MDI;
 using MarkPad.Services.Interfaces;
 
 namespace MarkPad.Shell
 {
-    internal class ShellViewModel : Conductor<IScreen>
+    internal class ShellViewModel : Conductor<IScreen>, IHandle<AppStartedEvent>
     {
         private readonly IDialogService dialogService;
         private readonly Func<DocumentViewModel> documentCreator;
@@ -20,18 +21,6 @@ namespace MarkPad.Shell
             this.documentCreator = documentCreator;
 
             this.ActivateItem(mdi);
-        }
-
-        protected override void OnActivate()
-        {
-            base.OnActivate();
-
-            var args = Environment.GetCommandLineArgs();
-            if (args.Length == 2)
-            {
-                if (File.Exists(args[1]) && Path.GetExtension(args[1]) == ".md")
-                    OpenDocument(args[1]);
-            }
         }
 
         public override string DisplayName
@@ -104,5 +93,18 @@ namespace MarkPad.Shell
                 doc.Save();
             }
         }
+
+        #region IHandle<AppStartedEvent> Members
+
+        public void Handle(AppStartedEvent message)
+        {
+            if (message.Args.Length == 1)
+            {
+                if (File.Exists(message.Args[0]) && Path.GetExtension(message.Args[0]) == ".md")
+                    OpenDocument(message.Args[0]);
+            }
+        }
+
+        #endregion
     }
 }
