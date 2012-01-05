@@ -7,6 +7,7 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro" mc:Ignorable="d" 
     MouseLeftButtonDown="DragMoveWindow"
+    Icon="../markpad.ico"
 >
     <i:Interaction.Behaviors>
         <Behaviours:BorderlessWindowBehavior/>
@@ -18,11 +19,36 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colours.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
+            <!--ACCENT COLORS-->
+            <Color x:Key="HighlightDarkColor">#FFbe0606</Color>
+            <Color x:Key="HighlightLightColor">#FFbe0606</Color>
+
+            <Color x:Key="AccentDarkColor">#FFbe0606</Color>
+
+            <!--80%-->
+            <Color x:Key="AccentColor">#CCbe0606</Color>
+            <!--60%-->
+            <Color x:Key="AccentColor2">#99ff3333</Color>
+            <!--40%-->
+            <Color x:Key="AccentColor3">#66ff3333</Color>
+            <!--20%-->
+            <Color x:Key="AccentColor4">#33ff3333</Color>
+
+            <LinearGradientBrush x:Key="BrandingBrush"
+                         EndPoint="0.001,0.5"
+                         StartPoint="1.002,0.5">
+                <GradientStop Color="{DynamicResource HighlightDarkColor}"
+                      Offset="0" />
+                <GradientStop Color="Blue"
+                      Offset="1" />
+            </LinearGradientBrush>
+
+            <SolidColorBrush x:Key="AccentColorBrush"
+                     Color="{DynamicResource AccentColor}" />
         </ResourceDictionary>
     </Window.Resources>
 	<Window.Background>
@@ -33,7 +59,8 @@
 	</Window.Background>
     <DockPanel>
         <Grid DockPanel.Dock="Top">
-            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Margin="30,10,30,10">
+            <TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold" FontSize="10.667" Margin="30,10,0,0"><Run Language="en-au" Text="MARKPAD"/></TextBlock>
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Margin="30,30,30,10">
                 <Button  x:Name="NewDocument" Content="NEW" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
                 <Button x:Name="NewJekyllDocument" Content="NEW JEKYLL PAGE" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
                 <Button x:Name="OpenDocument" Content="OPEN" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
@@ -45,8 +72,13 @@
                 <Button Click="ButtonMaxRestoreOnClick" x:Name="maxRestore" Style="{DynamicResource ChromelessButtonStyle}" Content="1" FontFamily="Marlett" />
                 <Button x:Name="Exit" Style="{DynamicResource ChromelessButtonStyle}" Content="r" FontFamily="Marlett" />
             </StackPanel>
+            <Rectangle HorizontalAlignment="Left" Stroke="Black" Width="10" StrokeThickness="0" Margin="0,10">
+                <Rectangle.Fill>
+                    <SolidColorBrush Color="{DynamicResource HighlightDarkColor}" />
+                </Rectangle.Fill>
+            </Rectangle>
         </Grid>
-        <ContentControl x:Name="MDI" Margin="10,0,10,10" />
+        <ContentControl x:Name="MDI" Margin="10,0" />
     </DockPanel>
 
 </Window>

@@ -8,6 +8,8 @@
     d:DesignHeight="300" d:DesignWidth="300"
 >
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        
         <Style TargetType="TabItem">
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="IsTabStop" Value="False" />
@@ -57,6 +59,7 @@
             <DataTemplate>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="{Binding DisplayName}" />
+                    <TextBlock Text="i" FontFamily="Marlett" Visibility="{Binding HasChanges, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <Button 
                         Style="{DynamicResource ChromelessButtonStyle}"
                         Margin="5,0,15,0"

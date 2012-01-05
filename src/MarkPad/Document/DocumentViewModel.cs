@@ -102,7 +102,7 @@ namespace MarkPad.Document
 
         public override string DisplayName
         {
-            get { return title + (HasChanges ? " *" : ""); }
+            get { return title; }
         }
 
         public override void CanClose(System.Action<bool> callback)
