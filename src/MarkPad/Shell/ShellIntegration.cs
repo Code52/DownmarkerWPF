@@ -1,26 +1,51 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Shell;
 using Caliburn.Micro;
 using MarkPad.Events;
 
 namespace MarkPad.Shell
 {
-    public class ShellIntegration : IHandle<FileOpenEvent>
+    public class ShellIntegration : IHandle<FileOpenEvent>, IDisposable
     {
+        private string recent = "Recent";
+        private JumpList jumpList;
+
         public ShellIntegration(IEventAggregator eventAggregator)
         {
             eventAggregator.Subscribe(this);
 
-            var jumpList = JumpList.GetJumpList(Application.Current);
+            jumpList = GetJumpList();
+            jumpList.ShowRecentCategory = true;
+            jumpList.ShowFrequentCategory = true;
+            
+            var firstFile = new JumpPath { Path = @"D:\Code\github\code52\code52website\_posts\2011-12-31-introduction.md"};
+            jumpList.JumpItems.Add(firstFile);
 
-            jumpList.JumpItems.Add(new JumpPath { CustomCategory = "Recent Files", Path = @"C:\A.txt"  });
-            jumpList.JumpItems.Add(new JumpPath { CustomCategory = "Recent Files", Path = @"C:\B.txt" });
-            jumpList.JumpItems.Add(new JumpPath { CustomCategory = "Recent Files", Path = @"C:\C.txt" });
+            JumpList.AddToRecentCategory(@"D:\Code\github\code52\code52website\_posts\2012-01-02-downmarker.md");
+            jumpList.Apply();
+        }
+
+        private static JumpList GetJumpList()
+        {
+            var list = JumpList.GetJumpList(Application.Current);
+            if (list != null) return list;
+
+            list = new JumpList();
+            JumpList.SetJumpList(Application.Current, list);
+            return list;
         }
 
         public void Handle(FileOpenEvent message)
         {
-            
+            JumpList.AddToRecentCategory(message.Path);
+
+            jumpList.Apply();
+        }
+
+        public void Dispose()
+        {
+            // TODO: dispose
         }
     }
 }

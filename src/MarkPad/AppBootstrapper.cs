@@ -14,6 +14,7 @@ namespace MarkPad
     class AppBootstrapper : Bootstrapper<ShellViewModel>
     {
         private IContainer container;
+        private ShellIntegration shell;
 
         private void SetupLogging()
         {
@@ -40,7 +41,11 @@ namespace MarkPad
 
             builder.RegisterModule<Services.ServicesModule>();
 
+            builder.RegisterType<ShellIntegration>().SingleInstance();
+
             container = builder.Build();
+
+            shell = container.Resolve<ShellIntegration>();
         }
 
         protected override void PrepareApplication()
@@ -102,6 +107,13 @@ namespace MarkPad
         protected override void BuildUp(object instance)
         {
             container.InjectProperties(instance);
+        }
+
+        protected override void OnExit(object sender, EventArgs e)
+        {
+            shell.Dispose();
+
+            base.OnExit(sender, e);
         }
     }
 }

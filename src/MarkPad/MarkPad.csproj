@@ -101,10 +101,12 @@
       <DependentUpon>DocumentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Document\DocumentViewModel.cs" />
+    <Compile Include="Events\FileOpenEvent.cs" />
     <Compile Include="MDI\MDIView.xaml.cs">
       <DependentUpon>MDIView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MDI\MDIViewModel.cs" />
+    <Compile Include="Shell\ShellIntegration.cs" />
     <Compile Include="Shell\ShellView.xaml.cs" />
     <Compile Include="Shell\ShellViewModel.cs" />
   </ItemGroup>

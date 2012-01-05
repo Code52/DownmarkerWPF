@@ -1,6 +1,7 @@
 ﻿using System;
 using Caliburn.Micro;
 using MarkPad.Document;
+using MarkPad.Events;
 using MarkPad.MDI;
 using MarkPad.Services.Interfaces;
 
@@ -8,11 +9,13 @@ namespace MarkPad.Shell
 {
     internal class ShellViewModel : Conductor<IScreen>
     {
+        private readonly IEventAggregator eventAggregator;
         private readonly IDialogService dialogService;
         private readonly Func<DocumentViewModel> documentCreator;
 
-        public ShellViewModel(IDialogService dialogService, MDIViewModel mdi, Func<DocumentViewModel> documentCreator)
+        public ShellViewModel(IEventAggregator eventAggregator, IDialogService dialogService, MDIViewModel mdi, Func<DocumentViewModel> documentCreator)
         {
+            this.eventAggregator = eventAggregator;
             this.dialogService = dialogService;
             this.MDI = mdi;
             this.documentCreator = documentCreator;
@@ -64,6 +67,9 @@ namespace MarkPad.Shell
             var doc = documentCreator();
             doc.Open(path);
             MDI.Open(doc);
+
+            eventAggregator.Publish(new FileOpenEvent(path));
+
         }
 
         public void SaveDocument()
