@@ -479,13 +479,13 @@
                     <ControlTemplate TargetType="{x:Type avalonedit:TextArea}">
                         <DockPanel Focusable="False">
                             <ItemsControl DockPanel.Dock="Left"
-						              Focusable="False"
+                                      Focusable="False"
                                       Margin="0,0,5,0"
                                           FontSize="10"
                                           FontFamily="Segoe UI"
                                       Padding="10,0,0,0"
                                       Background="#adDEDEDE"
-						              ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LeftMargins}">
+                                      ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LeftMargins}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel Orientation="Horizontal" />
@@ -493,9 +493,9 @@
                                 </ItemsControl.ItemsPanel>
                             </ItemsControl>
                             <ContentPresenter
-							Panel.ZIndex="-1"
-							Focusable="False"
-							Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TextView}"/>
+                            Panel.ZIndex="-1"
+                            Focusable="False"
+                            Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TextView}"/>
                         </DockPanel>
                     </ControlTemplate>
                 </Setter.Value>
@@ -509,15 +509,15 @@
         </Grid.ColumnDefinitions>
 
         <avalonedit:TextEditor
-			x:Name="Document"
-			WordWrap="True"
+            x:Name="Document"
+            WordWrap="True"
             ShowLineNumbers="True"
-			Document="{Binding Document}"
-			cal:Message.Attach="[Event TextChanged]=[Action Update]"
-			Grid.Column="0"
-			Margin="10,10,10,-5" 
-			VerticalAlignment="Stretch"
-			HorizontalAlignment="Stretch" Padding="0,0,10,0">
+            Document="{Binding Document}"
+            cal:Message.Attach="[Event TextChanged]=[Action Update]"
+            Grid.Column="0"
+            Margin="10,10,10,-5" 
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch" Padding="0,0,10,0">
             <avalonedit:TextEditor.Effect>
                 <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.25" Direction="270" />
             </avalonedit:TextEditor.Effect>

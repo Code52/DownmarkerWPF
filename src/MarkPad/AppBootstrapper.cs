@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Autofac;
 using Caliburn.Micro;
 using MarkPad.Framework;
 using MarkPad.Shell;
+using Microsoft.Win32;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
@@ -43,6 +45,8 @@ namespace MarkPad
             container = builder.Build();
 
             SetAwesomiumDefaults();
+
+            RegisterExtensionWithApp();
         }
 
         protected override void PrepareApplication()
@@ -65,6 +69,41 @@ namespace MarkPad
             };
 
             Awesomium.Core.WebCore.Initialize(c);
+        }
+
+        private void RegisterExtensionWithApp()
+        {
+            string markpadKeyName = "markpad.md";
+            string defaultExtension = ".md";
+
+            string exePath = Assembly.GetEntryAssembly().Location;
+
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes", true))
+            {
+                using (RegistryKey extensionKey = key.CreateSubKey(defaultExtension))
+                {
+                    extensionKey.SetValue("", markpadKeyName);
+                }
+
+                using (RegistryKey markpadKey = key.CreateSubKey(markpadKeyName))
+                {
+                    using (RegistryKey defaultIconKey = markpadKey.CreateSubKey("DefaultIcon"))
+                    {
+                        defaultIconKey.SetValue("", exePath + ",0");
+                    }
+
+                    using (RegistryKey shellKey = markpadKey.CreateSubKey("shell"))
+                    {
+                        using (RegistryKey openKey = shellKey.CreateSubKey("open"))
+                        {
+                            using (RegistryKey commandKey = openKey.CreateSubKey("command"))
+                            {
+                                commandKey.SetValue("", "\"" + exePath + "\" \"%1\"");
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private static void SetupCaliburnMicroDefaults(ContainerBuilder builder)
