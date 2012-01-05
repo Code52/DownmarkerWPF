@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text.RegularExpressions;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit.Document;
 using MarkdownSharp;
@@ -70,8 +71,28 @@ namespace MarkPad.Document
             {
                 var markdown = new Markdown();
 
-                return markdown.Transform(this.Document.Text);
+                var textToRender = StripHeader(Document.Text);
+
+                return markdown.Transform(textToRender);
             }
+        }
+
+        private static string StripHeader(string text)
+        {
+            const string delimiter = "---";
+            var matches = Regex.Matches(text, delimiter, RegexOptions.Multiline);
+
+            if (matches.Count != 2)
+            {
+                return text;
+            }
+
+            var startIndex = matches[0].Index;
+            var endIndex = matches[1].Index;
+            var length = endIndex - startIndex + delimiter.Length;
+            var textToReplace = text.Substring(startIndex, length);
+
+            return text.Replace(textToReplace, string.Empty); ;
         }
 
         public bool HasChanges
