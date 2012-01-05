@@ -9,19 +9,19 @@ namespace MarkPad
 {
     internal class Loader
     {
-        private const string LIBSFOLDER = "Libs";
+        const string LibsFolder = "Libs";
 
-        private static Dictionary<string, Assembly> libs = new Dictionary<string, Assembly>();
-        private static Dictionary<string, Assembly> reflectionOnlyLibs = new Dictionary<string, Assembly>();
+        static readonly Dictionary<string, Assembly> Libraries = new Dictionary<string, Assembly>();
+        static readonly Dictionary<string, Assembly> ReflectionOnlyLibraries = new Dictionary<string, Assembly>();
 
-        [System.STAThreadAttribute()]
+        [STAThreadAttribute]
         public static void Main(string[] args)
         {
-            AppDomain.CurrentDomain.AssemblyResolve += Loader.FindAssembly;
+            AppDomain.CurrentDomain.AssemblyResolve += FindAssembly;
 
             PreloadUnmanagedLibraries();
 
-            App app = new App();
+            var app = new App();
             app.Run();
         }
 
@@ -38,10 +38,10 @@ namespace MarkPad
             var assemblyName = Assembly.GetExecutingAssembly().GetName();
 
             var libraries = Assembly.GetExecutingAssembly().GetManifestResourceNames()
-                .Where(s => s.StartsWith(String.Format("{1}.{2}.{0}.", bittyness, assemblyName.Name, LIBSFOLDER)))
+                .Where(s => s.StartsWith(String.Format("{1}.{2}.{0}.", bittyness, assemblyName.Name, LibsFolder)))
                 .ToArray();
 
-            string dirName = Path.Combine(Path.GetTempPath(), String.Format("{2}.{1}.{0}", assemblyName.Version.ToString(), bittyness, assemblyName.Name));
+            var dirName = Path.Combine(Path.GetTempPath(), String.Format("{2}.{1}.{0}", assemblyName.Version, bittyness, assemblyName.Name));
             if (!Directory.Exists(dirName))
                 Directory.CreateDirectory(dirName);
 
@@ -75,7 +75,7 @@ namespace MarkPad
                 // is not in the PATH.
                 // Once it is loaded, the DllImport directives that use the DLL will use
                 // the one that is already loaded into the process.
-                IntPtr h = LoadLibrary(dllPath);
+                LoadLibrary(dllPath);
             }
         }
 
@@ -87,12 +87,12 @@ namespace MarkPad
 
             var assemblyName = executingAssembly.GetName();
 
-            string shortName = new AssemblyName(fullName).Name;
-            if (libs.ContainsKey(shortName))
-                return libs[shortName];
+            var shortName = new AssemblyName(fullName).Name;
+            if (Libraries.ContainsKey(shortName))
+                return Libraries[shortName];
 
-            var resourceName = String.Format("{0}.{2}.{1}.dll", assemblyName.Name, shortName, LIBSFOLDER);
-            var actualName = executingAssembly.GetManifestResourceNames().Where(n => string.Equals(n, resourceName, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+            var resourceName = String.Format("{0}.{2}.{1}.dll", assemblyName.Name, shortName, LibsFolder);
+            var actualName = executingAssembly.GetManifestResourceNames().FirstOrDefault(n => string.Equals(n, resourceName, StringComparison.OrdinalIgnoreCase));
 
             if (string.IsNullOrEmpty(actualName))
             {
@@ -101,12 +101,12 @@ namespace MarkPad
                 if (IntPtr.Size == 8)
                     bittyness = "x64";
 
-                resourceName = String.Format("{0}.{3}.{1}.{2}.dll", assemblyName.Name, bittyness, shortName, LIBSFOLDER);
-                actualName = executingAssembly.GetManifestResourceNames().Where(n => string.Equals(n, resourceName, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                resourceName = String.Format("{0}.{3}.{1}.{2}.dll", assemblyName.Name, bittyness, shortName, LibsFolder);
+                actualName = executingAssembly.GetManifestResourceNames().FirstOrDefault(n => string.Equals(n, resourceName, StringComparison.OrdinalIgnoreCase));
 
                 if (string.IsNullOrEmpty(actualName))
                 {
-                    libs[shortName] = null;
+                    Libraries[shortName] = null;
                     return null;
                 }
 
@@ -114,28 +114,28 @@ namespace MarkPad
                 // See http://stackoverflow.com/questions/2945080/ and http://connect.microsoft.com/VisualStudio/feedback/details/97801/
                 // But, since it's an unmanaged library we've already dumped it to disk to preload it into the process.
                 // So, we'll just load it from there.
-                string dirName = Path.Combine(Path.GetTempPath(), String.Format("{2}.{1}.{0}", assemblyName.Version.ToString(), bittyness, assemblyName.Name));
-                string dllPath = Path.Combine(dirName, String.Join(".", actualName.Split('.').Skip(3)));
+                var dirName = Path.Combine(Path.GetTempPath(), String.Format("{2}.{1}.{0}", assemblyName.Version, bittyness, assemblyName.Name));
+                var dllPath = Path.Combine(dirName, String.Join(".", actualName.Split('.').Skip(3)));
 
                 if (!File.Exists(dllPath))
                 {
-                    libs[shortName] = null;
+                    Libraries[shortName] = null;
                     return null;
                 }
 
                 a = Assembly.LoadFile(dllPath);
-                libs[shortName] = a;
+                Libraries[shortName] = a;
                 return a;
             }
 
-            using (Stream s = executingAssembly.GetManifestResourceStream(actualName))
+            using (var s = executingAssembly.GetManifestResourceStream(actualName))
             {
-                byte[] data = new BinaryReader(s).ReadBytes((int)s.Length);
+                var data = new BinaryReader(s).ReadBytes((int)s.Length);
 
                 byte[] debugData = null;
-                if (executingAssembly.GetManifestResourceNames().Contains(String.Format("{0}.{2}.{1}.pdb", assemblyName.Name, shortName, LIBSFOLDER)))
+                if (executingAssembly.GetManifestResourceNames().Contains(String.Format("{0}.{2}.{1}.pdb", assemblyName.Name, shortName, LibsFolder)))
                 {
-                    using (Stream ds = executingAssembly.GetManifestResourceStream(String.Format("{0}.{2}.{1}.pdb", assemblyName.Name, shortName, LIBSFOLDER)))
+                    using (var ds = executingAssembly.GetManifestResourceStream(String.Format("{0}.{2}.{1}.pdb", assemblyName.Name, shortName, LibsFolder)))
                     {
                         debugData = new BinaryReader(ds).ReadBytes((int)ds.Length);
                     }
@@ -144,11 +144,11 @@ namespace MarkPad
                 if (debugData != null)
                 {
                     a = Assembly.Load(data, debugData);
-                    libs[shortName] = a;
+                    Libraries[shortName] = a;
                     return a;
                 }
                 a = Assembly.Load(data);
-                libs[shortName] = a;
+                Libraries[shortName] = a;
                 return a;
             }
         }
@@ -160,23 +160,23 @@ namespace MarkPad
             var assemblyName = Assembly.GetExecutingAssembly().GetName();
 
             string shortName = new AssemblyName(fullName).Name;
-            if (reflectionOnlyLibs.ContainsKey(shortName))
-                return reflectionOnlyLibs[shortName];
+            if (ReflectionOnlyLibraries.ContainsKey(shortName))
+                return ReflectionOnlyLibraries[shortName];
 
-            var resourceName = String.Format("{0}.{2}.{1}.dll", assemblyName.Name, shortName, LIBSFOLDER);
+            var resourceName = String.Format("{0}.{2}.{1}.dll", assemblyName.Name, shortName, LibsFolder);
 
             if (!executingAssembly.GetManifestResourceNames().Contains(resourceName))
             {
-                reflectionOnlyLibs[shortName] = null;
+                ReflectionOnlyLibraries[shortName] = null;
                 return null;
             }
 
-            using (Stream s = executingAssembly.GetManifestResourceStream(resourceName))
+            using (var s = executingAssembly.GetManifestResourceStream(resourceName))
             {
-                byte[] data = new BinaryReader(s).ReadBytes((int)s.Length);
+                var data = new BinaryReader(s).ReadBytes((int)s.Length);
 
-                Assembly a = Assembly.ReflectionOnlyLoad(data);
-                reflectionOnlyLibs[shortName] = a;
+                var a = Assembly.ReflectionOnlyLoad(data);
+                ReflectionOnlyLibraries[shortName] = a;
 
                 return a;
             }
