@@ -105,6 +105,7 @@
       <DependentUpon>MDIView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MDI\MDIViewModel.cs" />
+    <Compile Include="Shell\ShellView.xaml.cs" />
     <Compile Include="Shell\ShellViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
