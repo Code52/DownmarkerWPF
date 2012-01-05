@@ -41,6 +41,8 @@ namespace MarkPad
             builder.RegisterModule<Services.ServicesModule>();
 
             container = builder.Build();
+
+            SetAwesomiumDefaults();
         }
 
         protected override void PrepareApplication()
@@ -50,6 +52,20 @@ namespace MarkPad
             Application.DispatcherUnhandledException += OnUnhandledException;
 #endif
             Application.Exit += OnExit;
+        }
+
+        private void SetAwesomiumDefaults()
+        {
+            var c = new Awesomium.Core.WebCoreConfig
+            {
+                CustomCSS = @"::-webkit-scrollbar { width: 12px; height: 20px; }
+                              ::-webkit-scrollbar-track { background-color: white; } 
+                              ::-webkit-scrollbar-button { background-color: white; }
+                              ::-webkit-scrollbar-thumb { background-color: #B9B9B9; }
+                              ::-webkit-scrollbar-thumb:hover { background-color: #000000; }",
+            };
+
+            Awesomium.Core.WebCore.Initialize(c);
         }
 
         private static void SetupCaliburnMicroDefaults(ContainerBuilder builder)
