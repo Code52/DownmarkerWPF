@@ -6,19 +6,29 @@ using MarkPad.Document;
 using MarkPad.Framework.Events;
 using MarkPad.MDI;
 using MarkPad.Services.Interfaces;
+using MarkPad.Settings;
 
 namespace MarkPad.Shell
 {
     internal class ShellViewModel : Conductor<IScreen>, IHandle<AppStartedEvent>
     {
         private readonly IDialogService dialogService;
+        private readonly IWindowManager windowService;
         private readonly Func<DocumentViewModel> documentCreator;
+        private readonly Func<SettingsViewModel> settingsCreator;
 
-        public ShellViewModel(IDialogService dialogService, MDIViewModel mdi, Func<DocumentViewModel> documentCreator)
+        public ShellViewModel(
+            IDialogService dialogService,
+            IWindowManager windowService,
+            MDIViewModel mdi,
+            Func<DocumentViewModel> documentCreator,
+            Func<SettingsViewModel> settingsCreator)
         {
             this.dialogService = dialogService;
+            this.windowService = windowService;
             this.MDI = mdi;
             this.documentCreator = documentCreator;
+            this.settingsCreator = settingsCreator;
 
             this.ActivateItem(mdi);
         }
@@ -94,7 +104,10 @@ namespace MarkPad.Shell
             }
         }
 
-        #region IHandle<AppStartedEvent> Members
+        public void ShowSettings()
+        {
+            //windowService.ShowDialog(settingsCreator());
+        }
 
         public void Handle(AppStartedEvent message)
         {
@@ -104,7 +117,5 @@ namespace MarkPad.Shell
                     OpenDocument(message.Args[0]);
             }
         }
-
-        #endregion
     }
 }
