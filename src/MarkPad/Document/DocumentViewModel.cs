@@ -23,12 +23,12 @@ namespace MarkPad.Document
             Document = new TextDocument();
         }
 
-        public void Open(string filename)
+        public void Open(string path)
         {
-            this.filename = filename;
-            title = new FileInfo(filename).Name;
+            filename = path;
+            title = new FileInfo(path).Name;
 
-            var text = File.ReadAllText(filename);
+            var text = File.ReadAllText(path);
             Document.Text = text;
             Original = text;
         }
@@ -92,7 +92,7 @@ namespace MarkPad.Document
             var length = endIndex - startIndex + delimiter.Length;
             var textToReplace = text.Substring(startIndex, length);
 
-            return text.Replace(textToReplace, string.Empty); ;
+            return text.Replace(textToReplace, string.Empty);
         }
 
         public bool HasChanges
