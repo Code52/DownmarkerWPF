@@ -7,7 +7,7 @@ namespace MarkPad.Services.Implementation
     {
         #region IDialogService Members
 
-        public bool ShowConfirmation(string title, string text, string extra)
+        public bool ShowConfirmation(string title, string text, string extra, params ButtonExtras[] buttonExtras)
         {
             DialogMessageService service = new DialogMessageService(null);
             service.Icon = DialogMessageIcon.Question;
@@ -15,11 +15,12 @@ namespace MarkPad.Services.Implementation
             service.Title = title;
             service.Text = text;
             service.Extra = extra;
+            service.ButtonExtras = buttonExtras;
             var result = service.Show();
             return result == DialogMessageResult.Yes;
         }
 
-        public bool? ShowConfirmationWithCancel(string title, string text, string extra)
+        public bool? ShowConfirmationWithCancel(string title, string text, string extra, params ButtonExtras[] buttonExtras)
         {
             DialogMessageService service = new DialogMessageService(null);
             service.Icon = DialogMessageIcon.Question;
@@ -27,6 +28,7 @@ namespace MarkPad.Services.Implementation
             service.Title = title;
             service.Text = text;
             service.Extra = extra;
+            service.ButtonExtras = buttonExtras;
             var result = service.Show();
             switch (result)
             {
@@ -38,7 +40,7 @@ namespace MarkPad.Services.Implementation
             return null;
         }
 
-        public void ShowMessage(string title, string text, string extra)
+        public void ShowMessage(string title, string text, string extra, params ButtonExtras[] buttonExtras)
         {
             DialogMessageService service = new DialogMessageService(null);
             service.Icon = DialogMessageIcon.Information;
@@ -46,10 +48,11 @@ namespace MarkPad.Services.Implementation
             service.Title = title;
             service.Text = text;
             service.Extra = extra;
+            service.ButtonExtras = buttonExtras;
             var result = service.Show();
         }
 
-        public void ShowWarning(string title, string text, string extra)
+        public void ShowWarning(string title, string text, string extra, params ButtonExtras[] buttonExtras)
         {
             DialogMessageService service = new DialogMessageService(null);
             service.Icon = DialogMessageIcon.Warning;
@@ -57,10 +60,11 @@ namespace MarkPad.Services.Implementation
             service.Title = title;
             service.Text = text;
             service.Extra = extra;
+            service.ButtonExtras = buttonExtras;
             var result = service.Show();
         }
 
-        public void ShowError(string title, string text, string extra)
+        public void ShowError(string title, string text, string extra, params ButtonExtras[] buttonExtras)
         {
             DialogMessageService service = new DialogMessageService(null);
             service.Icon = DialogMessageIcon.Error;
@@ -68,6 +72,7 @@ namespace MarkPad.Services.Implementation
             service.Title = title;
             service.Text = text;
             service.Extra = extra;
+            service.ButtonExtras = buttonExtras;
             var result = service.Show();
         }
 
