@@ -57,7 +57,7 @@
 			<GradientStop Color="White" Offset="1"/>
 		</LinearGradientBrush>
 	</Window.Background>
-    <DockPanel>
+    <DockPanel Margin="0px 0px 0px 10px">
         <Grid DockPanel.Dock="Top">
             <TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold" FontSize="10.667" Margin="30,10,0,0"><Run Language="en-au" Text="MARKPAD"/></TextBlock>
             <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Margin="30,30,30,10">
