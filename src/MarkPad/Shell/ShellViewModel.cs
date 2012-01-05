@@ -41,11 +41,6 @@ namespace MarkPad.Shell
 
         public MDIViewModel MDI { get; private set; }
 
-        public void Exit()
-        {
-            this.TryClose();
-        }
-
         public void NewDocument()
         {
             MDI.Open(documentCreator());
@@ -106,7 +101,7 @@ namespace MarkPad.Shell
 
         public void ShowSettings()
         {
-            //windowService.ShowDialog(settingsCreator());
+            windowService.ShowDialog(settingsCreator());
         }
 
         public void Handle(AppStartedEvent message)

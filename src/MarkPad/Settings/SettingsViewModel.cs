@@ -1,7 +1,8 @@
-﻿
+﻿using Caliburn.Micro;
+
 namespace MarkPad.Settings
 {
-    public class SettingsViewModel
+    public class SettingsViewModel : Screen
     {
     }
 }

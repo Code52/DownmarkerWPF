@@ -39,8 +39,8 @@
             <Color x:Key="AccentColor4">#33ff3333</Color>
 
             <LinearGradientBrush x:Key="BrandingBrush"
-                         EndPoint="0.001,0.5"
-                         StartPoint="1.002,0.5">
+                         EndPoint="0,0.5"
+                         StartPoint="1,0.5">
                 <GradientStop Color="{DynamicResource HighlightDarkColor}"
                       Offset="0" />
                 <GradientStop Color="Blue"
@@ -71,7 +71,7 @@
                 <Button x:Name="ShowSettings" Content="SETTINGS" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" Margin="0,0,20,0" FontWeight="Bold" />
                 <Button Click="ButtonMinimiseOnClick"  Style="{DynamicResource ChromelessButtonStyle}" Content="0" FontFamily="Marlett" />
                 <Button Click="ButtonMaxRestoreOnClick" x:Name="maxRestore" Style="{DynamicResource ChromelessButtonStyle}" Content="1" FontFamily="Marlett" />
-                <Button x:Name="Exit" Style="{DynamicResource ChromelessButtonStyle}" Content="r" FontFamily="Marlett" />
+                <Button x:Name="TryClose" Style="{DynamicResource ChromelessButtonStyle}" Content="r" FontFamily="Marlett" />
             </StackPanel>
             <Rectangle HorizontalAlignment="Left" Stroke="Black" Width="10" StrokeThickness="0" Margin="0,10">
                 <Rectangle.Fill>
