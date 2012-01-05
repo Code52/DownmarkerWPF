@@ -1,36 +1,39 @@
-using System.Collections;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.IO.IsolatedStorage;
+using System.Runtime.Serialization.Formatters.Binary;
 using MarkPad.Services.Interfaces;
-using Polenter.Serialization;
-using Polenter.Serialization.Core;
 
 namespace MarkPad.Services.Implementation
 {
-    internal class SettingsService :ISettingsService
+    internal class SettingsService : ISettingsService
     {
-        private readonly Hashtable _storage = new Hashtable();
-        private readonly SharpSerializer _serializer = new SharpSerializer();
-        private const string Filename = "settings.xml";
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+        private IsolatedStorageScope scope = IsolatedStorageScope.Assembly | IsolatedStorageScope.User | IsolatedStorageScope.Roaming;
+
+        private const string Filename = "settings.bin";
+        private Dictionary<string, object> _storage = new Dictionary<string, object>();
 
         public SettingsService()
         {
-            try
+            _storage = new Dictionary<string, object>();
+
+            using (IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(scope, null, null))
             {
-                _storage = (Hashtable)_serializer.Deserialize(Filename);
-            }
-            catch (FileNotFoundException ex)
-            {
-                
-            }
-            catch (DeserializingException ex)
-            {
-                //File probably doesn't exist or is corrupt
+                string[] filenames = isoStore.GetFileNames(Filename);
+                if (Filename.Length > 0)
+                {
+                    LoadStorage(isoStore);
+                }
             }
         }
+
         public T Get<T>(string key)
         {
-            if (_storage.Contains(key))
-                return (T) _storage[key];
+            if (_storage.ContainsKey(key))
+                return (T)_storage[key];
             return default(T);
         }
 
@@ -43,9 +46,28 @@ namespace MarkPad.Services.Implementation
 
         }
 
+        private void LoadStorage(IsolatedStorageFile isoStore)
+        {
+            try
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+
+                using (var stream = new IsolatedStorageFileStream(Filename, FileMode.Open, isoStore))
+                    _storage = (Dictionary<string, object>)formatter.Deserialize(stream);
+            }
+            catch (Exception e)
+            {
+                logger.WarnException(e.Message, e);
+            }
+        }
+
         public void Save()
         {
-            _serializer.Serialize(_storage, Filename);
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            using (IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(scope, null, null))
+            using (var stream = new IsolatedStorageFileStream(Filename, FileMode.Create, isoStore))
+                formatter.Serialize(stream, _storage);
         }
     }
 }

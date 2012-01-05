@@ -76,9 +76,6 @@
     <Reference Include="NLog">
       <HintPath>..\..\packages\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
     </Reference>
-    <Reference Include="Polenter.SharpSerializer, Version=2.16.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SharpSerializer.2.16\lib\net20\Polenter.SharpSerializer.dll</HintPath>
-    </Reference>
     <Reference Include="Ookii.Dialogs.Wpf">
       <HintPath>..\..\packages\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
     </Reference>
