@@ -320,183 +320,9 @@
                     </ControlTemplate>
                     <ControlTemplate x:Key="VerticalIncrementTemplate"
                                  TargetType="RepeatButton">
-                        <Grid x:Name="Root">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="MouseOver">
-                                        <Storyboard>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
-                                                                       Storyboard.TargetName="HoverPath">
-                                                <EasingDoubleKeyFrame KeyTime="0:0:0.1"
-                                                                  Value="1" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
-                                                                       Storyboard.TargetName="Blur">
-                                                <EasingDoubleKeyFrame KeyTime="0:0:0.1"
-                                                                  Value="0.5" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard />
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
-                                                                       Storyboard.TargetName="Root">
-                                                <EasingDoubleKeyFrame KeyTime="0:0:0.1"
-                                                                  Value="0.5" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Path Data="F1 M 531.107,321.943L 541.537,321.943L 536.322,328.042L 531.107,321.943 Z "
-                              Height="4"
-                              Stretch="Uniform"
-                              Width="6">
-                                <Path.Fill>
-                                    <SolidColorBrush x:Name="ButtonColor"
-                                                 Color="{DynamicResource Gray3}" />
-                                </Path.Fill>
-                            </Path>
-                            <Path x:Name="HoverPath"
-                              Data="F1 M 531.107,321.943L 541.537,321.943L 536.322,328.042L 531.107,321.943 Z "
-                              Height="4"
-                              Stretch="Uniform"
-                              Width="6"
-                              UseLayoutRounding="False"
-                              Opacity="0"
-                              Margin="1,0,0,0">
-                                <Path.Fill>
-                                    <SolidColorBrush Color="{DynamicResource BlackColor}" />
-                                </Path.Fill>
-                            </Path>
-                            <Path x:Name="Blur"
-                              Data="F1 M 531.107,321.943L 541.537,321.943L 536.322,328.042L 531.107,321.943 Z "
-                              Height="4"
-                              Stretch="Uniform"
-                              Width="6"
-                              UseLayoutRounding="False"
-                              Opacity="0"
-                              Margin="1,0,0,0">
-                                <Path.Effect>
-                                    <BlurEffect />
-                                </Path.Effect>
-                                <Path.Fill>
-                                    <SolidColorBrush Color="{DynamicResource BlackColor}" />
-                                </Path.Fill>
-                            </Path>
-                            <Rectangle x:Name="DisabledElement"
-                                   Fill="{DynamicResource WhiteColorBrush}"
-                                   Opacity="0"
-                                   RadiusY="2"
-                                   RadiusX="2" />
-                        </Grid>
                     </ControlTemplate>
                     <ControlTemplate x:Key="VerticalDecrementTemplate"
                                  TargetType="RepeatButton">
-                        <Grid x:Name="Root">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="MouseOver">
-                                        <Storyboard>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
-                                                                       Storyboard.TargetName="HoverPath">
-                                                <EasingDoubleKeyFrame KeyTime="0:0:0.1"
-                                                                  Value="1" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
-                                                                       Storyboard.TargetName="Blur">
-                                                <EasingDoubleKeyFrame KeyTime="0:0:0.1"
-                                                                  Value="0.5" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard />
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
-                                                                       Storyboard.TargetName="Root">
-                                                <EasingDoubleKeyFrame KeyTime="0:0:0.1"
-                                                                  Value="0.5" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Rectangle x:Name="Background"
-                                   Fill="{DynamicResource ControlBackgroundBrush}"
-                                   Opacity="0"
-                                   RadiusY="2"
-                                   RadiusX="2"
-                                   StrokeThickness="1" />
-                            <Rectangle x:Name="BackgroundMouseOver"
-                                   Fill="{DynamicResource HighlightBrush}"
-                                   Opacity="0"
-                                   RadiusY="2"
-                                   RadiusX="2" />
-                            <Rectangle x:Name="BackgroundPressed"
-                                   Fill="{DynamicResource HighlightBrush}"
-                                   Opacity="0"
-                                   RadiusY="2"
-                                   RadiusX="2" />
-                            <Rectangle x:Name="BackgroundGradient"
-                                   Fill="{DynamicResource TransparentWhiteBrush}"
-                                   Margin="1"
-                                   Opacity="0"
-                                   RadiusY="1"
-                                   RadiusX="1"
-                                   Stroke="{DynamicResource ControlBackgroundBrush}"
-                                   StrokeThickness="1" />
-                            <Rectangle x:Name="Highlight"
-                                   IsHitTestVisible="false"
-                                   Margin="1"
-                                   Opacity="0"
-                                   RadiusY="1"
-                                   RadiusX="1"
-                                   Stroke="{DynamicResource HighlightBrush}"
-                                   StrokeThickness="1" />
-                            <Path Data="F1 M 541.537,173.589L 531.107,173.589L 536.322,167.49L 541.537,173.589 Z "
-                              Height="4"
-                              Stretch="Uniform"
-                              Width="6">
-                                <Path.Fill>
-                                    <SolidColorBrush Color="{DynamicResource Gray2}" />
-                                </Path.Fill>
-                            </Path>
-                            <Path x:Name="HoverPath"
-                              Data="F1 M 541.537,173.589L 531.107,173.589L 536.322,167.49L 541.537,173.589 Z "
-                              Height="4"
-                              Stretch="Uniform"
-                              Width="6"
-                              UseLayoutRounding="False"
-                              Opacity="0"
-                              Margin="1,0,0,0">
-                                <Path.Fill>
-                                    <SolidColorBrush Color="{DynamicResource BlackColor}" />
-                                </Path.Fill>
-                            </Path>
-                            <Path x:Name="Blur"
-                              Data="F1 M 541.537,173.589L 531.107,173.589L 536.322,167.49L 541.537,173.589 Z "
-                              Height="4"
-                              Stretch="Uniform"
-                              Width="6"
-                              UseLayoutRounding="False"
-                              Opacity="0"
-                              Margin="1,0,0,0">
-                                <Path.Effect>
-                                    <BlurEffect />
-                                </Path.Effect>
-                                <Path.Fill>
-                                    <SolidColorBrush Color="{DynamicResource BlackColor}" />
-                                </Path.Fill>
-                            </Path>
-                        </Grid>
                     </ControlTemplate>
                     <ControlTemplate x:Key="VerticalThumbTemplate"
                                  TargetType="Thumb">
@@ -581,14 +407,6 @@
                             <SolidColorBrush Color="{DynamicResource Gray4}" />
                         </Border.BorderBrush>
                     </Border>
-                    <RepeatButton x:Name="VerticalSmallDecrease"
-                              Command="ScrollBar.LineUpCommand"
-                              Height="16"
-                              IsTabStop="False"
-                              Interval="50"
-                              Margin="1"
-                              Grid.Row="0"
-                              Template="{DynamicResource VerticalDecrementTemplate}" />
                     <Track x:Name="PART_Track"
                        MinHeight="60"
                        IsDirectionReversed="true"
@@ -617,14 +435,6 @@
                                       Template="{DynamicResource RepeatButtonTemplate}" />
                         </Track.IncreaseRepeatButton>
                     </Track>
-                    <RepeatButton x:Name="VerticalSmallIncrease"
-                              Command="ScrollBar.LineDownCommand"
-                              Height="16"
-                              IsTabStop="False"
-                              Interval="50"
-                              Margin="1"
-                              Grid.Row="2"
-                              Template="{DynamicResource VerticalIncrementTemplate}" />
                 </Grid>
             </Grid>
         </ControlTemplate>
