@@ -361,7 +361,7 @@
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
                             <Grid x:Name="ThumbVisual"
-                              Margin="1,0,1,0">
+                              Margin="1,0,0,0">
                                 <Rectangle x:Name="Background"
                                        StrokeThickness="1"
                                        Fill="{DynamicResource ThumbBrush}" />
@@ -393,20 +393,12 @@
                     </VisualStateGroup>
                 </VisualStateManager.VisualStateGroups>
                 <Grid x:Name="VerticalRoot"
-                  Width="11">
+                  Width="14">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Border BorderThickness="0,0,1,0"
-                        Margin="0,0,-1,0"
-                        Grid.RowSpan="5"
-                        Visibility="Collapsed">
-                        <Border.BorderBrush>
-                            <SolidColorBrush Color="{DynamicResource Gray4}" />
-                        </Border.BorderBrush>
-                    </Border>
                     <Track x:Name="PART_Track"
                        MinHeight="60"
                        IsDirectionReversed="true"
@@ -459,7 +451,7 @@
                 <Trigger Property="Orientation"
                      Value="Vertical">
                     <Setter Property="Width"
-                        Value="12" />
+                        Value="13" />
                     <Setter Property="Height"
                         Value="Auto" />
                     <Setter Property="Template"
@@ -468,6 +460,7 @@
             </Style.Triggers>
         </Style>
         
+
         <Style TargetType="{x:Type avalonedit:TextArea}">
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="SelectionBrush">
