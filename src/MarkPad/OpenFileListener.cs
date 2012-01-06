@@ -3,11 +3,11 @@ using System.ServiceModel;
 
 namespace MarkPad
 {
-    public class Proxy : IDisposable
+    public class OpenFileListener : IDisposable
     {
         private ServiceHost host;
 
-        public Proxy()
+        public OpenFileListener()
         {
         }
 

@@ -1,22 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Windows;
 using Autofac;
 using Caliburn.Micro;
 using MarkPad.Framework;
+using MarkPad.Services;
 using MarkPad.Shell;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
+using LogManager = NLog.LogManager;
 
 namespace MarkPad
 {
     class AppBootstrapper : Bootstrapper<ShellViewModel>
     {
+        private Mutex mutex;
+
         private IContainer container;
         private JumpListIntegration jumpList;
+        private OpenFileListener openFileListenerListener;
 
-        private void SetupLogging()
+        private static void SetupLogging()
         {
             var debuggerTarget = new DebuggerTarget { Layout = "[${level:uppercase=true}] (${logger}) ${message}" };
 
@@ -24,7 +31,7 @@ namespace MarkPad
             config.AddTarget("debugger", debuggerTarget);
             config.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, debuggerTarget));
 
-            NLog.LogManager.Configuration = config;
+            LogManager.Configuration = config;
         }
 
         protected override void Configure()
@@ -39,7 +46,7 @@ namespace MarkPad
 
             builder.RegisterModule<EventAggregationAutoSubscriptionModule>();
 
-            builder.RegisterModule<Services.ServicesModule>();
+            builder.RegisterModule<ServicesModule>();
 
             builder.RegisterType<JumpListIntegration>().SingleInstance();
 
@@ -55,6 +62,39 @@ namespace MarkPad
             Application.DispatcherUnhandledException += OnUnhandledException;
 #endif
             Application.Exit += OnExit;
+        }
+
+        protected override void OnStartup(object sender, StartupEventArgs e)
+        {
+            bool isOwned;
+            mutex = new Mutex(true, "Markpad.SingleInstanceCheck", out isOwned);
+            if (isOwned)
+            {
+                openFileListenerListener = new OpenFileListener();
+                openFileListenerListener.Start();
+            }
+            else
+            {
+                mutex = null;
+                var client = new OpenFileClient();
+                client.SendMessage(e.Args);
+
+                Application.Shutdown();
+            }
+            
+            base.OnStartup(sender, e);
+        }
+
+        protected override void OnExit(object sender, EventArgs e)
+        {
+            jumpList.Dispose();
+
+            if (mutex != null)
+            {
+                mutex.ReleaseMutex();
+            }
+
+            base.OnExit(sender, e);
         }
 
         private static void SetupCaliburnMicroDefaults(ContainerBuilder builder)
@@ -86,7 +126,7 @@ namespace MarkPad
         protected override object GetInstance(Type service, string key)
         {
             object instance;
-            if (string.IsNullOrWhiteSpace(key))
+            if (String.IsNullOrWhiteSpace(key))
             {
                 if (container.TryResolve(service, out instance))
                     return instance;
@@ -96,7 +136,7 @@ namespace MarkPad
                 if (container.TryResolveNamed(key, service, out instance))
                     return instance;
             }
-            throw new Exception(string.Format("Could not locate any instances of contract {0}.", key ?? service.Name));
+            throw new Exception(String.Format("Could not locate any instances of contract {0}.", key ?? service.Name));
         }
 
         protected override IEnumerable<object> GetAllInstances(Type service)
@@ -107,13 +147,6 @@ namespace MarkPad
         protected override void BuildUp(object instance)
         {
             container.InjectProperties(instance);
-        }
-
-        protected override void OnExit(object sender, EventArgs e)
-        {
-            jumpList.Dispose();
-
-            base.OnExit(sender, e);
         }
     }
 }

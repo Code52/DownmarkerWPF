@@ -7,7 +7,7 @@ using MarkPad.Services.Interfaces;
 
 namespace MarkPad.Shell
 {
-    internal class ShellViewModel : Conductor<IScreen>
+    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>
     {
         private readonly IEventAggregator eventAggregator;
         private readonly IDialogService dialogService;
@@ -58,18 +58,14 @@ namespace MarkPad.Shell
             var date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss zzz");
             return string.Format("---\r\nlayout: post\r\ntitle: {0}\r\npermalink: {1}\r\ndescription: {2}\r\ndate: {3}\r\ntags: \"some tags here\"\r\n---\r\n\r\n", title, permalink, description, date);
         }
+
         public void OpenDocument()
         {
-            var path = dialogService.GetFileOpenPath("Open a markdown document.", "Any File (*.*)|*.*");
+            var path = dialogService.GetFileOpenPath("OpenFileAction a markdown document.", "Any File (*.*)|*.*");
             if (string.IsNullOrEmpty(path))
                 return;
 
-            var doc = documentCreator();
-            doc.Open(path);
-            MDI.Open(doc);
-
             eventAggregator.Publish(new FileOpenEvent(path));
-
         }
 
         public void SaveDocument()
@@ -87,6 +83,13 @@ namespace MarkPad.Shell
             {
                 doc.Save();
             }
+        }
+
+        public void Handle(FileOpenEvent message)
+        {
+            var doc = documentCreator();
+            doc.Open(message.Path);
+            MDI.Open(doc);
         }
     }
 }

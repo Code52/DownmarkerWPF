@@ -69,6 +69,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MahApps.Metro.0.3.0.1\lib\net40\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -106,7 +107,8 @@
       <DependentUpon>MDIView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MDI\MDIViewModel.cs" />
-    <Compile Include="Proxy.cs" />
+    <Compile Include="OpenFileClient.cs" />
+    <Compile Include="OpenFileListener.cs" />
     <Compile Include="Shell\JumpListIntegration.cs" />
     <Compile Include="Shell\ShellView.xaml.cs" />
     <Compile Include="Shell\ShellViewModel.cs" />
