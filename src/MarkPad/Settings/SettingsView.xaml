@@ -69,5 +69,19 @@
                 <Button x:Name="TryClose" Style="{DynamicResource ChromelessButtonStyle}" Content="r" FontFamily="Marlett" />
             </StackPanel>
         </Grid>
+
+        <Grid DockPanel.Dock="Bottom">
+            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" Orientation="Horizontal">
+                <Button x:Name="Accept" Content="OK" />
+                <Button x:Name="Cancel" Content="Cancel"  />
+            </StackPanel>
+        </Grid>
+        
+        <StackPanel>
+            <TextBlock Text="Set Markpad as default for file extensions:" />
+            <CheckBox x:Name="FileMDBinding" Content=".md" />
+            <CheckBox x:Name="FileMarkdownBinding" Content=".markdown" />
+        </StackPanel>
+        
     </DockPanel>
 </Window>

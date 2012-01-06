@@ -112,6 +112,7 @@
     </Compile>
     <Compile Include="AppBootstrapper.cs" />
     <Compile Include="Framework\Events\AppReadyEvent.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Settings\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
@@ -217,7 +218,7 @@
     <Resource Include="markpad.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Events\" />
+    <Resource Include="markpaddoc.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
