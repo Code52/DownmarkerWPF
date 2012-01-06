@@ -37,9 +37,15 @@ namespace MarkPad.Document
             if (documentScrollViewer != null)
             {
                 documentScrollViewer.ScrollChanged += (i, j) => wb.ExecuteJavascript("window.scrollTo(0," + j.VerticalOffset + ");");
+                var x = ((DocumentViewModel)DataContext);
+                x.Document.TextChanged += (i, j) =>
+                                              {
+                                                  wb.LoadCompleted += (k, l) => wb.ExecuteJavascript("window.scrollTo(0," + documentScrollViewer.VerticalOffset + ");");
+                                              };
             }
-        }
 
+            
+        }
 
         public static T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject
         {
@@ -56,4 +62,6 @@ namespace MarkPad.Document
             return null;
         }
     }
+
+
 }

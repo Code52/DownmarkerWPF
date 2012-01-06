@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text.RegularExpressions;
+using System.Windows.Threading;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit.Document;
 using MarkdownSharp;
@@ -11,19 +13,26 @@ namespace MarkPad.Document
     internal class DocumentViewModel : Screen
     {
         private readonly IDialogService dialogService;
-
         private string title;
         private string filename;
+        private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
+        private readonly DispatcherTimer timer;
 
         public DocumentViewModel(IDialogService dialogService)
         {
             this.dialogService = dialogService;
-
             title = "New Document";
             Original = "";
             Document = new TextDocument();
+            timer = new DispatcherTimer();
+            timer.Tick += TimerTick;
+            timer.Interval = delay;
         }
-
+        private void TimerTick(object sender, EventArgs e)
+        {
+            timer.Stop();
+            NotifyOfPropertyChange(() => Render);
+        }
         public void Open(string path)
         {
             filename = path;
@@ -36,7 +45,8 @@ namespace MarkPad.Document
 
         public void Update()
         {
-            NotifyOfPropertyChange(() => Render);
+            timer.Stop();
+            timer.Start();
             NotifyOfPropertyChange(() => HasChanges);
             NotifyOfPropertyChange(() => DisplayName);
         }
