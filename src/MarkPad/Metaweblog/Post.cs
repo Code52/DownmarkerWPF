@@ -3,6 +3,7 @@ using CookComputing.XmlRpc;
 
 namespace MarkPad.Metaweblog
 {
+    [Serializable]
     [XmlRpcMissingMapping(MappingAction.Ignore)]
     public struct Post
     {

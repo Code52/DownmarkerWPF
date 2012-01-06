@@ -1,7 +1,7 @@
-﻿<Window x:Class="MarkPad.Publish.PublishView"
+﻿<Window x:Class="MarkPad.OpenFromWeb.OpenFromWebView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Blog settings" Height="240" Width="364" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+        Title="Fetch Posts" Height="600" Width="364" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <StackPanel Margin="10,10,10,0">
     	<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Web address of your blog" VerticalAlignment="Top"/>
         <TextBox Name="BlogUrl" HorizontalAlignment="Left" Width="331" />
@@ -10,6 +10,14 @@
 		<TextBox Name="Username" HorizontalAlignment="Left" Width="217.863" />
         <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Password" VerticalAlignment="Top" Margin="0,8,0,0"/>
         <TextBox Name="Password" HorizontalAlignment="Left" Width="217.863" />
+        <Button x:Name="Fetch" Content="Fetch" Width="100" />
+        <ListBox x:Name="Posts" Height="300" SelectedItem="CurrentPost">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Key}" HorizontalAlignment="Stretch"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
         	<Button x:Name="Continue" Click="ContinueClick" Content="Continue" Width="100"/>
         	<Button x:Name="Cancel" Click="CancelClick" Content="Cancel" IsCancel="True" Width="100" Margin="20,0,0,0"/>		

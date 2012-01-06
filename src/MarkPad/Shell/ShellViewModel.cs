@@ -2,6 +2,8 @@
 using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.MDI;
+using MarkPad.Metaweblog;
+using MarkPad.OpenFromWeb;
 using MarkPad.Publish;
 using MarkPad.Services.Interfaces;
 
@@ -108,6 +110,22 @@ namespace MarkPad.Shell
             {
                 doc.Publish();
             }
+        }
+
+        public void OpenFromWeb()
+        {
+            var result = _windowManager.ShowDialog(new OpenFromWebViewModel(_settingsService));
+            if (result != true)
+                return;
+
+            var post = _settingsService.Get<Post>("CurrentPost");
+            
+            _settingsService.Set(post.permalink, post);
+            _settingsService.Save();
+
+            var doc = documentCreator();
+            doc.OpenFromWeb(post.permalink, post.description);
+            MDI.Open(doc);
         }
     }
 }

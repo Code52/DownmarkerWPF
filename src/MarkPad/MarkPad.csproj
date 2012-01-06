@@ -129,6 +129,10 @@
     <Compile Include="Metaweblog\Post.cs" />
     <Compile Include="Metaweblog\Source.cs" />
     <Compile Include="Metaweblog\UserInfo.cs" />
+    <Compile Include="OpenFromWeb\OpenFromWebView.xaml.cs">
+      <DependentUpon>OpenFromWebView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="OpenFromWeb\OpenFromWebViewModel.cs" />
     <Compile Include="Publish\PublishView.xaml.cs">
       <DependentUpon>PublishView.xaml</DependentUpon>
     </Compile>
@@ -174,6 +178,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MDI\MDIView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="OpenFromWeb\OpenFromWebView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

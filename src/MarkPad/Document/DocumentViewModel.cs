@@ -39,6 +39,13 @@ namespace MarkPad.Document
             Original = text;
         }
 
+        public void OpenFromWeb(string postTitle, string text)
+        {
+            title = postTitle;
+            Document.Text = text;
+            Original = text;
+        }
+
         public void Update()
         {
             NotifyOfPropertyChange(() => Render);
@@ -152,15 +159,45 @@ namespace MarkPad.Document
             var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
             ((IXmlRpcProxy)proxy).Url = _settings.Get<string>("BlogUrl");
 
-            var post = new Post
+            var post = new Post();
+
+            var postTitle = this.DisplayName.Split('.')[0];
+
+            var savedPost = _settings.Get<Post>(postTitle);
+            
+            if (!string.IsNullOrWhiteSpace(savedPost.permalink))
+            {
+                post = proxy.GetPost(savedPost.postid.ToString(), _settings.Get<string>("Username"), _settings.Get<string>("Password"));
+            }
+
+            if (string.IsNullOrWhiteSpace(post.permalink))
+            {
+                post = new Post
                            {
-                               permalink = "testing1123",
-                               title = "testing this post",
+                               permalink = postTitle,
+                               title = "Teeeeeeest",
                                dateCreated = DateTime.Now,
-                               description = Document.Text,
-                               categories = new string[0],
+                               description = Render,
+                               categories = new string[0]
                            };
-            proxy.AddPost("0", _settings.Get<string>("Username"), _settings.Get<string>("Password"), post, true);
+              post.postid = proxy.AddPost("0", _settings.Get<string>("Username"), _settings.Get<string>("Password"), post, true);
+
+                _settings.Set(post.permalink, post);
+                _settings.Save();
+            }
+            else
+            {
+
+                post.description = Render;
+
+                proxy.UpdatePost(post.postid.ToString(), _settings.Get<string>("Username"),
+                                          _settings.Get<string>("Password"), post, true);
+
+                _settings.Set(post.permalink, post);
+                _settings.Save();
+            }
+
+            
         }
     }
 }
