@@ -103,25 +103,25 @@ namespace MarkPad
 
             string exePath = Assembly.GetEntryAssembly().Location;
 
-            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes", true))
+            using (var key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes", true))
             {
-                using (RegistryKey extensionKey = key.CreateSubKey(defaultExtension))
+                using (var extensionKey = key.CreateSubKey(defaultExtension))
                 {
                     extensionKey.SetValue("", markpadKeyName);
                 }
 
-                using (RegistryKey markpadKey = key.CreateSubKey(markpadKeyName))
+                using (var markpadKey = key.CreateSubKey(markpadKeyName))
                 {
-                    using (RegistryKey defaultIconKey = markpadKey.CreateSubKey("DefaultIcon"))
+                    using (var defaultIconKey = markpadKey.CreateSubKey("DefaultIcon"))
                     {
                         defaultIconKey.SetValue("", exePath + ",0");
                     }
 
-                    using (RegistryKey shellKey = markpadKey.CreateSubKey("shell"))
+                    using (var shellKey = markpadKey.CreateSubKey("shell"))
                     {
-                        using (RegistryKey openKey = shellKey.CreateSubKey("open"))
+                        using (var openKey = shellKey.CreateSubKey("open"))
                         {
-                            using (RegistryKey commandKey = openKey.CreateSubKey("command"))
+                            using (var commandKey = openKey.CreateSubKey("command"))
                             {
                                 commandKey.SetValue("", "\"" + exePath + "\" \"%1\"");
                             }
@@ -133,27 +133,17 @@ namespace MarkPad
 
         private static void SetupCaliburnMicroDefaults(ContainerBuilder builder)
         {
-            //  register view models
             builder.RegisterAssemblyTypes(AssemblySource.Instance.ToArray())
-                //  must be a type with a name that ends with ViewModel
               .Where(type => type.Name.EndsWith("ViewModel"))
-                //  registered as self
               .AsSelf()
-                //  always create a new one
               .InstancePerDependency();
 
-            //  register views
             builder.RegisterAssemblyTypes(AssemblySource.Instance.ToArray())
-                //  must be a type with a name that ends with View
               .Where(type => type.Name.EndsWith("View"))
-                //  registered as self
               .AsSelf()
-                //  always create a new one
               .InstancePerDependency();
 
-            //  register the single window manager for this container
             builder.Register<IWindowManager>(c => new WindowManager()).InstancePerLifetimeScope();
-            //  register the single event aggregator for this container
             builder.Register<IEventAggregator>(c => new EventAggregator()).InstancePerLifetimeScope();
         }
 

@@ -7,7 +7,7 @@ namespace MarkPad
         [STAThread]
         public static void Main(string[] args)
         {
-            SingleInstanceManager manager = new SingleInstanceManager();
+            var manager = new SingleInstanceManager();
             manager.Run(args);
         }
     }

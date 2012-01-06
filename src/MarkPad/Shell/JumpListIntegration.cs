@@ -39,6 +39,9 @@ namespace MarkPad.Shell
                 files.RemoveAt(index);
                 files.Insert(0, openedFile);
                 settingsService.UpdateRecentFiles(files);
+
+                jumpList.JumpItems.RemoveAt(index);
+                InsertFileFirst(openedFile);
             }
             else
             {
@@ -48,12 +51,17 @@ namespace MarkPad.Shell
                 if (files.Count > 5) files.RemoveAt(5);
                 settingsService.UpdateRecentFiles(files);
 
-                if (jumpList != null)
-                {
-                    var item = CreateJumpListItem(openedFile);
-                    jumpList.JumpItems.Insert(0, item);
-                    jumpList.Apply();
-                }
+                InsertFileFirst(openedFile);
+            }
+        }
+
+        private void InsertFileFirst(string openedFile)
+        {
+            if (jumpList != null)
+            {
+                var item = CreateJumpListItem(openedFile);
+                jumpList.JumpItems.Insert(0, item);
+                jumpList.Apply();
             }
         }
 
@@ -109,8 +117,5 @@ namespace MarkPad.Shell
             JumpList.SetJumpList(Application.Current, list);
             return list;
         }
-
-
-    
     }
 }

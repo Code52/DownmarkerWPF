@@ -3,11 +3,12 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using MarkPad.Shell;
+using Microsoft.VisualBasic.ApplicationServices;
 using StartupEventArgs = Microsoft.VisualBasic.ApplicationServices.StartupEventArgs;
 
 namespace MarkPad
 {
-    public class SingleInstanceManager : Microsoft.VisualBasic.ApplicationServices.WindowsFormsApplicationBase
+    public class SingleInstanceManager : WindowsFormsApplicationBase
     {
         private IList<string> validExtensions = new[] { ".md", ".markdown", ".mdown" };
 
@@ -16,23 +17,18 @@ namespace MarkPad
             IsSingleInstance = true;
         }
 
-        protected override bool OnStartup(Microsoft.VisualBasic.ApplicationServices.StartupEventArgs eventArgs)
+        protected override bool OnStartup(StartupEventArgs eventArgs)
         {
             var file = GetFile(eventArgs);
 
             if (!string.IsNullOrWhiteSpace(file))
             {
                 Loader.Start(file);
-
-                // Loader.Start with filename
             }
             else
             {
                 Loader.Start();
             }
-
-           
-
             
             return false;
         }
@@ -51,18 +47,17 @@ namespace MarkPad
             return string.Empty;
         }
 
-        protected override void OnStartupNextInstance(Microsoft.VisualBasic.ApplicationServices.StartupNextInstanceEventArgs eventArgs)
+        protected override void OnStartupNextInstance(StartupNextInstanceEventArgs eventArgs)
         {
             base.OnStartupNextInstance(eventArgs);
 
             var args = eventArgs.CommandLine.ToArray();
 
-            if (args.Length == 1)
-            {
-                var filePath = args[0];
-                if (File.Exists(filePath) && Path.GetExtension(filePath) == ".md")
-                    ((ShellView)Application.Current.MainWindow).OpenFile(filePath);
-            }
+            if (args.Length != 1) return;
+
+            var filePath = args[0];
+            if (File.Exists(filePath) && Path.GetExtension(filePath) == ".md")
+                ((ShellView)Application.Current.MainWindow).OpenFile(filePath);
         }
     }
 }
