@@ -523,7 +523,7 @@
             </avalonedit:TextEditor.Effect>
         </avalonedit:TextEditor>
 
-        <awe:WebControl UseLayoutRounding="True" Margin="10,10,10,-5" Grid.Column="1" HorizontalAlignment="Stretch" shared:WebBrowserUtility.BindableContent="{Binding Render}">
+        <awe:WebControl x:Name ="WebControl" UseLayoutRounding="True" Margin="10,10,10,-5" Grid.Column="1" HorizontalAlignment="Stretch" shared:WebBrowserUtility.BindableContent="{Binding Render}">
             <awe:WebControl.Effect>
                 <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.25" Direction="270" />
             </awe:WebControl.Effect>
