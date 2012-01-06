@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
-using System.Windows;
 using System.Reflection;
 using Autofac;
 using Caliburn.Micro;
@@ -20,11 +18,8 @@ namespace MarkPad
 {
     class AppBootstrapper : Bootstrapper<ShellViewModel>
     {
-        private Mutex mutex;
-
         private IContainer container;
         private JumpListIntegration jumpList;
-        private OpenFileListener openFileListenerListener;
 
         private static void SetupLogging()
         {
@@ -52,8 +47,7 @@ namespace MarkPad
             builder.RegisterModule<ServicesModule>();
 
             builder.RegisterType<JumpListIntegration>().SingleInstance();
-            builder.RegisterType<OpenFileCommand>().AsSelf();
-
+            
             container = builder.Build();
 
             jumpList = container.Resolve<JumpListIntegration>();
@@ -73,35 +67,9 @@ namespace MarkPad
             Application.Exit += OnExit;
         }
 
-        protected override void OnStartup(object sender, StartupEventArgs e)
-        {
-            bool isOwned;
-            mutex = new Mutex(true, "Markpad.SingleInstanceCheck", out isOwned);
-            if (isOwned)
-            {
-                openFileListenerListener = new OpenFileListener(container);
-                openFileListenerListener.Start();
-            }
-            else
-            {
-                mutex = null;
-                var client = new OpenFileClient();
-                client.SendMessage(e.Args);
-
-                Application.Shutdown();
-            }
-            
-            base.OnStartup(sender, e);
-        }
-
         protected override void OnExit(object sender, EventArgs e)
         {
             jumpList.Dispose();
-
-            if (mutex != null)
-            {
-                mutex.ReleaseMutex();
-            }
 
             base.OnExit(sender, e);
         }

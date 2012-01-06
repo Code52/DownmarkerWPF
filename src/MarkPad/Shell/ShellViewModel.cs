@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Shell;
 using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.Events;

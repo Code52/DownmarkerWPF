@@ -1,6 +1,4 @@
-﻿using System.Threading;
-
-namespace MarkPad
+﻿namespace MarkPad
 {
     public partial class App
     {
