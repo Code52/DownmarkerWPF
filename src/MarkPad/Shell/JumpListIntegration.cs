@@ -10,12 +10,15 @@ using MarkPad.Services.Interfaces;
 
 namespace MarkPad.Shell
 {
-    public class ShellIntegration : IHandle<FileOpenEvent>, IDisposable
+    /// <summary>
+    /// Class for interacting with the Windows7 JumpList
+    /// </summary>
+    public class JumpListIntegration : IHandle<FileOpenEvent>, IDisposable
     {
         private readonly ISettingsService settingsService;
         private readonly JumpList jumpList;
 
-        public ShellIntegration(IEventAggregator eventAggregator, ISettingsService settingsService)
+        public JumpListIntegration(IEventAggregator eventAggregator, ISettingsService settingsService)
         {
             this.settingsService = settingsService;
             eventAggregator.Subscribe(this);
@@ -29,9 +32,12 @@ namespace MarkPad.Shell
         {
             settingsService.AddRecentFile(message.Path);
             var item = CreateJumpListItem(message.Path);
-            jumpList.JumpItems.Insert(0, item);
 
-            jumpList.Apply();
+            if (jumpList != null)
+            {
+                jumpList.JumpItems.Insert(0, item);
+                jumpList.Apply();
+            }
         }
 
         public void Dispose()
@@ -65,6 +71,11 @@ namespace MarkPad.Shell
 
         private static JumpList GetJumpList()
         {
+            // check for Windows7
+            var os = Environment.OSVersion.Version;
+            if (os.Major < 6) return null;
+            if (os.Minor < 1) return null;
+
             var list = JumpList.GetJumpList(Application.Current);
             if (list != null) return list;
 
