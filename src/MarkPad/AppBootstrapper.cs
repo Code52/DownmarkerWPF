@@ -49,6 +49,7 @@ namespace MarkPad
             builder.RegisterModule<ServicesModule>();
 
             builder.RegisterType<JumpListIntegration>().SingleInstance();
+            builder.RegisterType<OpenFileAction>().AsSelf();
 
             container = builder.Build();
 
@@ -70,7 +71,7 @@ namespace MarkPad
             mutex = new Mutex(true, "Markpad.SingleInstanceCheck", out isOwned);
             if (isOwned)
             {
-                openFileListenerListener = new OpenFileListener();
+                openFileListenerListener = new OpenFileListener(container);
                 openFileListenerListener.Start();
             }
             else
