@@ -9,50 +9,6 @@
 >
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        
-        <Style TargetType="TabItem">
-            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-            <Setter Property="IsTabStop" Value="False" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Padding" Value="6,2,6,2" />
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="VerticalContentAlignment" Value="Stretch" />
-            <Setter Property="MinWidth" Value="5" />
-            <Setter Property="MinHeight" Value="5" />
-            <Setter Property="Background" Value="White" />
-            <Setter Property="FontSize" Value="26.67" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TabItem">
-                        <ContentPresenter x:Name="root" ContentSource="Header" />
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected" Value="true">
-                                <Setter Property="Foreground">
-                                    <Setter.Value>
-                                        <SolidColorBrush Color="{DynamicResource AccentColor}" />
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-
-                            <Trigger Property="IsSelected" Value="false">
-                                <Setter Property="Foreground">
-                                    <Setter.Value>
-                                        <SolidColorBrush Color="{DynamicResource Gray11}" />
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-                            <Trigger SourceName="root" Property="IsMouseOver" Value="True">
-                                <Setter Property="Foreground">
-                                    <Setter.Value>
-                                        <SolidColorBrush Color="{DynamicResource Gray3}" />
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </UserControl.Resources>
     <TabControl x:Name="Items">
         <TabControl.ItemTemplate>
