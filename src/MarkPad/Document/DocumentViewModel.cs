@@ -141,5 +141,14 @@ namespace MarkPad.Document
 
             callback(result);
         }
+
+        public void Print()
+        {
+            var view = this.GetView() as DocumentView;
+            if(view != null)
+            {
+                view.wb.Print();
+            }
+        }
     }
 }
