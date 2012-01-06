@@ -104,14 +104,6 @@ namespace MarkPad.Shell
             OpenDocument(message.Path);
         }
 
-        public void Handle(AppStartedEvent message)
-        {
-            if (message.Args.Length != 1) return;
-
-            if (File.Exists(message.Args[0]) && Path.GetExtension(message.Args[0]) == ".md")
-                OpenDocument(message.Args[0]);
-        }
-
         public void ShowSettings()
         {
             windowService.ShowDialog(settingsCreator());

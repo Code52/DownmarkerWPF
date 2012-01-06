@@ -14,7 +14,7 @@ namespace MarkPad.Shell
     /// <summary>
     /// Class for interacting with the Windows7 JumpList
     /// </summary>
-    public class JumpListIntegration : IHandle<FileOpenEvent>, IHandle<AppStartedEvent>, IDisposable
+    public class JumpListIntegration : IHandle<FileOpenEvent>, IHandle<AppReadyEvent>, IDisposable
     {
         private readonly ISettingsService settingsService;
         private JumpList jumpList;
@@ -37,7 +37,7 @@ namespace MarkPad.Shell
             }
         }
 
-        public void Handle(AppStartedEvent message)
+        public void Handle(AppReadyEvent message)
         {
             jumpList = GetJumpList();
 
