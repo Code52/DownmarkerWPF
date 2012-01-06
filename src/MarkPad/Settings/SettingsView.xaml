@@ -80,6 +80,7 @@
         <StackPanel>
             <TextBlock Text="Set Markpad as default for file extensions:" />
             <CheckBox x:Name="FileMDBinding" Content=".md" />
+            <CheckBox x:Name="FileMDownBinding" Content=".mdown" />
             <CheckBox x:Name="FileMarkdownBinding" Content=".markdown" />
         </StackPanel>
         

@@ -5,6 +5,8 @@ using Microsoft.Win32;
 
 namespace MarkPad.Settings
 {
+    // TODO: saving for .mdown file extension
+
     public class SettingsViewModel : Screen
     {
         private const string markpadKeyName = "markpad.md";
@@ -18,11 +20,15 @@ namespace MarkPad.Settings
 
                 FileMarkdownBinding = key.GetSubKeyNames().Contains(Constants.DefaultExtensions[1]) &&
                     !string.IsNullOrEmpty(key.OpenSubKey(Constants.DefaultExtensions[1]).GetValue("").ToString());
+
+                FileMarkdownBinding = key.GetSubKeyNames().Contains(Constants.DefaultExtensions[2]) &&
+                    !string.IsNullOrEmpty(key.OpenSubKey(Constants.DefaultExtensions[2]).GetValue("").ToString());
             }
         }
 
         public bool FileMDBinding { get; set; }
         public bool FileMarkdownBinding { get; set; }
+        public bool FileMDownBinding { get; set; }
 
         public void Accept()
         {
