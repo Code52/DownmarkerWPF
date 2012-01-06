@@ -38,6 +38,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>markpad.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac">
       <HintPath>..\..\packages\Autofac.2.5.2.830\lib\NET40\Autofac.dll</HintPath>
@@ -47,9 +50,13 @@
     </Reference>
     <Reference Include="Awesomium.Core, Version=1.6.3.0, Culture=neutral, PublicKeyToken=e1a0d7c8071a5214, processorArchitecture=x86">
       <HintPath>..\..\lib\Awesomium.Core.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Awesomium.Windows.Controls, Version=1.6.3.0, Culture=neutral, PublicKeyToken=7a34e179b8b61c39, processorArchitecture=x86">
       <HintPath>..\..\lib\Awesomium.Windows.Controls.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Caliburn.Micro">
       <HintPath>..\..\packages\Caliburn.Micro.1.2.0\lib\Net40\Caliburn.Micro.dll</HintPath>
@@ -63,8 +70,12 @@
     <Reference Include="MarkdownSharp">
       <HintPath>..\..\packages\MarkdownSharp.1.13.0.0\lib\35\MarkdownSharp.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="NLog">
       <HintPath>..\..\packages\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="Ookii.Dialogs.Wpf">
+      <HintPath>..\..\packages\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -99,6 +110,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AppBootstrapper.cs" />
+    <Compile Include="Framework\Events\AppStartedEvent.cs" />
+    <Compile Include="Settings\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\SettingsViewModel.cs" />
+    <Compile Include="SingleInstance.cs" />
     <Compile Include="Document\DocumentView.xaml.cs">
       <DependentUpon>DocumentView.xaml</DependentUpon>
     </Compile>
@@ -112,7 +129,6 @@
     <Compile Include="Shell\OpenFileCommand.cs" />
     <Compile Include="Shell\OpenFileClient.cs" />
     <Compile Include="Shell\OpenFileListener.cs" />
-    <Compile Include="Shell\ShellView.xaml.cs" />
     <Compile Include="Shell\ShellViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -136,10 +152,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="..\..\lib\AwesomiumProcess">
-      <Link>AwesomiumProcess</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="..\..\lib\AwesomiumProcess">
+      <Link>Libs\x86\AwesomiumProcess</Link>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -157,10 +172,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Settings\SettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Shell\ShellView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Shell\ShellView.xaml.cs">
+      <DependentUpon>ShellView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MarkPad.Services\MarkPad.Services.csproj">
@@ -173,24 +195,32 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\lib\Awesomium.dll">
-      <Link>Awesomium.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="..\..\lib\Awesomium.dll">
+      <Link>Libs\x86\Awesomium.dll</Link>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\lib\en-US.dll">
-      <Link>en-US.dll</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\lib\icudt42.dll">
-      <Link>icudt42.dll</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="..\..\lib\en-US.dll">
+      <Link>Libs\x86\en-US.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\lib\icudt42.dll">
+      <Link>Libs\x86\icudt42.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\lib\Awesomium.Core.dll">
+      <Link>Libs\x86\Awesomium.Core.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\lib\Awesomium.Windows.Controls.dll">
+      <Link>Libs\x86\Awesomium.Windows.Controls.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="markpad.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
-  <!--<Import Project="$(SolutionDir)\tools\EmbedAssemblies.targets" />-->
+  <Import Project="$(SolutionDir)\tools\EmbedAssemblies.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Reflection;
 using Autofac;
 using Caliburn.Micro;
 using MarkPad.Framework;
 using MarkPad.Services;
 using MarkPad.Shell;
+using Microsoft.Win32;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
@@ -54,14 +57,19 @@ namespace MarkPad
             container = builder.Build();
 
             jumpList = container.Resolve<JumpListIntegration>();
+
+            SetAwesomiumDefaults();
+
+            RegisterExtensionWithApp();
         }
 
         protected override void PrepareApplication()
         {
             Application.Startup += OnStartup;
-#if (!DEBUG)
-            Application.DispatcherUnhandledException += OnUnhandledException;
-#endif
+
+            if (!Debugger.IsAttached)
+                Application.DispatcherUnhandledException += OnUnhandledException;
+
             Application.Exit += OnExit;
         }
 
@@ -96,6 +104,55 @@ namespace MarkPad
             }
 
             base.OnExit(sender, e);
+        }
+
+        private void SetAwesomiumDefaults()
+        {
+            var c = new Awesomium.Core.WebCoreConfig
+            {
+                CustomCSS = @"body { font-family: Segoe UI, sans-serif; font-size:0.8em;}
+                              ::-webkit-scrollbar { width: 12px; height: 20px; }
+                              ::-webkit-scrollbar-track { background-color: white; }
+                              ::-webkit-scrollbar-thumb { background-color: #B9B9B9; }
+                              ::-webkit-scrollbar-thumb:hover { background-color: #000000; }",
+            };
+
+            Awesomium.Core.WebCore.Initialize(c);
+        }
+
+        private void RegisterExtensionWithApp()
+        {
+            string markpadKeyName = "markpad.md";
+            string defaultExtension = ".md";
+
+            string exePath = Assembly.GetEntryAssembly().Location;
+
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes", true))
+            {
+                using (RegistryKey extensionKey = key.CreateSubKey(defaultExtension))
+                {
+                    extensionKey.SetValue("", markpadKeyName);
+                }
+
+                using (RegistryKey markpadKey = key.CreateSubKey(markpadKeyName))
+                {
+                    using (RegistryKey defaultIconKey = markpadKey.CreateSubKey("DefaultIcon"))
+                    {
+                        defaultIconKey.SetValue("", exePath + ",0");
+                    }
+
+                    using (RegistryKey shellKey = markpadKey.CreateSubKey("shell"))
+                    {
+                        using (RegistryKey openKey = shellKey.CreateSubKey("open"))
+                        {
+                            using (RegistryKey commandKey = openKey.CreateSubKey("command"))
+                            {
+                                commandKey.SetValue("", "\"" + exePath + "\" \"%1\"");
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private static void SetupCaliburnMicroDefaults(ContainerBuilder builder)

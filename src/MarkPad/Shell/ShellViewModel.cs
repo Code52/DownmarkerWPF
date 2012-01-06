@@ -1,24 +1,38 @@
 ﻿using System;
+using System.IO;
+using System.Windows.Shell;
 using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.Events;
+using MarkPad.Framework.Events;
 using MarkPad.MDI;
 using MarkPad.Services.Interfaces;
+using MarkPad.Settings;
 
 namespace MarkPad.Shell
 {
-    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>
+    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>, IHandle<AppStartedEvent>
     {
         private readonly IEventAggregator eventAggregator;
         private readonly IDialogService dialogService;
+        private readonly IWindowManager windowService;
         private readonly Func<DocumentViewModel> documentCreator;
+        private readonly Func<SettingsViewModel> settingsCreator;
 
-        public ShellViewModel(IEventAggregator eventAggregator, IDialogService dialogService, MDIViewModel mdi, Func<DocumentViewModel> documentCreator)
+        public ShellViewModel(
+            IDialogService dialogService,
+            IWindowManager windowService,
+            IEventAggregator eventAggregator,
+            MDIViewModel mdi,
+            Func<DocumentViewModel> documentCreator,
+            Func<SettingsViewModel> settingsCreator)
         {
             this.eventAggregator = eventAggregator;
             this.dialogService = dialogService;
+            this.windowService = windowService;
             this.MDI = mdi;
             this.documentCreator = documentCreator;
+            this.settingsCreator = settingsCreator;
 
             this.ActivateItem(mdi);
         }
@@ -30,11 +44,6 @@ namespace MarkPad.Shell
         }
 
         public MDIViewModel MDI { get; private set; }
-
-        public void Exit()
-        {
-            this.TryClose();
-        }
 
         public void NewDocument()
         {
@@ -61,11 +70,18 @@ namespace MarkPad.Shell
 
         public void OpenDocument()
         {
-            var path = dialogService.GetFileOpenPath("OpenFileCommand a markdown document.", "Any File (*.*)|*.*");
+            var path = dialogService.GetFileOpenPath("Open a markdown document.", "Markdown Document (*.md)|*.md|Any File (*.*)|*.*");
             if (string.IsNullOrEmpty(path))
                 return;
 
             eventAggregator.Publish(new FileOpenEvent(path));
+        }
+
+        public void OpenDocument(string path)
+        {
+            var doc = documentCreator();
+            doc.Open(path);
+            MDI.Open(doc);
         }
 
         public void SaveDocument()
@@ -87,9 +103,21 @@ namespace MarkPad.Shell
 
         public void Handle(FileOpenEvent message)
         {
-            var doc = documentCreator();
-            doc.Open(message.Path);
-            MDI.Open(doc);
+            OpenDocument(message.Path);
+        }
+
+        public void Handle(AppStartedEvent message)
+        {
+            if (message.Args.Length == 1)
+            {
+                if (File.Exists(message.Args[0]) && Path.GetExtension(message.Args[0]) == ".md")
+                    OpenDocument(message.Args[0]);
+            }
+        }
+
+        public void ShowSettings()
+        {
+            windowService.ShowDialog(settingsCreator());
         }
     }
 }

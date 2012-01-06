@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
+using MarkPad.Services.Interfaces;
 using Ookii.Dialogs.Wpf;
 
 namespace MarkPad.Services.Implementation
@@ -83,6 +86,34 @@ namespace MarkPad.Services.Implementation
             td.MainInstruction = Text;
             td.Content = Extra;
 
+            var translation = new Dictionary<TaskDialogButton, ButtonType>();
+
+            if (ButtonExtras != null && ButtonExtras.Any())
+            {
+                td.ButtonStyle = TaskDialogButtonStyle.CommandLinks;
+
+                var buttonSet = td.Buttons.ToArray();
+                td.Buttons.Clear();
+
+                foreach (var extra in ButtonExtras)
+                {
+                    foreach (var button in buttonSet.Where(b => b.ButtonType == extra.ButtonType))
+                    {
+                        button.ButtonType = ButtonType.Custom;
+                        button.Text = extra.Text;
+                        button.CommandLinkNote = extra.Note;
+
+                        translation.Add(button, extra.ButtonType);
+                        td.Buttons.Add(button);
+                    }
+                }
+
+                foreach (var button in buttonSet.Where(b => b.ButtonType != ButtonType.Custom))
+                {
+                    td.Buttons.Add(button);
+                }
+            }
+
             TaskDialogButton result = null;
 
             if (owner == null)
@@ -96,14 +127,16 @@ namespace MarkPad.Services.Implementation
                     System.Windows.Threading.DispatcherPriority.Normal);
             }
 
-            switch (result.ButtonType)
+            var resultButtonType = result.ButtonType;
+            if (resultButtonType == ButtonType.Custom)
+                resultButtonType = translation[result];
+
+            switch (resultButtonType)
             {
                 case ButtonType.Cancel:
                     return DialogMessageResult.Cancel;
                 case ButtonType.Close:
                     return DialogMessageResult.Close;
-                case ButtonType.Custom:
-                    return DialogMessageResult.CustomButtonClicked;
                 case ButtonType.No:
                     return DialogMessageResult.No;
                 case ButtonType.Ok:
@@ -175,13 +208,12 @@ namespace MarkPad.Services.Implementation
             return DialogMessageResult.None;
         }
 
-        #region IDialogMessageService Members
-
         public string Title { get; set; }
         public string Extra { get; set; }
         public string Text { get; set; }
         public DialogMessageButtons Buttons { get; set; }
         public DialogMessageIcon Icon { get; set; }
+        public ButtonExtras[] ButtonExtras { get; set; }
 
         public DialogMessageResult Show()
         {
@@ -192,7 +224,5 @@ namespace MarkPad.Services.Implementation
 
             return DoWin32MsgBox();
         }
-
-        #endregion
     }
 }
