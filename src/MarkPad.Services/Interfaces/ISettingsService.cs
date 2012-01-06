@@ -4,8 +4,8 @@ namespace MarkPad.Services.Interfaces
 {
     public interface ISettingsService
     {
-        IEnumerable<string> GetRecentFiles();
-        void AddRecentFile(string path);
+        IList<string> GetRecentFiles();
+        void UpdateRecentFiles(IList<string> files);
         void Save();
     }
 }

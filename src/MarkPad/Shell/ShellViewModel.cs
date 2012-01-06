@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.Framework.Events;
@@ -28,11 +27,11 @@ namespace MarkPad.Shell
             this.eventAggregator = eventAggregator;
             this.dialogService = dialogService;
             this.windowService = windowService;
-            this.MDI = mdi;
+            MDI = mdi;
             this.documentCreator = documentCreator;
             this.settingsCreator = settingsCreator;
 
-            this.ActivateItem(mdi);
+            ActivateItem(mdi);
         }
 
         public override string DisplayName
@@ -59,9 +58,9 @@ namespace MarkPad.Shell
 
         private static string CreateJekyllHeader()
         {
-            var permalink = "new-page.html";
-            var title = "New Post";
-            var description = "Some Description";
+            const string permalink = "new-page.html";
+            const string title = "New Post";
+            const string description = "Some Description";
             var date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss zzz");
             return string.Format("---\r\nlayout: post\r\ntitle: {0}\r\npermalink: {1}\r\ndescription: {2}\r\ndate: {3}\r\ntags: \"some tags here\"\r\n---\r\n\r\n", title, permalink, description, date);
         }

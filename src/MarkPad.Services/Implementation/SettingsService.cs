@@ -25,9 +25,14 @@ namespace MarkPad.Services.Implementation
             }
         }
 
-        public IEnumerable<string> GetRecentFiles()
+        public IList<string> GetRecentFiles()
         {
             return settings.RecentFiles;
+        }
+
+        public void UpdateRecentFiles(IList<string> files)
+        {
+            settings.RecentFiles = files;
         }
 
         public void AddRecentFile(string path)

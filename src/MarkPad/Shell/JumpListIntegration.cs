@@ -27,13 +27,33 @@ namespace MarkPad.Shell
 
         public void Handle(FileOpenEvent message)
         {
-            var item = CreateJumpListItem(message.Path);
-            settingsService.AddRecentFile(message.Path);
-            
-            if (jumpList != null)
+            var openedFile = message.Path;
+
+            var currentFiles = jumpList.JumpItems.OfType<JumpTask>().Select(t => t.Arguments);
+
+            if (currentFiles.Contains(openedFile))
             {
-                jumpList.JumpItems.Insert(0, item);
-                jumpList.Apply();
+                // find file in list
+                var files = settingsService.GetRecentFiles();
+                var index = files.IndexOf(openedFile);
+                files.RemoveAt(index);
+                files.Insert(0, openedFile);
+                settingsService.UpdateRecentFiles(files);
+            }
+            else
+            {
+                // update settings
+                var files = settingsService.GetRecentFiles();
+                files.Insert(0, openedFile);
+                if (files.Count > 5) files.RemoveAt(5);
+                settingsService.UpdateRecentFiles(files);
+
+                if (jumpList != null)
+                {
+                    var item = CreateJumpListItem(openedFile);
+                    jumpList.JumpItems.Insert(0, item);
+                    jumpList.Apply();
+                }
             }
         }
 
@@ -53,6 +73,7 @@ namespace MarkPad.Shell
         {
             foreach (var file in recentFiles.Distinct())
             {
+                if (!File.Exists(file)) continue;
                 var item = CreateJumpListItem(file);
                 jumpList.JumpItems.Add(item);
             }
