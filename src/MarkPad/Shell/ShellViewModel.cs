@@ -107,5 +107,14 @@ namespace MarkPad.Shell
         {
             windowService.ShowDialog(settingsCreator());
         }
+
+        public void PrintDocument()
+        {
+            var doc = MDI.ActiveItem as DocumentViewModel;
+            if (doc != null)
+            {
+                doc.Print();
+            }
+        }
     }
 }

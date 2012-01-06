@@ -67,6 +67,7 @@
                 <Button x:Name="OpenDocument" Content="OPEN" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
                 <Button x:Name="SaveDocument" Content="SAVE" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
                 <Button x:Name="SaveAllDocuments" Content="SAVE ALL" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
+                <Button x:Name="PrintDocument" Content="PRINT" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
             </StackPanel>
             <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Orientation="Horizontal">
                 <Button x:Name="ShowSettings" Content="SETTINGS" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" Margin="0,0,20,0" FontWeight="Bold" />
