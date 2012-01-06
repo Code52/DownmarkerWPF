@@ -38,11 +38,6 @@ namespace MarkPad.Shell
                 WindowState = WindowState.Maximized;
             }
         }
-        
-        private void WindowLoadedOnClick(object sender, RoutedEventArgs e)
-        {
-            eventAggregator.Publish(new AppReadyEvent());
-        }
 
         internal void OpenFile(string path)
         {

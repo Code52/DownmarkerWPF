@@ -20,17 +20,7 @@ namespace MarkPad
 
             PreloadUnmanagedLibraries();
 
-            var app = new App();    
-            app.Run();
-        }
-
-        public static void Start(string file)
-        {
-            AppDomain.CurrentDomain.AssemblyResolve += FindAssembly;
-
-            PreloadUnmanagedLibraries();
-
-            var app = new App(file);
+            var app = new App();
             app.Run();
         }
 

@@ -22,7 +22,6 @@ namespace MarkPad.Shell
         public JumpListIntegration(IEventAggregator eventAggregator, ISettingsService settingsService)
         {
             this.settingsService = settingsService;
-            eventAggregator.Subscribe(this);
         }
 
         public void Handle(FileOpenEvent message)

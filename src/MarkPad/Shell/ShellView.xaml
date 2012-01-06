@@ -7,7 +7,6 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro" mc:Ignorable="d" 
     MouseLeftButtonDown="DragMoveWindow"
-    Loaded="WindowLoadedOnClick"
     Icon="../markpad.ico"
 >
     <i:Interaction.Behaviors>

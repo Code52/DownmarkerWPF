@@ -1,7 +1,6 @@
-using System.IO;
+using System;
 using System.Linq;
 using System.Windows;
-using MarkPad.Shell;
 using Microsoft.VisualBasic.ApplicationServices;
 using StartupEventArgs = Microsoft.VisualBasic.ApplicationServices.StartupEventArgs;
 
@@ -9,6 +8,13 @@ namespace MarkPad
 {
     public class SingleInstanceManager : WindowsFormsApplicationBase
     {
+        [STAThread]
+        public static void Main(string[] args)
+        {
+            var manager = new SingleInstanceManager();
+            manager.Run(args);
+        }
+
         public SingleInstanceManager()
         {
             IsSingleInstance = true;
@@ -16,45 +22,14 @@ namespace MarkPad
 
         protected override bool OnStartup(StartupEventArgs eventArgs)
         {
-            var file = GetFile(eventArgs);
-
-            if (!string.IsNullOrWhiteSpace(file))
-            {
-                Loader.Start(file);
-            }
-            else
-            {
-                Loader.Start();
-            }
-            
+            Loader.Start();
             return false;
-        }
-
-        private string GetFile(StartupEventArgs eventArgs)
-        {
-            var args = eventArgs.CommandLine.ToArray();
-
-            if (args.Length == 1)
-            {
-                var filePath = args[0];
-                if (File.Exists(filePath) && Constants.DefaultExtensions.Contains(Path.GetExtension(filePath).ToLower()))
-                    return filePath;
-            }
-
-            return string.Empty;
         }
 
         protected override void OnStartupNextInstance(StartupNextInstanceEventArgs eventArgs)
         {
             base.OnStartupNextInstance(eventArgs);
-
-            var args = eventArgs.CommandLine.ToArray();
-
-            if (args.Length != 1) return;
-
-            var filePath = args[0];
-            if (File.Exists(filePath) && Path.GetExtension(filePath) == ".md")
-                ((ShellView)Application.Current.MainWindow).OpenFile(filePath);
+            ((App)Application.Current).HandleArguments(eventArgs.CommandLine.ToArray());
         }
     }
 }

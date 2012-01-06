@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using Autofac;
 using Caliburn.Micro;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.Services;
 using MarkPad.Shell;
-using Microsoft.Win32;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
@@ -17,12 +15,13 @@ using LogManager = NLog.LogManager;
 
 namespace MarkPad
 {
-    class AppBootstrapper : Bootstrapper<ShellViewModel>, IHandle<AppReadyEvent>
+    class AppBootstrapper : Bootstrapper<ShellViewModel>
     {
         private string initialFile;
         private IContainer container;
         private JumpListIntegration jumpList;
-        private IEventAggregator eventAggregator;
+
+        public IContainer Container { get { return container; } }
 
         private static void SetupLogging()
         {
@@ -57,13 +56,6 @@ namespace MarkPad
             SetAwesomiumDefaults();
         }
 
-        public void OpenFile(string fileName)
-        {
-            initialFile = fileName;
-            eventAggregator = container.Resolve<IEventAggregator>();
-            eventAggregator.Subscribe(this);
-        }
-
         protected override void PrepareApplication()
         {
             Application.Startup += OnStartup;
@@ -72,6 +64,15 @@ namespace MarkPad
                 Application.DispatcherUnhandledException += OnUnhandledException;
 
             Application.Exit += OnExit;
+        }
+
+        protected override void OnStartup(object sender, System.Windows.StartupEventArgs e)
+        {
+            base.OnStartup(sender, e);
+
+            container.Resolve<IEventAggregator>().Publish(new AppReadyEvent());
+
+            ((App)Application).HandleArguments(Environment.GetCommandLineArgs().Skip(1).ToArray());
         }
 
         protected override void OnExit(object sender, EventArgs e)
@@ -135,12 +136,6 @@ namespace MarkPad
         protected override void BuildUp(object instance)
         {
             container.InjectProperties(instance);
-        }
-
-        public void Handle(AppReadyEvent message)
-        {
-            eventAggregator.Publish(new FileOpenEvent(initialFile));
-            eventAggregator.Unsubscribe(this);
         }
     }
 }
