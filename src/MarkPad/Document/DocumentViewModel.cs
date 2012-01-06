@@ -18,6 +18,7 @@ namespace MarkPad.Document
 
         private string title;
         private string filename;
+        private Post _post;
 
         public DocumentViewModel(IDialogService dialogService, ISettingsService settings)
         {
@@ -27,6 +28,7 @@ namespace MarkPad.Document
             title = "New Document";
             Original = "";
             Document = new TextDocument();
+            _post = new Post();
         }
 
         public void Open(string path)
@@ -39,12 +41,15 @@ namespace MarkPad.Document
             Original = text;
         }
 
-        public void OpenFromWeb(string postTitle, string text)
+        public void OpenFromWeb(Post post)
         {
-            title = postTitle;
-            Document.Text = text;
-            Original = text;
+            _post = post;
+            title = post.permalink;
+            Document.Text = post.description;
+            Original = post.description;
         }
+
+        public Post Post { get { return _post; } }
 
         public void Update()
         {
@@ -154,31 +159,31 @@ namespace MarkPad.Document
             callback(result);
         }
 
-        public void Publish()
+        public void Publish(string postTitle, string[] categories)
         {
+            if (categories == null) categories = new string[0];
+
             var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
             ((IXmlRpcProxy)proxy).Url = _settings.Get<string>("BlogUrl");
 
             var post = new Post();
 
-            var postTitle = this.DisplayName.Split('.')[0];
+            var permalink = this.DisplayName.Split('.')[0];
 
-            var savedPost = _settings.Get<Post>(postTitle);
-            
-            if (!string.IsNullOrWhiteSpace(savedPost.permalink))
+            if (!string.IsNullOrWhiteSpace(_post.permalink))
             {
-                post = proxy.GetPost(savedPost.postid.ToString(), _settings.Get<string>("Username"), _settings.Get<string>("Password"));
+                post = proxy.GetPost(_post.postid.ToString(), _settings.Get<string>("Username"), _settings.Get<string>("Password"));
             }
 
             if (string.IsNullOrWhiteSpace(post.permalink))
             {
                 post = new Post
                            {
-                               permalink = postTitle,
-                               title = "Teeeeeeest",
+                               permalink = permalink,
+                               title = postTitle,
                                dateCreated = DateTime.Now,
                                description = Render,
-                               categories = new string[0]
+                               categories = categories
                            };
               post.postid = proxy.AddPost("0", _settings.Get<string>("Username"), _settings.Get<string>("Password"), post, true);
 
@@ -187,8 +192,9 @@ namespace MarkPad.Document
             }
             else
             {
-
+                post.title = postTitle;
                 post.description = Render;
+                post.categories = categories;
 
                 proxy.UpdatePost(post.postid.ToString(), _settings.Get<string>("Username"),
                                           _settings.Get<string>("Password"), post, true);
@@ -197,7 +203,7 @@ namespace MarkPad.Document
                 _settings.Save();
             }
 
-            
+            Original = Document.Text;
         }
     }
 }

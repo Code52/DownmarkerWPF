@@ -5,6 +5,7 @@ using MarkPad.MDI;
 using MarkPad.Metaweblog;
 using MarkPad.OpenFromWeb;
 using MarkPad.Publish;
+using MarkPad.PublishDetails;
 using MarkPad.Services.Interfaces;
 
 namespace MarkPad.Shell
@@ -108,7 +109,12 @@ namespace MarkPad.Shell
             var doc = MDI.ActiveItem as DocumentViewModel;
             if (doc != null)
             {
-                doc.Publish();
+                var pd = new Details {Title = doc.Post.title, Categories = doc.Post.categories };
+                var detailsResult = _windowManager.ShowDialog(new PublishDetailsViewModel(pd));
+                if (detailsResult != true)
+                    return;
+
+                doc.Publish(pd.Title, pd.Categories);
             }
         }
 
@@ -120,11 +126,8 @@ namespace MarkPad.Shell
 
             var post = _settingsService.Get<Post>("CurrentPost");
             
-            _settingsService.Set(post.permalink, post);
-            _settingsService.Save();
-
             var doc = documentCreator();
-            doc.OpenFromWeb(post.permalink, post.description);
+            doc.OpenFromWeb(post);
             MDI.Open(doc);
         }
     }

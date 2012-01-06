@@ -1,0 +1,15 @@
+﻿<Window x:Class="MarkPad.PublishDetails.PublishDetailsView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Post Details" Height="240" Width="364" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+    <StackPanel Margin="10,10,10,0">
+    	<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Title of the post" VerticalAlignment="Top"/>
+        <TextBox Name="Title" HorizontalAlignment="Left" Width="331" />
+        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Categories" VerticalAlignment="Top" Margin="0,20,0,0"/>
+		<TextBox Name="Categories" HorizontalAlignment="Left" Width="217.863" />
+        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Opacity="0.5"><Run Language="en-au" Text="Seperated by commas"/></TextBlock>
+        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+        	<Button x:Name="Continue" Click="ContinueClick" Content="Continue" Width="100"/>
+        </StackPanel>		
+    </StackPanel>
+</Window>
