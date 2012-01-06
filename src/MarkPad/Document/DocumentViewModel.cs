@@ -147,7 +147,7 @@ namespace MarkPad.Document
             var view = this.GetView() as DocumentView;
             if(view != null)
             {
-                view.WebControl.Print();
+                view.wb.Print();
             }
         }
     }
