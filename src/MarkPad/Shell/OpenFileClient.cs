@@ -6,6 +6,9 @@ using MarkPad.Services.Services;
 
 namespace MarkPad.Shell
 {
+    /// <summary>
+    /// Proxy class for sending the "Open File" command to another process
+    /// </summary>
     public class OpenFileClient
     {
         public void SendMessage(IList<string> args)

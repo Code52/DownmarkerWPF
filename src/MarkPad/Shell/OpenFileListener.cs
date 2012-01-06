@@ -5,6 +5,9 @@ using MarkPad.Services.Services;
 
 namespace MarkPad.Shell
 {
+    /// <summary>
+    /// Service Host for listening to the "Open File" commands from other processes
+    /// </summary>
     public class OpenFileListener : IDisposable
     {
         private readonly IComponentContext context;
