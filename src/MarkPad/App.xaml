@@ -5,13 +5,16 @@
     xmlns:local="clr-namespace:MarkPad"
 >    
     <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-         
+        <!--<ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>         
                 <ResourceDictionary>
                     <local:AppBootstrapper x:Key="bootstrapper" />
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        </ResourceDictionary>-->
     </Application.Resources>
+
+    <JumpList.JumpList>
+        <JumpList ShowRecentCategory="True" />
+    </JumpList.JumpList>
 </Application>
