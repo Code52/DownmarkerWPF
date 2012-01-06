@@ -16,14 +16,14 @@ namespace MarkPad.Shell
     public class JumpListIntegration : IHandle<FileOpenEvent>, IDisposable
     {
         private readonly ISettingsService settingsService;
-        private readonly JumpList jumpList;
+        //private readonly JumpList jumpList;
 
         public JumpListIntegration(IEventAggregator eventAggregator, ISettingsService settingsService)
         {
             this.settingsService = settingsService;
             eventAggregator.Subscribe(this);
 
-            jumpList = GetJumpList();
+            //jumpList = GetJumpList();
 
             PopulateJumpList(settingsService.GetRecentFiles());
         }
@@ -31,13 +31,8 @@ namespace MarkPad.Shell
         public void Handle(FileOpenEvent message)
         {
             settingsService.AddRecentFile(message.Path);
-            var item = CreateJumpListItem(message.Path);
-
-            if (jumpList != null)
-            {
-                jumpList.JumpItems.Insert(0, item);
-                jumpList.Apply();
-            }
+            JumpList.AddToRecentCategory(message.Path);
+            //jumpList.Apply();
         }
 
         public void Dispose()
@@ -45,45 +40,45 @@ namespace MarkPad.Shell
             settingsService.Save();
         }
 
-        private void PopulateJumpList(IEnumerable<string> recentFiles)
+        private static void PopulateJumpList(IEnumerable<string> recentFiles)
         {
             foreach (var file in recentFiles)
             {
-                var item = CreateJumpListItem(file);
-                jumpList.JumpItems.Add(item);
+                if (File.Exists(file))
+                    JumpList.AddToRecentCategory(file);
             }
 
-            jumpList.Apply();
+            //jumpList.Apply();
         }
 
-        private static JumpItem CreateJumpListItem(string file)
-        {
-            var path = Assembly.GetEntryAssembly().CodeBase;
-            return new JumpTask
-                           {
-                               Arguments = file,
-                               IconResourcePath = path,
-                               ApplicationPath = path,
-                               Title = new FileInfo(file).Name,
-                               CustomCategory = "Recent Files"
-                           };
-        }
+        //private static JumpItem CreateJumpListItem(string file)
+        //{
+        //    var path = Assembly.GetEntryAssembly().CodeBase;
+        //    return new JumpTask
+        //                   {
+        //                       Arguments = file,
+        //                       IconResourcePath = path,
+        //                       ApplicationPath = path,
+        //                       Title = new FileInfo(file).Name,
+        //                       CustomCategory = "Recent Files"
+        //                   };
+        //}
 
-        private static JumpList GetJumpList()
-        {
-            // check for Windows7
-            var os = Environment.OSVersion.Version;
-            if (os.Major < 6) return null;
-            if (os.Minor < 1) return null;
+        //private static JumpList GetJumpList()
+        //{
+        //    // check for Windows7
+        //    var os = Environment.OSVersion.Version;
+        //    if (os.Major < 6) return null;
+        //    if (os.Minor < 1) return null;
 
-            var list = JumpList.GetJumpList(Application.Current);
-            if (list != null) return list;
+        //    var list = JumpList.GetJumpList(Application.Current);
+        //    if (list != null) return list;
 
-            list = new JumpList { ShowFrequentCategory = false, ShowRecentCategory = false };
+        //    list = new JumpList { ShowFrequentCategory = false, ShowRecentCategory = true };
 
-            JumpList.SetJumpList(Application.Current, list);
-            return list;
-        }
+        //    JumpList.SetJumpList(Application.Current, list);
+        //    return list;
+        //}
 
         
     }
