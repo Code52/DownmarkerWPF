@@ -1,0 +1,11 @@
+﻿body
+{
+    font-family: Consolas;
+    color: rgb(241, 242, 243);
+    background-color: rgb(34, 40, 42);
+	font-size: 14pt;
+}
+
+a { color: rgb(147, 199, 99); }
+
+h1, h2, h3, h4, h5, h6 { color: rgb(236, 118, 0); }

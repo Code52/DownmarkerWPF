@@ -8,6 +8,8 @@ using MarkPad.Shell;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
+using System.IO;
+using System.Reflection;
 
 namespace MarkPad
 {
@@ -42,7 +44,7 @@ namespace MarkPad
 
             container = builder.Build();
 
-            SetAwesomiumDefaults();
+            //SetAwesomiumDefaults();
         }
 
         protected override void PrepareApplication()
@@ -65,7 +67,17 @@ namespace MarkPad
                               ::-webkit-scrollbar-thumb:hover { background-color: #000000; }",
             };
 
-            Awesomium.Core.WebCore.Initialize(c);
+            Awesomium.Core.WebCore.Initialize(c, true);
+            Awesomium.Core.WebCore.BaseDirectory = Path.Combine(
+                    Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), 
+                    "Themes"
+            );
+        }
+
+        protected override void OnStartup(object sender, System.Windows.StartupEventArgs e)
+        {
+            base.OnStartup(sender, e);
+            SetAwesomiumDefaults();
         }
 
         private static void SetupCaliburnMicroDefaults(ContainerBuilder builder)
