@@ -6,6 +6,7 @@ using System.Reflection;
 using Autofac;
 using Caliburn.Micro;
 using MarkPad.Framework;
+using MarkPad.Framework.Events;
 using MarkPad.Services;
 using MarkPad.Shell;
 using Microsoft.Win32;
@@ -16,10 +17,12 @@ using LogManager = NLog.LogManager;
 
 namespace MarkPad
 {
-    class AppBootstrapper : Bootstrapper<ShellViewModel>
+    class AppBootstrapper : Bootstrapper<ShellViewModel>, IHandle<AppReadyEvent>
     {
+        private string initialFile;
         private IContainer container;
         private JumpListIntegration jumpList;
+        private IEventAggregator eventAggregator;
 
         private static void SetupLogging()
         {
@@ -43,18 +46,23 @@ namespace MarkPad
             SetupCaliburnMicroDefaults(builder);
 
             builder.RegisterModule<EventAggregationAutoSubscriptionModule>();
-
             builder.RegisterModule<ServicesModule>();
 
             builder.RegisterType<JumpListIntegration>().SingleInstance();
-            
+
             container = builder.Build();
 
             jumpList = container.Resolve<JumpListIntegration>();
 
             SetAwesomiumDefaults();
-
             RegisterExtensionWithApp();
+        }
+
+        public void OpenFile(string fileName)
+        {
+            initialFile = fileName;
+            eventAggregator = container.Resolve<IEventAggregator>();
+            eventAggregator.Subscribe(this);
         }
 
         protected override void PrepareApplication()
@@ -173,6 +181,12 @@ namespace MarkPad
         protected override void BuildUp(object instance)
         {
             container.InjectProperties(instance);
+        }
+
+        public void Handle(AppReadyEvent message)
+        {
+            eventAggregator.Publish(new FileOpenEvent(initialFile));
+            eventAggregator.Unsubscribe(this);
         }
     }
 }
