@@ -4,7 +4,7 @@ namespace MarkPad
 {
     public static class Constants
     {
-        public static readonly string[] DefaultExtensions = new string[] { ".md", ".markdown" };
+        public static readonly string[] DefaultExtensions = new string[] { ".md", ".markdown", ".mdown" };
 
         public static string ExtensionFilter
         {

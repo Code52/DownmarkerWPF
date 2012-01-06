@@ -10,8 +10,6 @@ namespace MarkPad
 {
     public class SingleInstanceManager : WindowsFormsApplicationBase
     {
-        private IList<string> validExtensions = new[] { ".md", ".markdown", ".mdown" };
-
         public SingleInstanceManager()
         {
             IsSingleInstance = true;
@@ -40,7 +38,7 @@ namespace MarkPad
             if (args.Length == 1)
             {
                 var filePath = args[0];
-                if (File.Exists(filePath) && validExtensions.Contains(Path.GetExtension(filePath)))
+                if (File.Exists(filePath) && Constants.DefaultExtensions.Contains(Path.GetExtension(filePath).ToLower()))
                     return filePath;
             }
 

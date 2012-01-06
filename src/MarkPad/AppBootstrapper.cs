@@ -55,7 +55,6 @@ namespace MarkPad
             jumpList = container.Resolve<JumpListIntegration>();
 
             SetAwesomiumDefaults();
-            RegisterExtensionWithApp();
         }
 
         public void OpenFile(string fileName)
@@ -94,41 +93,6 @@ namespace MarkPad
             };
 
             Awesomium.Core.WebCore.Initialize(c);
-        }
-
-        private void RegisterExtensionWithApp()
-        {
-            string markpadKeyName = "markpad.md";
-            string defaultExtension = ".md";
-
-            string exePath = Assembly.GetEntryAssembly().Location;
-
-            using (var key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes", true))
-            {
-                using (var extensionKey = key.CreateSubKey(defaultExtension))
-                {
-                    extensionKey.SetValue("", markpadKeyName);
-                }
-
-                using (var markpadKey = key.CreateSubKey(markpadKeyName))
-                {
-                    using (var defaultIconKey = markpadKey.CreateSubKey("DefaultIcon"))
-                    {
-                        defaultIconKey.SetValue("", exePath + ",0");
-                    }
-
-                    using (var shellKey = markpadKey.CreateSubKey("shell"))
-                    {
-                        using (var openKey = shellKey.CreateSubKey("open"))
-                        {
-                            using (var commandKey = openKey.CreateSubKey("command"))
-                            {
-                                commandKey.SetValue("", "\"" + exePath + "\" \"%1\"");
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         private static void SetupCaliburnMicroDefaults(ContainerBuilder builder)
