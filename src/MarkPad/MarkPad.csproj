@@ -65,7 +65,7 @@
       <HintPath>..\..\packages\AvalonEdit.4.1.0.8000\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
     <Reference Include="MahApps.Metro">
-      <HintPath>..\..\packages\MahApps.Metro.0.3.0.1\lib\net40\MahApps.Metro.dll</HintPath>
+      <HintPath>..\..\packages\MahApps.Metro.0.4.0.17\lib\net40\MahApps.Metro.dll</HintPath>
     </Reference>
     <Reference Include="MarkdownSharp">
       <HintPath>..\..\packages\MarkdownSharp.1.13.0.0\lib\35\MarkdownSharp.dll</HintPath>
@@ -83,7 +83,7 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Activation" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MahApps.Metro.0.3.0.1\lib\net40\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\..\packages\MahApps.Metro.0.4.0.17\lib\net40\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
