@@ -1,21 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Autofac;
 using Caliburn.Micro;
 using MarkPad.Framework;
+using MarkPad.Framework.Events;
+using MarkPad.Services;
 using MarkPad.Shell;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
+using LogManager = NLog.LogManager;
 
 namespace MarkPad
 {
     class AppBootstrapper : Bootstrapper<ShellViewModel>
     {
+        private string initialFile;
         private IContainer container;
+        private JumpListIntegration jumpList;
 
-        private void SetupLogging()
+        public IContainer Container { get { return container; } }
+
+        private static void SetupLogging()
         {
             var debuggerTarget = new DebuggerTarget { Layout = "[${level:uppercase=true}] (${logger}) ${message}" };
 
@@ -23,7 +31,7 @@ namespace MarkPad
             config.AddTarget("debugger", debuggerTarget);
             config.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, debuggerTarget));
 
-            NLog.LogManager.Configuration = config;
+            LogManager.Configuration = config;
         }
 
         protected override void Configure()
@@ -37,10 +45,13 @@ namespace MarkPad
             SetupCaliburnMicroDefaults(builder);
 
             builder.RegisterModule<EventAggregationAutoSubscriptionModule>();
+            builder.RegisterModule<ServicesModule>();
 
-            builder.RegisterModule<Services.ServicesModule>();
+            builder.RegisterType<JumpListIntegration>().SingleInstance();
 
             container = builder.Build();
+
+            jumpList = container.Resolve<JumpListIntegration>();
 
             SetAwesomiumDefaults();
         }
@@ -48,10 +59,27 @@ namespace MarkPad
         protected override void PrepareApplication()
         {
             Application.Startup += OnStartup;
-#if (!DEBUG)
-            Application.DispatcherUnhandledException += OnUnhandledException;
-#endif
+
+            if (!Debugger.IsAttached)
+                Application.DispatcherUnhandledException += OnUnhandledException;
+
             Application.Exit += OnExit;
+        }
+
+        protected override void OnStartup(object sender, System.Windows.StartupEventArgs e)
+        {
+            base.OnStartup(sender, e);
+
+            container.Resolve<IEventAggregator>().Publish(new AppReadyEvent());
+
+            ((App)Application).HandleArguments(Environment.GetCommandLineArgs().Skip(1).ToArray());
+        }
+
+        protected override void OnExit(object sender, EventArgs e)
+        {
+            jumpList.Dispose();
+
+            base.OnExit(sender, e);
         }
 
         private void SetAwesomiumDefaults()
@@ -70,34 +98,24 @@ namespace MarkPad
 
         private static void SetupCaliburnMicroDefaults(ContainerBuilder builder)
         {
-            //  register view models
             builder.RegisterAssemblyTypes(AssemblySource.Instance.ToArray())
-                //  must be a type with a name that ends with ViewModel
               .Where(type => type.Name.EndsWith("ViewModel"))
-                //  registered as self
               .AsSelf()
-                //  always create a new one
               .InstancePerDependency();
 
-            //  register views
             builder.RegisterAssemblyTypes(AssemblySource.Instance.ToArray())
-                //  must be a type with a name that ends with View
               .Where(type => type.Name.EndsWith("View"))
-                //  registered as self
               .AsSelf()
-                //  always create a new one
               .InstancePerDependency();
 
-            //  register the single window manager for this container
             builder.Register<IWindowManager>(c => new WindowManager()).InstancePerLifetimeScope();
-            //  register the single event aggregator for this container
             builder.Register<IEventAggregator>(c => new EventAggregator()).InstancePerLifetimeScope();
         }
 
         protected override object GetInstance(Type service, string key)
         {
             object instance;
-            if (string.IsNullOrWhiteSpace(key))
+            if (String.IsNullOrWhiteSpace(key))
             {
                 if (container.TryResolve(service, out instance))
                     return instance;
@@ -107,7 +125,7 @@ namespace MarkPad
                 if (container.TryResolveNamed(key, service, out instance))
                     return instance;
             }
-            throw new Exception(string.Format("Could not locate any instances of contract {0}.", key ?? service.Name));
+            throw new Exception(String.Format("Could not locate any instances of contract {0}.", key ?? service.Name));
         }
 
         protected override IEnumerable<object> GetAllInstances(Type service)
