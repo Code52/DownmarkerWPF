@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Shell;
 using Caliburn.Micro;
@@ -19,15 +20,20 @@ namespace MarkPad.Shell
         private readonly ISettingsService settingsService;
         private JumpList jumpList;
 
-        public JumpListIntegration(IEventAggregator eventAggregator, ISettingsService settingsService)
+        public JumpListIntegration(ISettingsService settingsService)
         {
             this.settingsService = settingsService;
         }
 
         public void Handle(FileOpenEvent message)
         {
-            var openedFile = message.Path;
+            var x = new Thread(new ParameterizedThreadStart(delegate { OpenFileAsync(message.Path); }));
+            x.SetApartmentState(ApartmentState.STA);
+            x.Start();
+        }
 
+        public void OpenFileAsync(string openedFile)
+        {
             var currentFiles = jumpList.JumpItems.OfType<JumpTask>().Select(t => t.Arguments);
 
             if (currentFiles.Contains(openedFile))
@@ -68,7 +74,9 @@ namespace MarkPad.Shell
         {
             jumpList = GetJumpList();
 
-            PopulateJumpList(settingsService.GetRecentFiles());
+            var x = new Thread(new ParameterizedThreadStart(delegate { PopulateJumpList(settingsService.GetRecentFiles()); }));
+            x.SetApartmentState(ApartmentState.STA);
+            x.Start();
         }
 
         public void Dispose()
