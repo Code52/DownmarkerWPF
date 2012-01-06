@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using MarkPad.Shell;
@@ -31,7 +32,15 @@ namespace MarkPad
         protected override void OnStartupNextInstance(Microsoft.VisualBasic.ApplicationServices.StartupNextInstanceEventArgs eventArgs)
         {
             base.OnStartupNextInstance(eventArgs);
-            ((ShellView)Application.Current.MainWindow).StartAgain(eventArgs.CommandLine.ToArray());
+
+            var args = eventArgs.CommandLine.ToArray();
+
+            if (args.Length == 1)
+            {
+                var filePath = args[0];
+                if (File.Exists(filePath) && Path.GetExtension(filePath) == ".md")
+                    ((ShellView)Application.Current.MainWindow).OpenFile(filePath);
+            }
         }
     }
 }

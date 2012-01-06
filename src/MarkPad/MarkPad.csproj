@@ -120,7 +120,7 @@
       <DependentUpon>DocumentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Document\DocumentViewModel.cs" />
-    <Compile Include="Events\FileOpenEvent.cs" />
+    <Compile Include="Framework\Events\FileOpenEvent.cs" />
     <Compile Include="MDI\MDIView.xaml.cs">
       <DependentUpon>MDIView.xaml</DependentUpon>
     </Compile>
@@ -214,6 +214,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="markpad.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Events\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

@@ -39,9 +39,9 @@ namespace MarkPad.Shell
             }
         }
 
-        internal void StartAgain(string[] args)
+        internal void OpenFile(string path)
         {
-            eventAggregator.Publish(new AppStartedEvent(args));
+            eventAggregator.Publish(new FileOpenEvent(path));
         }
     }
 }

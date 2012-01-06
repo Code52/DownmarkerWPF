@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Shell;
 using Caliburn.Micro;
-using MarkPad.Events;
+using MarkPad.Framework.Events;
 using MarkPad.Services.Interfaces;
 
 namespace MarkPad.Shell
@@ -13,31 +14,34 @@ namespace MarkPad.Shell
     /// <summary>
     /// Class for interacting with the Windows7 JumpList
     /// </summary>
-    public class JumpListIntegration : IHandle<FileOpenEvent>, IDisposable
+    public class JumpListIntegration : IHandle<FileOpenEvent>, IHandle<AppStartedEvent>, IDisposable
     {
         private readonly ISettingsService settingsService;
-        private readonly JumpList jumpList;
+        private JumpList jumpList;
 
         public JumpListIntegration(IEventAggregator eventAggregator, ISettingsService settingsService)
         {
             this.settingsService = settingsService;
             eventAggregator.Subscribe(this);
-
-            jumpList = GetJumpList();
-
-            PopulateJumpList(settingsService.GetRecentFiles());
         }
 
         public void Handle(FileOpenEvent message)
         {
-            settingsService.AddRecentFile(message.Path);
             var item = CreateJumpListItem(message.Path);
-
+            settingsService.AddRecentFile(message.Path);
+            
             if (jumpList != null)
             {
                 jumpList.JumpItems.Insert(0, item);
                 jumpList.Apply();
             }
+        }
+
+        public void Handle(AppStartedEvent message)
+        {
+            jumpList = GetJumpList();
+
+            PopulateJumpList(settingsService.GetRecentFiles());
         }
 
         public void Dispose()
@@ -47,7 +51,7 @@ namespace MarkPad.Shell
 
         private void PopulateJumpList(IEnumerable<string> recentFiles)
         {
-            foreach (var file in recentFiles)
+            foreach (var file in recentFiles.Distinct())
             {
                 var item = CreateJumpListItem(file);
                 jumpList.JumpItems.Add(item);
@@ -85,6 +89,7 @@ namespace MarkPad.Shell
             return list;
         }
 
-        
+
+    
     }
 }

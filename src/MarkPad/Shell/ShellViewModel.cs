@@ -2,7 +2,6 @@
 using System.IO;
 using Caliburn.Micro;
 using MarkPad.Document;
-using MarkPad.Events;
 using MarkPad.Framework.Events;
 using MarkPad.MDI;
 using MarkPad.Services.Interfaces;
@@ -10,7 +9,7 @@ using MarkPad.Settings;
 
 namespace MarkPad.Shell
 {
-    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>, IHandle<AppStartedEvent>
+    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>
     {
         private readonly IEventAggregator eventAggregator;
         private readonly IDialogService dialogService;
@@ -107,11 +106,10 @@ namespace MarkPad.Shell
 
         public void Handle(AppStartedEvent message)
         {
-            if (message.Args.Length == 1)
-            {
-                if (File.Exists(message.Args[0]) && Path.GetExtension(message.Args[0]) == ".md")
-                    OpenDocument(message.Args[0]);
-            }
+            if (message.Args.Length != 1) return;
+
+            if (File.Exists(message.Args[0]) && Path.GetExtension(message.Args[0]) == ".md")
+                OpenDocument(message.Args[0]);
         }
 
         public void ShowSettings()
