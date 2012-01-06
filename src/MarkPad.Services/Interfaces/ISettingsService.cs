@@ -6,5 +6,6 @@ namespace MarkPad.Services.Interfaces
     {
         IEnumerable<string> GetRecentFiles();
         void AddRecentFile(string path);
+        void Save();
     }
 }

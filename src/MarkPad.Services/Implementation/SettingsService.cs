@@ -1,22 +1,54 @@
 using System.Collections.Generic;
+using System.IO;
 using MarkPad.Services.Interfaces;
+using Newtonsoft.Json;
 
 namespace MarkPad.Services.Implementation
 {
     public class SettingsService : ISettingsService
     {
+        private readonly string filePath;
+        private readonly Settings settings;
+
+        public SettingsService()
+        {
+            filePath = Path.Combine(Path.GetTempPath(), "settings.json");
+            
+            if (File.Exists(filePath))
+            {
+                var contents = File.ReadAllText(filePath);
+                settings = JsonConvert.DeserializeObject<Settings>(contents);
+            }
+            else
+            {
+                settings = new Settings();
+            }
+        }
+
         public IEnumerable<string> GetRecentFiles()
         {
-            return new List<string>
-                       {
-                           @"D:\Code\github\code52\code52website\_posts\2011-12-31-introduction.md",
-                           @"D:\Code\github\code52\code52website\_posts\2012-01-02-downmarker.md"
-                       };
+            return settings.RecentFiles;
         }
 
         public void AddRecentFile(string path)
         {
-            throw new System.NotImplementedException();
+            settings.RecentFiles.Insert(0, path);
         }
+
+        public void Save()
+        {
+            var contents = JsonConvert.SerializeObject(settings);
+            File.WriteAllText(filePath, contents);
+        }
+    }
+
+    internal class Settings
+    {
+        public Settings()
+        {
+            RecentFiles = new List<string>();
+        }
+
+        public IList<string> RecentFiles { get; set; }
     }
 }

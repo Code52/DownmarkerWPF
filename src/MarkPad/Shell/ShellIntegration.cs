@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Windows;
@@ -21,20 +22,45 @@ namespace MarkPad.Shell
 
             jumpList = GetJumpList();
 
-            foreach (var f in settingsService.GetRecentFiles())
+            PopulateJumpList(settingsService.GetRecentFiles());
+        }
+
+        public void Handle(FileOpenEvent message)
+        {
+            settingsService.AddRecentFile(message.Path);
+            var item = CreateJumpListItem(message.Path);
+            jumpList.JumpItems.Insert(0, item);
+
+            jumpList.Apply();
+        }
+
+        public void Dispose()
+        {
+            settingsService.Save();
+        }
+
+        private void PopulateJumpList(IEnumerable<string> recentFiles)
+        {
+            foreach (var file in recentFiles)
             {
-                var path = new JumpTask
-                {
-                    Arguments = f,
-                    IconResourcePath = Assembly.GetEntryAssembly().CodeBase,
-                    ApplicationPath = Assembly.GetEntryAssembly().CodeBase,
-                    Title = new FileInfo(f).Name,
-                    CustomCategory = "Recent"
-                };
-                jumpList.JumpItems.Add(path);
+                var item = CreateJumpListItem(file);
+                jumpList.JumpItems.Add(item);
             }
 
             jumpList.Apply();
+        }
+
+        private static JumpItem CreateJumpListItem(string file)
+        {
+            var path = Assembly.GetEntryAssembly().CodeBase;
+            return new JumpTask
+                           {
+                               Arguments = file,
+                               IconResourcePath = path,
+                               ApplicationPath = path,
+                               Title = new FileInfo(file).Name,
+                               CustomCategory = "Recent Files"
+                           };
         }
 
         private static JumpList GetJumpList()
@@ -48,17 +74,6 @@ namespace MarkPad.Shell
             return list;
         }
 
-        public void Handle(FileOpenEvent message)
-        {
-            settingsService.AddRecentFile(message.Path);
-            JumpList.AddToRecentCategory(message.Path);
-
-            jumpList.Apply();
-        }
-
-        public void Dispose()
-        {
-            // TODO: dispose
-        }
+        
     }
 }
