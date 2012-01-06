@@ -17,9 +17,9 @@ namespace MarkPad.Shell
             if (!File.Exists(path))
                 return;
 
-            var pipeFactory = new ChannelFactory<IOpenFileAction>(
+            var pipeFactory = new ChannelFactory<IOpenFileCommand>(
                 new NetNamedPipeBinding(),
-                new EndpointAddress("net.pipe://localhost/OpenFileAction"));
+                new EndpointAddress("net.pipe://localhost/OpenFileCommand"));
 
             try
             {

@@ -76,7 +76,7 @@
     <Compile Include="Services\AutofacInstanceProviderServiceBehavior.cs" />
     <Compile Include="Services\AutofacServiceFactory.cs" />
     <Compile Include="Services\AutofacServiceHost.cs" />
-    <Compile Include="Services\IOpenFileAction.cs" />
+    <Compile Include="Services\IOpenFileCommand.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

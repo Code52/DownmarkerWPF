@@ -18,8 +18,8 @@ namespace MarkPad.Shell
         public void Start()
         {
             var factory = new AutofacServiceFactory(context);
-            host = factory.CreateService(typeof(OpenFileAction), new[] { new Uri("net.pipe://localhost") });
-            host.AddServiceEndpoint(typeof(IOpenFileAction), new NetNamedPipeBinding(), "OpenFileAction");
+            host = factory.CreateService(typeof(OpenFileCommand), new[] { new Uri("net.pipe://localhost") });
+            host.AddServiceEndpoint(typeof(IOpenFileCommand), new NetNamedPipeBinding(), "OpenFileCommand");
             host.Open();
         }
 

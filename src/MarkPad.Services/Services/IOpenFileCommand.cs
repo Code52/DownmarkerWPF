@@ -3,7 +3,7 @@ using System.ServiceModel;
 namespace MarkPad.Services.Services
 {
     [ServiceContract]
-    public interface IOpenFileAction
+    public interface IOpenFileCommand
     {
         [OperationContract]
         void OpenFile(string path);

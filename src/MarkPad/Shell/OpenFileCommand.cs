@@ -4,11 +4,14 @@ using MarkPad.Services.Services;
 
 namespace MarkPad.Shell
 {
-    public class OpenFileAction : IOpenFileAction
+    /// <summary>
+    /// Logic for processing the "Open File" command
+    /// </summary>
+    public class OpenFileCommand : IOpenFileCommand
     {
         private readonly IEventAggregator eventAggregator;
 
-        public OpenFileAction(IEventAggregator eventAggregator)
+        public OpenFileCommand(IEventAggregator eventAggregator)
         {
             this.eventAggregator = eventAggregator;
         }

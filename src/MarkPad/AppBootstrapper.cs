@@ -49,7 +49,7 @@ namespace MarkPad
             builder.RegisterModule<ServicesModule>();
 
             builder.RegisterType<JumpListIntegration>().SingleInstance();
-            builder.RegisterType<OpenFileAction>().AsSelf();
+            builder.RegisterType<OpenFileCommand>().AsSelf();
 
             container = builder.Build();
 

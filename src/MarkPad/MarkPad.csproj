@@ -109,7 +109,7 @@
     </Compile>
     <Compile Include="MDI\MDIViewModel.cs" />
     <Compile Include="Shell\JumpListIntegration.cs" />
-    <Compile Include="Shell\OpenFileAction.cs" />
+    <Compile Include="Shell\OpenFileCommand.cs" />
     <Compile Include="Shell\OpenFileClient.cs" />
     <Compile Include="Shell\OpenFileListener.cs" />
     <Compile Include="Shell\ShellView.xaml.cs" />
