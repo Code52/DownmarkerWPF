@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.ServiceModel;
+using MarkPad.Services.Services;
 
-namespace MarkPad
+namespace MarkPad.Shell
 {
     public class OpenFileClient
     {

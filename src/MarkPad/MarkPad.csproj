@@ -108,9 +108,10 @@
       <DependentUpon>MDIView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MDI\MDIViewModel.cs" />
-    <Compile Include="OpenFileClient.cs" />
-    <Compile Include="OpenFileListener.cs" />
     <Compile Include="Shell\JumpListIntegration.cs" />
+    <Compile Include="Shell\OpenFileAction.cs" />
+    <Compile Include="Shell\OpenFileClient.cs" />
+    <Compile Include="Shell\OpenFileListener.cs" />
     <Compile Include="Shell\ShellView.xaml.cs" />
     <Compile Include="Shell\ShellViewModel.cs" />
   </ItemGroup>

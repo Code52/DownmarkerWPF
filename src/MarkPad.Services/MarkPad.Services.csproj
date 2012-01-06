@@ -51,6 +51,8 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Activation" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -70,6 +72,11 @@
     <Compile Include="Implementation\SettingsService.cs" />
     <Compile Include="ServicesModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AutofacInstanceProvider.cs" />
+    <Compile Include="Services\AutofacInstanceProviderServiceBehavior.cs" />
+    <Compile Include="Services\AutofacServiceFactory.cs" />
+    <Compile Include="Services\AutofacServiceHost.cs" />
+    <Compile Include="Services\IOpenFileAction.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
