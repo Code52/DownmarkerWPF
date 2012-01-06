@@ -82,5 +82,14 @@ namespace MarkPad.Shell
                 doc.Save();
             }
         }
+
+        public void PrintDocument()
+        {
+            var doc = MDI.ActiveItem as DocumentViewModel;
+            if (doc != null)
+            {
+                doc.Print();
+            }
+        }
     }
 }
