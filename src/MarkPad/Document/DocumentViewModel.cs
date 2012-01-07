@@ -162,7 +162,7 @@ namespace MarkPad.Document
 
             var post = new Post();
 
-            var permalink = this.DisplayName.Split('.')[0];
+            var permalink = this.DisplayName.Split('.')[0] == "New Document" ? postTitle : this.DisplayName.Split('.')[0];
 
             if (!string.IsNullOrWhiteSpace(_post.permalink))
             {
@@ -198,6 +198,8 @@ namespace MarkPad.Document
             }
 
             Original = Document.Text;
+            title = postTitle;
+            NotifyOfPropertyChange(() => DisplayName);
         }
     }
 }

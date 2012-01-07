@@ -4,7 +4,7 @@
         Title="Post Details" Height="240" Width="364" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <StackPanel Margin="10,10,10,0">
     	<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Title of the post" VerticalAlignment="Top"/>
-        <TextBox Name="Title" HorizontalAlignment="Left" Width="331" />
+        <TextBox Name="PostTitle" HorizontalAlignment="Left" Width="331" />
         <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Categories" VerticalAlignment="Top" Margin="0,20,0,0"/>
 		<TextBox Name="Categories" HorizontalAlignment="Left" Width="217.863" />
         <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Opacity="0.5"><Run Language="en-au" Text="Seperated by commas"/></TextBlock>

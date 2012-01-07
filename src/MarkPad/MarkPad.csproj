@@ -154,8 +154,8 @@
       <DependentUpon>PublishView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Publish\PublishViewModel.cs" />
-    <Compile Include="Shell\ShellView.xaml.cs" />
-    <Compile Include="Shell\ShellViewModel.cs" />    <Page Include="Styles\MarkPad.Accents.xaml">
+    <Compile Include="Shell\ShellViewModel.cs" />  
+	<Page Include="Styles\MarkPad.Accents.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

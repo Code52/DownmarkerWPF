@@ -14,7 +14,7 @@ namespace MarkPad.PublishDetails
             _post = post;
         }
 
-        public string Title
+        public string PostTitle
         {
             get { return _post.Title; }
             set { _post.Title = value; }

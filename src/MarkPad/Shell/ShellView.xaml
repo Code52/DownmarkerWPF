@@ -46,6 +46,8 @@
             <Button x:Name="SaveDocument" Content="SAVE" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
             <Button x:Name="SaveAllDocuments" Content="SAVE ALL" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
             <Button x:Name="PrintDocument" Content="PRINT" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
+            <Button x:Name="OpenFromWeb" Content="OPEN FROM WEB" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
+            <Button x:Name="PublishDocument" Content="PUBLISH" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
         </StackPanel>
         <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Orientation="Horizontal">
             <Button x:Name="ShowSettings" Content="SETTINGS" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" Margin="0,0,20,0" FontWeight="Bold" />
@@ -63,34 +65,4 @@
                         Margin="10,0"
                         Grid.Row="1" />
     </Grid>
-            <GradientStop Color="#FFDEDEDE"/>
-            <GradientStop Color="White" Offset="1"/>
-        </LinearGradientBrush>
-    </Window.Background>
-    <DockPanel>
-        <Grid DockPanel.Dock="Top">
-            <TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold" FontSize="10.667" Margin="30,10,0,0"><Run Language="en-au" Text="MARKPAD"/></TextBlock>
-            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Margin="30,30,30,10">
-                <Button  x:Name="NewDocument" Content="NEW" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
-                <Button x:Name="NewJekyllDocument" Content="NEW JEKYLL PAGE" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
-                <Button x:Name="OpenDocument" Content="OPEN" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
-                <Button x:Name="SaveDocument" Content="SAVE" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
-                <Button x:Name="SaveAllDocuments" Content="SAVE ALL" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
-                <Button x:Name="OpenFromWeb" Content="OPEN FROM WEB" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
-                <Button x:Name="Publish" Content="PUBLISH" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
-            </StackPanel>
-            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Orientation="Horizontal">
-                <Button Click="ButtonMinimiseOnClick"  Style="{DynamicResource ChromelessButtonStyle}" Content="0" FontFamily="Marlett" />
-                <Button Click="ButtonMaxRestoreOnClick" x:Name="maxRestore" Style="{DynamicResource ChromelessButtonStyle}" Content="1" FontFamily="Marlett" />
-                <Button x:Name="Exit" Style="{DynamicResource ChromelessButtonStyle}" Content="r" FontFamily="Marlett" />
-            </StackPanel>
-            <Rectangle HorizontalAlignment="Left" Stroke="Black" Width="10" StrokeThickness="0" Margin="0,10">
-                <Rectangle.Fill>
-                    <SolidColorBrush Color="{DynamicResource HighlightDarkColor}" />
-                </Rectangle.Fill>
-            </Rectangle>
-        </Grid>
-        <ContentControl x:Name="MDI" Margin="10,0" />
-    </DockPanel>
-
 </Window>

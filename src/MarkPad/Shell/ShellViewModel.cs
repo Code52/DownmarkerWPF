@@ -24,6 +24,7 @@ namespace MarkPad.Shell
         public ShellViewModel(
             IDialogService dialogService,
             IWindowManager windowManager,
+            ISettingsService settingsService,
             IEventAggregator eventAggregator,
             MDIViewModel mdi,
             Func<DocumentViewModel> documentCreator,
@@ -122,7 +123,7 @@ namespace MarkPad.Shell
 
         public void ShowSettings()
         {
-            windowService.ShowDialog(settingsCreator());
+            _windowManager.ShowDialog(settingsCreator());
         }
 
         public void PrintDocument()
@@ -134,7 +135,7 @@ namespace MarkPad.Shell
             }
         }
 
-        public void Publish()
+        public void PublishDocument()
         {
             if (string.IsNullOrEmpty(_settingsService.Get<string>("BlogUrl")))
             { 

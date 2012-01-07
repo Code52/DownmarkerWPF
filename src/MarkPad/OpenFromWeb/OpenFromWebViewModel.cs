@@ -35,13 +35,13 @@ namespace MarkPad.OpenFromWeb
             set { _settings.Set("Password", value); }
         }
 
-        public KeyValuePair<string, Post> CurrentPost
+        public Entry CurrentPost
         {
             get
             {
                 var post = _settings.Get<Post>("CurrentPost");
-             
-                return new KeyValuePair<string, Post>(post.title, post);
+
+                return new Entry {Key = post.title, Value = post};
             }
             set
             {
@@ -49,14 +49,27 @@ namespace MarkPad.OpenFromWeb
             }
         }
 
-        public Dictionary<string, Post> Posts { get; set; }
+        public ObservableCollection<Entry> Posts { get; set; }
 
         public void Fetch()
         {
             var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
             ((IXmlRpcProxy)proxy).Url = this.BlogUrl;
             
-            this.Posts = proxy.GetRecentPosts("0", this.Username, this.Password, 100).ToDictionary(p => p.title);
+            var posts = proxy.GetRecentPosts("0", this.Username, this.Password, 100);
+
+            this.Posts = new ObservableCollection<Entry>();
+
+            foreach(var p in posts)
+            {
+                this.Posts.Add(new Entry {Key = p.title, Value = p});
+            }
         }
+    }
+
+    public class Entry
+    {
+        public string Key { get; set; }
+        public Post Value { get; set; }
     }
 }
