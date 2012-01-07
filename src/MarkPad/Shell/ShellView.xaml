@@ -5,15 +5,32 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:fw="clr-namespace:MarkPad.Framework"
+    xmlns:cm="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
     xmlns:Shell="clr-namespace:MarkPad.Shell" mc:Ignorable="d" 
     MouseLeftButtonDown="DragMoveWindow"
     Icon="../markpad.ico"
-    d:DataContext="{d:DesignInstance Shell:ShellViewModel}"
->
+    d:DataContext="{d:DesignInstance Shell:ShellViewModel}">
+    
     <i:Interaction.Behaviors>
         <Behaviours:BorderlessWindowBehavior/>
     </i:Interaction.Behaviors>
+    
+    <i:Interaction.Triggers>
+        <fw:InputBindingTrigger>
+            <fw:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Ctrl" Key="S" />
+            </fw:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="SaveDocument" />
+        </fw:InputBindingTrigger>
+        <fw:InputBindingTrigger>
+            <fw:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Ctrl+Shift" Key="S" />
+            </fw:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="SaveAllDocuments" />
+        </fw:InputBindingTrigger>
+    </i:Interaction.Triggers>
 
     <Window.Resources>
         <ResourceDictionary>

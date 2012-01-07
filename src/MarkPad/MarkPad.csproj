@@ -98,6 +98,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Framework\InputBindingTrigger.cs" />
     <Compile Include="SingleInstanceManager.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
