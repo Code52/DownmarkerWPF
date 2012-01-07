@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using System.IO;
+using System.Windows.Threading;
 using System.Text.RegularExpressions;
 using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using ICSharpCode.AvalonEdit.Document;
-using MarkdownSharp;
 using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
 using Ookii.Dialogs.Wpf;
@@ -18,6 +18,8 @@ namespace MarkPad.Document
 
         private string title;
         private string filename;
+        private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
+        private readonly DispatcherTimer timer;
         private Post _post;
 
         public DocumentViewModel(IDialogService dialogService, ISettingsService settings)
@@ -29,8 +31,15 @@ namespace MarkPad.Document
             Original = "";
             Document = new TextDocument();
             _post = new Post();
+            timer = new DispatcherTimer();
+            timer.Tick += TimerTick;
+            timer.Interval = delay;
         }
-
+        private void TimerTick(object sender, EventArgs e)
+        {
+            timer.Stop();
+            NotifyOfPropertyChange(() => Render);
+        }
         public void Open(string path)
         {
             filename = path;
@@ -53,7 +62,8 @@ namespace MarkPad.Document
 
         public void Update()
         {
-            NotifyOfPropertyChange(() => Render);
+            timer.Stop();
+            timer.Start();
             NotifyOfPropertyChange(() => HasChanges);
             NotifyOfPropertyChange(() => DisplayName);
         }
@@ -65,7 +75,7 @@ namespace MarkPad.Document
 
             if (string.IsNullOrEmpty(filename))
             {
-                var path = dialogService.GetFileSavePath("Choose a location to save the document.", "*.md", "Markdown Files (*.md)|*.md|All Files (*.*)|*.*");
+                var path = dialogService.GetFileSavePath("Choose a location to save the document.", "*.md", Constants.ExtensionFilter + "|All Files (*.*)|*.*");
 
                 if (string.IsNullOrEmpty(path))
                     return false;
@@ -86,32 +96,7 @@ namespace MarkPad.Document
 
         public string Render
         {
-            get
-            {
-                var markdown = new Markdown();
-
-                var textToRender = StripHeader(Document.Text);
-
-                return markdown.Transform(textToRender);
-            }
-        }
-
-        private static string StripHeader(string text)
-        {
-            const string delimiter = "---";
-            var matches = Regex.Matches(text, delimiter, RegexOptions.Multiline);
-
-            if (matches.Count != 2)
-            {
-                return text;
-            }
-
-            var startIndex = matches[0].Index;
-            var endIndex = matches[1].Index;
-            var length = endIndex - startIndex + delimiter.Length;
-            var textToReplace = text.Substring(startIndex, length);
-
-            return text.Replace(textToReplace, string.Empty);
+            get { return DocumentParser.Parse(Document.Text); }
         }
 
         public bool HasChanges
@@ -157,6 +142,15 @@ namespace MarkPad.Document
             }
 
             callback(result);
+        }
+
+        public void Print()
+        {
+            var view = this.GetView() as DocumentView;
+            if (view != null)
+            {
+                view.wb.Print();
+            }
         }
 
         public void Publish(string postTitle, string[] categories)

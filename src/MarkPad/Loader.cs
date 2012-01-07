@@ -14,8 +14,7 @@ namespace MarkPad
         static readonly Dictionary<string, Assembly> Libraries = new Dictionary<string, Assembly>();
         static readonly Dictionary<string, Assembly> ReflectionOnlyLibraries = new Dictionary<string, Assembly>();
 
-        [STAThreadAttribute]
-        public static void Main(string[] args)
+        public static void Start()
         {
             AppDomain.CurrentDomain.AssemblyResolve += FindAssembly;
 

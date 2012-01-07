@@ -1,12 +1,31 @@
-﻿<SyntaxDefinition name="Markdown"
-        xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
-  <Color name="Comment" foreground="Green" />
-  <Color name="String" foreground="Blue" />
+﻿<SyntaxDefinition name="Markdown" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <Color name="Code" foreground="Green" />
+  <Color name="String" foreground="#A4A4A4"  />
+  <Color name="Url" foreground="#A4A4A4"  />
 
-  <!-- This is the main ruleset. -->
-  <RuleSet>
-    <Span fontWeight="bold" begin="\*\*" end="\*\*" />
-    <Span fontStyle="italic" begin="\*" end="\*" />
 
+  <RuleSet ignoreCase="false">
+    <Import ruleSet="HTML/"/>
+    <Span>
+      <Begin color="String">\*</Begin>
+      <End color="String">\*</End>
+    </Span>
+    <Span color="Code">
+      <Begin>`</Begin>
+      <End>`</End>
+    </Span>
+    <Span color="Code" begin="\t" />
+    <Span>
+      <Begin color="Url">\!\[</Begin>
+      <End color="Url">\]</End>
+    </Span>
+    <Span>
+      <Begin color="Url">\[</Begin>
+      <End color="Url">\]</End>
+    </Span>
+    <Span>
+      <Begin color="Url">\(</Begin>
+      <End color="Url">\)</End>
+    </Span>
   </RuleSet>
 </SyntaxDefinition>
