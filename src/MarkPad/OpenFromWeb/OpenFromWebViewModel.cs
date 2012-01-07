@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
+using System.Windows;
 using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using MarkPad.Metaweblog;
@@ -13,7 +16,7 @@ namespace MarkPad.OpenFromWeb
     {
         private readonly ISettingsService _settings;
 
-        public OpenFromWebViewModel(ISettingsService settings, List<BlogSetting> blogs )
+        public OpenFromWebViewModel(ISettingsService settings, List<BlogSetting> blogs)
         {
             _settings = settings;
 
@@ -32,7 +35,7 @@ namespace MarkPad.OpenFromWeb
             {
                 var post = _settings.Get<Post>("CurrentPost");
 
-                return new Entry {Key = post.title, Value = post};
+                return new Entry { Key = post.title, Value = post };
             }
             set
             {
@@ -46,14 +49,23 @@ namespace MarkPad.OpenFromWeb
         {
             var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
             ((IXmlRpcProxy)proxy).Url = this.SelectedBlog.WebAPI;
-            
-            var posts = proxy.GetRecentPosts("0", this.SelectedBlog.Username, this.SelectedBlog.Password, 100);
 
-            this.Posts = new ObservableCollection<Entry>();
 
-            foreach(var p in posts)
+
+            try
             {
-                this.Posts.Add(new Entry {Key = p.title, Value = p});
+                var posts = proxy.GetRecentPosts(this.SelectedBlog.BlogInfo.blogid, this.SelectedBlog.Username, this.SelectedBlog.Password, 100);
+
+                this.Posts = new ObservableCollection<Entry>();
+
+                foreach (var p in posts)
+                {
+                    this.Posts.Add(new Entry { Key = p.title, Value = p });
+                }
+            }
+            catch (WebException ex)
+            {
+                MessageBox.Show(ex.Message, "Error Fetching Posts", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

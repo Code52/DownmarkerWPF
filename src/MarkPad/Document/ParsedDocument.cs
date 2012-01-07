@@ -36,6 +36,30 @@ namespace MarkPad.Document
             return ToHtml(header, contents);
         }
 
+        public static string GetBodyContents(string source)
+        {
+            const string delimiter = "---";
+
+            var components = source.Split(new[] { delimiter }, 2, StringSplitOptions.RemoveEmptyEntries);
+
+            string contents;
+
+            if (components.Length == 0)
+            {
+                contents = "";
+            }
+            else if (components.Length == 2)
+            {
+                contents = components[1];
+            }
+            else
+            {
+                contents = components[0];
+            }
+
+            return MarkdownParser.Transform(contents);
+        }
+
         private static string ToHtml(string header, string contents)
         {
             var body = MarkdownParser.Transform(contents);

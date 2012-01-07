@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Net;
+using System.Windows;
 using System.Windows.Threading;
 using System.Text.RegularExpressions;
 using Caliburn.Micro;
@@ -100,6 +102,11 @@ namespace MarkPad.Document
             get { return DocumentParser.Parse(Document.Text); }
         }
 
+        public string RenderBody
+        {
+            get { return DocumentParser.GetBodyContents(Document.Text); }
+        }
+
         public bool HasChanges
         {
             get { return Original != Document.Text; }
@@ -159,44 +166,54 @@ namespace MarkPad.Document
             if (categories == null) categories = new string[0];
 
             var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
-            ((IXmlRpcProxy)proxy).Url = blog.WebAPI;
+            ((IXmlRpcProxy) proxy).Url = blog.WebAPI;
 
             var post = new Post();
 
-            var permalink = this.DisplayName.Split('.')[0] == "New Document" ? postTitle : this.DisplayName.Split('.')[0];
+            var permalink = this.DisplayName.Split('.')[0] == "New Document"
+                                ? postTitle
+                                : this.DisplayName.Split('.')[0];
 
             if (!string.IsNullOrWhiteSpace(_post.permalink))
             {
                 post = proxy.GetPost(_post.postid.ToString(), blog.Username, blog.Password);
             }
 
-            if (string.IsNullOrWhiteSpace(post.permalink))
+            try
             {
-                post = new Post
-                           {
-                               permalink = permalink,
-                               title = postTitle,
-                               dateCreated = DateTime.Now,
-                               description = Render,
-                               categories = categories
-                           };
-              post.postid = proxy.AddPost("0", blog.Username, blog.Password, post, true);
+                if (string.IsNullOrWhiteSpace(post.permalink))
+                {
+                    post = new Post
+                               {
+                                   permalink = permalink,
+                                   title = postTitle,
+                                   dateCreated = DateTime.Now,
+                                   description = blog.Language == "HTML" ? RenderBody : Document.Text,
+                                   categories = categories
+                               };
+                    post.postid = proxy.AddPost(blog.BlogInfo.blogid, blog.Username, blog.Password, post, true);
 
-                _settings.Set(post.permalink, post);
-                _settings.Save();
+                    _settings.Set(post.permalink, post);
+                    _settings.Save();
+                }
+                else
+                {
+                    post.title = postTitle;
+                    post.description = blog.Language == "HTML" ? RenderBody : Document.Text;
+                    post.categories = categories;
+
+                    proxy.UpdatePost(post.postid.ToString(), blog.Username, blog.Password, post, true);
+
+                    _settings.Set(post.permalink, post);
+                    _settings.Save();
+                }
             }
-            else
+            catch (WebException ex)
             {
-                post.title = postTitle;
-                post.description = Render;
-                post.categories = categories;
-
-                proxy.UpdatePost(post.postid.ToString(), blog.Username, blog.Password, post, true);
-
-                _settings.Set(post.permalink, post);
-                _settings.Save();
+                MessageBox.Show(ex.Message, "Error Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
+            _post = post;
             Original = Document.Text;
             title = postTitle;
             NotifyOfPropertyChange(() => DisplayName);

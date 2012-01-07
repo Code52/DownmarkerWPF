@@ -3,8 +3,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro" MouseLeftButtonDown="DragMoveWindow"
-        WindowStartupLocation="CenterOwner" mc:Ignorable="d" Width="300" Height="450" ResizeMode="NoResize">
+        xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
+        xmlns:Settings="clr-namespace:MarkPad.Settings" MouseLeftButtonDown="DragMoveWindow"
+        WindowStartupLocation="CenterOwner" mc:Ignorable="d" Width="300" Height="520" ResizeMode="NoResize">
     <i:Interaction.Behaviors>
         <Behaviours:BorderlessWindowBehavior />
     </i:Interaction.Behaviors>
@@ -70,12 +71,27 @@
             <TextBlock VerticalAlignment="Center" Margin="0 5 10 0" Text="MetaweblogAPI Address:"/>
             <TextBox x:Name="CurrentBlog_WebAPI" HorizontalAlignment="Stretch" />
             <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                <TextBlock VerticalAlignment="Center" Margin="0 0 10 0" Width="65" Text="User Name:"/>
-                <TextBox x:Name="CurrentBlog_Username" Width="180" />
+                <TextBlock VerticalAlignment="Center" Margin="0 0 10 0" Width="125" Text="User Name:"/>
+                <TextBox x:Name="CurrentBlog_Username" Width="120" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                <TextBlock VerticalAlignment="Center" Margin="0 0 10 0" Width="65" Text="Password:"/>
-                <TextBox x:Name="CurrentBlog_Password" Width="180"  />
+                <TextBlock VerticalAlignment="Center" Margin="0 0 10 0" Width="125" Text="Password:"/>
+                <TextBox x:Name="CurrentBlog_Password" Width="120"  />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                <TextBlock VerticalAlignment="Center" Margin="0 0 10 0" Width="125" Text="Rendering Language:"/>
+                <ComboBox x:Name="BlogLanguages" HorizontalAlignment="Left" Width="120" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                <TextBlock VerticalAlignment="Center" Margin="0 0 10 0" Width="120" Text="Select Blog From API:"/>
+                <Button x:Name="FetchBlogs" Content="Fetch" Margin="5 0 5 0" />
+                <ComboBox x:Name="APIBlogs" Width="75">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
             </StackPanel>
         </StackPanel>
 
