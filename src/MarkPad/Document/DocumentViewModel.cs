@@ -56,7 +56,7 @@ namespace MarkPad.Document
 
             if (string.IsNullOrEmpty(filename))
             {
-                var path = dialogService.GetFileSavePath("Choose a location to save the document.", "*.md", "Markdown Files (*.md)|*.md|All Files (*.*)|*.*");
+                var path = dialogService.GetFileSavePath("Choose a location to save the document.", "*.md", Constants.ExtensionFilter + "|All Files (*.*)|*.*");
 
                 if (string.IsNullOrEmpty(path))
                     return false;
@@ -77,10 +77,7 @@ namespace MarkPad.Document
 
         public string Render
         {
-            get
-            {
-                return new ParsedDocument(Document.Text).ToHtml();
-            }
+            get { return DocumentParser.Parse(Document.Text); }
         }
 
         public bool HasChanges
@@ -131,7 +128,7 @@ namespace MarkPad.Document
         public void Print()
         {
             var view = this.GetView() as DocumentView;
-            if(view != null)
+            if (view != null)
             {
                 view.wb.Print();
             }

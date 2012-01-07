@@ -1,75 +1,64 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using MarkdownSharp;
 
 namespace MarkPad.Document
 {
-    class DocumentHeader
+    static class DocumentParser
     {
-        private readonly string _text;
+        private static Markdown MarkdownParser = new Markdown();
 
-        public DocumentHeader(string text)
-        {
-            _text = text;
-        }
-
-        public bool TryGetValue(string key, out string value)
-        {
-            // TODO: Cache these?
-            var match = Regex.Match(_text, "^" + key + ": (.*)$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
-
-            value = match.Success ? match.Result("$1").Trim() : String.Empty;
-
-            return match.Success;
-        }
-    }
-
-    class ParsedDocument
-    {
-        public DocumentHeader Header { get; private set; }
-        public string Contents { get; private set; }
-
-        public ParsedDocument(string source)
+        public static string Parse(string source)
         {
             const string delimiter = "---";
 
             var components = source.Split(new[] { delimiter }, 2, StringSplitOptions.RemoveEmptyEntries);
 
+            string header;
+            string contents;
+
             if (components.Length == 0)
             {
-                Header = new DocumentHeader("");
-                Contents = "";
+                header = "";
+                contents = "";
             }
             else if (components.Length == 2)
             {
-                Header = new DocumentHeader(components[0]);
-                Contents = components[1];
+                header = components[0];
+                contents = components[1];
             }
             else
             {
-                Header = new DocumentHeader("");
-                Contents = components[0];
+                header = "";
+                contents = components[0];
             }
+
+            return ToHtml(header, contents);
         }
 
-        public string ToHtml()
+        private static string ToHtml(string header, string contents)
         {
-            var markdown = new Markdown();
-
-            var body = markdown.Transform(Contents);
+            var body = MarkdownParser.Transform(contents);
 
             string themeName;
             string head = "";
 
-            if (Header.TryGetValue("theme", out themeName))
+            if (TryGetHeaderValue(header, "theme", out themeName))
                 head = String.Format(@"<link rel=""stylesheet"" type=""text/css"" href=""{0}/style.css"" />", themeName);
 
             var document = String.Format("<html>\r\n<head>\r\n{0}\r\n</head>\r\n<body>\r\n{1}\r\n</body>\r\n</html>", head, body);
 
             return document;
+        }
+
+        private static bool TryGetHeaderValue(string header, string key, out string value)
+        {
+            // TODO: Cache these?
+            var match = Regex.Match(header, "^" + key + "\\s*:\\s*(.*)$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
+
+            value = match.Success ? match.Result("$1").Trim() : String.Empty;
+
+            return match.Success;
         }
     }
 }

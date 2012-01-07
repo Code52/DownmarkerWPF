@@ -14,7 +14,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{F95A6BBE-B8AE-4CCA-A0ED-949C14833B85}"
 	ProjectSection(SolutionItems) = preProject
 		tools\EmbedAssemblies.targets = tools\EmbedAssemblies.targets
-		src\GlobalAssemblyInfo.cs = src\GlobalAssemblyInfo.cs
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.Services", "src\MarkPad.Services\MarkPad.Services.csproj", "{8088D80C-14AF-4618-B12A-F47C2771EBDD}"
