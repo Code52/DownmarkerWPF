@@ -1,19 +1,10 @@
 using System.Windows;
 using System.Windows.Input;
-using Caliburn.Micro;
-using MarkPad.Framework.Events;
 
 namespace MarkPad.Shell
 {
     public partial class ShellView
     {
-        private readonly IEventAggregator eventAggregator;
-
-        public ShellView(IEventAggregator eventAggregator)
-        {
-            this.eventAggregator = eventAggregator;
-        }
-
         private void DragMoveWindow(object sender, MouseButtonEventArgs e)
         {
             if (e.RightButton != MouseButtonState.Pressed && e.MiddleButton != MouseButtonState.Pressed)
@@ -37,11 +28,6 @@ namespace MarkPad.Shell
                 maxRestore.Content = "2";
                 WindowState = WindowState.Maximized;
             }
-        }
-
-        internal void OpenFile(string path)
-        {
-            eventAggregator.Publish(new FileOpenEvent(path));
         }
     }
 }

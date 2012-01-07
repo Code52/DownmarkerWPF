@@ -17,7 +17,6 @@ namespace MarkPad
 {
     class AppBootstrapper : Bootstrapper<ShellViewModel>
     {
-        private string initialFile;
         private IContainer container;
         private JumpListIntegration jumpList;
 
