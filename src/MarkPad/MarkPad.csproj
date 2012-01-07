@@ -129,6 +129,10 @@
     <Compile Include="MDI\MDIViewModel.cs" />
     <Compile Include="Shell\JumpListIntegration.cs" />
     <Compile Include="Shell\ShellViewModel.cs" />
+    <Page Include="Styles\MarkPad.Accents.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Framework\EventAggregationAutoSubscriptionModule.cs" />
