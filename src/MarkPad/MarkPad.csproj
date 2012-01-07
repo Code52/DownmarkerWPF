@@ -102,6 +102,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Framework\InputBindingTrigger.cs" />
     <Compile Include="Settings\BlogSetting.cs" />
     <Compile Include="SingleInstanceManager.cs" />
     <Page Include="App.xaml">
