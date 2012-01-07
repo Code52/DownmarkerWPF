@@ -1,7 +1,11 @@
-﻿using Caliburn.Micro;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Windows;
+using Caliburn.Micro;
 using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
 using System.Linq;
+using MarkPad.Settings;
 
 namespace MarkPad.PublishDetails
 {
@@ -9,10 +13,15 @@ namespace MarkPad.PublishDetails
     {
         private Details _post;
 
-        public PublishDetailsViewModel(Details post)
+        public PublishDetailsViewModel(Details post, List<BlogSetting> blogs)
         {
             _post = post;
+
+            Blogs = new ObservableCollection<BlogSetting>(blogs);
+            SelectedBlog = Blogs[0];
         }
+
+        public ObservableCollection<BlogSetting> Blogs { get; set; }
 
         public string PostTitle
         {
@@ -28,11 +37,18 @@ namespace MarkPad.PublishDetails
             }
             set { _post.Categories = value.Split(','); }
         }
+
+        public BlogSetting SelectedBlog
+        {
+            get { return _post.Blog; }
+            set { _post.Blog = value; }
+        }
     }
 
     public class Details
     {
         public string Title { get; set; }
         public string[] Categories { get; set; }
+        public BlogSetting Blog { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
+using MarkPad.Settings;
 
 namespace MarkPad.OpenFromWeb
 {
@@ -12,28 +13,18 @@ namespace MarkPad.OpenFromWeb
     {
         private readonly ISettingsService _settings;
 
-        public OpenFromWebViewModel(ISettingsService settings)
+        public OpenFromWebViewModel(ISettingsService settings, List<BlogSetting> blogs )
         {
             _settings = settings;
+
+            this.Blogs = blogs;
+
+            SelectedBlog = blogs[0];
         }
 
-        public string BlogUrl
-        {
-            get { return _settings.Get<string>("BlogUrl"); }
-            set { _settings.Set("BlogUrl", value); }
-        }
+        public List<BlogSetting> Blogs { get; set; }
 
-        public string Username
-        {
-            get { return _settings.Get<string>("Username"); }
-            set { _settings.Set("Username", value); }
-        }
-
-        public string Password
-        {
-            get { return _settings.Get<string>("Password"); }
-            set { _settings.Set("Password", value); }
-        }
+        public BlogSetting SelectedBlog { get; set; }
 
         public Entry CurrentPost
         {
@@ -54,9 +45,9 @@ namespace MarkPad.OpenFromWeb
         public void Fetch()
         {
             var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
-            ((IXmlRpcProxy)proxy).Url = this.BlogUrl;
+            ((IXmlRpcProxy)proxy).Url = this.SelectedBlog.WebAPI;
             
-            var posts = proxy.GetRecentPosts("0", this.Username, this.Password, 100);
+            var posts = proxy.GetRecentPosts("0", this.SelectedBlog.Username, this.SelectedBlog.Password, 100);
 
             this.Posts = new ObservableCollection<Entry>();
 

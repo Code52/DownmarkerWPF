@@ -102,6 +102,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Settings\BlogSetting.cs" />
     <Compile Include="SingleInstanceManager.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -150,12 +151,8 @@
       <DependentUpon>PublishDetailsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="PublishDetails\PublishDetailsViewModel.cs" />
-    <Compile Include="Publish\PublishView.xaml.cs">
-      <DependentUpon>PublishView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Publish\PublishViewModel.cs" />
-    <Compile Include="Shell\ShellViewModel.cs" />  
-	<Page Include="Styles\MarkPad.Accents.xaml">
+    <Compile Include="Shell\ShellViewModel.cs" />
+    <Page Include="Styles\MarkPad.Accents.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -212,10 +209,6 @@
     <Page Include="PublishDetails\PublishDetailsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Publish\PublishView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Shell\ShellView.xaml">
       <Generator>MSBuild:Compile</Generator>

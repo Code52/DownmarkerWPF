@@ -1,4 +1,5 @@
-﻿using MarkPad.Metaweblog;
+﻿using System.Windows.Input;
+using MarkPad.Metaweblog;
 
 namespace MarkPad.OpenFromWeb
 {
@@ -9,6 +10,12 @@ namespace MarkPad.OpenFromWeb
             InitializeComponent();
 
             return new Post();
+        }
+
+        private void DragMoveWindow(object sender, MouseButtonEventArgs e)
+        {
+            if (e.RightButton != MouseButtonState.Pressed && e.MiddleButton != MouseButtonState.Pressed)
+                DragMove();
         }
 
         private void ContinueClick(object sender, System.Windows.RoutedEventArgs e)

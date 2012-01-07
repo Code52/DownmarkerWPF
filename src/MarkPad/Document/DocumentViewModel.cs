@@ -7,6 +7,7 @@ using CookComputing.XmlRpc;
 using ICSharpCode.AvalonEdit.Document;
 using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
+using MarkPad.Settings;
 using Ookii.Dialogs.Wpf;
 
 namespace MarkPad.Document
@@ -153,12 +154,12 @@ namespace MarkPad.Document
             }
         }
 
-        public void Publish(string postTitle, string[] categories)
+        public void Publish(string postTitle, string[] categories, BlogSetting blog)
         {
             if (categories == null) categories = new string[0];
 
             var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
-            ((IXmlRpcProxy)proxy).Url = _settings.Get<string>("BlogUrl");
+            ((IXmlRpcProxy)proxy).Url = blog.WebAPI;
 
             var post = new Post();
 
@@ -166,7 +167,7 @@ namespace MarkPad.Document
 
             if (!string.IsNullOrWhiteSpace(_post.permalink))
             {
-                post = proxy.GetPost(_post.postid.ToString(), _settings.Get<string>("Username"), _settings.Get<string>("Password"));
+                post = proxy.GetPost(_post.postid.ToString(), blog.Username, blog.Password);
             }
 
             if (string.IsNullOrWhiteSpace(post.permalink))
@@ -179,7 +180,7 @@ namespace MarkPad.Document
                                description = Render,
                                categories = categories
                            };
-              post.postid = proxy.AddPost("0", _settings.Get<string>("Username"), _settings.Get<string>("Password"), post, true);
+              post.postid = proxy.AddPost("0", blog.Username, blog.Password, post, true);
 
                 _settings.Set(post.permalink, post);
                 _settings.Save();
@@ -190,8 +191,7 @@ namespace MarkPad.Document
                 post.description = Render;
                 post.categories = categories;
 
-                proxy.UpdatePost(post.postid.ToString(), _settings.Get<string>("Username"),
-                                          _settings.Get<string>("Password"), post, true);
+                proxy.UpdatePost(post.postid.ToString(), blog.Username, blog.Password, post, true);
 
                 _settings.Set(post.permalink, post);
                 _settings.Save();

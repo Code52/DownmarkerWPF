@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Windows;
 using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.Framework.Events;
 using MarkPad.MDI;
 using MarkPad.Metaweblog;
 using MarkPad.OpenFromWeb;
-using MarkPad.Publish;
 using MarkPad.PublishDetails;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
@@ -137,28 +138,35 @@ namespace MarkPad.Shell
 
         public void PublishDocument()
         {
-            if (string.IsNullOrEmpty(_settingsService.Get<string>("BlogUrl")))
-            { 
-                var result =_windowManager.ShowDialog(new PublishViewModel(_settingsService));
-                if (result != true)
-                    return;
+            var blogs = _settingsService.Get<List<BlogSetting>>("Blogs");
+            if(blogs == null || blogs.Count == 0)
+            {
+                MessageBox.Show("No blogs available to publish to.", "Error Publishing Post", MessageBoxButton.OK, MessageBoxImage.Stop);
+                return;
             }
 
             var doc = MDI.ActiveItem as DocumentViewModel;
             if (doc != null)
             {
                 var pd = new Details {Title = doc.Post.title, Categories = doc.Post.categories };
-                var detailsResult = _windowManager.ShowDialog(new PublishDetailsViewModel(pd));
+                var detailsResult = _windowManager.ShowDialog(new PublishDetailsViewModel(pd, blogs));
                 if (detailsResult != true)
                     return;
 
-                doc.Publish(pd.Title, pd.Categories);
+                doc.Publish(pd.Title, pd.Categories,  pd.Blog);
             }
         }
 
         public void OpenFromWeb()
         {
-            var result = _windowManager.ShowDialog(new OpenFromWebViewModel(_settingsService));
+            var blogs = _settingsService.Get<List<BlogSetting>>("Blogs");
+            if (blogs == null || blogs.Count == 0)
+            {
+                MessageBox.Show("No blogs available to fetch from.", "Error Retrieving Posts", MessageBoxButton.OK, MessageBoxImage.Stop);
+                return;     
+            }
+
+            var result = _windowManager.ShowDialog(new OpenFromWebViewModel(_settingsService, blogs));
             if (result != true)
                 return;
 
