@@ -19,29 +19,54 @@
     </i:Interaction.Behaviors>
 
     <i:Interaction.Triggers>
+ <fw:InputBindingTrigger>
+            <fw:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Ctrl" Key="N" />
+            </fw:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="NewDocument" />
+        </fw:InputBindingTrigger>
         <fw:InputBindingTrigger>
             <fw:InputBindingTrigger.InputBinding>
                 <KeyBinding Modifiers="Ctrl" Key="S" />
             </fw:InputBindingTrigger.InputBinding>
             <cm:ActionMessage MethodName="SaveDocument" />
         </fw:InputBindingTrigger>
-        <fw:InputBindingTrigger>
-            <fw:InputBindingTrigger.InputBinding>
-                <KeyBinding Modifiers="Ctrl" Key="O" />
-            </fw:InputBindingTrigger.InputBinding>
-            <cm:ActionMessage MethodName="OpenDocument" />
-        </fw:InputBindingTrigger>
-        <fw:InputBindingTrigger>
+ <fw:InputBindingTrigger>
             <fw:InputBindingTrigger.InputBinding>
                 <KeyBinding Modifiers="Ctrl+Shift" Key="S" />
             </fw:InputBindingTrigger.InputBinding>
             <cm:ActionMessage MethodName="SaveAllDocuments" />
+        </fw:InputBindingTrigger>
+
+        <fw:InputBindingTrigger>
+            <fw:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Ctrl" Key="B" />
+            </fw:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="ToggleBold" />
+        </fw:InputBindingTrigger>
+        <fw:InputBindingTrigger>
+            <fw:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Ctrl" Key="I" />
+            </fw:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="ToggleItalic" />
+        </fw:InputBindingTrigger>
+        <fw:InputBindingTrigger>
+            <fw:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Ctrl" Key="J" />
+            </fw:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="ToggleCode" />
         </fw:InputBindingTrigger>
         <fw:InputBindingTrigger>
             <fw:InputBindingTrigger.InputBinding>
                 <KeyBinding Key="F10" />
             </fw:InputBindingTrigger.InputBinding>
             <cm:ActionMessage MethodName="ToggleWebView" />
+        </fw:InputBindingTrigger>
+        <fw:InputBindingTrigger>
+            <fw:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Ctrl" Key="O" />
+            </fw:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="OpenDocument" />
         </fw:InputBindingTrigger>
     </i:Interaction.Triggers>
 

@@ -4,6 +4,7 @@ using System.Windows;
 using Caliburn.Micro;
 using MarkPad.About;
 using MarkPad.Document;
+using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.MDI;
 using MarkPad.Metaweblog;
@@ -154,11 +155,33 @@ namespace MarkPad.Shell
                 doc.Print();
             }
         }
+        private DocumentView GetDocument()
+        {
+            return (MDI.ActiveItem as DocumentViewModel)
+                .Evaluate(d => d.GetView() as DocumentView);
+        }
+        public void ToggleBold()
+        {
+            GetDocument()
+                .ExecuteSafely(v => v.ToggleBold());
+        }
+
+        public void ToggleItalic()
+        {
+            GetDocument()
+                .ExecuteSafely(v => v.ToggleItalic());
+        }
+
+        public void ToggleCode()
+        {
+            GetDocument()
+                .ExecuteSafely(v => v.ToggleCode());
+        }
 
         public void PublishDocument()
         {
             var blogs = _settingsService.Get<List<BlogSetting>>("Blogs");
-            if(blogs == null || blogs.Count == 0)
+            if (blogs == null || blogs.Count == 0)
             {
                 MessageBox.Show("No blogs available to publish to.", "Error Publishing Post", MessageBoxButton.OK, MessageBoxImage.Stop);
                 return;
@@ -167,12 +190,12 @@ namespace MarkPad.Shell
             var doc = MDI.ActiveItem as DocumentViewModel;
             if (doc != null)
             {
-                var pd = new Details {Title = doc.Post.title, Categories = doc.Post.categories };
+                var pd = new Details { Title = doc.Post.title, Categories = doc.Post.categories };
                 var detailsResult = _windowManager.ShowDialog(new PublishDetailsViewModel(pd, blogs));
                 if (detailsResult != true)
                     return;
 
-                doc.Publish(pd.Title, pd.Categories,  pd.Blog);
+                doc.Publish(pd.Title, pd.Categories, pd.Blog);
             }
         }
 
@@ -182,7 +205,7 @@ namespace MarkPad.Shell
             if (blogs == null || blogs.Count == 0)
             {
                 MessageBox.Show("No blogs available to fetch from.", "Error Retrieving Posts", MessageBoxButton.OK, MessageBoxImage.Stop);
-                return;     
+                return;
             }
 
             var result = _windowManager.ShowDialog(new OpenFromWebViewModel(_settingsService, blogs));
@@ -190,7 +213,7 @@ namespace MarkPad.Shell
                 return;
 
             var post = _settingsService.Get<Post>("CurrentPost");
-            
+
             var doc = documentCreator();
             doc.OpenFromWeb(post);
             MDI.Open(doc);
