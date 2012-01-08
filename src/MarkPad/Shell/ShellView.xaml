@@ -19,7 +19,7 @@
     </i:Interaction.Behaviors>
 
     <i:Interaction.Triggers>
- <fw:InputBindingTrigger>
+        <fw:InputBindingTrigger>
             <fw:InputBindingTrigger.InputBinding>
                 <KeyBinding Modifiers="Ctrl" Key="N" />
             </fw:InputBindingTrigger.InputBinding>
@@ -31,7 +31,7 @@
             </fw:InputBindingTrigger.InputBinding>
             <cm:ActionMessage MethodName="SaveDocument" />
         </fw:InputBindingTrigger>
- <fw:InputBindingTrigger>
+        <fw:InputBindingTrigger>
             <fw:InputBindingTrigger.InputBinding>
                 <KeyBinding Modifiers="Ctrl+Shift" Key="S" />
             </fw:InputBindingTrigger.InputBinding>
@@ -119,7 +119,7 @@
                 <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.25" Direction="270" />
             </Grid.Effect>
             <Grid Margin="10"  Height="321" Width="687">
-                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="29.333" FontFamily="Segoe WP Light"><Run Text="markdown cheat sheet"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="29.333" FontFamily="Segoe UI" FontWeight="Light"><Run Text="markdown cheat sheet"/></TextBlock>
                 <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,51,0,0">
                     <TextBlock TextWrapping="Wrap" FontWeight="Bold" FontSize="10.667">FORMAT TEXT</TextBlock>
                     <TextBlock TextWrapping="Wrap" Opacity="0.75" FontWeight="Bold" FontSize="10.667"><Run Text="HEADERS"/></TextBlock>
@@ -178,7 +178,7 @@
                 <Button x:Name="PublishDocument" Content="PUBLISH" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
             </StackPanel>
             <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Orientation="Horizontal">
-                <Button x:Name="ShowSettings" Content="SETTINGS" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" Margin="0,0,20,0" FontWeight="Bold" />
+                <Button x:Name="ShowSettings" Content="SETTINGS" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" Margin="0,0,0,0" FontWeight="Bold" />
                 <TextBlock Margin="10,0"><Run Text="|"/></TextBlock>
                 <Button x:Name="ShowAbout" Content="ABOUT" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" Margin="0,0,20,0" FontWeight="Bold" />
                 <Button Click="ButtonMinimiseOnClick"  Style="{DynamicResource ChromelessButtonStyle}" Content="0" FontFamily="Marlett" />
