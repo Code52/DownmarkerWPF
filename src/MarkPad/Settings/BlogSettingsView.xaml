@@ -26,7 +26,7 @@
 
     <Window.Background>
         <LinearGradientBrush MappingMode="Absolute" StartPoint="0,0" EndPoint="0,180">
-            <GradientStop Color="#FFDEDEDE" />
+            <GradientStop Color="#EEEEEE" />
             <GradientStop Color="White" Offset="1" />
         </LinearGradientBrush>
     </Window.Background>
