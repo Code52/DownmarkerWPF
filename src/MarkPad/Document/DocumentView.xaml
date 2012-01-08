@@ -516,6 +516,7 @@
             cal:Message.Attach="[Event TextChanged]=[Action Update]"
             Grid.Column="0"
             Margin="10,10,10,-5" 
+            TextOptions.TextFormattingMode="Display"
             VerticalAlignment="Stretch"
             HorizontalAlignment="Stretch" Padding="0,0,10,0">
             <avalonedit:TextEditor.Effect>
