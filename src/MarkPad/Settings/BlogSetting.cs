@@ -1,11 +1,12 @@
 using System;
-using MarkPad.Metaweblog;
 using System.ComponentModel;
+using Caliburn.Micro;
+using MarkPad.Metaweblog;
 
 namespace MarkPad.Settings
 {
     [Serializable]
-    public class BlogSetting : IEditableObject, INotifyPropertyChanged
+    public class BlogSetting : PropertyChangedBase, IEditableObject
     {
         public string BlogName { get; set; }
 
@@ -29,7 +30,7 @@ namespace MarkPad.Settings
                 {
                     return false;
                 }
-                
+
                 return true;
             }
         }
@@ -82,8 +83,5 @@ namespace MarkPad.Settings
         public void EndEdit()
         {
         }
-
-        [field:NonSerialized]
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
