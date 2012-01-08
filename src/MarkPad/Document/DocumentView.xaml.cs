@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml;
 using Awesomium.Core;
@@ -19,6 +21,15 @@ namespace MarkPad.Document
             InitializeComponent();
             Loaded += DocumentViewLoaded;
             wb.Loaded += WbLoaded;
+
+            Editor.TextArea.SelectionChanged += SelectionChanged;
+
+            Editor.PreviewMouseLeftButtonUp += HandleMouseUp;
+
+            CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleBold, (x, y) => ToggleBold(), CanEditDocument));
+            CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleItalic, (x, y) => ToggleItalic(), CanEditDocument));
+            CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCode, (x, y) => ToggleCode(), CanEditDocument));
+            CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCodeBlock, (x, y) => ToggleCodeBlock(), CanEditDocument));
         }
 
         void WbLoaded(object sender, RoutedEventArgs e)
@@ -121,7 +132,33 @@ namespace MarkPad.Document
 
             Editor.SelectedText = Spaces + Editor.SelectedText.Replace(NewLine, NewLine + Spaces);
         }
+
+        private void SelectionChanged(object sender, EventArgs e)
+        {
+            if (Editor.TextArea.Selection.IsEmpty)
+            {
+                floatingToolBar.Hide();
+            }
+        }
+
+        private void HandleMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (Editor.TextArea.Selection.IsEmpty)
+            {
+                floatingToolBar.Hide();
+            }
+            else
+            {
+                floatingToolBar.Show();
+            }
+        }
+
+        private void CanEditDocument(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (Editor != null && Editor.TextArea != null && Editor.TextArea.Selection != null)
+            {
+                e.CanExecute = !Editor.TextArea.Selection.IsEmpty;
+            }
+        }
     }
-
-
 }
