@@ -25,7 +25,7 @@ namespace MarkPad.Services.Interfaces
         void ShowWarning(string title, string text, string extra, params ButtonExtras[] buttonExtras);
         void ShowError(string title, string text, string extra, params ButtonExtras[] buttonExtras);
 
-        string GetFileOpenPath(string title, string filter);
+        string[] GetFileOpenPath(string title, string filter);
         string GetFileSavePath(string title, string defaultExt, string filter);
     }
 }

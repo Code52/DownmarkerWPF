@@ -76,7 +76,7 @@ namespace MarkPad.Services.Implementation
             var result = service.Show();
         }
 
-        public string GetFileOpenPath(string title, string filter)
+        public string[] GetFileOpenPath(string title, string filter)
         {
             if (VistaOpenFileDialog.IsVistaFileDialogSupported)
             {
@@ -84,11 +84,11 @@ namespace MarkPad.Services.Implementation
                 openFileDialog.Title = title;
                 openFileDialog.CheckFileExists = true;
                 openFileDialog.RestoreDirectory = true;
-
+                openFileDialog.Multiselect = true;
                 openFileDialog.Filter = filter;
 
                 if (openFileDialog.ShowDialog() == true)
-                    return openFileDialog.FileName;
+                    return openFileDialog.FileNames;
             }
             else
             {
@@ -96,14 +96,14 @@ namespace MarkPad.Services.Implementation
                 ofd.Title = title;
                 ofd.CheckFileExists = true;
                 ofd.RestoreDirectory = true;
-
+                ofd.Multiselect = true;
                 ofd.Filter = filter;
 
                 if (ofd.ShowDialog() == true)
-                    return ofd.FileName;
+                    return ofd.FileNames;
             }
 
-            return "";
+            return null;
         }
 
         public string GetFileSavePath(string title, string defaultExt, string filter)

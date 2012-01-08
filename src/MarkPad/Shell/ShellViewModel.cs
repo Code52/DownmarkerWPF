@@ -72,10 +72,11 @@ namespace MarkPad.Shell
         public void OpenDocument()
         {
             var path = dialogService.GetFileOpenPath("Open a markdown document.", Constants.ExtensionFilter + "|Any File (*.*)|*.*");
-            if (string.IsNullOrEmpty(path))
+            if (path == null)
                 return;
 
-            eventAggregator.Publish(new FileOpenEvent(path));
+            foreach (var p in path)
+                eventAggregator.Publish(new FileOpenEvent(p));
         }
 
         public void OpenDocument(string path)
