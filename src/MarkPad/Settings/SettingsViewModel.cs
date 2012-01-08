@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net;
 using System.Reflection;
-using System.Windows;
 using Caliburn.Micro;
-using CookComputing.XmlRpc;
-using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
 using Microsoft.Win32;
 
@@ -19,8 +16,14 @@ namespace MarkPad.Settings
         private readonly ISettingsService _settingsService;
         private readonly IWindowManager _windowManager;
 
-        public SettingsViewModel(ISettingsService settingsService, IWindowManager windowManager)
+        private readonly Func<BlogSettingsViewModel> blogSettingsCreator;
+
+        public SettingsViewModel(ISettingsService settingsService, IWindowManager windowManager, Func<BlogSettingsViewModel> blogSettingsCreator)
         {
+            _settingsService = settingsService;
+            _windowManager = windowManager;
+            this.blogSettingsCreator = blogSettingsCreator;
+
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes"))
             {
                 FileMDBinding = key.GetSubKeyNames().Contains(Constants.DefaultExtensions[0]) &&
@@ -32,9 +35,6 @@ namespace MarkPad.Settings
                 FileMDownBinding = key.GetSubKeyNames().Contains(Constants.DefaultExtensions[2]) &&
                     !string.IsNullOrEmpty(key.OpenSubKey(Constants.DefaultExtensions[2]).GetValue("").ToString());
             }
-
-            _settingsService = settingsService;
-            _windowManager = windowManager;
 
             var blogs = _settingsService.Get<List<BlogSetting>>("Blogs") ?? new List<BlogSetting>();
 
@@ -50,11 +50,14 @@ namespace MarkPad.Settings
 
         public void AddBlog()
         {
-            var blog = new BlogSetting { BlogName = "New", Language = "HTML"};
+            var blog = new BlogSetting { BlogName = "New", Language = "HTML" };
 
             blog.BeginEdit();
 
-            var result = _windowManager.ShowDialog(new BlogSettingsViewModel(blog));
+            var blogSettings = blogSettingsCreator();
+            blogSettings.InitializeBlog(blog);
+
+            var result = _windowManager.ShowDialog(blogSettings);
             if (result != true)
             {
                 blog.CancelEdit();
@@ -72,7 +75,10 @@ namespace MarkPad.Settings
 
             CurrentBlog.BeginEdit();
 
-            var result = _windowManager.ShowDialog(new BlogSettingsViewModel(CurrentBlog));
+            var blogSettings = blogSettingsCreator();
+            blogSettings.InitializeBlog(CurrentBlog);
+
+            var result = _windowManager.ShowDialog(blogSettings);
 
             if (result != true)
             {
