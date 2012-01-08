@@ -509,7 +509,7 @@
         </Grid.ColumnDefinitions>
 
         <avalonedit:TextEditor
-            x:Name="Document"
+            x:Name="Editor"
             WordWrap="True"
             ShowLineNumbers="True"
             Document="{Binding Document}"

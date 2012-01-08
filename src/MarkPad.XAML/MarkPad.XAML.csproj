@@ -72,7 +72,6 @@
     <Compile Include="Converters\DebugConverter.cs" />
     <Compile Include="Converters\MarkupConverter.cs" />
     <Compile Include="AttachedProperties\WebBrowserUtility.cs" />
-    <Compile Include="Converters\BoolDoubleNegativeConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

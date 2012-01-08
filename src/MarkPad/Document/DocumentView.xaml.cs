@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Xml;
-using Awesomium.Core;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 
@@ -29,22 +28,21 @@ namespace MarkPad.Document
             using (var stream = Assembly.GetEntryAssembly().GetManifestResourceStream("MarkPad.Syntax.Markdown.xshd"))
             using (var reader = new XmlTextReader(stream))
             {
-                Document.SyntaxHighlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+                Editor.SyntaxHighlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
             }
 
-            documentScrollViewer = FindVisualChild<ScrollViewer>(Document);
+            documentScrollViewer = FindVisualChild<ScrollViewer>(Editor);
 
             if (documentScrollViewer != null)
             {
                 documentScrollViewer.ScrollChanged += (i, j) => wb.ExecuteJavascript("window.scrollTo(0," + j.VerticalOffset + ");");
-                var x = ((DocumentViewModel)DataContext);
-                x.Document.TextChanged += (i, j) =>
+                Editor.TextChanged += (i, j) =>
                                               {
                                                   wb.LoadCompleted += (k, l) => wb.ExecuteJavascript("window.scrollTo(0," + documentScrollViewer.VerticalOffset + ");");
                                               };
             }
 
-            
+
         }
 
         public static T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject
