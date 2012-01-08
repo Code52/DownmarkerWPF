@@ -1,5 +1,6 @@
 ﻿using System;
 using Caliburn.Micro;
+using MarkPad.About;
 using MarkPad.Document;
 using MarkPad.Framework.Events;
 using MarkPad.MDI;
@@ -15,6 +16,7 @@ namespace MarkPad.Shell
         private readonly IWindowManager windowService;
         private readonly Func<DocumentViewModel> documentCreator;
         private readonly Func<SettingsViewModel> settingsCreator;
+        private readonly Func<AboutViewModel> aboutCreator;
 
         public ShellViewModel(
             IDialogService dialogService,
@@ -22,7 +24,8 @@ namespace MarkPad.Shell
             IEventAggregator eventAggregator,
             MDIViewModel mdi,
             Func<DocumentViewModel> documentCreator,
-            Func<SettingsViewModel> settingsCreator)
+            Func<SettingsViewModel> settingsCreator,
+            Func<AboutViewModel> aboutCreator)
         {
             this.eventAggregator = eventAggregator;
             this.dialogService = dialogService;
@@ -30,6 +33,7 @@ namespace MarkPad.Shell
             MDI = mdi;
             this.documentCreator = documentCreator;
             this.settingsCreator = settingsCreator;
+            this.aboutCreator = aboutCreator;
 
             ActivateItem(mdi);
         }
@@ -107,6 +111,12 @@ namespace MarkPad.Shell
         {
             windowService.ShowDialog(settingsCreator());
         }
+
+        public void ShowAbout()
+        {
+            windowService.ShowDialog(aboutCreator());
+        }
+
 
         public void PrintDocument()
         {
