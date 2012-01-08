@@ -98,6 +98,14 @@ namespace MarkPad.Settings
             {
                 MessageBox.Show(ex.Message, "Fetch Failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            catch(XmlRpcException ex)
+            {
+                MessageBox.Show(ex.Message, "Fetch Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (XmlRpcFaultException ex)
+            {
+                MessageBox.Show(ex.Message, "Fetch Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 

@@ -67,6 +67,14 @@ namespace MarkPad.OpenFromWeb
             {
                 MessageBox.Show(ex.Message, "Error Fetching Posts", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            catch (XmlRpcException ex)
+            {
+                MessageBox.Show(ex.Message, "Fetch Fetching Posts", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (XmlRpcFaultException ex)
+            {
+                MessageBox.Show(ex.Message, "Fetch Fetching Posts", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 

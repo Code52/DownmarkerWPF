@@ -213,6 +213,14 @@ namespace MarkPad.Document
             {
                 MessageBox.Show(ex.Message, "Error Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            catch (XmlRpcException ex)
+            {
+                MessageBox.Show(ex.Message, "Error Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (XmlRpcFaultException ex)
+            {
+                MessageBox.Show(ex.Message, "Error Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
 
             _post = post;
             Original = Document.Text;

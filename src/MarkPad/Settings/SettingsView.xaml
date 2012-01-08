@@ -5,8 +5,8 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 		Icon="../markpad.ico"
         xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
-        xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro" MouseLeftButtonDown="DragMoveWindow"
-        xmlns:Settings="clr-namespace:MarkPad.Settings" MouseLeftButtonDown="DragMoveWindow"
+        MouseLeftButtonDown="DragMoveWindow"
+        xmlns:Settings="clr-namespace:MarkPad.Settings" 
         WindowStartupLocation="CenterOwner" mc:Ignorable="d" Width="300" Height="320" ResizeMode="NoResize">
     <i:Interaction.Behaviors>
     <Behaviours:BorderlessWindowBehavior ResizeWithGrip="False" />

@@ -134,7 +134,7 @@ namespace MarkPad.Shell
 
         public void ShowAbout()
         {
-            windowService.ShowDialog(aboutCreator());
+            _windowManager.ShowDialog(aboutCreator());
         }
 
         public void ToggleWebView()
