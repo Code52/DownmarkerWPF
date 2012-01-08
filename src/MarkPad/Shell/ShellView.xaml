@@ -43,7 +43,18 @@
             </fw:InputBindingTrigger.InputBinding>
             <cm:ActionMessage MethodName="ToggleBold" />
         </fw:InputBindingTrigger>
-
+        <fw:InputBindingTrigger>
+            <fw:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Ctrl" Key="I" />
+            </fw:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="ToggleItalic" />
+        </fw:InputBindingTrigger>
+        <fw:InputBindingTrigger>
+            <fw:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Ctrl" Key="J" />
+            </fw:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="ToggleCode" />
+        </fw:InputBindingTrigger>
     </i:Interaction.Triggers>
 
     <Window.Resources>

@@ -57,6 +57,9 @@ namespace MarkPad.Framework
 
         private static string ToggleDelimiter(this string inputString, string delimiter, bool turnOn)
         {
+            //todo: Don't put the delimeters around spaces. It doesn't look nice
+            // probably have to use fancy-pants regex or some shit
+
             if (turnOn)
                 return delimiter + inputString + delimiter;
 

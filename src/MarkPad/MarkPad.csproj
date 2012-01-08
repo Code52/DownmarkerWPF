@@ -98,7 +98,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Framework\CommonExtensions.cs" />
+    <Compile Include="Framework\ObjectExtensions.cs" />
     <Compile Include="Framework\InputBindingTrigger.cs" />
     <Compile Include="Framework\MarkdownHelpers.cs" />
     <Compile Include="Framework\VisualExtensions.cs" />

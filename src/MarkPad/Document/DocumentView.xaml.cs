@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -45,7 +46,12 @@ namespace MarkPad.Document
                                               };
             }
 
-            
+            //  AvalonEdit hijacks Ctrl+I. We need to free that mutha up
+            var editCommandBindings = Document.TextArea.DefaultInputHandler.Editing.CommandBindings;
+
+            editCommandBindings
+                .FirstOrDefault(b => b.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.IndentSelection)
+                .ExecuteSafely(b => editCommandBindings.Remove(b));
         }
 
 
@@ -65,20 +71,59 @@ namespace MarkPad.Document
             Document.SelectedText = selectedText.ToggleItalic(!selectedText.IsItalic());
         }
 
+        internal void ToggleCode()
+        {
+            if (Document.SelectedText.Contains(NewLine))
+                ToggleCodeBlock();
+            else
+            {
+                var selectedText = GetSelectedText();
+                if (string.IsNullOrWhiteSpace(selectedText)) return;
+
+                Document.SelectedText = selectedText.ToggleCode(!selectedText.IsCode());
+            }
+        }
+
+
         private string GetSelectedText()
         {
             var textArea = Document.TextArea;
+            // What would you do if the selected text is empty? I vote: Nothing.
             if (textArea.Selection.IsEmpty)
                 return null;
-            //{
-            //    var line = textArea.Document.GetLineByOffset(textArea.Caret.Offset);
-            //    textArea.Selection = textArea.Selection.StartSelectionOrSetEndpoint(line.Offset, line.Offset + line.Length);
-            //}
 
             return textArea.Selection.GetText(textArea.Document);
         }
 
+        private const string NewLine = "\r\n";
+        private const int NumSpaces = 4;
+        private const string Spaces = "    ";
+        private void ToggleCodeBlock()
+        {
+            var lines = Document.SelectedText.Split(NewLine.ToCharArray());
+            if (lines[0].Length > 4)
+            {
+                if (lines[0].Substring(0, 4) == Spaces)
+                {
+                    Document.SelectedText =
+                        Document.SelectedText.Replace((NewLine + Spaces), NewLine);
 
+                    // remember the first line
+                    if (Document.SelectedText.Length >= NumSpaces)
+                    {
+                        var firstFour = Document.SelectedText.Substring(0, NumSpaces);
+                        var rest = Document.SelectedText.Substring(NumSpaces);
+
+                        Document.SelectedText =
+                            firstFour.Replace(Spaces, string.Empty) + rest;
+                    }
+                    return;
+                }
+            }
+
+            Document.SelectedText =
+                Spaces + Document.SelectedText.Replace(NewLine, NewLine + Spaces);
+        }
     }
 
 

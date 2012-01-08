@@ -135,5 +135,11 @@ namespace MarkPad.Shell
                 .ExecuteSafely(v => v.ToggleItalic());
         }
 
+        public void ToggleCode()
+        {
+            GetDocument()
+                .ExecuteSafely(v => v.ToggleCode());
+        }
+
     }
 }
