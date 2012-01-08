@@ -133,5 +133,7 @@ namespace MarkPad.Document
                 view.wb.Print();
             }
         }
+
+        public bool DistractionFree { get; set; }
     }
 }

@@ -39,12 +39,12 @@
     		Margin="0,8,8,0" Height="14" VerticalAlignment="Top" />
         <StackPanel Margin="60,10,60,0">
             <Image Margin="0" Source="/MarkPad;component/icon.png" Height="150" Width="150" HorizontalAlignment="Center"/>
-            <TextBlock TextWrapping="Wrap" FontWeight="Bold" FontSize="69.333" HorizontalAlignment="Left" Margin="-4,0,0,0"><Run Language="en-au" Text="MarkPad"/></TextBlock>
+            <TextBlock TextWrapping="Wrap" FontWeight="Bold" FontSize="69.333" HorizontalAlignment="Left" Margin="-4,0,0,0"><Run Text="MarkPad"/></TextBlock>
             <TextBlock Margin="0,-18,0,0" TextWrapping="Wrap" FontWeight="Bold" HorizontalAlignment="Left" Height="20.83"><Run Text="version "/><Run Text=" "/><Run Text="{Binding Version, Mode=OneTime}" /></TextBlock>
-            <TextBlock TextWrapping="Wrap" Foreground="#FF41B1E1" Margin="0,-7,-0.001,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontFamily="Segoe UI Light" FontSize="18.667"><Run Language="en-au" Text="a code52 project"/></TextBlock>
+            <TextBlock TextWrapping="Wrap" Foreground="#FF41B1E1" Margin="0,-7,-0.001,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontFamily="Segoe UI Light" FontSize="18.667"><Run Text="a code52 project"/></TextBlock>
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Margin="0,8,0,0" FontFamily="Segoe UI Light" FontSize="32" Text="a project by" />
             <TextBlock Text="{Binding Authors}" TextWrapping="Wrap" Margin="0,4,0,0" />
-            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Margin="0,10,0,0" FontFamily="Segoe UI Light" FontSize="32" ><Run Language="en-au" Text="markpad uses"/></TextBlock>
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Margin="0,10,0,0" FontFamily="Segoe UI Light" FontSize="32" ><Run Text="markpad uses"/></TextBlock>
             <TextBlock Text="{Binding Components}" TextWrapping="Wrap" Margin="0,4,0,0" />
             <Button x:Name="Visit" Content="Visit Markpad Website" HorizontalAlignment="Center" Margin="0,25,0,0" Style="{DynamicResource SquareButtonStyle}" Width="145"/>
         </StackPanel>
