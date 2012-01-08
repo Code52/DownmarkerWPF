@@ -38,7 +38,7 @@
     </Grid.RowDefinitions>
     <TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold"
                FontSize="10.667" Margin="10,10,0,0">
-      <Run Language="en-au" Text="SETTINGS" />
+      <Run Text="SETTINGS" />
     </TextBlock>
 
     <Button x:Name="TryClose" Style="{DynamicResource ChromelessButtonStyle}" Content="r"
