@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using Caliburn.Micro;
+using MarkPad.About;
 using MarkPad.Document;
 using MarkPad.Framework.Events;
 using MarkPad.MDI;
@@ -21,6 +22,7 @@ namespace MarkPad.Shell
         private readonly ISettingsService _settingsService;
         private readonly Func<DocumentViewModel> documentCreator;
         private readonly Func<SettingsViewModel> settingsCreator;
+        private readonly Func<AboutViewModel> aboutCreator;
 
         public ShellViewModel(
             IDialogService dialogService,
@@ -29,7 +31,8 @@ namespace MarkPad.Shell
             IEventAggregator eventAggregator,
             MDIViewModel mdi,
             Func<DocumentViewModel> documentCreator,
-            Func<SettingsViewModel> settingsCreator)
+            Func<SettingsViewModel> settingsCreator,
+            Func<AboutViewModel> aboutCreator)
         {
             this.eventAggregator = eventAggregator;
             this.dialogService = dialogService;
@@ -38,6 +41,7 @@ namespace MarkPad.Shell
             this.MDI = mdi;
             this.documentCreator = documentCreator;
             this.settingsCreator = settingsCreator;
+            this.aboutCreator = aboutCreator;
 
             ActivateItem(mdi);
         }
@@ -87,10 +91,11 @@ namespace MarkPad.Shell
         public void OpenDocument()
         {
             var path = dialogService.GetFileOpenPath("Open a markdown document.", Constants.ExtensionFilter + "|Any File (*.*)|*.*");
-            if (string.IsNullOrEmpty(path))
+            if (path == null)
                 return;
 
-            eventAggregator.Publish(new FileOpenEvent(path));
+            foreach (var p in path)
+                eventAggregator.Publish(new FileOpenEvent(p));
         }
 
         public void OpenDocument(string path)
@@ -125,6 +130,20 @@ namespace MarkPad.Shell
         public void ShowSettings()
         {
             _windowManager.ShowDialog(settingsCreator());
+        }
+
+        public void ShowAbout()
+        {
+            windowService.ShowDialog(aboutCreator());
+        }
+
+        public void ToggleWebView()
+        {
+            var doc = MDI.ActiveItem as DocumentViewModel;
+            if (doc != null)
+            {
+                doc.DistractionFree = !doc.DistractionFree;
+            }
         }
 
         public void PrintDocument()

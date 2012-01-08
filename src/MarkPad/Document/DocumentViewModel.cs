@@ -161,6 +161,7 @@ namespace MarkPad.Document
             }
         }
 
+        public bool DistractionFree { get; set; }
         public void Publish(string postTitle, string[] categories, BlogSetting blog)
         {
             if (categories == null) categories = new string[0];

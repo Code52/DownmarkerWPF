@@ -11,6 +11,7 @@
     xmlns:Shell="clr-namespace:MarkPad.Shell" mc:Ignorable="d" 
     MouseLeftButtonDown="DragMoveWindow"
     Icon="../markpad.ico"
+    KeyDown="WindowKeyDown"
     d:DataContext="{d:DesignInstance Shell:ShellViewModel}">
     
     <i:Interaction.Behaviors>
@@ -26,13 +27,25 @@
         </fw:InputBindingTrigger>
         <fw:InputBindingTrigger>
             <fw:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Ctrl" Key="O" />
+            </fw:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="OpenDocument" />
+        </fw:InputBindingTrigger>
+        <fw:InputBindingTrigger>
+            <fw:InputBindingTrigger.InputBinding>
                 <KeyBinding Modifiers="Ctrl+Shift" Key="S" />
             </fw:InputBindingTrigger.InputBinding>
             <cm:ActionMessage MethodName="SaveAllDocuments" />
         </fw:InputBindingTrigger>
+        <fw:InputBindingTrigger>
+            <fw:InputBindingTrigger.InputBinding>
+                <KeyBinding Key="F10" />
+            </fw:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="ToggleWebView" />
+        </fw:InputBindingTrigger>
     </i:Interaction.Triggers>
 
-    <Window.Resources>
+        <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colours.xaml" />
@@ -41,7 +54,32 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MarkPad;component/Styles/MarkPad.Accents.xaml" />
-            </ResourceDictionary.MergedDictionaries>            
+            </ResourceDictionary.MergedDictionaries>
+        	<Storyboard x:Key="ShowCheatSheet">
+        		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="cheatSheetDropdown">
+        			<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+        		</ObjectAnimationUsingKeyFrames>
+        		<ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="cheatSheetDropdown">
+        			<EasingThicknessKeyFrame KeyTime="0" Value="0,-341,0,0"/>
+        			<EasingThicknessKeyFrame KeyTime="0:0:0.5" Value="0">
+        				<EasingThicknessKeyFrame.EasingFunction>
+        					<CircleEase EasingMode="EaseOut"/>
+        				</EasingThicknessKeyFrame.EasingFunction>
+        			</EasingThicknessKeyFrame>
+        		</ThicknessAnimationUsingKeyFrames>
+        	</Storyboard>
+            <Storyboard x:Key="HideCheatSheet">
+                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="cheatSheetDropdown">
+                    <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="{x:Static Visibility.Collapsed}"/>
+                </ObjectAnimationUsingKeyFrames>
+                <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="cheatSheetDropdown">
+                    <EasingThicknessKeyFrame KeyTime="0:0:0.5" Value="0,-341,0,0">
+                        <EasingThicknessKeyFrame.EasingFunction>
+                            <CircleEase EasingMode="EaseOut"/>
+                        </EasingThicknessKeyFrame.EasingFunction>
+                    </EasingThicknessKeyFrame>
+                </ThicknessAnimationUsingKeyFrames>
+            </Storyboard>
         </ResourceDictionary>
     </Window.Resources>
     <Window.Background>
@@ -50,11 +88,59 @@
             <GradientStop Color="White" Offset="1"/>
         </LinearGradientBrush>
     </Window.Background>
-    <Grid Margin="0px 0px 0px 10px">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <Grid Margin="0,0,0,10">
+        <Grid x:Name="cheatSheetDropdown" UseLayoutRounding="True" SnapsToDevicePixels="True" Panel.ZIndex="100" HorizontalAlignment="Center" VerticalAlignment="Top" Background="White" Margin="0,-341,0,0" Visibility="Collapsed">
+			<Grid.Effect>
+                <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.25" Direction="270" />
+            </Grid.Effect>
+            <Grid Margin="10"  Height="321" Width="687">
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="29.333" FontFamily="Segoe WP Light"><Run Text="markdown cheat sheet"/></TextBlock>
+                <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,51,0,0">
+                    <TextBlock TextWrapping="Wrap" FontWeight="Bold" FontSize="10.667">FORMAT TEXT</TextBlock>
+                    <TextBlock TextWrapping="Wrap" Opacity="0.75" FontWeight="Bold" FontSize="10.667"><Run Text="HEADERS"/></TextBlock>
+                    <TextBlock TextWrapping="Wrap" FontFamily="Courier New">
+				<Run># This is an &lt;h1&gt; tag</Run><LineBreak />
+				<Run>## This is an &lt;h2&gt; tag</Run><LineBreak />
+				<Run>####### This is an &lt;h6&gt; tag</Run>
+                    </TextBlock>
+
+                    <TextBlock TextWrapping="Wrap" Margin="0,10,0,0" Opacity="0.75" FontSize="10.667"><Run FontWeight="Bold" Text="TEXT STYLE"/></TextBlock>
+                    <TextBlock TextWrapping="Wrap" FontFamily="Courier New" >
+				<Run>*This text will be italic*</Run><LineBreak />
+				<Run>_This will also be italic_</Run><LineBreak />
+				<Run>**This text will be bold**</Run><LineBreak />
+				<Run>__This will also be bold__</Run><LineBreak /><LineBreak />
+				<Run>*You **can** combine them*</Run>
+                    </TextBlock>
+
+                </StackPanel>
+                <StackPanel VerticalAlignment="Top" Margin="230.666,51,0,0" HorizontalAlignment="Left">
+                    <TextBlock TextWrapping="Wrap" FontWeight="Bold" FontSize="10.667"><Run Text="LISTS"/></TextBlock>
+                    <TextBlock TextWrapping="Wrap" Opacity="0.75" FontWeight="Bold" FontSize="10.667"><Run Text="UNORDERED"/></TextBlock>
+                    <TextBlock TextWrapping="Wrap" FontFamily="Courier New"><Run Text="* Item 1"/><LineBreak/><Run Text="* Item 2"/><LineBreak/><Run Text="    * Item 2a"/><LineBreak/><Run Text="    * Item 2b"/></TextBlock>
+
+                    <TextBlock TextWrapping="Wrap" Margin="0,10,0,0" Opacity="0.75" FontSize="10.667"><Run FontWeight="Bold" Text="ORDERED"/></TextBlock>
+                    <TextBlock TextWrapping="Wrap" FontFamily="Courier New" ><Run Text="1. Item 1"/><LineBreak/><Run Text="2. Item 2"/><LineBreak/><Run Text="    * Item 2a"/><LineBreak/><Run Text="    * Item 2b"/></TextBlock>
+
+                </StackPanel>
+                <StackPanel VerticalAlignment="Top" Margin="0,51,63.4,0" HorizontalAlignment="Right">
+                    <TextBlock TextWrapping="Wrap" FontWeight="Bold" FontSize="10.667" Text="MISCELLANEOUS"/>
+                    <TextBlock TextWrapping="Wrap" Opacity="0.75" FontWeight="Bold" FontSize="10.667" Text="IMAGES"/>
+                    <TextBlock TextWrapping="Wrap" FontFamily="Courier New"><Run Text="![Something!](/images/logo.png)"/><LineBreak/><Run Text="Format: ![Alt Text](url)"/></TextBlock>
+
+                    <TextBlock TextWrapping="Wrap" Margin="0,10,0,0" Opacity="0.75" FontSize="10.667" FontWeight="Bold" Text="LINKS"/>
+                    <TextBlock TextWrapping="Wrap" FontFamily="Courier New" ><Run Text="http://foo.com"/><LineBreak/><Run Text="[title](http://foo.com)"/></TextBlock>
+                </StackPanel>
+
+                <Button Click="DismissCheatSheet" Style="{DynamicResource ChromelessButtonStyle}" ToolTip="dismiss cheat sheet" Foreground="Black" Content="r" FontFamily="Marlett" HorizontalAlignment="Right" VerticalAlignment="Top" />
+            </Grid>
+        </Grid>
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold" FontSize="10.667" Margin="30,10,0,0"><Run Text="MARKPAD"/></TextBlock>
         <TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold" FontSize="10.667" Margin="30,10,0,0"><Run Language="en-au" Text="MARKPAD"/></TextBlock>
         <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Margin="30,30,30,10">
             <Button  x:Name="NewDocument" Content="NEW" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
@@ -71,15 +157,21 @@
             <Button Click="ButtonMinimiseOnClick"  Style="{DynamicResource ChromelessButtonStyle}" Content="0" FontFamily="Marlett" />
             <Button Click="ButtonMaxRestoreOnClick" x:Name="maxRestore" Style="{DynamicResource ChromelessButtonStyle}" Content="1" FontFamily="Marlett" />
             <Button x:Name="TryClose" Style="{DynamicResource ChromelessButtonStyle}" Content="r" FontFamily="Marlett" />
-        </StackPanel>
-        <Rectangle HorizontalAlignment="Left" Stroke="Black" Width="10" StrokeThickness="0" Margin="0,10">
-            <Rectangle.Fill>
-                <SolidColorBrush Color="{DynamicResource HighlightDarkColor}" />
-            </Rectangle.Fill>
-        </Rectangle>
+				<TextBlock Margin="10,0"><Run Text="|"/></TextBlock>
+				<Button x:Name="ShowAbout" Content="ABOUT" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" Margin="0,0,20,0" FontWeight="Bold" />
+				<Button Click="ButtonMinimiseOnClick"  Style="{DynamicResource ChromelessButtonStyle}" Content="0" FontFamily="Marlett" />
+				<Button Click="ButtonMaxRestoreOnClick" x:Name="maxRestore" Style="{DynamicResource ChromelessButtonStyle}" Content="1" FontFamily="Marlett" />
+				<Button x:Name="TryClose" Style="{DynamicResource ChromelessButtonStyle}" Content="r" FontFamily="Marlett" />
+			</StackPanel>
+			<Rectangle HorizontalAlignment="Left" Stroke="Black" Width="10" StrokeThickness="0" Margin="0,10">
+				<Rectangle.Fill>
+					<SolidColorBrush Color="{DynamicResource HighlightDarkColor}" />
+				</Rectangle.Fill>
+			</Rectangle>
             
-        <ContentControl x:Name="MDI"
-                        Margin="10,0"
-                        Grid.Row="1" />
-    </Grid>
+			<ContentControl x:Name="MDI"
+				Margin="10,0"
+				Grid.Row="1" />
+		</Grid>
+	</Grid>
 </Window>

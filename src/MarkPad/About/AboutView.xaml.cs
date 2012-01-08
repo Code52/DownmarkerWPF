@@ -1,10 +1,10 @@
 ﻿using System.Windows.Input;
 
-namespace MarkPad.Settings
+namespace MarkPad.About
 {
-    public partial class SettingsView
+    public partial class AboutView
     {
-        public SettingsView()
+        public AboutView()
         {
             InitializeComponent();
         }

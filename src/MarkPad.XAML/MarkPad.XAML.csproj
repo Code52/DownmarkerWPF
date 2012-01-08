@@ -68,6 +68,8 @@
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AttachedProperties\WebBrowserUtility.cs" />
+    <Compile Include="Converters\BoolDoubleNegativeConverter.cs" />
+    <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
