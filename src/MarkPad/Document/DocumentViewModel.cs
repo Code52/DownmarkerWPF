@@ -175,7 +175,7 @@ namespace MarkPad.Document
                                 ? postTitle
                                 : this.DisplayName.Split('.')[0];
 
-            if (!string.IsNullOrWhiteSpace(_post.postid.ToString()))
+            if (_post.postid != null && !string.IsNullOrWhiteSpace(_post.postid.ToString()))
             {
                 post = proxy.GetPost(_post.postid.ToString(), blog.Username, blog.Password);
             }

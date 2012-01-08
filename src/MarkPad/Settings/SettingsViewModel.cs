@@ -94,6 +94,7 @@ namespace MarkPad.Settings
             UpdateExtensionRegistryKeys();
 
             _settingsService.Set("Blogs", Blogs.ToList());
+            _settingsService.Save();
 
             TryClose();
         }
