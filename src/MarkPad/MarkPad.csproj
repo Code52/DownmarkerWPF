@@ -104,6 +104,10 @@
   <ItemGroup>
     <Compile Include="Framework\InputBindingTrigger.cs" />
     <Compile Include="Settings\BlogSetting.cs" />
+    <Compile Include="Settings\BlogSettingsView.xaml.cs">
+      <DependentUpon>BlogSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\BlogSettingsViewModel.cs" />
     <Compile Include="SingleInstanceManager.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -153,6 +157,10 @@
     </Compile>
     <Compile Include="PublishDetails\PublishDetailsViewModel.cs" />
     <Compile Include="Shell\ShellViewModel.cs" />
+    <Page Include="Settings\BlogSettingsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Styles\MarkPad.Accents.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
