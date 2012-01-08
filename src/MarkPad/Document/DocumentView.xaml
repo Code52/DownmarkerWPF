@@ -6,10 +6,15 @@
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:shared="http://schemas.markpad.net/winfx/xaml/shared" xmlns:cal="http://www.caliburnproject.org"
     xmlns:awe="clr-namespace:Awesomium.Windows.Controls;assembly=Awesomium.Windows.Controls" xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
+    xmlns:Document="clr-namespace:MarkPad.Document" xmlns:Framework="clr-namespace:MarkPad.Framework"
     x:Class="MarkPad.Document.DocumentView"
     mc:Ignorable="d" 
     d:DesignHeight="300" d:DesignWidth="300"
 >
+    <UserControl.InputBindings>
+        <KeyBinding Command="Document:FormattingCommands.ToggleBold" Key="B" Modifiers="Control" />
+        <KeyBinding Command="Document:FormattingCommands.ToggleItalic" Key="I" Modifiers="Control" />
+    </UserControl.InputBindings>
     <UserControl.Resources>
         <ControlTemplate x:Key="HorizontalScrollBar"
                      TargetType="{x:Type ScrollBar}">
@@ -507,6 +512,17 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="{Binding DistractionFree, Converter={shared:BoolToGridLengthConverter Invert=True}}" />
         </Grid.ColumnDefinitions>
+
+        <Framework:FloatingToolBar x:Name="floatingToolBar" PlacementTarget="{Binding ElementName=Editor}" CommandTarget="{Binding ElementName=root}" VerticalOffset="-60" HorizontalOffset="-30">
+            <Border Background="#f0f0f0" Padding="3,2,3,2" BorderThickness="1" CornerRadius="1" BorderBrush="#999999">
+                <StackPanel Orientation="Horizontal">
+                    <Button Width="22"  Command="Document:FormattingCommands.ToggleBold" ToolTip="Bold">B</Button>
+                    <Button Width="22" Command="Document:FormattingCommands.ToggleItalic" ToolTip="Italic">I</Button>
+                    <Button Width="44" Command="Document:FormattingCommands.ToggleCode" ToolTip="Code" Margin="5,0,0,0">Code</Button>
+                    <Button Width="78" Command="Document:FormattingCommands.ToggleCodeBlock" ToolTip="Code block">Code block</Button>
+                </StackPanel>
+            </Border>
+        </Framework:FloatingToolBar>
 
         <avalonedit:TextEditor
             x:Name="Editor"
