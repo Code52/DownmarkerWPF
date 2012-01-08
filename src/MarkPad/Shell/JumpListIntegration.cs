@@ -102,7 +102,6 @@ namespace MarkPad.Shell
             return new JumpTask
                            {
                                Arguments = file,
-                               IconResourcePath = path,
                                ApplicationPath = path,
                                Title = new FileInfo(file).Name,
                                CustomCategory = "Recent Files"
