@@ -121,7 +121,7 @@ namespace MarkPad.Framework
         {
             if (IsOpen)
             {
-                Show();
+                Hide();
             }
         }
 
