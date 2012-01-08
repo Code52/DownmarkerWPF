@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows;
 using Caliburn.Micro;
 using MarkPad.About;
 using MarkPad.Document;
@@ -24,6 +23,7 @@ namespace MarkPad.Shell
         private readonly Func<DocumentViewModel> documentCreator;
         private readonly Func<SettingsViewModel> settingsCreator;
         private readonly Func<AboutViewModel> aboutCreator;
+        private readonly Func<OpenFromWebViewModel> openFromWebCreator;
 
         public ShellViewModel(
             IDialogService dialogService,
@@ -33,16 +33,18 @@ namespace MarkPad.Shell
             MDIViewModel mdi,
             Func<DocumentViewModel> documentCreator,
             Func<SettingsViewModel> settingsCreator,
-            Func<AboutViewModel> aboutCreator)
+            Func<AboutViewModel> aboutCreator,
+            Func<OpenFromWebViewModel> openFromWebCreator)
         {
             this.eventAggregator = eventAggregator;
             this.dialogService = dialogService;
-            _windowManager = windowManager;
-            _settingsService = settingsService;
+            this._windowManager = windowManager;
+            this._settingsService = settingsService;
             this.MDI = mdi;
             this.documentCreator = documentCreator;
             this.settingsCreator = settingsCreator;
             this.aboutCreator = aboutCreator;
+            this.openFromWebCreator = openFromWebCreator;
 
             ActivateItem(mdi);
         }
@@ -155,11 +157,13 @@ namespace MarkPad.Shell
                 doc.Print();
             }
         }
+
         private DocumentView GetDocument()
         {
             return (MDI.ActiveItem as DocumentViewModel)
                 .Evaluate(d => d.GetView() as DocumentView);
         }
+
         public void ToggleBold()
         {
             GetDocument()
@@ -183,7 +187,7 @@ namespace MarkPad.Shell
             var blogs = _settingsService.Get<List<BlogSetting>>("Blogs");
             if (blogs == null || blogs.Count == 0)
             {
-                MessageBox.Show("No blogs available to publish to.", "Error Publishing Post", MessageBoxButton.OK, MessageBoxImage.Stop);
+                dialogService.ShowError("Error Publishing Post", "No blogs available to publish to.", "");
                 return;
             }
 
@@ -204,11 +208,14 @@ namespace MarkPad.Shell
             var blogs = _settingsService.Get<List<BlogSetting>>("Blogs");
             if (blogs == null || blogs.Count == 0)
             {
-                MessageBox.Show("No blogs available to fetch from.", "Error Retrieving Posts", MessageBoxButton.OK, MessageBoxImage.Stop);
+                dialogService.ShowError("Error Retrieving Posts", "No blogs available to fetch from.", "");
                 return;
             }
 
-            var result = _windowManager.ShowDialog(new OpenFromWebViewModel(_settingsService, blogs));
+            var openFromWeb = openFromWebCreator();
+            openFromWeb.InitializeBlogs(blogs);
+
+            var result = _windowManager.ShowDialog(openFromWeb);
             if (result != true)
                 return;
 

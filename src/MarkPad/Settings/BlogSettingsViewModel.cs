@@ -2,22 +2,26 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
-using System.Reflection;
-using System.Windows;
 using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
-using Microsoft.Win32;
 
 namespace MarkPad.Settings
 {
     public class BlogSettingsViewModel : Screen
     {
-        public BlogSettingsViewModel(BlogSetting blog)
-        {
-            BlogLanguages = new List<string> {"HTML", "Markdown"};
+        private readonly IDialogService dialogService;
 
+        public BlogSettingsViewModel(IDialogService dialogService)
+        {
+            this.dialogService = dialogService;
+
+            BlogLanguages = new List<string> { "HTML", "Markdown" };
+        }
+
+        public void InitializeBlog(BlogSetting blog)
+        {
             CurrentBlog = blog;
         }
 
@@ -83,7 +87,7 @@ namespace MarkPad.Settings
             try
             {
                 var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
-                ((IXmlRpcProxy) proxy).Url = CurrentBlog.WebAPI;
+                ((IXmlRpcProxy)proxy).Url = CurrentBlog.WebAPI;
 
                 var blogs = proxy.GetUsersBlogs("MarkPad", CurrentBlog.Username, CurrentBlog.Password);
 
@@ -91,20 +95,20 @@ namespace MarkPad.Settings
 
                 foreach (var blogInfo in blogs)
                 {
-                    this.APIBlogs.Add(new FetchedBlogInfo {Name = blogInfo.blogName, BlogInfo = blogInfo});
+                    this.APIBlogs.Add(new FetchedBlogInfo { Name = blogInfo.blogName, BlogInfo = blogInfo });
                 }
             }
             catch (WebException ex)
             {
-                MessageBox.Show(ex.Message, "Fetch Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                dialogService.ShowError("Fetch Failed", ex.Message, "");
             }
-            catch(XmlRpcException ex)
+            catch (XmlRpcException ex)
             {
-                MessageBox.Show(ex.Message, "Fetch Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                dialogService.ShowError("Fetch Failed", ex.Message, "");
             }
             catch (XmlRpcFaultException ex)
             {
-                MessageBox.Show(ex.Message, "Fetch Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                dialogService.ShowError("Fetch Failed", ex.Message, "");
             }
         }
     }

@@ -1,20 +1,24 @@
-﻿using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
+using MarkPad.Services.Interfaces;
 
 namespace MarkPad.PublishDetails
 {
     public partial class PublishDetailsView
     {
-        public PublishDetailsView()
+        private readonly IDialogService dialogService;
+
+        public PublishDetailsView(IDialogService dialogService)
         {
+            this.dialogService = dialogService;
+
             InitializeComponent();
         }
 
         private void ContinueClick(object sender, System.Windows.RoutedEventArgs e)
         {
-            if(string.IsNullOrWhiteSpace(PostTitle.Text))
+            if (string.IsNullOrWhiteSpace(PostTitle.Text))
             {
-                MessageBox.Show("Post title needs to be entered before publishing.", "Error Publishing Post", MessageBoxButton.OK, MessageBoxImage.Warning);
+                dialogService.ShowWarning("Error Publishing Post", "Post title needs to be entered before publishing.", "");
                 return;
             }
 

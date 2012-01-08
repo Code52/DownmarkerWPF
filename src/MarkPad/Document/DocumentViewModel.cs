@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Windows;
 using System.Windows.Threading;
-using System.Text.RegularExpressions;
 using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using ICSharpCode.AvalonEdit.Document;
@@ -18,11 +16,11 @@ namespace MarkPad.Document
     {
         private readonly IDialogService dialogService;
         private readonly ISettingsService _settings;
+        private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
+        private readonly DispatcherTimer timer;
 
         private string title;
         private string filename;
-        private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
-        private readonly DispatcherTimer timer;
         private Post _post;
 
         public DocumentViewModel(IDialogService dialogService, ISettingsService settings)
@@ -38,11 +36,13 @@ namespace MarkPad.Document
             timer.Tick += TimerTick;
             timer.Interval = delay;
         }
+
         private void TimerTick(object sender, EventArgs e)
         {
             timer.Stop();
             NotifyOfPropertyChange(() => Render);
         }
+
         public void Open(string path)
         {
             filename = path;
@@ -95,6 +95,7 @@ namespace MarkPad.Document
         }
 
         public TextDocument Document { get; set; }
+
         public string Original { get; set; }
 
         public string Render
@@ -162,12 +163,13 @@ namespace MarkPad.Document
         }
 
         public bool DistractionFree { get; set; }
+
         public void Publish(string postTitle, string[] categories, BlogSetting blog)
         {
             if (categories == null) categories = new string[0];
 
             var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
-            ((IXmlRpcProxy) proxy).Url = blog.WebAPI;
+            ((IXmlRpcProxy)proxy).Url = blog.WebAPI;
 
             var post = new Post();
 
@@ -211,15 +213,15 @@ namespace MarkPad.Document
             }
             catch (WebException ex)
             {
-                MessageBox.Show(ex.Message, "Error Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
+                dialogService.ShowError("Error Publishing", ex.Message, "");
             }
             catch (XmlRpcException ex)
             {
-                MessageBox.Show(ex.Message, "Error Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
+                dialogService.ShowError("Error Publishing", ex.Message, "");
             }
             catch (XmlRpcFaultException ex)
             {
-                MessageBox.Show(ex.Message, "Error Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
+                dialogService.ShowError("Error Publishing", ex.Message, "");
             }
 
             _post = post;
