@@ -6,6 +6,7 @@ using System.Xml;
 using Awesomium.Core;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using MarkPad.Framework;
 
 namespace MarkPad.Document
 {
@@ -32,7 +33,7 @@ namespace MarkPad.Document
                 Document.SyntaxHighlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
             }
 
-            documentScrollViewer = FindVisualChild<ScrollViewer>(Document);
+            documentScrollViewer = Document.FindVisualChild<ScrollViewer>();
 
             if (documentScrollViewer != null)
             {
@@ -47,20 +48,37 @@ namespace MarkPad.Document
             
         }
 
-        public static T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject
-        {
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
-            {
-                DependencyObject child = VisualTreeHelper.GetChild(obj, i);
-                if (child != null && child is T)
-                    return (T)child;
 
-                T childOfChild = FindVisualChild<T>(child);
-                if (childOfChild != null)
-                    return childOfChild;
-            }
-            return null;
+        internal void ToggleBold()
+        {
+            var selectedText = GetSelectedText();
+            if (string.IsNullOrWhiteSpace(selectedText)) return;
+
+            Document.SelectedText = selectedText.ToggleBold(!selectedText.IsBold());
         }
+
+        internal void ToggleItalic()
+        {
+            var selectedText = GetSelectedText();
+            if (string.IsNullOrWhiteSpace(selectedText)) return;
+
+            Document.SelectedText = selectedText.ToggleItalic(!selectedText.IsItalic());
+        }
+
+        private string GetSelectedText()
+        {
+            var textArea = Document.TextArea;
+            if (textArea.Selection.IsEmpty)
+                return null;
+            //{
+            //    var line = textArea.Document.GetLineByOffset(textArea.Caret.Offset);
+            //    textArea.Selection = textArea.Selection.StartSelectionOrSetEndpoint(line.Offset, line.Offset + line.Length);
+            //}
+
+            return textArea.Selection.GetText(textArea.Document);
+        }
+
+
     }
 
 

@@ -20,6 +20,12 @@
     <i:Interaction.Triggers>
         <fw:InputBindingTrigger>
             <fw:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Ctrl" Key="N" />
+            </fw:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="NewDocument" />
+        </fw:InputBindingTrigger>
+        <fw:InputBindingTrigger>
+            <fw:InputBindingTrigger.InputBinding>
                 <KeyBinding Modifiers="Ctrl" Key="S" />
             </fw:InputBindingTrigger.InputBinding>
             <cm:ActionMessage MethodName="SaveDocument" />
@@ -30,6 +36,14 @@
             </fw:InputBindingTrigger.InputBinding>
             <cm:ActionMessage MethodName="SaveAllDocuments" />
         </fw:InputBindingTrigger>
+
+        <fw:InputBindingTrigger>
+            <fw:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Ctrl" Key="B" />
+            </fw:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="ToggleBold" />
+        </fw:InputBindingTrigger>
+
     </i:Interaction.Triggers>
 
     <Window.Resources>

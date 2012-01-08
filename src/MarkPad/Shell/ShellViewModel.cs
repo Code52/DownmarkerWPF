@@ -1,10 +1,12 @@
 ﻿using System;
 using Caliburn.Micro;
 using MarkPad.Document;
+using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.MDI;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
+
 
 namespace MarkPad.Shell
 {
@@ -83,11 +85,8 @@ namespace MarkPad.Shell
 
         public void SaveDocument()
         {
-            var doc = MDI.ActiveItem as DocumentViewModel;
-            if (doc != null)
-            {
-                doc.Save();
-            }
+            (MDI.ActiveItem as DocumentViewModel)
+                .ExecuteSafely(d => d.Save());
         }
 
         public void SaveAllDocuments()
@@ -116,5 +115,25 @@ namespace MarkPad.Shell
                 doc.Print();
             }
         }
+
+        private DocumentView GetDocument()
+        {
+            return (MDI.ActiveItem as DocumentViewModel)
+                .Evaluate(d => d.GetView() as DocumentView);
+        }
+
+
+        public void ToggleBold()
+        {
+            GetDocument()
+                .ExecuteSafely(v => v.ToggleBold());
+        }
+
+        public void ToggleItalic()
+        {
+            GetDocument()
+                .ExecuteSafely(v => v.ToggleItalic());
+        }
+
     }
 }
