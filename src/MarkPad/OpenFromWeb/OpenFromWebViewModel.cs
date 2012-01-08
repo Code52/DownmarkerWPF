@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Net;
-using System.Windows;
 using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using MarkPad.Metaweblog;
@@ -15,13 +12,17 @@ namespace MarkPad.OpenFromWeb
     public class OpenFromWebViewModel : Screen
     {
         private readonly ISettingsService _settings;
+        private readonly IDialogService dialogService;
 
-        public OpenFromWebViewModel(ISettingsService settings, List<BlogSetting> blogs)
+        public OpenFromWebViewModel(ISettingsService settings, IDialogService dialogService)
         {
-            _settings = settings;
+            this._settings = settings;
+            this.dialogService = dialogService;
+        }
 
+        public void InitializeBlogs(List<BlogSetting> blogs)
+        {
             this.Blogs = blogs;
-
             SelectedBlog = blogs[0];
         }
 
@@ -50,8 +51,6 @@ namespace MarkPad.OpenFromWeb
             var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
             ((IXmlRpcProxy)proxy).Url = this.SelectedBlog.WebAPI;
 
-
-
             try
             {
                 var posts = proxy.GetRecentPosts(this.SelectedBlog.BlogInfo.blogid, this.SelectedBlog.Username, this.SelectedBlog.Password, 100);
@@ -65,15 +64,15 @@ namespace MarkPad.OpenFromWeb
             }
             catch (WebException ex)
             {
-                MessageBox.Show(ex.Message, "Error Fetching Posts", MessageBoxButton.OK, MessageBoxImage.Error);
+                dialogService.ShowError("Error Fetching Posts", ex.Message, "");
             }
             catch (XmlRpcException ex)
             {
-                MessageBox.Show(ex.Message, "Fetch Fetching Posts", MessageBoxButton.OK, MessageBoxImage.Error);
+                dialogService.ShowError("Error Fetching Posts", ex.Message, "");
             }
             catch (XmlRpcFaultException ex)
             {
-                MessageBox.Show(ex.Message, "Fetch Fetching Posts", MessageBoxButton.OK, MessageBoxImage.Error);
+                dialogService.ShowError("Error Fetching Posts", ex.Message, "");
             }
         }
     }
