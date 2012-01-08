@@ -27,6 +27,12 @@
         </fw:InputBindingTrigger>
         <fw:InputBindingTrigger>
             <fw:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Ctrl" Key="O" />
+            </fw:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="OpenDocument" />
+        </fw:InputBindingTrigger>
+        <fw:InputBindingTrigger>
+            <fw:InputBindingTrigger.InputBinding>
                 <KeyBinding Modifiers="Ctrl+Shift" Key="S" />
             </fw:InputBindingTrigger.InputBinding>
             <cm:ActionMessage MethodName="SaveAllDocuments" />
