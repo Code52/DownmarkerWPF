@@ -48,6 +48,12 @@ namespace MarkPad.Settings
         public BlogSetting CurrentBlog { get; set; }
         public ObservableCollection<BlogSetting> Blogs { get; set; }
 
+        public override string DisplayName
+        {
+            get { return "Settings"; }
+            set { }
+        }
+
         public void AddBlog()
         {
             var blog = new BlogSetting { BlogName = "New", Language = "HTML" };

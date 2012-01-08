@@ -20,6 +20,12 @@ namespace MarkPad.Settings
             BlogLanguages = new List<string> { "HTML", "Markdown" };
         }
 
+        public override string DisplayName
+        {
+            get { return "Blog Settings"; }
+            set { }
+        }
+
         public void InitializeBlog(BlogSetting blog)
         {
             CurrentBlog = blog;
