@@ -5,6 +5,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
         xmlns:cal="http://www.caliburnproject.org" MouseLeftButtonDown="DragMoveWindow"
+        Icon="../markpad.ico"
         WindowStartupLocation="CenterOwner" mc:Ignorable="d" Width="300" Height="420" ResizeMode="NoResize">
     <i:Interaction.Behaviors>
         <Behaviours:BorderlessWindowBehavior />
@@ -25,75 +26,57 @@
 
     <Window.Background>
         <LinearGradientBrush MappingMode="Absolute" StartPoint="0,0" EndPoint="0,180">
-            <GradientStop Color="#FFDEDEDE" />
+            <GradientStop Color="#EEEEEE" />
             <GradientStop Color="White" Offset="1" />
         </LinearGradientBrush>
     </Window.Background>
 
-    <Grid Margin="10 10 10 10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold"
-               FontSize="10.667" Margin="10,10,0,0">
-            <Run Language="en-au" Text="BLOG SETTINGS" />
-        </TextBlock>
-
-        <Button Grid.Row="0" x:Name="TryClose" Style="{DynamicResource ChromelessButtonStyle}" Content="r"
+    <Grid>
+        <Button x:Name="TryClose" Style="{DynamicResource ChromelessButtonStyle}" Content="r"
                 HorizontalAlignment="Right"
+                VerticalAlignment="Top"
                 FontFamily="Marlett"
-                Margin="10" />
+                Margin="10"/>
+        <Grid Margin="15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Segoe UI" FontWeight="Light" FontSize="29.333" Text="blog settings" />
 
-        <StackPanel Grid.Row="1" Margin="18 5 18 0">
-            <TextBlock HorizontalAlignment="Left" Margin="0 0 10 0"
-               Text="BLOG NAME"  FontWeight="Bold" FontSize="10.667"/>
-            <TextBox x:Name="CurrentBlog_BlogName" />
-        </StackPanel>
-        <StackPanel Grid.Row="2" Margin="18 5 18 0">
-            <TextBlock HorizontalAlignment="Left" Margin="0 0 10 0"
-               Text="METAWEBLOG API ADDRESS"  FontWeight="Bold" FontSize="10.667"/>
-            <TextBox x:Name="CurrentBlog_WebAPI" HorizontalAlignment="Stretch" />
-        </StackPanel>
-        <StackPanel Grid.Row="3" Margin="18 5 18 0">
-            <TextBlock HorizontalAlignment="Left" Margin="0 0 10 0"
-               Text="USERNAME"  FontWeight="Bold" FontSize="10.667"/>
-            <TextBox HorizontalAlignment="Left" x:Name="CurrentBlog_Username" Width="150" />
-        </StackPanel>
-        <StackPanel Grid.Row="4" Margin="18 5 18 0">
-            <TextBlock HorizontalAlignment="Left" Margin="0 0 10 0"
-               Text="PASSWORD"  FontWeight="Bold" FontSize="10.667"/>
-            <TextBox HorizontalAlignment="Left" x:Name="CurrentBlog_Password" Width="150"  />
-        </StackPanel>
-        <StackPanel Grid.Row="5" Margin="18 5 18 0">
-            <TextBlock HorizontalAlignment="Left" Margin="0 0 10 0"
-               Text="RENDERING LANGUAGE"  FontWeight="Bold" FontSize="10.667"/>
-            <ComboBox x:Name="BlogLanguages" HorizontalAlignment="Left" Width="150" />
-        </StackPanel>
-        <StackPanel Grid.Row="6" Margin="18 5 18 0">
-            <TextBlock HorizontalAlignment="Left" Margin="0 0 10 0"
-               Text="BLOG NAME"  FontWeight="Bold" FontSize="10.667"/>
-            <ComboBox HorizontalAlignment="Left" x:Name="APIBlogs" Width="150"
+            <StackPanel Grid.Row="1" Margin="0 5 0 0">
+                <TextBlock HorizontalAlignment="Left" Text="BLOG NAME"  FontWeight="Bold" FontSize="10.667"/>
+                <TextBox x:Name="CurrentBlog_BlogName" />
+
+                <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="METAWEBLOG API ADDRESS"  FontWeight="Bold" FontSize="10.667"/>
+                <TextBox x:Name="CurrentBlog_WebAPI" HorizontalAlignment="Stretch" />
+
+                <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="USERNAME"  FontWeight="Bold" FontSize="10.667"/>
+                <TextBox HorizontalAlignment="Left" x:Name="CurrentBlog_Username" Width="150" />
+
+                <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="PASSWORD"  FontWeight="Bold" FontSize="10.667"/>
+                <TextBox HorizontalAlignment="Left" x:Name="CurrentBlog_Password" Width="150"  />
+
+                <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="RENDERING LANGUAGE"  FontWeight="Bold" FontSize="10.667"/>
+                <ComboBox x:Name="BlogLanguages" HorizontalAlignment="Left" Width="150" />
+
+                <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="BLOG NAME"  FontWeight="Bold" FontSize="10.667"/>
+                <ComboBox HorizontalAlignment="Left" x:Name="APIBlogs" Width="150" 
                       IsEnabled="{Binding CurrentBlog.IsWebAPICompleted}"
                       cal:Message.Attach="[Event DropDownOpened]=[Action FetchBlogs]">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Name}" />
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-        </StackPanel>
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
 
-        <StackPanel Grid.Row="8" HorizontalAlignment="Right" Height="25" Margin="10" Orientation="Horizontal">
-            <Button Width="75" x:Name="Accept" Content="OK" Click="OkClick" IsEnabled="{Binding CurrentBlog.IsBlogSettingCompleted}" Margin="0 0 5 0" />
-            <Button Width="75" x:Name="Cancel" Content="Cancel" Click="CancelClick" IsCancel="True" />
-        </StackPanel>
+            <StackPanel Grid.Row="2" HorizontalAlignment="Right" Height="25" Margin="10,20,0,10" Orientation="Horizontal">
+                <Button Width="75" x:Name="Accept" Content="OK" Click="OkClick" IsEnabled="{Binding CurrentBlog.IsBlogSettingCompleted}" Margin="0 0 5 0" />
+                <Button Width="75" x:Name="Cancel" Content="Cancel" Click="CancelClick" IsCancel="True" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

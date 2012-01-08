@@ -20,10 +20,10 @@ namespace MarkPad.About
                                                          "Mike Minutillo",
                                                          "Jake Ginnivan",
                                                          "Ian Randall",
+                                                         "Paul Stovell",
                                                          "Andrew Tobin",
                                                          "Brendan Forster",
                                                          "Paul Jenkins"
-
                                                      };
         public string Authors
         {
@@ -53,9 +53,10 @@ namespace MarkPad.About
             try
             {
                 System.Diagnostics.Process.Start("http://code52.org/DownmarkerWPF/");
-            } catch //I forget what exceptions can be raised if the browser is crashed?
+            }
+            catch //I forget what exceptions can be raised if the browser is crashed?
             {
-                
+
             }
         }
     }
