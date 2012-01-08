@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-
 namespace MarkPad.Services.Interfaces
 {
     public interface ISettingsService
     {
-        IList<string> GetRecentFiles();
-        void UpdateRecentFiles(IList<string> files);
+        T Get<T>(string key);
+        void Set<T>(string key, T value);
         void Save();
     }
 }

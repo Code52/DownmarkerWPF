@@ -1,6 +1,13 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Net;
 using System.Reflection;
+using System.Windows;
 using Caliburn.Micro;
+using CookComputing.XmlRpc;
+using MarkPad.Metaweblog;
+using MarkPad.Services.Interfaces;
 using Microsoft.Win32;
 
 namespace MarkPad.Settings
@@ -9,7 +16,10 @@ namespace MarkPad.Settings
     {
         private const string markpadKeyName = "markpad.md";
 
-        public SettingsViewModel()
+        private readonly ISettingsService _settingsService;
+        private readonly IWindowManager _windowManager;
+
+        public SettingsViewModel(ISettingsService settingsService, IWindowManager windowManager)
         {
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes"))
             {
@@ -22,15 +32,69 @@ namespace MarkPad.Settings
                 FileMDownBinding = key.GetSubKeyNames().Contains(Constants.DefaultExtensions[2]) &&
                     !string.IsNullOrEmpty(key.OpenSubKey(Constants.DefaultExtensions[2]).GetValue("").ToString());
             }
+
+            _settingsService = settingsService;
+            _windowManager = windowManager;
+
+            var blogs = _settingsService.Get<List<BlogSetting>>("Blogs") ?? new List<BlogSetting>();
+
+            Blogs = new ObservableCollection<BlogSetting>(blogs);
         }
 
         public bool FileMDBinding { get; set; }
         public bool FileMarkdownBinding { get; set; }
         public bool FileMDownBinding { get; set; }
 
+        public BlogSetting CurrentBlog { get; set; }
+        public ObservableCollection<BlogSetting> Blogs { get; set; }
+
+        public void AddBlog()
+        {
+            var blog = new BlogSetting { BlogName = "New", Language = "HTML"};
+
+            blog.BeginEdit();
+
+            var result = _windowManager.ShowDialog(new BlogSettingsViewModel(blog));
+            if (result != true)
+            {
+                blog.CancelEdit();
+                return;
+            }
+
+            blog.EndEdit();
+
+            Blogs.Add(blog);
+        }
+
+        public void EditBlog()
+        {
+            if (CurrentBlog == null) return;
+
+            CurrentBlog.BeginEdit();
+
+            var result = _windowManager.ShowDialog(new BlogSettingsViewModel(CurrentBlog));
+
+            if (result != true)
+            {
+                CurrentBlog.CancelEdit();
+                return;
+            }
+
+            CurrentBlog.EndEdit();
+        }
+
+        public void RemoveBlog()
+        {
+            if (CurrentBlog != null)
+                Blogs.Remove(CurrentBlog);
+        }
+
         public void Accept()
         {
             UpdateExtensionRegistryKeys();
+
+            _settingsService.Set("Blogs", Blogs.ToList());
+            _settingsService.Save();
 
             TryClose();
         }

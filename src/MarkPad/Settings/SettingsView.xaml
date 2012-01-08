@@ -4,58 +4,73 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 		Icon="../markpad.ico"
-        xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro" MouseLeftButtonDown="DragMoveWindow"
-        WindowStartupLocation="CenterOwner" mc:Ignorable="d" Width="300" Height="150" ResizeMode="NoResize">
-  <i:Interaction.Behaviors>
+        xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
+        MouseLeftButtonDown="DragMoveWindow"
+        xmlns:Settings="clr-namespace:MarkPad.Settings" 
+        WindowStartupLocation="CenterOwner" mc:Ignorable="d" Width="300" Height="320" ResizeMode="NoResize">
+    <i:Interaction.Behaviors>
     <Behaviours:BorderlessWindowBehavior ResizeWithGrip="False" />
-  </i:Interaction.Behaviors>
+    </i:Interaction.Behaviors>
 
-  <Window.Resources>
-    <ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colours.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/MarkPad;component/Styles/MarkPad.Accents.xaml" />
-      </ResourceDictionary.MergedDictionaries>
-    </ResourceDictionary>
-  </Window.Resources>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colours.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MarkPad;component/Styles/MarkPad.Accents.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
 
-  <Window.Background>
-    <LinearGradientBrush MappingMode="Absolute" StartPoint="0,0" EndPoint="0,180">
-      <GradientStop Color="#FFDEDEDE" />
-      <GradientStop Color="White" Offset="1" />
-    </LinearGradientBrush>
-  </Window.Background>
+    <Window.Background>
+        <LinearGradientBrush MappingMode="Absolute" StartPoint="0,0" EndPoint="0,180">
+            <GradientStop Color="#FFDEDEDE" />
+            <GradientStop Color="White" Offset="1" />
+        </LinearGradientBrush>
+    </Window.Background>
 
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
-      <RowDefinition Height="Auto" />
-    </Grid.RowDefinitions>
-    <TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold"
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold"
                FontSize="10.667" Margin="10,10,0,0">
       <Run Text="SETTINGS" />
-    </TextBlock>
+        </TextBlock>
 
-    <Button x:Name="TryClose" Style="{DynamicResource ChromelessButtonStyle}" Content="r"
+        <Button x:Name="TryClose" Style="{DynamicResource ChromelessButtonStyle}" Content="r"
                 HorizontalAlignment="Right"
                 FontFamily="Marlett"
                 Margin="10" />
 
-    <StackPanel Grid.Row="1" Margin="18 0 0 0">
-      <TextBlock Text="Set Markpad as default for file extensions:" />
-      <CheckBox x:Name="FileMDBinding" Content=".md" />
-      <CheckBox x:Name="FileMDownBinding" Content=".mdown" />
-      <CheckBox x:Name="FileMarkdownBinding" Content=".markdown" />
-    </StackPanel>
-
-    <StackPanel HorizontalAlignment="Right" Grid.Row="2" Margin="10" Orientation="Horizontal">
-      <Button x:Name="Accept" Content="OK" Margin="0 0 5 0" />
-      <Button x:Name="Cancel" Content="Cancel" />
-    </StackPanel>
-  </Grid>
+        <StackPanel Grid.Row="1" Margin="18 0 0 0">
+            <TextBlock Text="Set Markpad as default for file extensions:" />
+            <CheckBox x:Name="FileMDBinding" Content=".md" />
+            <CheckBox x:Name="FileMDownBinding" Content=".mdown" />
+            <CheckBox x:Name="FileMarkdownBinding" Content=".markdown" />
+        </StackPanel>
+        <StackPanel Grid.Row="2" Margin="18 10 0 0">
+            <TextBlock Text="Blog Sites" />
+            <StackPanel Orientation="Horizontal">
+                <ListBox x:Name="Blogs" SelectedItem="CurrentBlog"
+                         DisplayMemberPath="BlogName"
+                         Height="100" Width="200" />
+                <StackPanel  Margin="5 0 0 0" VerticalAlignment="Top">
+                    <Button x:Name="AddBlog" Content="Add New" Height="25" VerticalAlignment="Top"/>
+                    <Button x:Name="EditBlog" Content="Edit" Height="25" Margin="0 5 0 0" VerticalAlignment="Top"/>
+                    <Button x:Name="RemoveBlog" Content="Remove" Margin="0 5 0 0" Height="25" VerticalAlignment="Top"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel HorizontalAlignment="Right" Grid.Row="3" Height="25" Margin="10" Orientation="Horizontal">
+            <Button Width="75" x:Name="Accept" Content="OK" Margin="0 0 5 0" />
+            <Button Width="75" x:Name="Cancel" Content="Cancel" />
+        </StackPanel>
+    </Grid>
 </Window>

@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Windows;
 using Caliburn.Micro;
 using MarkPad.About;
 using MarkPad.Document;
 using MarkPad.Framework.Events;
 using MarkPad.MDI;
+using MarkPad.Metaweblog;
+using MarkPad.OpenFromWeb;
+using MarkPad.PublishDetails;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
 
@@ -13,14 +18,16 @@ namespace MarkPad.Shell
     {
         private readonly IEventAggregator eventAggregator;
         private readonly IDialogService dialogService;
-        private readonly IWindowManager windowService;
+        private readonly IWindowManager _windowManager;
+        private readonly ISettingsService _settingsService;
         private readonly Func<DocumentViewModel> documentCreator;
         private readonly Func<SettingsViewModel> settingsCreator;
         private readonly Func<AboutViewModel> aboutCreator;
 
         public ShellViewModel(
             IDialogService dialogService,
-            IWindowManager windowService,
+            IWindowManager windowManager,
+            ISettingsService settingsService,
             IEventAggregator eventAggregator,
             MDIViewModel mdi,
             Func<DocumentViewModel> documentCreator,
@@ -29,8 +36,9 @@ namespace MarkPad.Shell
         {
             this.eventAggregator = eventAggregator;
             this.dialogService = dialogService;
-            this.windowService = windowService;
-            MDI = mdi;
+            _windowManager = windowManager;
+            _settingsService = settingsService;
+            this.MDI = mdi;
             this.documentCreator = documentCreator;
             this.settingsCreator = settingsCreator;
             this.aboutCreator = aboutCreator;
@@ -45,6 +53,17 @@ namespace MarkPad.Shell
         }
 
         public MDIViewModel MDI { get; private set; }
+
+        public override void CanClose(Action<bool> callback)
+        {
+            base.CanClose(callback);
+            _settingsService.Save();
+        }
+
+        public void Exit()
+        {
+            this.TryClose();
+        }
 
         public void NewDocument()
         {
@@ -110,12 +129,12 @@ namespace MarkPad.Shell
 
         public void ShowSettings()
         {
-            windowService.ShowDialog(settingsCreator());
+            _windowManager.ShowDialog(settingsCreator());
         }
 
         public void ShowAbout()
         {
-            windowService.ShowDialog(aboutCreator());
+            _windowManager.ShowDialog(aboutCreator());
         }
 
         public void ToggleWebView()
@@ -134,6 +153,47 @@ namespace MarkPad.Shell
             {
                 doc.Print();
             }
+        }
+
+        public void PublishDocument()
+        {
+            var blogs = _settingsService.Get<List<BlogSetting>>("Blogs");
+            if(blogs == null || blogs.Count == 0)
+            {
+                MessageBox.Show("No blogs available to publish to.", "Error Publishing Post", MessageBoxButton.OK, MessageBoxImage.Stop);
+                return;
+            }
+
+            var doc = MDI.ActiveItem as DocumentViewModel;
+            if (doc != null)
+            {
+                var pd = new Details {Title = doc.Post.title, Categories = doc.Post.categories };
+                var detailsResult = _windowManager.ShowDialog(new PublishDetailsViewModel(pd, blogs));
+                if (detailsResult != true)
+                    return;
+
+                doc.Publish(pd.Title, pd.Categories,  pd.Blog);
+            }
+        }
+
+        public void OpenFromWeb()
+        {
+            var blogs = _settingsService.Get<List<BlogSetting>>("Blogs");
+            if (blogs == null || blogs.Count == 0)
+            {
+                MessageBox.Show("No blogs available to fetch from.", "Error Retrieving Posts", MessageBoxButton.OK, MessageBoxImage.Stop);
+                return;     
+            }
+
+            var result = _windowManager.ShowDialog(new OpenFromWebViewModel(_settingsService, blogs));
+            if (result != true)
+                return;
+
+            var post = _settingsService.Get<Post>("CurrentPost");
+            
+            var doc = documentCreator();
+            doc.OpenFromWeb(post);
+            MDI.Open(doc);
         }
     }
 }

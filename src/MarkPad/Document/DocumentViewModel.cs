@@ -1,9 +1,15 @@
 ﻿using System;
 using System.IO;
+using System.Net;
+using System.Windows;
 using System.Windows.Threading;
+using System.Text.RegularExpressions;
 using Caliburn.Micro;
+using CookComputing.XmlRpc;
 using ICSharpCode.AvalonEdit.Document;
+using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
+using MarkPad.Settings;
 using Ookii.Dialogs.Wpf;
 
 namespace MarkPad.Document
@@ -11,17 +17,23 @@ namespace MarkPad.Document
     internal class DocumentViewModel : Screen
     {
         private readonly IDialogService dialogService;
+        private readonly ISettingsService _settings;
+
         private string title;
         private string filename;
         private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
         private readonly DispatcherTimer timer;
+        private Post _post;
 
-        public DocumentViewModel(IDialogService dialogService)
+        public DocumentViewModel(IDialogService dialogService, ISettingsService settings)
         {
             this.dialogService = dialogService;
+            _settings = settings;
+
             title = "New Document";
             Original = "";
             Document = new TextDocument();
+            _post = new Post();
             timer = new DispatcherTimer();
             timer.Tick += TimerTick;
             timer.Interval = delay;
@@ -40,6 +52,16 @@ namespace MarkPad.Document
             Document.Text = text;
             Original = text;
         }
+
+        public void OpenFromWeb(Post post)
+        {
+            _post = post;
+            title = post.permalink;
+            Document.Text = post.description;
+            Original = post.description;
+        }
+
+        public Post Post { get { return _post; } }
 
         public void Update()
         {
@@ -78,6 +100,11 @@ namespace MarkPad.Document
         public string Render
         {
             get { return DocumentParser.Parse(Document.Text); }
+        }
+
+        public string RenderBody
+        {
+            get { return DocumentParser.GetBodyContents(Document.Text); }
         }
 
         public bool HasChanges
@@ -135,5 +162,70 @@ namespace MarkPad.Document
         }
 
         public bool DistractionFree { get; set; }
+        public void Publish(string postTitle, string[] categories, BlogSetting blog)
+        {
+            if (categories == null) categories = new string[0];
+
+            var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
+            ((IXmlRpcProxy) proxy).Url = blog.WebAPI;
+
+            var post = new Post();
+
+            var permalink = this.DisplayName.Split('.')[0] == "New Document"
+                                ? postTitle
+                                : this.DisplayName.Split('.')[0];
+
+            if (_post.postid != null && !string.IsNullOrWhiteSpace(_post.postid.ToString()))
+            {
+                post = proxy.GetPost(_post.postid.ToString(), blog.Username, blog.Password);
+            }
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(post.permalink))
+                {
+                    post = new Post
+                               {
+                                   permalink = permalink,
+                                   title = postTitle,
+                                   dateCreated = DateTime.Now,
+                                   description = blog.Language == "HTML" ? RenderBody : Document.Text,
+                                   categories = categories
+                               };
+                    post.postid = proxy.AddPost(blog.BlogInfo.blogid, blog.Username, blog.Password, post, true);
+
+                    _settings.Set(post.permalink, post);
+                    _settings.Save();
+                }
+                else
+                {
+                    post.title = postTitle;
+                    post.description = blog.Language == "HTML" ? RenderBody : Document.Text;
+                    post.categories = categories;
+
+                    proxy.UpdatePost(post.postid.ToString(), blog.Username, blog.Password, post, true);
+
+                    _settings.Set(post.permalink, post);
+                    _settings.Save();
+                }
+            }
+            catch (WebException ex)
+            {
+                MessageBox.Show(ex.Message, "Error Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (XmlRpcException ex)
+            {
+                MessageBox.Show(ex.Message, "Error Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (XmlRpcFaultException ex)
+            {
+                MessageBox.Show(ex.Message, "Error Publishing", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            _post = post;
+            Original = Document.Text;
+            title = postTitle;
+            NotifyOfPropertyChange(() => DisplayName);
+        }
     }
 }

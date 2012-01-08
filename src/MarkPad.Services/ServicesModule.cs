@@ -9,7 +9,7 @@ namespace MarkPad.Services
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<DialogService>().As<IDialogService>();
-            builder.RegisterType<SettingsService>().As<ISettingsService>();
+            builder.RegisterType<SettingsService>().As<ISettingsService>().SingleInstance();
         }
     }
 }
