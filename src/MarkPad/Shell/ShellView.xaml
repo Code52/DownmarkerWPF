@@ -13,11 +13,11 @@
     Icon="../markpad.ico"
     KeyDown="WindowKeyDown"
     d:DataContext="{d:DesignInstance Shell:ShellViewModel}">
-    
+
     <i:Interaction.Behaviors>
         <Behaviours:BorderlessWindowBehavior/>
     </i:Interaction.Behaviors>
-    
+
     <i:Interaction.Triggers>
         <fw:InputBindingTrigger>
             <fw:InputBindingTrigger.InputBinding>
@@ -45,7 +45,7 @@
         </fw:InputBindingTrigger>
     </i:Interaction.Triggers>
 
-        <Window.Resources>
+    <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colours.xaml" />
@@ -55,19 +55,19 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MarkPad;component/Styles/MarkPad.Accents.xaml" />
             </ResourceDictionary.MergedDictionaries>
-        	<Storyboard x:Key="ShowCheatSheet">
-        		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="cheatSheetDropdown">
-        			<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
-        		</ObjectAnimationUsingKeyFrames>
-        		<ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="cheatSheetDropdown">
-        			<EasingThicknessKeyFrame KeyTime="0" Value="0,-341,0,0"/>
-        			<EasingThicknessKeyFrame KeyTime="0:0:0.5" Value="0">
-        				<EasingThicknessKeyFrame.EasingFunction>
-        					<CircleEase EasingMode="EaseOut"/>
-        				</EasingThicknessKeyFrame.EasingFunction>
-        			</EasingThicknessKeyFrame>
-        		</ThicknessAnimationUsingKeyFrames>
-        	</Storyboard>
+            <Storyboard x:Key="ShowCheatSheet">
+                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="cheatSheetDropdown">
+                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                </ObjectAnimationUsingKeyFrames>
+                <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="cheatSheetDropdown">
+                    <EasingThicknessKeyFrame KeyTime="0" Value="0,-341,0,0"/>
+                    <EasingThicknessKeyFrame KeyTime="0:0:0.5" Value="0">
+                        <EasingThicknessKeyFrame.EasingFunction>
+                            <CircleEase EasingMode="EaseOut"/>
+                        </EasingThicknessKeyFrame.EasingFunction>
+                    </EasingThicknessKeyFrame>
+                </ThicknessAnimationUsingKeyFrames>
+            </Storyboard>
             <Storyboard x:Key="HideCheatSheet">
                 <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="cheatSheetDropdown">
                     <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="{x:Static Visibility.Collapsed}"/>
@@ -90,7 +90,7 @@
     </Window.Background>
     <Grid Margin="0,0,0,10">
         <Grid x:Name="cheatSheetDropdown" UseLayoutRounding="True" SnapsToDevicePixels="True" Panel.ZIndex="100" HorizontalAlignment="Center" VerticalAlignment="Top" Background="White" Margin="0,-341,0,0" Visibility="Collapsed">
-			<Grid.Effect>
+            <Grid.Effect>
                 <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.25" Direction="270" />
             </Grid.Effect>
             <Grid Margin="10"  Height="321" Width="687">
@@ -135,37 +135,40 @@
                 <Button Click="DismissCheatSheet" Style="{DynamicResource ChromelessButtonStyle}" ToolTip="dismiss cheat sheet" Foreground="Black" Content="r" FontFamily="Marlett" HorizontalAlignment="Right" VerticalAlignment="Top" />
             </Grid>
         </Grid>
-		<Grid>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="*" />
-			</Grid.RowDefinitions>
-			<TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold" FontSize="10.667" Margin="30,10,0,0"><Run Text="MARKPAD"/></TextBlock>
-			<StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Margin="30,30,30,10">
-				<Button  x:Name="NewDocument" Content="NEW" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
-				<Button x:Name="NewJekyllDocument" Content="NEW JEKYLL PAGE" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
-				<Button x:Name="OpenDocument" Content="OPEN" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
-				<Button x:Name="SaveDocument" Content="SAVE" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
-				<Button x:Name="SaveAllDocuments" Content="SAVE ALL" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
-				<Button x:Name="PrintDocument" Content="PRINT" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
-			</StackPanel>
-			<StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Orientation="Horizontal">
-				<Button x:Name="ShowSettings" Content="SETTINGS" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" FontWeight="Bold" />
-				<TextBlock Margin="10,0"><Run Text="|"/></TextBlock>
-				<Button x:Name="ShowAbout" Content="ABOUT" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" Margin="0,0,20,0" FontWeight="Bold" />
-				<Button Click="ButtonMinimiseOnClick"  Style="{DynamicResource ChromelessButtonStyle}" Content="0" FontFamily="Marlett" />
-				<Button Click="ButtonMaxRestoreOnClick" x:Name="maxRestore" Style="{DynamicResource ChromelessButtonStyle}" Content="1" FontFamily="Marlett" />
-				<Button x:Name="TryClose" Style="{DynamicResource ChromelessButtonStyle}" Content="r" FontFamily="Marlett" />
-			</StackPanel>
-			<Rectangle HorizontalAlignment="Left" Stroke="Black" Width="10" StrokeThickness="0" Margin="0,10">
-				<Rectangle.Fill>
-					<SolidColorBrush Color="{DynamicResource HighlightDarkColor}" />
-				</Rectangle.Fill>
-			</Rectangle>
-            
-			<ContentControl x:Name="MDI"
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold" FontSize="10.667" Margin="30,10,0,0"><Run Text="MARKPAD"/></TextBlock>
+            <TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold" FontSize="10.667" Margin="30,10,0,0"><Run Language="en-au" Text="MARKPAD"/></TextBlock>
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Margin="30,30,30,10">
+                <Button  x:Name="NewDocument" Content="NEW" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
+                <Button x:Name="NewJekyllDocument" Content="NEW JEKYLL PAGE" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
+                <Button x:Name="OpenDocument" Content="OPEN" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
+                <Button x:Name="SaveDocument" Content="SAVE" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
+                <Button x:Name="SaveAllDocuments" Content="SAVE ALL" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
+                <Button x:Name="PrintDocument" Content="PRINT" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
+                <Button x:Name="OpenFromWeb" Content="OPEN FROM WEB" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
+                <Button x:Name="PublishDocument" Content="PUBLISH" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Orientation="Horizontal">
+                <Button x:Name="ShowSettings" Content="SETTINGS" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" Margin="0,0,20,0" FontWeight="Bold" />
+                <TextBlock Margin="10,0"><Run Text="|"/></TextBlock>
+                <Button x:Name="ShowAbout" Content="ABOUT" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" Margin="0,0,20,0" FontWeight="Bold" />
+                <Button Click="ButtonMinimiseOnClick"  Style="{DynamicResource ChromelessButtonStyle}" Content="0" FontFamily="Marlett" />
+                <Button Click="ButtonMaxRestoreOnClick" x:Name="maxRestore" Style="{DynamicResource ChromelessButtonStyle}" Content="1" FontFamily="Marlett" />
+                <Button x:Name="TryClose" Style="{DynamicResource ChromelessButtonStyle}" Content="r" FontFamily="Marlett" />
+            </StackPanel>
+            <Rectangle HorizontalAlignment="Left" Stroke="Black" Width="10" StrokeThickness="0" Margin="0,10">
+                <Rectangle.Fill>
+                    <SolidColorBrush Color="{DynamicResource HighlightDarkColor}" />
+                </Rectangle.Fill>
+            </Rectangle>
+
+            <ContentControl x:Name="MDI"
 				Margin="10,0"
 				Grid.Row="1" />
-		</Grid>
-	</Grid>
+        </Grid>
+    </Grid>
 </Window>
