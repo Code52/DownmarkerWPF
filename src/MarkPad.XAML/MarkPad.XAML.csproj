@@ -68,6 +68,7 @@
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Converters\BoolToGridLengthConverter.cs" />
     <Compile Include="Converters\DebugConverter.cs" />
     <Compile Include="Converters\MarkupConverter.cs" />
     <Compile Include="AttachedProperties\WebBrowserUtility.cs" />

@@ -505,7 +505,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="{Binding DistractionFree, Converter={shared:BoolDoubleNegativeConverter}}" />
+            <ColumnDefinition Width="{Binding DistractionFree, Converter={shared:BoolToGridLengthConverter Invert=True}}" />
         </Grid.ColumnDefinitions>
 
         <avalonedit:TextEditor
