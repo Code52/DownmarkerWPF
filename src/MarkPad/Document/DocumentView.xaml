@@ -6,14 +6,11 @@
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:shared="http://schemas.markpad.net/winfx/xaml/shared" xmlns:cal="http://www.caliburnproject.org"
     xmlns:awe="clr-namespace:Awesomium.Windows.Controls;assembly=Awesomium.Windows.Controls" xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
-    xmlns:Converters="clr-namespace:MarkPad.XAML.Converters;assembly=MarkPad.XAML"
     x:Class="MarkPad.Document.DocumentView"
     mc:Ignorable="d" 
     d:DesignHeight="300" d:DesignWidth="300"
 >
     <UserControl.Resources>
-        <Converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
-        <Converters:BoolDoubleNegativeConverter x:Key="BoolDoubleNegativeConverter" />
         <ControlTemplate x:Key="HorizontalScrollBar"
                      TargetType="{x:Type ScrollBar}">
             <Grid x:Name="Root">
@@ -508,11 +505,11 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="{Binding DistractionFree, Converter={StaticResource BoolDoubleNegativeConverter}}" />
+            <ColumnDefinition Width="{Binding DistractionFree, Converter={shared:BoolToGridLengthConverter Invert=True}}" />
         </Grid.ColumnDefinitions>
 
         <avalonedit:TextEditor
-            x:Name="Document"
+            x:Name="Editor"
             WordWrap="True"
             ShowLineNumbers="True"
             Document="{Binding Document}"
