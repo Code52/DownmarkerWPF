@@ -19,7 +19,7 @@
     </i:Interaction.Behaviors>
 
     <i:Interaction.Triggers>
- <fw:InputBindingTrigger>
+        <fw:InputBindingTrigger>
             <fw:InputBindingTrigger.InputBinding>
                 <KeyBinding Modifiers="Ctrl" Key="N" />
             </fw:InputBindingTrigger.InputBinding>
@@ -31,7 +31,7 @@
             </fw:InputBindingTrigger.InputBinding>
             <cm:ActionMessage MethodName="SaveDocument" />
         </fw:InputBindingTrigger>
- <fw:InputBindingTrigger>
+        <fw:InputBindingTrigger>
             <fw:InputBindingTrigger.InputBinding>
                 <KeyBinding Modifiers="Ctrl+Shift" Key="S" />
             </fw:InputBindingTrigger.InputBinding>
@@ -178,7 +178,7 @@
                 <Button x:Name="PublishDocument" Content="PUBLISH" Style="{DynamicResource ChromelessButtonStyle}" FontSize="13.333" Margin="0,0,20,0" FontWeight="Bold" />
             </StackPanel>
             <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Orientation="Horizontal">
-                <Button x:Name="ShowSettings" Content="SETTINGS" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" Margin="0,0,20,0" FontWeight="Bold" />
+                <Button x:Name="ShowSettings" Content="SETTINGS" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" Margin="0,0,0,0" FontWeight="Bold" />
                 <TextBlock Margin="10,0"><Run Text="|"/></TextBlock>
                 <Button x:Name="ShowAbout" Content="ABOUT" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" Margin="0,0,20,0" FontWeight="Bold" />
                 <Button Click="ButtonMinimiseOnClick"  Style="{DynamicResource ChromelessButtonStyle}" Content="0" FontFamily="Marlett" />
