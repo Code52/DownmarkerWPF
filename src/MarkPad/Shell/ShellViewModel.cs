@@ -117,6 +117,14 @@ namespace MarkPad.Shell
             windowService.ShowDialog(aboutCreator());
         }
 
+        public void ToggleWebView()
+        {
+            var doc = MDI.ActiveItem as DocumentViewModel;
+            if (doc != null)
+            {
+                doc.DistractionFree = !doc.DistractionFree;
+            }
+        }
 
         public void PrintDocument()
         {
