@@ -6,7 +6,7 @@ namespace MarkPad.Document
 {
     static class DocumentParser
     {
-        private static Markdown MarkdownParser = new Markdown();
+        private static readonly Markdown MarkdownParser = new Markdown();
 
         public static string Parse(string source)
         {
