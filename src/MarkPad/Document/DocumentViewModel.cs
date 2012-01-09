@@ -118,7 +118,7 @@ namespace MarkPad.Document
             get { return title; }
         }
 
-        public override void CanClose(System.Action<bool> callback)
+        public override void CanClose(Action<bool> callback)
         {
             if (!HasChanges)
             {

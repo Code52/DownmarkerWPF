@@ -1,10 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Windows;
 using Caliburn.Micro;
-using MarkPad.Metaweblog;
-using MarkPad.Services.Interfaces;
-using System.Linq;
 using MarkPad.Settings;
 
 namespace MarkPad.PublishDetails
