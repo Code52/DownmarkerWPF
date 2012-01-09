@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.IsolatedStorage;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using MarkPad.Services.Interfaces;
 
@@ -23,7 +24,7 @@ namespace MarkPad.Services.Implementation
             using (IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(scope, null, null))
             {
                 string[] filenames = isoStore.GetFileNames(Filename);
-                if (Filename.Length > 0)
+                if (filenames.Any())
                 {
                     LoadStorage(isoStore);
                 }
