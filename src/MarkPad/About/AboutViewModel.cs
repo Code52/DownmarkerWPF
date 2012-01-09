@@ -41,7 +41,8 @@ namespace MarkPad.About
                                                          "Ookii Dialogs",
                                                          "XML-RPC.NET",
                                                          "MarkdownSharp",
-                                                         "JSON.NET"
+                                                         "JSON.NET",
+                                                         "Notify Property Weaver"
                                                      };
         public string Components
         {
