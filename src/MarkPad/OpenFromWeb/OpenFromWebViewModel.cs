@@ -11,12 +11,12 @@ namespace MarkPad.OpenFromWeb
 {
     public class OpenFromWebViewModel : Screen
     {
-        private readonly ISettingsService _settings;
+        private readonly ISettingsService settings;
         private readonly IDialogService dialogService;
 
         public OpenFromWebViewModel(ISettingsService settings, IDialogService dialogService)
         {
-            this._settings = settings;
+            this.settings = settings;
             this.dialogService = dialogService;
         }
 
@@ -34,13 +34,13 @@ namespace MarkPad.OpenFromWeb
         {
             get
             {
-                var post = _settings.Get<Post>("CurrentPost");
+                var post = settings.Get<Post>("CurrentPost");
 
                 return new Entry { Key = post.title, Value = post };
             }
             set
             {
-                _settings.Set("CurrentPost", value.Value);
+                settings.Set("CurrentPost", value.Value);
             }
         }
 

@@ -18,8 +18,8 @@ namespace MarkPad.Shell
     {
         private readonly IEventAggregator eventAggregator;
         private readonly IDialogService dialogService;
-        private readonly IWindowManager _windowManager;
-        private readonly ISettingsService _settingsService;
+        private readonly IWindowManager windowManager;
+        private readonly ISettingsService settingsService;
         private readonly Func<DocumentViewModel> documentCreator;
         private readonly Func<SettingsViewModel> settingsCreator;
         private readonly Func<AboutViewModel> aboutCreator;
@@ -38,8 +38,8 @@ namespace MarkPad.Shell
         {
             this.eventAggregator = eventAggregator;
             this.dialogService = dialogService;
-            this._windowManager = windowManager;
-            this._settingsService = settingsService;
+            this.windowManager = windowManager;
+            this.settingsService = settingsService;
             this.MDI = mdi;
             this.documentCreator = documentCreator;
             this.settingsCreator = settingsCreator;
@@ -60,7 +60,7 @@ namespace MarkPad.Shell
         public override void CanClose(Action<bool> callback)
         {
             base.CanClose(callback);
-            _settingsService.Save();
+            settingsService.Save();
         }
 
         public void Exit()
@@ -132,12 +132,12 @@ namespace MarkPad.Shell
 
         public void ShowSettings()
         {
-            _windowManager.ShowDialog(settingsCreator());
+            windowManager.ShowDialog(settingsCreator());
         }
 
         public void ShowAbout()
         {
-            _windowManager.ShowDialog(aboutCreator());
+            windowManager.ShowDialog(aboutCreator());
         }
 
         public void ToggleWebView()
@@ -184,7 +184,7 @@ namespace MarkPad.Shell
 
         public void PublishDocument()
         {
-            var blogs = _settingsService.Get<List<BlogSetting>>("Blogs");
+            var blogs = settingsService.Get<List<BlogSetting>>("Blogs");
             if (blogs == null || blogs.Count == 0)
             {
                 dialogService.ShowError("Error Publishing Post", "No blogs available to publish to.", "");
@@ -195,7 +195,7 @@ namespace MarkPad.Shell
             if (doc != null)
             {
                 var pd = new Details { Title = doc.Post.title, Categories = doc.Post.categories };
-                var detailsResult = _windowManager.ShowDialog(new PublishDetailsViewModel(pd, blogs));
+                var detailsResult = windowManager.ShowDialog(new PublishDetailsViewModel(pd, blogs));
                 if (detailsResult != true)
                     return;
 
@@ -205,7 +205,7 @@ namespace MarkPad.Shell
 
         public void OpenFromWeb()
         {
-            var blogs = _settingsService.Get<List<BlogSetting>>("Blogs");
+            var blogs = settingsService.Get<List<BlogSetting>>("Blogs");
             if (blogs == null || blogs.Count == 0)
             {
                 dialogService.ShowError("Error Retrieving Posts", "No blogs available to fetch from.", "");
@@ -215,11 +215,11 @@ namespace MarkPad.Shell
             var openFromWeb = openFromWebCreator();
             openFromWeb.InitializeBlogs(blogs);
 
-            var result = _windowManager.ShowDialog(openFromWeb);
+            var result = windowManager.ShowDialog(openFromWeb);
             if (result != true)
                 return;
 
-            var post = _settingsService.Get<Post>("CurrentPost");
+            var post = settingsService.Get<Post>("CurrentPost");
 
             var doc = documentCreator();
             doc.OpenFromWeb(post);

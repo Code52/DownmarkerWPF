@@ -13,15 +13,15 @@ namespace MarkPad.Settings
     {
         private const string markpadKeyName = "markpad.md";
 
-        private readonly ISettingsService _settingsService;
-        private readonly IWindowManager _windowManager;
+        private readonly ISettingsService settingsService;
+        private readonly IWindowManager windowManager;
 
         private readonly Func<BlogSettingsViewModel> blogSettingsCreator;
 
         public SettingsViewModel(ISettingsService settingsService, IWindowManager windowManager, Func<BlogSettingsViewModel> blogSettingsCreator)
         {
-            _settingsService = settingsService;
-            _windowManager = windowManager;
+            this.settingsService = settingsService;
+            this.windowManager = windowManager;
             this.blogSettingsCreator = blogSettingsCreator;
 
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes"))
@@ -36,7 +36,7 @@ namespace MarkPad.Settings
                     !string.IsNullOrEmpty(key.OpenSubKey(Constants.DefaultExtensions[2]).GetValue("").ToString());
             }
 
-            var blogs = _settingsService.Get<List<BlogSetting>>("Blogs") ?? new List<BlogSetting>();
+            var blogs = settingsService.Get<List<BlogSetting>>("Blogs") ?? new List<BlogSetting>();
 
             Blogs = new ObservableCollection<BlogSetting>(blogs);
         }
@@ -63,7 +63,7 @@ namespace MarkPad.Settings
             var blogSettings = blogSettingsCreator();
             blogSettings.InitializeBlog(blog);
 
-            var result = _windowManager.ShowDialog(blogSettings);
+            var result = windowManager.ShowDialog(blogSettings);
             if (result != true)
             {
                 blog.CancelEdit();
@@ -84,7 +84,7 @@ namespace MarkPad.Settings
             var blogSettings = blogSettingsCreator();
             blogSettings.InitializeBlog(CurrentBlog);
 
-            var result = _windowManager.ShowDialog(blogSettings);
+            var result = windowManager.ShowDialog(blogSettings);
 
             if (result != true)
             {
@@ -105,8 +105,8 @@ namespace MarkPad.Settings
         {
             UpdateExtensionRegistryKeys();
 
-            _settingsService.Set("Blogs", Blogs.ToList());
-            _settingsService.Save();
+            settingsService.Set("Blogs", Blogs.ToList());
+            settingsService.Save();
 
             TryClose();
         }
