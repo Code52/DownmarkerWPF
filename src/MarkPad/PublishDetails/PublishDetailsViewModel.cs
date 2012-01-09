@@ -1,17 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Windows;
 using Caliburn.Micro;
-using MarkPad.Metaweblog;
-using MarkPad.Services.Interfaces;
-using System.Linq;
 using MarkPad.Settings;
 
 namespace MarkPad.PublishDetails
 {
     public class PublishDetailsViewModel : Screen
     {
-        private Details _post;
+        private readonly Details _post;
 
         public PublishDetailsViewModel(Details post, List<BlogSetting> blogs)
         {

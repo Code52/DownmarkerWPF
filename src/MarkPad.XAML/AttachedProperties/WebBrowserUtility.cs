@@ -1,5 +1,4 @@
 using System.Windows;
-using System.Windows.Controls;
 using Awesomium.Windows.Controls;
 
 namespace MarkPad.XAML.AttachedProperties

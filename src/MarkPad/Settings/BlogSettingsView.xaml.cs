@@ -19,12 +19,12 @@ namespace MarkPad.Settings
                 DragMove();
         }
 
-        private void OkClick(object sender, System.Windows.RoutedEventArgs e)
+        private void OkClick(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
         }
 
-        private void CancelClick(object sender, System.Windows.RoutedEventArgs e)
+        private void CancelClick(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
         }
