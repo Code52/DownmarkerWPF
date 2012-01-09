@@ -105,16 +105,13 @@
     </Compile>
     <Compile Include="About\AboutViewModel.cs" />
     <Compile Include="Document\FormattingCommands.cs" />
-    <Compile Include="Framework\FloatingToolBar.cs" />
     <Compile Include="Framework\ObjectExtensions.cs" />
-    <Compile Include="Framework\InputBindingTrigger.cs" />
     <Compile Include="Settings\BlogSetting.cs" />
     <Compile Include="Settings\BlogSettingsView.xaml.cs">
       <DependentUpon>BlogSettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\BlogSettingsViewModel.cs" />
     <Compile Include="Framework\MarkdownHelpers.cs" />
-    <Compile Include="Framework\VisualExtensions.cs" />
     <Compile Include="SingleInstanceManager.cs" />
     <Page Include="About\AboutView.xaml">
       <SubType>Designer</SubType>

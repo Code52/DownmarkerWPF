@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
-namespace MarkPad.Framework
+namespace MarkPad.XAML
 {
     public static class VisualExtensions
     {

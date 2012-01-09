@@ -3,9 +3,9 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 
-namespace MarkPad.Framework
+namespace MarkPad.XAML.Triggers
 {
-    class InputBindingTrigger : TriggerBase<FrameworkElement>, ICommand
+    public class InputBindingTrigger : TriggerBase<FrameworkElement>, ICommand
     {
         public InputBinding InputBinding
         {
