@@ -11,7 +11,7 @@ namespace MarkPad.PublishDetails
 {
     public class PublishDetailsViewModel : Screen
     {
-        private Details _post;
+        private readonly Details _post;
 
         public PublishDetailsViewModel(Details post, List<BlogSetting> blogs)
         {

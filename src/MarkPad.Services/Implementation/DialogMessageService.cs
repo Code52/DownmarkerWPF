@@ -43,7 +43,7 @@ namespace MarkPad.Services.Implementation
 
     internal class DialogMessageService
     {
-        private Window owner;
+        private readonly Window owner;
 
         public DialogMessageService(Window owner)
         {
