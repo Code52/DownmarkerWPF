@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Caliburn.Micro;
@@ -137,11 +138,10 @@ namespace MarkPad.Settings
 
                 using (RegistryKey markpadKey = key.CreateSubKey(markpadKeyName))
                 {
-                    // Can't get this to work right now.
-                    //using (RegistryKey defaultIconKey = markpadKey.CreateSubKey("DefaultIcon"))
-                    //{
-                    //    defaultIconKey.SetValue("", exePath + ",1");
-                    //}
+                    using (RegistryKey defaultIconKey = markpadKey.CreateSubKey("DefaultIcon"))
+                    {
+                        defaultIconKey.SetValue("", Path.Combine(Constants.IconDir, Constants.Icons[0]));
+                    }
 
                     using (RegistryKey shellKey = markpadKey.CreateSubKey("shell"))
                     {

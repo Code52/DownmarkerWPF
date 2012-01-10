@@ -253,7 +253,7 @@
     <Resource Include="markpad.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="markpaddoc.ico" />
+    <EmbeddedResource Include="markpaddoc.ico" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Themes\ChaosSquirrel\style.css">

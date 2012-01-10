@@ -71,6 +71,8 @@ namespace MarkPad
 
             SetAwesomiumDefaults();
 
+            DumpIconsForDocuments();
+
             container.Resolve<IEventAggregator>().Publish(new AppReadyEvent());
 
             ((App)Application).HandleArguments(Environment.GetCommandLineArgs().Skip(1).ToArray());
@@ -99,6 +101,26 @@ namespace MarkPad
                     Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
                     "Themes"
             );
+        }
+
+        private void DumpIconsForDocuments()
+        {
+            var assemblyName = Assembly.GetEntryAssembly().GetName();
+
+            if (!Directory.Exists(Constants.IconDir))
+                Directory.CreateDirectory(Constants.IconDir);
+
+            foreach (var file in Constants.Icons)
+            {
+                if (File.Exists(Path.Combine(Constants.IconDir, file)))
+                    continue;
+
+                using (Stream stm = Assembly.GetExecutingAssembly().GetManifestResourceStream(String.Format("{0}.{1}", assemblyName.Name, file)))
+                using (Stream outFile = File.Create(Path.Combine(Constants.IconDir, file)))
+                {
+                    stm.CopyTo(outFile);
+                }
+            }
         }
 
         private static void SetupCaliburnMicroDefaults(ContainerBuilder builder)

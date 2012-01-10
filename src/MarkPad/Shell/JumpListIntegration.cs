@@ -107,6 +107,7 @@ namespace MarkPad.Shell
                            {
                                Arguments = file,
                                ApplicationPath = path,
+                               IconResourcePath = Path.Combine(Constants.IconDir, Constants.Icons[0]),
                                Title = new FileInfo(file).Name,
                                CustomCategory = "Recent Files"
                            };
