@@ -15,11 +15,11 @@ namespace MarkPad.Services.Implementation
         private IsolatedStorageScope scope = IsolatedStorageScope.Assembly | IsolatedStorageScope.User | IsolatedStorageScope.Roaming;
 
         private const string Filename = "settings.bin";
-        private Dictionary<string, object> _storage = new Dictionary<string, object>();
+        private Dictionary<string, object> storage = new Dictionary<string, object>();
 
         public SettingsService()
         {
-            _storage = new Dictionary<string, object>();
+            storage = new Dictionary<string, object>();
 
             using (IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(scope, null, null))
             {
@@ -33,17 +33,17 @@ namespace MarkPad.Services.Implementation
 
         public T Get<T>(string key)
         {
-            if (_storage.ContainsKey(key))
-                return (T)_storage[key];
+            if (storage.ContainsKey(key))
+                return (T)storage[key];
             return default(T);
         }
 
         public void Set<T>(string key, T value)
         {
-            if (!_storage.ContainsKey(key))
-                _storage.Add(key, value);
+            if (!storage.ContainsKey(key))
+                storage.Add(key, value);
             else
-                _storage[key] = value;
+                storage[key] = value;
 
         }
 
@@ -54,7 +54,7 @@ namespace MarkPad.Services.Implementation
                 BinaryFormatter formatter = new BinaryFormatter();
 
                 using (var stream = new IsolatedStorageFileStream(Filename, FileMode.Open, isoStore))
-                    _storage = (Dictionary<string, object>)formatter.Deserialize(stream);
+                    storage = (Dictionary<string, object>)formatter.Deserialize(stream);
             }
             catch (Exception e)
             {
@@ -68,7 +68,7 @@ namespace MarkPad.Services.Implementation
 
             using (IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(scope, null, null))
             using (var stream = new IsolatedStorageFileStream(Filename, FileMode.Create, isoStore))
-                formatter.Serialize(stream, _storage);
+                formatter.Serialize(stream, storage);
         }
     }
 }

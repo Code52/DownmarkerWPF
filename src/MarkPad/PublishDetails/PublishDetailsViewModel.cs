@@ -7,11 +7,11 @@ namespace MarkPad.PublishDetails
 {
     public class PublishDetailsViewModel : Screen
     {
-        private readonly Details _post;
+        private readonly Details post;
 
         public PublishDetailsViewModel(Details post, List<BlogSetting> blogs)
         {
-            _post = post;
+            this.post = post;
 
             Blogs = new ObservableCollection<BlogSetting>(blogs);
             SelectedBlog = Blogs[0];
@@ -21,23 +21,23 @@ namespace MarkPad.PublishDetails
 
         public string PostTitle
         {
-            get { return _post.Title; }
-            set { _post.Title = value; }
+            get { return post.Title; }
+            set { post.Title = value; }
         }
 
         public string Categories
         {
             get
             {
-                return _post.Categories == null ?  "" : string.Join(",", _post.Categories);
+                return post.Categories == null ? "" : string.Join(",", post.Categories);
             }
-            set { _post.Categories = value.Split(','); }
+            set { post.Categories = value.Split(','); }
         }
 
         public BlogSetting SelectedBlog
         {
-            get { return _post.Blog; }
-            set { _post.Blog = value; }
+            get { return post.Blog; }
+            set { post.Blog = value; }
         }
     }
 

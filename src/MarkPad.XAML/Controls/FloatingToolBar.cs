@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
-namespace MarkPad.Framework
+namespace MarkPad.XAML.Controls
 {
     public class FloatingToolBar : Popup
     {
