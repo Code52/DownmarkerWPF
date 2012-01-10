@@ -8,6 +8,7 @@ using System.Xml;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using MarkPad.Framework;
+using MarkPad.XAML;
 
 namespace MarkPad.Document
 {

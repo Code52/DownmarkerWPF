@@ -17,12 +17,12 @@ namespace MarkPad.Shell
     /// </summary>
     public class JumpListIntegration : IHandle<FileOpenEvent>, IHandle<AppReadyEvent>, IDisposable
     {
-        private readonly ISettingsService _settingsService;
+        private readonly ISettingsService settingsService;
         private JumpList jumpList;
 
         public JumpListIntegration(ISettingsService settingsService)
         {
-            this._settingsService = settingsService;
+            this.settingsService = settingsService;
         }
 
         public void Handle(FileOpenEvent message)
@@ -39,11 +39,11 @@ namespace MarkPad.Shell
             if (currentFiles.Contains(openedFile))
             {
                 // find file in list
-                var files = _settingsService.Get<List<string>>("RecentFiles");
+                var files = settingsService.Get<List<string>>("RecentFiles");
                 var index = files.IndexOf(openedFile);
                 files.RemoveAt(index);
                 files.Insert(0, openedFile);
-                _settingsService.Set("RecentFiles", files);
+                settingsService.Set("RecentFiles", files);
 
                 jumpList.JumpItems.RemoveAt(index);
                 InsertFileFirst(openedFile);
@@ -51,12 +51,12 @@ namespace MarkPad.Shell
             else
             {
                 // update settings
-                var files = _settingsService.Get<List<string>>("RecentFiles");
-                if(files == null) files = new List<string>();
+                var files = settingsService.Get<List<string>>("RecentFiles");
+                if (files == null) files = new List<string>();
 
                 files.Insert(0, openedFile);
                 if (files.Count > 5) files.RemoveAt(5);
-                _settingsService.Set("RecentFiles", files);
+                settingsService.Set("RecentFiles", files);
 
                 InsertFileFirst(openedFile);
             }
@@ -76,14 +76,14 @@ namespace MarkPad.Shell
         {
             jumpList = GetJumpList();
 
-            var x = new Thread(new ParameterizedThreadStart(delegate { PopulateJumpList(_settingsService.Get<List<string>>("RecentFiles")); }));
+            var x = new Thread(new ParameterizedThreadStart(delegate { PopulateJumpList(settingsService.Get<List<string>>("RecentFiles")); }));
             x.SetApartmentState(ApartmentState.STA);
             x.Start();
         }
 
         public void Dispose()
         {
-            _settingsService.Save();
+            settingsService.Save();
         }
 
         private void PopulateJumpList(IEnumerable<string> recentFiles)

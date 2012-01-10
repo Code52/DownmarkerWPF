@@ -15,23 +15,23 @@ namespace MarkPad.Document
     internal class DocumentViewModel : Screen
     {
         private readonly IDialogService dialogService;
-        private readonly ISettingsService _settings;
+        private readonly ISettingsService settings;
         private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
         private readonly DispatcherTimer timer;
 
         private string title;
         private string filename;
-        private Post _post;
+        private Post post;
 
         public DocumentViewModel(IDialogService dialogService, ISettingsService settings)
         {
             this.dialogService = dialogService;
-            _settings = settings;
+            this.settings = settings;
 
             title = "New Document";
             Original = "";
             Document = new TextDocument();
-            _post = new Post();
+            post = new Post();
             timer = new DispatcherTimer();
             timer.Tick += TimerTick;
             timer.Interval = delay;
@@ -55,13 +55,13 @@ namespace MarkPad.Document
 
         public void OpenFromWeb(Post post)
         {
-            _post = post;
+            this.post = post;
             title = post.permalink;
             Document.Text = post.description;
             Original = post.description;
         }
 
-        public Post Post { get { return _post; } }
+        public Post Post { get { return post; } }
 
         public void Update()
         {
@@ -171,22 +171,22 @@ namespace MarkPad.Document
             var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
             ((IXmlRpcProxy)proxy).Url = blog.WebAPI;
 
-            var post = new Post();
+            var newpost = new Post();
 
             var permalink = this.DisplayName.Split('.')[0] == "New Document"
                                 ? postTitle
                                 : this.DisplayName.Split('.')[0];
 
-            if (_post.postid != null && !string.IsNullOrWhiteSpace(_post.postid.ToString()))
+            if (newpost.postid != null && !string.IsNullOrWhiteSpace(newpost.postid.ToString()))
             {
-                post = proxy.GetPost(_post.postid.ToString(), blog.Username, blog.Password);
+                newpost = proxy.GetPost(newpost.postid.ToString(), blog.Username, blog.Password);
             }
 
             try
             {
-                if (string.IsNullOrWhiteSpace(post.permalink))
+                if (string.IsNullOrWhiteSpace(newpost.permalink))
                 {
-                    post = new Post
+                    newpost = new Post
                                {
                                    permalink = permalink,
                                    title = postTitle,
@@ -194,21 +194,21 @@ namespace MarkPad.Document
                                    description = blog.Language == "HTML" ? RenderBody : Document.Text,
                                    categories = categories
                                };
-                    post.postid = proxy.AddPost(blog.BlogInfo.blogid, blog.Username, blog.Password, post, true);
+                    newpost.postid = proxy.AddPost(blog.BlogInfo.blogid, blog.Username, blog.Password, newpost, true);
 
-                    _settings.Set(post.permalink, post);
-                    _settings.Save();
+                    settings.Set(newpost.permalink, newpost);
+                    settings.Save();
                 }
                 else
                 {
-                    post.title = postTitle;
-                    post.description = blog.Language == "HTML" ? RenderBody : Document.Text;
-                    post.categories = categories;
+                    newpost.title = postTitle;
+                    newpost.description = blog.Language == "HTML" ? RenderBody : Document.Text;
+                    newpost.categories = categories;
 
-                    proxy.UpdatePost(post.postid.ToString(), blog.Username, blog.Password, post, true);
+                    proxy.UpdatePost(newpost.postid.ToString(), blog.Username, blog.Password, newpost, true);
 
-                    _settings.Set(post.permalink, post);
-                    _settings.Save();
+                    settings.Set(newpost.permalink, newpost);
+                    settings.Save();
                 }
             }
             catch (WebException ex)
@@ -224,7 +224,7 @@ namespace MarkPad.Document
                 dialogService.ShowError("Error Publishing", ex.Message, "");
             }
 
-            _post = post;
+            this.post = newpost;
             Original = Document.Text;
             title = postTitle;
             NotifyOfPropertyChange(() => DisplayName);
