@@ -49,20 +49,12 @@ namespace MarkPad.Framework
         /// <param name="obj">An object of type <typeparamref name="T"/>.</param>
         /// <param name="action">The action to perform if <paramref name="obj"/> is not null</param>
         /// <returns><paramref name="obj"/> to allow for chaining</returns>
-        public static T Execute<T>(this T obj, Action<T> action) where T : class
+        public static T ExecuteSafely<T>(this T obj, Action<T> action) where T : class
         {
             if (obj != null)
                 action(obj);
 
             return obj;
-        }
-        public static void ExecuteSafely<T>(this T obj, Action<T> action)
-        {
-            if (obj == null) return;
-
-            if (action == null) return;
-
-            action(obj);
         }
     }
 }
