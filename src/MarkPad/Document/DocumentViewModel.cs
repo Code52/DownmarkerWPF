@@ -229,5 +229,24 @@ namespace MarkPad.Document
             title = postTitle;
             NotifyOfPropertyChange(() => DisplayName);
         }
+
+        public MarkPadHyperlink GetHyperlink(string selectedText, string url)
+        {
+            //todo: UI - needs a popup...
+            return new MarkPadHyperlink(selectedText, @"http://code52.org");
+        }
     }
+
+    public class MarkPadHyperlink
+    {
+        public MarkPadHyperlink(string text, string url)
+        {
+            Text = text;
+            Url = url;
+        }
+
+        public string Text { get; private set; }
+        public string Url { get; private set; }
+    }
+
 }

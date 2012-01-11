@@ -5,9 +5,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml;
+using Caliburn.Micro;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using MarkPad.Framework;
+using MarkPad.Framework.Events;
 using MarkPad.XAML;
 
 namespace MarkPad.Document
@@ -15,8 +17,11 @@ namespace MarkPad.Document
     public partial class DocumentView
     {
         private ScrollViewer documentScrollViewer;
+        private readonly IEventAggregator eventAggregator;
         public DocumentView()
         {
+            eventAggregator = IoC.Get<IEventAggregator>();
+
             InitializeComponent();
             Loaded += DocumentViewLoaded;
             wb.Loaded += WbLoaded;
@@ -29,6 +34,7 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleItalic, (x, y) => ToggleItalic(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCode, (x, y) => ToggleCode(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCodeBlock, (x, y) => ToggleCodeBlock(), CanEditDocument));
+            CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
         }
 
         void WbLoaded(object sender, RoutedEventArgs e)
@@ -130,6 +136,36 @@ namespace MarkPad.Document
             }
 
             Editor.SelectedText = Spaces + Editor.SelectedText.Replace(NewLine, NewLine + Spaces);
+        }
+
+        private void SetHyperlink()
+        {
+            var textArea = Editor.TextArea;
+            if (textArea.Selection.IsEmpty)
+            {
+                var startOffset = textArea.Caret.Offset;
+                while ((Editor.Document.GetCharAt(startOffset) != ' ') && (startOffset >= 0))
+                {
+                    startOffset--;
+                }
+                var newEndOffset = textArea.Caret.Offset;
+                while ((Editor.Document.GetCharAt(newEndOffset) != ' ') && (newEndOffset <= Editor.Document.TextLength))
+                {
+                    newEndOffset++;
+                }
+                textArea.Selection = textArea.Selection.StartSelectionOrSetEndpoint(startOffset, newEndOffset);
+            }
+            var selectedText = textArea.Selection.GetText(textArea.Document);
+
+            //todo? Work out if it already is a link and parse the text from the url?
+
+            (DataContext as DocumentViewModel)
+                .ExecuteSafely(vm =>
+                                   {
+                                       var hyperlink = vm.GetHyperlink(selectedText, string.Empty);
+                                       textArea.Selection.ReplaceSelectionWithText(textArea, 
+                                           string.Format("[{0}]({1})", hyperlink.Text, hyperlink.Url));
+                                   });
         }
 
         private void SelectionChanged(object sender, EventArgs e)
