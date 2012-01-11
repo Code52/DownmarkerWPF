@@ -23,7 +23,8 @@ namespace MarkPad
             {
                 var filePath = args[0];
                 if (File.Exists(filePath) && Constants.DefaultExtensions.Contains(Path.GetExtension(filePath).ToLower()))
-                    bootstrapper.Container.Resolve<IEventAggregator>().Publish(new FileOpenEvent(filePath));
+                  //  DTB: modified direct call to the container to get the event aggregator from the bootstrapper
+                  bootstrapper.GetEventAggregator().Publish(new FileOpenEvent(filePath));
             }
         }
     }

@@ -17,12 +17,10 @@ using LogManager = NLog.LogManager;
 
 namespace MarkPad
 {
-    class AppBootstrapper : Bootstrapper<ShellViewModel>
+    //  DTB: Changed from Bootstrapper<T> to Caliburn.Micro.Autofac.AutofacBootstrapper<T>
+    class AppBootstrapper : Caliburn.Micro.Autofac.AutofacBootstrapper<ShellViewModel>
     {
-        private IContainer container;
         private JumpListIntegration jumpList;
-
-        public IContainer Container { get { return container; } }
 
         private static void SetupLogging()
         {
@@ -35,25 +33,27 @@ namespace MarkPad
             LogManager.Configuration = config;
         }
 
-        protected override void Configure()
+        //  DTB: added static constructor to configure logging
+        static AppBootstrapper()
         {
             SetupLogging();
             //  DTB: replaced use of internal NLogAdapter to the one provided by Caliburn.Micro.Logging
             Caliburn.Micro.LogManager.GetLog = t => new Caliburn.Micro.Logging.NLog.NLogLogger(t);
-            //Caliburn.Micro.LogManager.GetLog = t => new NLogAdapter(t);
+        }
 
-            var builder = new ContainerBuilder();
+        protected override void ConfigureBootstrapper()
+        {   //  you must call the base version first!
+            base.ConfigureBootstrapper();
+            //  override namespace naming convention
+            EnforceNamespaceConvention = false;
+            //  auto subsubscribe event aggregators
+            AutoSubscribeEventAggegatorHandlers = true;
+        }
 
-            SetupCaliburnMicroDefaults(builder);
-
-            builder.RegisterModule<EventAggregationAutoSubscriptionModule>();
+        protected override void ConfigureContainer(ContainerBuilder builder)
+        {   //  DTB: Moved the Autofac registration code in this override
             builder.RegisterModule<ServicesModule>();
-
             builder.RegisterType<JumpListIntegration>().SingleInstance();
-
-            container = builder.Build();
-
-            jumpList = container.Resolve<JumpListIntegration>();
         }
 
         protected override void PrepareApplication()
@@ -70,11 +70,15 @@ namespace MarkPad
         {
             base.OnStartup(sender, e);
 
+            //  DTB: moved jumplist resolution to OnStartup
+            jumpList = Container.Resolve<JumpListIntegration>();
+
             SetAwesomiumDefaults();
 
             DumpIconsForDocuments();
 
-            container.Resolve<IEventAggregator>().Publish(new AppReadyEvent());
+            //  DTB: Replace use of internal container with base class Container property
+            Container.Resolve<IEventAggregator>().Publish(new AppReadyEvent());
 
             ((App)Application).HandleArguments(Environment.GetCommandLineArgs().Skip(1).ToArray());
         }
@@ -124,46 +128,9 @@ namespace MarkPad
             }
         }
 
-        private static void SetupCaliburnMicroDefaults(ContainerBuilder builder)
+        public IEventAggregator GetEventAggregator()
         {
-            builder.RegisterAssemblyTypes(AssemblySource.Instance.ToArray())
-              .Where(type => type.Name.EndsWith("ViewModel"))
-              .AsSelf()
-              .InstancePerDependency();
-
-            builder.RegisterAssemblyTypes(AssemblySource.Instance.ToArray())
-              .Where(type => type.Name.EndsWith("View"))
-              .AsSelf()
-              .InstancePerDependency();
-
-            builder.Register<IWindowManager>(c => new WindowManager()).InstancePerLifetimeScope();
-            builder.Register<IEventAggregator>(c => new EventAggregator()).InstancePerLifetimeScope();
-        }
-
-        protected override object GetInstance(Type service, string key)
-        {
-            object instance;
-            if (String.IsNullOrWhiteSpace(key))
-            {
-                if (container.TryResolve(service, out instance))
-                    return instance;
-            }
-            else
-            {
-                if (container.TryResolveNamed(key, service, out instance))
-                    return instance;
-            }
-            throw new Exception(String.Format("Could not locate any instances of contract {0}.", key ?? service.Name));
-        }
-
-        protected override IEnumerable<object> GetAllInstances(Type service)
-        {
-            return container.Resolve(typeof(IEnumerable<>).MakeGenericType(service)) as IEnumerable<object>;
-        }
-
-        protected override void BuildUp(object instance)
-        {
-            container.InjectProperties(instance);
+            return Container.Resolve<IEventAggregator>();
         }
     }
 }
