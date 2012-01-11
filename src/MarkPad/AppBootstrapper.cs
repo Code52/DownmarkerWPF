@@ -38,8 +38,9 @@ namespace MarkPad
         protected override void Configure()
         {
             SetupLogging();
-
-            Caliburn.Micro.LogManager.GetLog = t => new NLogAdapter(t);
+            //  DTB: replaced use of internal NLogAdapter to the one provided by Caliburn.Micro.Logging
+            Caliburn.Micro.LogManager.GetLog = t => new Caliburn.Micro.Logging.NLog.NLogLogger(t);
+            //Caliburn.Micro.LogManager.GetLog = t => new NLogAdapter(t);
 
             var builder = new ContainerBuilder();
 
