@@ -14,14 +14,14 @@ namespace MarkPad
         static readonly Dictionary<string, Assembly> Libraries = new Dictionary<string, Assembly>();
         static readonly Dictionary<string, Assembly> ReflectionOnlyLibraries = new Dictionary<string, Assembly>();
 
-        public static void Start()
+        [STAThread]
+        public static void Main()
         {
             AppDomain.CurrentDomain.AssemblyResolve += FindAssembly;
 
             PreloadUnmanagedLibraries();
 
-            var app = new App();
-            app.Run();
+            App.Start();
         }
 
         [DllImport("kernel32.dll")]

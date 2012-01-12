@@ -1,13 +1,18 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Windows;
 using Autofac;
 using Caliburn.Micro;
 using MarkPad.Framework.Events;
+using Microsoft.Shell;
 
 namespace MarkPad
 {
-    public partial class App
+    public partial class App : Application, ISingleInstanceApp
     {
+        private const string Unique = "There can be only one MARKPAD!!! (We ignore crappy sequels here)";
+
         private readonly AppBootstrapper bootstrapper;
 
         public App()
@@ -19,12 +24,31 @@ namespace MarkPad
 
         public void HandleArguments(string[] args)
         {
-            if (args.Length == 1)
+            if (args.Length == 2)
             {
-                var filePath = args[0];
+                var filePath = args[1];
                 if (File.Exists(filePath) && Constants.DefaultExtensions.Contains(Path.GetExtension(filePath).ToLower()))
                     bootstrapper.Container.Resolve<IEventAggregator>().Publish(new FileOpenEvent(filePath));
             }
+        }
+
+        public static void Start()
+        {
+            if (SingleInstance<App>.InitializeAsFirstInstance(Unique))
+            {
+                new App().Run();
+
+                // Allow single instance code to perform cleanup operations
+                SingleInstance<App>.Cleanup();
+            }
+        }
+
+        public bool SignalExternalCommandLineArgs(IList<string> args)
+        {
+            // handle command line arguments of second instance
+            HandleArguments(args.ToArray());
+
+            return true;
         }
     }
 }

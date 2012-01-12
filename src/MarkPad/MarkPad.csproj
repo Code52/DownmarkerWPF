@@ -75,7 +75,6 @@
     <Reference Include="MarkdownSharp">
       <HintPath>..\..\packages\MarkdownSharp.1.13.0.0\lib\35\MarkdownSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="NLog">
       <HintPath>..\..\packages\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
     </Reference>
@@ -84,6 +83,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MahApps.Metro.0.4.0.17\lib\net40\System.Windows.Interactivity.dll</HintPath>
@@ -104,6 +104,7 @@
       <DependentUpon>AboutView.xaml</DependentUpon>
     </Compile>
     <Compile Include="About\AboutViewModel.cs" />
+    <Compile Include="SingleInstance.cs" />
     <Compile Include="Document\FormattingCommands.cs" />
     <Compile Include="Framework\ObjectExtensions.cs" />
     <Compile Include="Settings\BlogSetting.cs" />
@@ -112,7 +113,6 @@
     </Compile>
     <Compile Include="Settings\BlogSettingsViewModel.cs" />
     <Compile Include="Framework\MarkdownHelpers.cs" />
-    <Compile Include="SingleInstanceManager.cs" />
     <Page Include="About\AboutView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
