@@ -120,6 +120,12 @@
     </Compile>
     <Compile Include="About\AboutViewModel.cs" />
     <Compile Include="Framework\DebugLogger.cs" />
+    <Compile Include="Metaweblog\Generated\MetaWeblog.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MetaWeblog.tt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="SingleInstance.cs" />
     <Compile Include="Document\FormattingCommands.cs" />
     <Compile Include="Framework\ObjectExtensions.cs" />
@@ -166,7 +172,6 @@
     <Compile Include="Metaweblog\Category.cs" />
     <Compile Include="Metaweblog\CategoryInfo.cs" />
     <Compile Include="Metaweblog\Enclosure.cs" />
-    <Compile Include="Metaweblog\IMetaWeblog.cs" />
     <Compile Include="Metaweblog\MediaObject.cs" />
     <Compile Include="Metaweblog\MediaObjectInfo.cs" />
     <Compile Include="Metaweblog\Post.cs" />
@@ -198,6 +203,12 @@
     <EmbeddedResource Include="..\..\lib\AwesomiumProcess">
       <Link>Libs\x86\AwesomiumProcess</Link>
     </EmbeddedResource>
+    <None Include="Metaweblog\Generated\BloggerAPI.json" />
+    <None Include="Metaweblog\Generated\MetaWeblog.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MetaWeblog.generated.cs</LastGenOutput>
+    </None>
+    <None Include="Metaweblog\Generated\MetaWeblogAPI.json" />
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
     <EmbeddedResource Include="Syntax\Markdown.xshd" />
@@ -298,6 +309,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

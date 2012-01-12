@@ -168,7 +168,7 @@ namespace MarkPad.Document
         {
             if (categories == null) categories = new string[0];
 
-            var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
+            var proxy = new MetaWeblog();
             ((IXmlRpcProxy)proxy).Url = blog.WebAPI;
 
             var newpost = new Post();
@@ -194,7 +194,7 @@ namespace MarkPad.Document
                                    description = blog.Language == "HTML" ? RenderBody : Document.Text,
                                    categories = categories
                                };
-                    newpost.postid = proxy.AddPost(blog.BlogInfo.blogid, blog.Username, blog.Password, newpost, true);
+                    newpost.postid = proxy.NewPost(blog.BlogInfo.blogid, blog.Username, blog.Password, newpost, true);
 
                     settings.Set(newpost.permalink, newpost);
                     settings.Save();
@@ -205,7 +205,7 @@ namespace MarkPad.Document
                     newpost.description = blog.Language == "HTML" ? RenderBody : Document.Text;
                     newpost.categories = categories;
 
-                    proxy.UpdatePost(newpost.postid.ToString(), blog.Username, blog.Password, newpost, true);
+                    proxy.EditPost(newpost.postid.ToString(), blog.Username, blog.Password, newpost, true);
 
                     settings.Set(newpost.permalink, newpost);
                     settings.Save();

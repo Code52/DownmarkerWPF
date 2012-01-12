@@ -48,7 +48,7 @@ namespace MarkPad.OpenFromWeb
 
         public void Fetch()
         {
-            var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
+            var proxy = new MetaWeblog();
             ((IXmlRpcProxy)proxy).Url = this.SelectedBlog.WebAPI;
 
             try

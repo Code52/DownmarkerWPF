@@ -92,7 +92,7 @@ namespace MarkPad.Settings
             this.SelectedAPIBlog = null;
             try
             {
-                var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
+                var proxy = new MetaWeblog();
                 ((IXmlRpcProxy)proxy).Url = CurrentBlog.WebAPI;
 
                 var blogs = proxy.GetUsersBlogs("MarkPad", CurrentBlog.Username, CurrentBlog.Password);
