@@ -75,7 +75,8 @@ namespace MarkPad
 
             container.Resolve<IEventAggregator>().Publish(new AppReadyEvent());
 
-            ((App)Application).HandleArguments(Environment.GetCommandLineArgs().Skip(1).ToArray());
+            // Handle the original arguments from the first run of this app.
+            ((App)Application).HandleArguments(Environment.GetCommandLineArgs());
         }
 
         protected override void OnExit(object sender, EventArgs e)
