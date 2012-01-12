@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -17,7 +16,6 @@ using LogManager = NLog.LogManager;
 
 namespace MarkPad
 {
-    //  DTB: Changed from Bootstrapper<T> to Caliburn.Micro.Autofac.AutofacBootstrapper<T>
     class AppBootstrapper : Caliburn.Micro.Autofac.AutofacBootstrapper<ShellViewModel>
     {
         private JumpListIntegration jumpList;
@@ -33,7 +31,6 @@ namespace MarkPad
             LogManager.Configuration = config;
         }
 
-        //  DTB: added static constructor to configure logging
         static AppBootstrapper()
         {
             SetupLogging();
@@ -50,7 +47,7 @@ namespace MarkPad
         }
 
         protected override void ConfigureContainer(ContainerBuilder builder)
-        {   //  DTB: Moved the Autofac registration code in this override
+        {
             builder.RegisterModule<ServicesModule>();
             builder.RegisterType<JumpListIntegration>().SingleInstance();
         }
@@ -69,14 +66,12 @@ namespace MarkPad
         {
             base.OnStartup(sender, e);
 
-            //  DTB: moved jumplist resolution to OnStartup
             jumpList = Container.Resolve<JumpListIntegration>();
 
             SetAwesomiumDefaults();
 
             DumpIconsForDocuments();
 
-            //  DTB: Replace use of internal container with base class Container property
             Container.Resolve<IEventAggregator>().Publish(new AppReadyEvent());
 
             ((App)Application).HandleArguments(Environment.GetCommandLineArgs().Skip(1).ToArray());

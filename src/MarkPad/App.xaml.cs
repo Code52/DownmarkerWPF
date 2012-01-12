@@ -1,7 +1,5 @@
 ﻿using System.IO;
 using System.Linq;
-using Autofac;
-using Caliburn.Micro;
 using MarkPad.Framework.Events;
 
 namespace MarkPad
@@ -23,8 +21,7 @@ namespace MarkPad
             {
                 var filePath = args[0];
                 if (File.Exists(filePath) && Constants.DefaultExtensions.Contains(Path.GetExtension(filePath).ToLower()))
-                  //  DTB: modified direct call to the container to get the event aggregator from the bootstrapper
-                  bootstrapper.GetEventAggregator().Publish(new FileOpenEvent(filePath));
+                    bootstrapper.GetEventAggregator().Publish(new FileOpenEvent(filePath));
             }
         }
     }
