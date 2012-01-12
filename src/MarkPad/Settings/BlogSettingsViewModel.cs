@@ -95,6 +95,8 @@ namespace MarkPad.Settings
             {
                 var proxy = new MetaWeblog(CurrentBlog.WebAPI);
 
+                this.APIBlogs = new ObservableCollection<FetchedBlogInfo>();
+
                 var taskBlogInfo = Task<BlogInfo[]>.Factory.FromAsync(
                                        proxy.BeginGetUsersBlogs,
                                        proxy.EndGetUsersBlogs,
@@ -104,8 +106,6 @@ namespace MarkPad.Settings
                                        null);
                 taskBlogInfo.ContinueWith(continueParam =>
                 {
-                    this.APIBlogs = new ObservableCollection<FetchedBlogInfo>();
-
                     foreach (var blogInfo in continueParam.Result)
                     {
                         this.APIBlogs.Add(new FetchedBlogInfo { Name = blogInfo.blogName, BlogInfo = blogInfo });
