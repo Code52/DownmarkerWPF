@@ -168,8 +168,7 @@ namespace MarkPad.Document
         {
             if (categories == null) categories = new string[0];
 
-            var proxy = new MetaWeblog();
-            ((IXmlRpcProxy)proxy).Url = blog.WebAPI;
+            var proxy = new MetaWeblog(blog.WebAPI);
 
             var newpost = new Post();
 

@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using MarkPad.Metaweblog;
@@ -92,17 +93,24 @@ namespace MarkPad.Settings
             this.SelectedAPIBlog = null;
             try
             {
-                var proxy = new MetaWeblog();
-                ((IXmlRpcProxy)proxy).Url = CurrentBlog.WebAPI;
+                var proxy = new MetaWeblog(CurrentBlog.WebAPI);
 
-                var blogs = proxy.GetUsersBlogs("MarkPad", CurrentBlog.Username, CurrentBlog.Password);
-
-                this.APIBlogs = new ObservableCollection<FetchedBlogInfo>();
-
-                foreach (var blogInfo in blogs)
+                var taskBlogInfo = Task<BlogInfo[]>.Factory.FromAsync(
+                                       proxy.BeginGetUsersBlogs,
+                                       proxy.EndGetUsersBlogs,
+                                       "MarkPad",
+                                       CurrentBlog.Username,
+                                       CurrentBlog.Password,
+                                       null);
+                taskBlogInfo.ContinueWith(continueParam =>
                 {
-                    this.APIBlogs.Add(new FetchedBlogInfo { Name = blogInfo.blogName, BlogInfo = blogInfo });
-                }
+                    this.APIBlogs = new ObservableCollection<FetchedBlogInfo>();
+
+                    foreach (var blogInfo in continueParam.Result)
+                    {
+                        this.APIBlogs.Add(new FetchedBlogInfo { Name = blogInfo.blogName, BlogInfo = blogInfo });
+                    }
+                }, TaskScheduler.FromCurrentSynchronizationContext());
             }
             catch (WebException ex)
             {
