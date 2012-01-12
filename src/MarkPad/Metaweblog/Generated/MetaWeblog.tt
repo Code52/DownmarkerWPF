@@ -66,30 +66,6 @@ namespace MarkPad.Metaweblog
     }
 }
 <#+
-    internal class Helpers
-    {
-        private const string UnderscoresPattern = "(((?<=[a-z])[A-Z])|([A-Z](?![A-Z]|$)))";
-
-        public static string Capitalize(string upperCase)
-        {
-            var lower = upperCase.ToLowerInvariant();
-            return char.ToUpperInvariant(lower[0]) + lower.Substring(1);
-        }
-
-        public static string Underscore(string camelCase)
-        {
-            if(camelCase.StartsWith("@"))
-            {
-                camelCase = camelCase.Substring(1);
-            }
-            var underscored = Regex.Replace(camelCase, UnderscoresPattern,
-                                            new MatchEvaluator(m => string.Concat("_", m.Value.ToLowerInvariant())),
-                                            RegexOptions.Compiled);
-
-            return underscored;
-        }		
-    }
-
     internal class APIMethod
     {
         public string Type
