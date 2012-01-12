@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -17,12 +16,9 @@ using LogManager = NLog.LogManager;
 
 namespace MarkPad
 {
-    class AppBootstrapper : Bootstrapper<ShellViewModel>
+    class AppBootstrapper : Caliburn.Micro.Autofac.AutofacBootstrapper<ShellViewModel>
     {
-        private IContainer container;
         private JumpListIntegration jumpList;
-
-        public IContainer Container { get { return container; } }
 
         private static void SetupLogging()
         {
@@ -35,24 +31,25 @@ namespace MarkPad
             LogManager.Configuration = config;
         }
 
-        protected override void Configure()
+        static AppBootstrapper()
         {
             SetupLogging();
-
             Caliburn.Micro.LogManager.GetLog = t => new NLogAdapter(t);
+        }
 
-            var builder = new ContainerBuilder();
+        protected override void ConfigureBootstrapper()
+        {   //  you must call the base version first!
+            base.ConfigureBootstrapper();
+            //  override namespace naming convention
+            EnforceNamespaceConvention = false;
+            //  auto subsubscribe event aggregators
+            AutoSubscribeEventAggegatorHandlers = true;
+        }
 
-            SetupCaliburnMicroDefaults(builder);
-
-            builder.RegisterModule<EventAggregationAutoSubscriptionModule>();
+        protected override void ConfigureContainer(ContainerBuilder builder)
+        {
             builder.RegisterModule<ServicesModule>();
-
             builder.RegisterType<JumpListIntegration>().SingleInstance();
-
-            container = builder.Build();
-
-            jumpList = container.Resolve<JumpListIntegration>();
         }
 
         protected override void PrepareApplication()
@@ -69,11 +66,13 @@ namespace MarkPad
         {
             base.OnStartup(sender, e);
 
+            jumpList = Container.Resolve<JumpListIntegration>();
+
             SetAwesomiumDefaults();
 
             DumpIconsForDocuments();
 
-            container.Resolve<IEventAggregator>().Publish(new AppReadyEvent());
+            Container.Resolve<IEventAggregator>().Publish(new AppReadyEvent());
 
             // Handle the original arguments from the first run of this app.
             ((App)Application).HandleArguments(Environment.GetCommandLineArgs());
@@ -124,46 +123,9 @@ namespace MarkPad
             }
         }
 
-        private static void SetupCaliburnMicroDefaults(ContainerBuilder builder)
+        public IEventAggregator GetEventAggregator()
         {
-            builder.RegisterAssemblyTypes(AssemblySource.Instance.ToArray())
-              .Where(type => type.Name.EndsWith("ViewModel"))
-              .AsSelf()
-              .InstancePerDependency();
-
-            builder.RegisterAssemblyTypes(AssemblySource.Instance.ToArray())
-              .Where(type => type.Name.EndsWith("View"))
-              .AsSelf()
-              .InstancePerDependency();
-
-            builder.Register<IWindowManager>(c => new WindowManager()).InstancePerLifetimeScope();
-            builder.Register<IEventAggregator>(c => new EventAggregator()).InstancePerLifetimeScope();
-        }
-
-        protected override object GetInstance(Type service, string key)
-        {
-            object instance;
-            if (String.IsNullOrWhiteSpace(key))
-            {
-                if (container.TryResolve(service, out instance))
-                    return instance;
-            }
-            else
-            {
-                if (container.TryResolveNamed(key, service, out instance))
-                    return instance;
-            }
-            throw new Exception(String.Format("Could not locate any instances of contract {0}.", key ?? service.Name));
-        }
-
-        protected override IEnumerable<object> GetAllInstances(Type service)
-        {
-            return container.Resolve(typeof(IEnumerable<>).MakeGenericType(service)) as IEnumerable<object>;
-        }
-
-        protected override void BuildUp(object instance)
-        {
-            container.InjectProperties(instance);
+            return Container.Resolve<IEventAggregator>();
         }
     }
 }
