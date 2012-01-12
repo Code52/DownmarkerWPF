@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using Autofac;
 using Caliburn.Micro;
@@ -9,10 +8,6 @@ using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.Services;
 using MarkPad.Shell;
-using NLog;
-using NLog.Config;
-using NLog.Targets;
-using LogManager = NLog.LogManager;
 
 namespace MarkPad
 {
@@ -20,21 +15,9 @@ namespace MarkPad
     {
         private JumpListIntegration jumpList;
 
-        private static void SetupLogging()
-        {
-            var debuggerTarget = new DebuggerTarget { Layout = "[${level:uppercase=true}] (${logger}) ${message}" };
-
-            var config = new LoggingConfiguration();
-            config.AddTarget("debugger", debuggerTarget);
-            config.LoggingRules.Add(new LoggingRule("*", LogLevel.Trace, debuggerTarget));
-
-            LogManager.Configuration = config;
-        }
-
         static AppBootstrapper()
         {
-            SetupLogging();
-            Caliburn.Micro.LogManager.GetLog = t => new NLogAdapter(t);
+            LogManager.GetLog = t => new DebugLogger(t);
         }
 
         protected override void ConfigureBootstrapper()
