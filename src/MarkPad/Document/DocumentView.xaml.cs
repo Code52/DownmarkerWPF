@@ -62,6 +62,9 @@ namespace MarkPad.Document
             editCommandBindings
                 .FirstOrDefault(b => b.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.IndentSelection)
                 .ExecuteSafely(b => editCommandBindings.Remove(b));
+
+            // set default focus to the editor
+            Editor.Focus();
         }
 
 
