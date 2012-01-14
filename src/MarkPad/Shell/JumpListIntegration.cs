@@ -34,6 +34,9 @@ namespace MarkPad.Shell
 
         public void OpenFileAsync(string openedFile)
         {
+            if (!IsWin7())
+                return;
+
             var currentFiles = jumpList.JumpItems.OfType<JumpTask>().Select(t => t.Arguments);
 
             if (currentFiles.Contains(openedFile))
@@ -64,6 +67,9 @@ namespace MarkPad.Shell
 
         private void InsertFileFirst(string openedFile)
         {
+            if (!IsWin7())
+                return;
+
             if (jumpList != null)
             {
                 var item = CreateJumpListItem(openedFile);
@@ -74,6 +80,9 @@ namespace MarkPad.Shell
 
         public void Handle(AppReadyEvent message)
         {
+            if (!IsWin7())
+                return;
+
             jumpList = GetJumpList();
 
             var x = new Thread(new ParameterizedThreadStart(delegate { PopulateJumpList(settingsService.Get<List<string>>("RecentFiles")); }));
@@ -88,6 +97,9 @@ namespace MarkPad.Shell
 
         private void PopulateJumpList(IEnumerable<string> recentFiles)
         {
+            if (!IsWin7())
+                return;
+
             if (recentFiles == null) return;
 
             foreach (var file in recentFiles.Distinct())
@@ -102,6 +114,9 @@ namespace MarkPad.Shell
 
         private static JumpItem CreateJumpListItem(string file)
         {
+            if (!IsWin7())
+                return null;
+
             var path = Assembly.GetEntryAssembly().CodeBase;
             return new JumpTask
                            {
@@ -113,12 +128,20 @@ namespace MarkPad.Shell
                            };
         }
 
-        private static JumpList GetJumpList()
+        private static bool IsWin7()
         {
             // check for Windows7
             var os = Environment.OSVersion.Version;
-            if (os.Major < 6) return null;
-            if (os.Minor < 1) return null;
+            if (os.Major < 6) return false;
+            if (os.Minor < 1) return false;
+
+            return true;
+        }
+
+        private static JumpList GetJumpList()
+        {
+            if (!IsWin7())
+                return null;
 
             var list = JumpList.GetJumpList(Application.Current);
             if (list != null) return list;
