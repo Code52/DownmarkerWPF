@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -68,6 +69,9 @@ namespace MarkPad.Document
             editCommandBindings
                 .FirstOrDefault(b => b.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.IndentSelection)
                 .ExecuteSafely(b => editCommandBindings.Remove(b));
+
+            // set default focus to the editor
+            Editor.Focus();
         }
 
 
@@ -138,31 +142,30 @@ namespace MarkPad.Document
             Editor.SelectedText = Spaces + Editor.SelectedText.Replace(NewLine, NewLine + Spaces);
         }
 
-        private void SetHyperlink()
+        static readonly char[] WordBreakers = new[] { ' ', '\r', '\n' };
+
+        internal void SetHyperlink()
         {
             var textArea = Editor.TextArea;
             if (textArea.Selection.IsEmpty)
-            {
-                var startOffset = textArea.Caret.Offset;
-                while ((Editor.Document.GetCharAt(startOffset) != ' ') && (startOffset >= 0))
-                {
-                    startOffset--;
-                }
-                var newEndOffset = textArea.Caret.Offset;
-                while ((Editor.Document.GetCharAt(newEndOffset) != ' ') && (newEndOffset <= Editor.Document.TextLength))
-                {
-                    newEndOffset++;
-                }
-                textArea.Selection = textArea.Selection.StartSelectionOrSetEndpoint(startOffset, newEndOffset);
-            }
+                return;
+
             var selectedText = textArea.Selection.GetText(textArea.Document);
 
-            //todo? Work out if it already is a link and parse the text from the url?
+            //  Check if the selected text already is a link...
+            string text = selectedText, url = string.Empty;
+            var match = Regex.Match(selectedText, @"\[(?<text>(?:[^\\]|\\.)+)\]\((?<url>[^)]+)\)");
+            if (match.Success)
+            {
+                text = match.Groups["text"].Value;
+                url = match.Groups["url"].Value;
+            }
+            var hyperlink = new MarkPadHyperlink(text, url);
 
             (DataContext as DocumentViewModel)
                 .ExecuteSafely(vm =>
                                    {
-                                       var hyperlink = vm.GetHyperlink(selectedText, string.Empty);
+                                       hyperlink = vm.GetHyperlink(hyperlink);
                                        textArea.Selection.ReplaceSelectionWithText(textArea, 
                                            string.Format("[{0}]({1})", hyperlink.Text, hyperlink.Url));
                                    });

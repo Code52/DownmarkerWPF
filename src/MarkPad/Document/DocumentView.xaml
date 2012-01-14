@@ -523,7 +523,7 @@
                     <Button Width="22" Command="Document:FormattingCommands.ToggleItalic" ToolTip="Italic">I</Button>
                     <Button Width="44" Command="Document:FormattingCommands.ToggleCode" ToolTip="Code" Margin="5,0,0,0">Code</Button>
                     <Button Width="78" Command="Document:FormattingCommands.ToggleCodeBlock" ToolTip="Code block">Code block</Button>
-                    <Button Width="36" Command="Document:FormattingCommands.SetHyperlink" ToolTip="Hyperlink">www</Button>
+                    <Button Width="42" Command="Document:FormattingCommands.SetHyperlink" ToolTip="Hyperlink">www</Button>
                 </StackPanel>
             </Border>
         </controls:FloatingToolBar>

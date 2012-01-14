@@ -5,6 +5,7 @@ using System.Windows.Threading;
 using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using ICSharpCode.AvalonEdit.Document;
+using MarkPad.HyperlinkEditor;
 using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
@@ -16,6 +17,8 @@ namespace MarkPad.Document
     {
         private readonly IDialogService dialogService;
         private readonly ISettingsService settings;
+        private readonly IWindowManager windowManager;
+
         private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
         private readonly DispatcherTimer timer;
 
@@ -23,10 +26,11 @@ namespace MarkPad.Document
         private string filename;
         private Post post;
 
-        public DocumentViewModel(IDialogService dialogService, ISettingsService settings)
+        public DocumentViewModel(IDialogService dialogService, ISettingsService settings, IWindowManager windowManager)
         {
             this.dialogService = dialogService;
             this.settings = settings;
+            this.windowManager = windowManager;
 
             title = "New Document";
             Original = "";
@@ -230,23 +234,15 @@ namespace MarkPad.Document
             NotifyOfPropertyChange(() => DisplayName);
         }
 
-        public MarkPadHyperlink GetHyperlink(string selectedText, string url)
+        public MarkPadHyperlink GetHyperlink(MarkPadHyperlink hyperlink)
         {
-            //todo: UI - needs a popup...
-            return new MarkPadHyperlink(selectedText, @"http://code52.org");
+            var viewModel = new HyperlinkEditorViewModel(hyperlink.Text, hyperlink.Url);
+            this.windowManager.ShowDialog(viewModel);
+            if (!viewModel.WasCancelled)
+            {
+                hyperlink.Set(viewModel.Text, viewModel.Url);
+            }
+            return hyperlink;
         }
     }
-
-    public class MarkPadHyperlink
-    {
-        public MarkPadHyperlink(string text, string url)
-        {
-            Text = text;
-            Url = url;
-        }
-
-        public string Text { get; private set; }
-        public string Url { get; private set; }
-    }
-
 }
