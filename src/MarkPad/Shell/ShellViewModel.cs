@@ -177,6 +177,14 @@ namespace MarkPad.Shell
                 .ExecuteSafely(v => v.ToggleCode());
         }
 
+        public void SetHyperlink()
+        {
+            GetDocument()
+                .ExecuteSafely(v => v.SetHyperlink());
+        }
+
+
+
         public void PublishDocument()
         {
             var blogs = settingsService.Get<List<BlogSetting>>("Blogs");

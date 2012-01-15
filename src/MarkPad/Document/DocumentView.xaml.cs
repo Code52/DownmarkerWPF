@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml;
+using Caliburn.Micro;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using MarkPad.Framework;
+using MarkPad.Framework.Events;
 using MarkPad.XAML;
 
 namespace MarkPad.Document
@@ -15,8 +18,11 @@ namespace MarkPad.Document
     public partial class DocumentView
     {
         private ScrollViewer documentScrollViewer;
+        private readonly IEventAggregator eventAggregator;
         public DocumentView()
         {
+            eventAggregator = IoC.Get<IEventAggregator>();
+
             InitializeComponent();
             Loaded += DocumentViewLoaded;
             wb.Loaded += WbLoaded;
@@ -29,6 +35,7 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleItalic, (x, y) => ToggleItalic(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCode, (x, y) => ToggleCode(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCodeBlock, (x, y) => ToggleCodeBlock(), CanEditDocument));
+            CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
         }
 
         void WbLoaded(object sender, RoutedEventArgs e)
@@ -62,6 +69,9 @@ namespace MarkPad.Document
             editCommandBindings
                 .FirstOrDefault(b => b.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.IndentSelection)
                 .ExecuteSafely(b => editCommandBindings.Remove(b));
+
+            // set default focus to the editor
+            Editor.Focus();
         }
 
 
@@ -130,6 +140,35 @@ namespace MarkPad.Document
             }
 
             Editor.SelectedText = Spaces + Editor.SelectedText.Replace(NewLine, NewLine + Spaces);
+        }
+
+        static readonly char[] WordBreakers = new[] { ' ', '\r', '\n' };
+
+        internal void SetHyperlink()
+        {
+            var textArea = Editor.TextArea;
+            if (textArea.Selection.IsEmpty)
+                return;
+
+            var selectedText = textArea.Selection.GetText(textArea.Document);
+
+            //  Check if the selected text already is a link...
+            string text = selectedText, url = string.Empty;
+            var match = Regex.Match(selectedText, @"\[(?<text>(?:[^\\]|\\.)+)\]\((?<url>[^)]+)\)");
+            if (match.Success)
+            {
+                text = match.Groups["text"].Value;
+                url = match.Groups["url"].Value;
+            }
+            var hyperlink = new MarkPadHyperlink(text, url);
+
+            (DataContext as DocumentViewModel)
+                .ExecuteSafely(vm =>
+                                   {
+                                       hyperlink = vm.GetHyperlink(hyperlink);
+                                       textArea.Selection.ReplaceSelectionWithText(textArea, 
+                                           string.Format("[{0}]({1})", hyperlink.Text, hyperlink.Url));
+                                   });
         }
 
         private void SelectionChanged(object sender, EventArgs e)

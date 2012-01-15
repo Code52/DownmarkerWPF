@@ -119,7 +119,12 @@
       <DependentUpon>AboutView.xaml</DependentUpon>
     </Compile>
     <Compile Include="About\AboutViewModel.cs" />
+    <Compile Include="Document\MarkPadHyperlink.cs" />
     <Compile Include="Framework\DebugLogger.cs" />
+    <Compile Include="HyperlinkEditor\HyperlinkEditorView.xaml.cs">
+      <DependentUpon>HyperlinkEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="HyperlinkEditor\HyperlinkEditorViewModel.cs" />
     <Compile Include="Metaweblog\Generated\MetaWeblog.generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -175,6 +180,7 @@
     <Compile Include="Metaweblog\Category.cs" />
     <Compile Include="Metaweblog\CategoryInfo.cs" />
     <Compile Include="Metaweblog\Enclosure.cs" />
+    <Compile Include="Metaweblog\IMetaWeblog.cs" />
     <Compile Include="Metaweblog\MediaObject.cs" />
     <Compile Include="Metaweblog\MediaObjectInfo.cs" />
     <Compile Include="Metaweblog\Post.cs" />
@@ -189,6 +195,10 @@
     </Compile>
     <Compile Include="PublishDetails\PublishDetailsViewModel.cs" />
     <Compile Include="Shell\ShellViewModel.cs" />
+    <Page Include="HyperlinkEditor\HyperlinkEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Settings\BlogSettingsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

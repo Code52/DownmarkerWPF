@@ -5,6 +5,7 @@ using System.Windows.Threading;
 using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using ICSharpCode.AvalonEdit.Document;
+using MarkPad.HyperlinkEditor;
 using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
@@ -16,6 +17,8 @@ namespace MarkPad.Document
     {
         private readonly IDialogService dialogService;
         private readonly ISettingsService settings;
+        private readonly IWindowManager windowManager;
+
         private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
         private readonly DispatcherTimer timer;
 
@@ -23,10 +26,11 @@ namespace MarkPad.Document
         private string filename;
         private Post post;
 
-        public DocumentViewModel(IDialogService dialogService, ISettingsService settings)
+        public DocumentViewModel(IDialogService dialogService, ISettingsService settings, IWindowManager windowManager)
         {
             this.dialogService = dialogService;
             this.settings = settings;
+            this.windowManager = windowManager;
 
             title = "New Document";
             Original = "";
@@ -227,6 +231,17 @@ namespace MarkPad.Document
             Original = Document.Text;
             title = postTitle;
             NotifyOfPropertyChange(() => DisplayName);
+        }
+
+        public MarkPadHyperlink GetHyperlink(MarkPadHyperlink hyperlink)
+        {
+            var viewModel = new HyperlinkEditorViewModel(hyperlink.Text, hyperlink.Url);
+            this.windowManager.ShowDialog(viewModel);
+            if (!viewModel.WasCancelled)
+            {
+                hyperlink.Set(viewModel.Text, viewModel.Url);
+            }
+            return hyperlink;
         }
     }
 }

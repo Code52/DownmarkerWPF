@@ -60,6 +60,12 @@
         </s:InputBindingTrigger>
         <s:InputBindingTrigger>
             <s:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Ctrl" Key="K" />
+            </s:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="SetHyperlink" />
+        </s:InputBindingTrigger>
+        <s:InputBindingTrigger>
+            <s:InputBindingTrigger.InputBinding>
                 <KeyBinding Key="F10" />
             </s:InputBindingTrigger.InputBinding>
             <cm:ActionMessage MethodName="ToggleWebView" />

@@ -9,5 +9,6 @@ namespace MarkPad.Document
         public static ICommand ToggleItalic = new RoutedCommand();
         public static ICommand ToggleCode = new RoutedCommand();
         public static ICommand ToggleCodeBlock = new RoutedCommand();
+        public static ICommand SetHyperlink = new RoutedCommand();
     }
 }
