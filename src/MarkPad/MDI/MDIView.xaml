@@ -14,7 +14,11 @@
         <TabControl.ItemTemplate>
             <DataTemplate>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="{Binding DisplayName}" />
+                    <TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" MaxWidth="400">
+                        <TextBlock.ToolTip>
+                            <ToolTip Content="{Binding DisplayName}" />
+                        </TextBlock.ToolTip>
+                    </TextBlock>
                     <TextBlock Text="i" FontFamily="Marlett" Visibility="{Binding HasChanges, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <Button 
                         Style="{DynamicResource ChromelessButtonStyle}"
