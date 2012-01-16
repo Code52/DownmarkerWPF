@@ -1,12 +1,8 @@
-﻿using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
 namespace MarkPad.HyperlinkEditor
 {
-    /// <summary>
-    /// Interaction logic for HyperlinkEditorView.xaml
-    /// </summary>
-    public partial class HyperlinkEditorView : Window
+    public partial class HyperlinkEditorView
     {
         public HyperlinkEditorView()
         {
