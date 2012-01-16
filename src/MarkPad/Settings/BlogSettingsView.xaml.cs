@@ -11,6 +11,17 @@ namespace MarkPad.Settings
         public BlogSettingsView()
         {
             InitializeComponent();
+
+            CurrentBlog_Password.Loaded += CurrentBlog_Password_Loaded;
+        }
+
+        void CurrentBlog_Password_Loaded(object sender, RoutedEventArgs e)
+        {
+            var vm = this.DataContext as BlogSettingsViewModel;
+            if (vm == null)
+                return;
+
+            CurrentBlog_Password.Password = vm.CurrentBlog.Password;
         }
 
         private void DragMoveWindow(object sender, MouseButtonEventArgs e)

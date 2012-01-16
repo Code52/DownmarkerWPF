@@ -87,6 +87,14 @@ namespace MarkPad.Settings
             }
         }
 
+        public void SetCurrentBlogPassword(object password)
+        {
+            if (CurrentBlog == null)
+                return;
+
+            CurrentBlog.Password = password.ToString();
+        }
+
         public void FetchBlogs()
         {
             this.SelectedAPIBlog = null;

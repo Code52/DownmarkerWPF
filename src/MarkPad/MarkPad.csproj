@@ -120,6 +120,8 @@
     </Compile>
     <Compile Include="About\AboutViewModel.cs" />
     <Compile Include="Document\MarkPadHyperlink.cs" />
+    <Compile Include="Framework\FrameworkExtensions.cs" />
+    <Compile Include="Framework\Dynamic.cs" />
     <Compile Include="Framework\DebugLogger.cs" />
     <Compile Include="HyperlinkEditor\HyperlinkEditorView.xaml.cs">
       <DependentUpon>HyperlinkEditorView.xaml</DependentUpon>
