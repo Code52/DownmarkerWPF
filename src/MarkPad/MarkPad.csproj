@@ -180,7 +180,6 @@
     <Compile Include="Metaweblog\Category.cs" />
     <Compile Include="Metaweblog\CategoryInfo.cs" />
     <Compile Include="Metaweblog\Enclosure.cs" />
-    <Compile Include="Metaweblog\IMetaWeblog.cs" />
     <Compile Include="Metaweblog\MediaObject.cs" />
     <Compile Include="Metaweblog\MediaObjectInfo.cs" />
     <Compile Include="Metaweblog\Post.cs" />

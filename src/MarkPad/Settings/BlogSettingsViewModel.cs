@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Caliburn.Micro;
-using CookComputing.XmlRpc;
 using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
 
@@ -91,39 +90,38 @@ namespace MarkPad.Settings
         public void FetchBlogs()
         {
             this.SelectedAPIBlog = null;
-            try
+
+            var proxy = new MetaWeblog(CurrentBlog.WebAPI);
+
+            this.APIBlogs = new ObservableCollection<FetchedBlogInfo>();
+
+            var taskBlogInfo = Task<BlogInfo[]>.Factory.FromAsync(
+                                   proxy.BeginGetUsersBlogs,
+                                   proxy.EndGetUsersBlogs,
+                                   "MarkPad",
+                                   CurrentBlog.Username,
+                                   CurrentBlog.Password,
+                                   null);
+
+            taskBlogInfo.ContinueWith(continueParam =>
             {
-                var proxy = new MetaWeblog(CurrentBlog.WebAPI);
-
-                this.APIBlogs = new ObservableCollection<FetchedBlogInfo>();
-
-                var taskBlogInfo = Task<BlogInfo[]>.Factory.FromAsync(
-                                       proxy.BeginGetUsersBlogs,
-                                       proxy.EndGetUsersBlogs,
-                                       "MarkPad",
-                                       CurrentBlog.Username,
-                                       CurrentBlog.Password,
-                                       null);
-                taskBlogInfo.ContinueWith(continueParam =>
+                if (continueParam.Exception != null)
                 {
-                    foreach (var blogInfo in continueParam.Result)
-                    {
-                        this.APIBlogs.Add(new FetchedBlogInfo { Name = blogInfo.blogName, BlogInfo = blogInfo });
-                    }
-                }, TaskScheduler.FromCurrentSynchronizationContext());
-            }
-            catch (WebException ex)
-            {
-                dialogService.ShowError("Fetch Failed", ex.Message, "");
-            }
-            catch (XmlRpcException ex)
-            {
-                dialogService.ShowError("Fetch Failed", ex.Message, "");
-            }
-            catch (XmlRpcFaultException ex)
-            {
-                dialogService.ShowError("Fetch Failed", ex.Message, "");
-            }
+                    var message = continueParam.Exception.Message;
+
+                    var aggEx = continueParam.Exception as AggregateException;
+                    if (aggEx != null)
+                        message = String.Join(Environment.NewLine, aggEx.InnerExceptions.Select(ex => ex.Message));
+
+                    dialogService.ShowError("Markpad", "There was a problem contacting the website. Check the settings and try again.", message);
+                    return;
+                }
+
+                foreach (var blogInfo in continueParam.Result)
+                {
+                    this.APIBlogs.Add(new FetchedBlogInfo { Name = blogInfo.blogName, BlogInfo = blogInfo });
+                }
+            }, TaskScheduler.FromCurrentSynchronizationContext());
         }
     }
 
