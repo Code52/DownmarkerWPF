@@ -66,6 +66,7 @@
     <Compile Include="Implementation\DialogMessageService.cs" />
     <Compile Include="Implementation\DialogService.cs" />
     <Compile Include="Implementation\SettingsService.cs" />
+    <Compile Include="Interfaces\ButtonExtras.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />
     <Compile Include="Interfaces\ISettingsService.cs" />
     <Compile Include="ServicesModule.cs" />

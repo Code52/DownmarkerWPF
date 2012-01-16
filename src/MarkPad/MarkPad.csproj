@@ -125,6 +125,8 @@
       <DependentUpon>HyperlinkEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="HyperlinkEditor\HyperlinkEditorViewModel.cs" />
+    <Compile Include="OpenFromWeb\Entry.cs" />
+    <Compile Include="Settings\FetchedBlogInfo.cs" />
     <Compile Include="SingleInstance.cs" />
     <Compile Include="Document\FormattingCommands.cs" />
     <Compile Include="Framework\ObjectExtensions.cs" />
@@ -207,6 +209,9 @@
     <EmbeddedResource Include="..\..\lib\AwesomiumProcess">
       <Link>Libs\x86\AwesomiumProcess</Link>
     </EmbeddedResource>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
     <EmbeddedResource Include="Syntax\Markdown.xshd" />

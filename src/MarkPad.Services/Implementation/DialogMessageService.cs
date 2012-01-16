@@ -52,7 +52,7 @@ namespace MarkPad.Services.Implementation
 
         private DialogMessageResult DoOokiiMsgBox()
         {
-            TaskDialog td = new TaskDialog();
+            var td = new TaskDialog();
 
             if ((Buttons & DialogMessageButtons.Ok) != 0) td.Buttons.Add(new TaskDialogButton(ButtonType.Ok));
             if ((Buttons & DialogMessageButtons.Cancel) != 0) td.Buttons.Add(new TaskDialogButton(ButtonType.Cancel));
