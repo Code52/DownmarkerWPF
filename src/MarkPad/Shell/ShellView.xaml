@@ -13,6 +13,7 @@
     mc:Ignorable="d" 
     MouseLeftButtonDown="DragMoveWindow"
     Icon="../markpad.ico"
+    SnapsToDevicePixels="True"
     KeyDown="WindowKeyDown"
     d:DataContext="{d:DesignInstance Shell:ShellViewModel}">
 

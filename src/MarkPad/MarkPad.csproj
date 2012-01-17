@@ -120,6 +120,9 @@
     </Compile>
     <Compile Include="About\AboutViewModel.cs" />
     <Compile Include="Document\MarkPadHyperlink.cs" />
+    <Compile Include="ExceptionDialog.xaml.cs">
+      <DependentUpon>ExceptionDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Framework\DebugLogger.cs" />
     <Compile Include="HyperlinkEditor\HyperlinkEditorView.xaml.cs">
       <DependentUpon>HyperlinkEditorView.xaml</DependentUpon>
@@ -186,6 +189,10 @@
     </Compile>
     <Compile Include="PublishDetails\PublishDetailsViewModel.cs" />
     <Compile Include="Shell\ShellViewModel.cs" />
+    <Page Include="ExceptionDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="HyperlinkEditor\HyperlinkEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
