@@ -4,6 +4,7 @@
         Icon="../markpad.ico"
         xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
         MouseLeftButtonDown="DragMoveWindow" 
+        ShowInTaskbar="False"
         SnapsToDevicePixels="True"
         WindowStartupLocation="CenterOwner" Width="300" Height="320" ResizeMode="NoResize">
     <i:Interaction.Behaviors>
