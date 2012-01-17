@@ -7,7 +7,7 @@
         xmlns:cal="http://www.caliburnproject.org" xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="MarkPad.Settings.BlogSettingsView" MouseLeftButtonDown="DragMoveWindow"
         Icon="../markpad.ico"
         ShowInTaskbar="False"
-        WindowStartupLocation="CenterOwner" mc:Ignorable="d" Width="300" Height="500" ResizeMode="NoResize">
+        WindowStartupLocation="CenterOwner" mc:Ignorable="d" Width="300" Height="490" ResizeMode="NoResize">
     <i:Interaction.Behaviors>
         <Behaviours:BorderlessWindowBehavior ResizeWithGrip="False" />
     </i:Interaction.Behaviors>

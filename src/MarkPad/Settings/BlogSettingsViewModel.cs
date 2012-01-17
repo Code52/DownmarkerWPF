@@ -125,10 +125,14 @@ namespace MarkPad.Settings
                     return;
                 }
 
+                var newAPIBlogs = new ObservableCollection<FetchedBlogInfo>();
+
                 foreach (var blogInfo in continueParam.Result)
                 {
-                    this.APIBlogs.Add(new FetchedBlogInfo { Name = blogInfo.blogName, BlogInfo = blogInfo });
+                    newAPIBlogs.Add(new FetchedBlogInfo { Name = blogInfo.blogName, BlogInfo = blogInfo });
                 }
+
+                this.APIBlogs = newAPIBlogs;
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
     }
