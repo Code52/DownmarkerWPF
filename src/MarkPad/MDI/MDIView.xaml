@@ -26,7 +26,7 @@
                         FontFamily="Marlett"
                         FontSize="12"
                         Content="r"
-                        cal:Message.Attach="DeactivateItem($dataContext, 'true')"
+                        cal:Message.Attach="DeactivateItem($dataContext, true)"
                     />
                 </StackPanel>
             </DataTemplate>
