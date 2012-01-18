@@ -30,6 +30,8 @@ namespace MarkPad
             EnforceNamespaceConvention = false;
             //  auto subsubscribe event aggregators
             AutoSubscribeEventAggegatorHandlers = true;
+
+            FrameworkExtensions.Message.Attach.AllowXamlSyntax();
         }
 
         protected override void ConfigureContainer(ContainerBuilder builder)
