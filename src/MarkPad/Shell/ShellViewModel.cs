@@ -11,6 +11,7 @@ using MarkPad.OpenFromWeb;
 using MarkPad.PublishDetails;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
+using Ookii.Dialogs.Wpf;
 
 namespace MarkPad.Shell
 {
@@ -202,7 +203,7 @@ namespace MarkPad.Shell
                 if (detailsResult != true)
                     return;
 
-                doc.Publish(pd.Title, pd.Categories, pd.Blog);
+                doc.Publish(doc.Post.postid == null ? null : doc.Post.postid.ToString(), pd.Title, pd.Categories, pd.Blog);
             }
         }
 
@@ -211,7 +212,12 @@ namespace MarkPad.Shell
             var blogs = settingsService.Get<List<BlogSetting>>("Blogs");
             if (blogs == null || blogs.Count == 0)
             {
-                dialogService.ShowError("Error Retrieving Posts", "No blogs available to fetch from.", "");
+                var setupBlog = dialogService.ShowConfirmation("No blogs setup", "Do you want to setup a blog?", "", 
+                    new ButtonExtras(ButtonType.Yes, "Yes", "Setup a blog"),
+                    new ButtonExtras(ButtonType.No, "No", "Don't setup a blog now"));
+
+                if (setupBlog)
+                    ShowSettings();
                 return;
             }
 

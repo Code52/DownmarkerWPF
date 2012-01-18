@@ -1,21 +1,5 @@
-﻿using Ookii.Dialogs.Wpf;
-
-namespace MarkPad.Services.Interfaces
+﻿namespace MarkPad.Services.Interfaces
 {
-    public class ButtonExtras
-    {
-        public ButtonExtras(ButtonType buttonType, string text, string note)
-        {
-            this.ButtonType = buttonType;
-            this.Text = text;
-            this.Note = note;
-        }
-
-        public ButtonType ButtonType { get; private set; }
-        public string Text { get; private set; }
-        public string Note { get; private set; }
-    }
-
     public interface IDialogService
     {
         bool ShowConfirmation(string title, string text, string extra, params ButtonExtras[] buttonExtras);

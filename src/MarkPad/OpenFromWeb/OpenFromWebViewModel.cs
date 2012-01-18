@@ -22,11 +22,11 @@ namespace MarkPad.OpenFromWeb
 
         public void InitializeBlogs(List<BlogSetting> blogs)
         {
-            this.Blogs = blogs;
+            Blogs = blogs;
             SelectedBlog = blogs[0];
         }
 
-        public List<BlogSetting> Blogs { get; set; }
+        public List<BlogSetting> Blogs { get; private set; }
 
         public BlogSetting SelectedBlog { get; set; }
 
@@ -44,7 +44,7 @@ namespace MarkPad.OpenFromWeb
             }
         }
 
-        public ObservableCollection<Entry> Posts { get; set; }
+        public ObservableCollection<Entry> Posts { get; private set; }
 
         public void Fetch()
         {
@@ -52,13 +52,13 @@ namespace MarkPad.OpenFromWeb
 
             try
             {
-                var posts = proxy.GetRecentPosts(this.SelectedBlog.BlogInfo.blogid, this.SelectedBlog.Username, this.SelectedBlog.Password, 100);
+                var posts = proxy.GetRecentPosts(SelectedBlog.BlogInfo.blogid, SelectedBlog.Username, SelectedBlog.Password, 100);
 
-                this.Posts = new ObservableCollection<Entry>();
+                Posts = new ObservableCollection<Entry>();
 
                 foreach (var p in posts)
                 {
-                    this.Posts.Add(new Entry { Key = p.title, Value = p });
+                    Posts.Add(new Entry { Key = p.title, Value = p });
                 }
             }
             catch (WebException ex)
@@ -74,11 +74,5 @@ namespace MarkPad.OpenFromWeb
                 dialogService.ShowError("Error Fetching Posts", ex.Message, "");
             }
         }
-    }
-
-    public class Entry
-    {
-        public string Key { get; set; }
-        public Post Value { get; set; }
     }
 }

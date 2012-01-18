@@ -5,30 +5,32 @@ namespace MarkPad.Services.Implementation
 {
     internal class DialogService : IDialogService
     {
-        #region IDialogService Members
-
         public bool ShowConfirmation(string title, string text, string extra, params ButtonExtras[] buttonExtras)
         {
-            DialogMessageService service = new DialogMessageService(null);
-            service.Icon = DialogMessageIcon.Question;
-            service.Buttons = DialogMessageButtons.Yes | DialogMessageButtons.No;
-            service.Title = title;
-            service.Text = text;
-            service.Extra = extra;
-            service.ButtonExtras = buttonExtras;
+            var service = new DialogMessageService(null)
+                          {
+                              Icon = DialogMessageIcon.Question,
+                              Buttons = DialogMessageButtons.Yes | DialogMessageButtons.No,
+                              Title = title,
+                              Text = text,
+                              Extra = extra,
+                              ButtonExtras = buttonExtras
+                          };
             var result = service.Show();
             return result == DialogMessageResult.Yes;
         }
 
         public bool? ShowConfirmationWithCancel(string title, string text, string extra, params ButtonExtras[] buttonExtras)
         {
-            DialogMessageService service = new DialogMessageService(null);
-            service.Icon = DialogMessageIcon.Question;
-            service.Buttons = DialogMessageButtons.Yes | DialogMessageButtons.No | DialogMessageButtons.Cancel;
-            service.Title = title;
-            service.Text = text;
-            service.Extra = extra;
-            service.ButtonExtras = buttonExtras;
+            var service = new DialogMessageService(null)
+                          {
+                              Icon = DialogMessageIcon.Question,
+                              Buttons = DialogMessageButtons.Yes | DialogMessageButtons.No | DialogMessageButtons.Cancel,
+                              Title = title,
+                              Text = text,
+                              Extra = extra,
+                              ButtonExtras = buttonExtras
+                          };
             var result = service.Show();
             switch (result)
             {
@@ -42,62 +44,72 @@ namespace MarkPad.Services.Implementation
 
         public void ShowMessage(string title, string text, string extra, params ButtonExtras[] buttonExtras)
         {
-            DialogMessageService service = new DialogMessageService(null);
-            service.Icon = DialogMessageIcon.Information;
-            service.Buttons = DialogMessageButtons.Ok;
-            service.Title = title;
-            service.Text = text;
-            service.Extra = extra;
-            service.ButtonExtras = buttonExtras;
-            var result = service.Show();
+            var service = new DialogMessageService(null)
+                                           {
+                                               Icon = DialogMessageIcon.Information,
+                                               Buttons = DialogMessageButtons.Ok,
+                                               Title = title,
+                                               Text = text,
+                                               Extra = extra,
+                                               ButtonExtras = buttonExtras
+                                           };
+            service.Show();
         }
 
         public void ShowWarning(string title, string text, string extra, params ButtonExtras[] buttonExtras)
         {
-            DialogMessageService service = new DialogMessageService(null);
-            service.Icon = DialogMessageIcon.Warning;
-            service.Buttons = DialogMessageButtons.Ok;
-            service.Title = title;
-            service.Text = text;
-            service.Extra = extra;
-            service.ButtonExtras = buttonExtras;
-            var result = service.Show();
+            var service = new DialogMessageService(null)
+                                           {
+                                               Icon = DialogMessageIcon.Warning,
+                                               Buttons = DialogMessageButtons.Ok,
+                                               Title = title,
+                                               Text = text,
+                                               Extra = extra,
+                                               ButtonExtras = buttonExtras
+                                           };
+            service.Show();
         }
 
         public void ShowError(string title, string text, string extra, params ButtonExtras[] buttonExtras)
         {
-            DialogMessageService service = new DialogMessageService(null);
-            service.Icon = DialogMessageIcon.Error;
-            service.Buttons = DialogMessageButtons.Ok;
-            service.Title = title;
-            service.Text = text;
-            service.Extra = extra;
-            service.ButtonExtras = buttonExtras;
-            var result = service.Show();
+            var service = new DialogMessageService(null)
+                          {
+                              Icon = DialogMessageIcon.Error,
+                              Buttons = DialogMessageButtons.Ok,
+                              Title = title,
+                              Text = text,
+                              Extra = extra,
+                              ButtonExtras = buttonExtras
+                          };
+            service.Show();
         }
 
         public string[] GetFileOpenPath(string title, string filter)
         {
-            if (VistaOpenFileDialog.IsVistaFileDialogSupported)
+            if (VistaFileDialog.IsVistaFileDialogSupported)
             {
-                VistaOpenFileDialog openFileDialog = new VistaOpenFileDialog();
-                openFileDialog.Title = title;
-                openFileDialog.CheckFileExists = true;
-                openFileDialog.RestoreDirectory = true;
-                openFileDialog.Multiselect = true;
-                openFileDialog.Filter = filter;
+                var openFileDialog = new VistaOpenFileDialog
+                                     {
+                                         Title = title,
+                                         CheckFileExists = true,
+                                         RestoreDirectory = true,
+                                         Multiselect = true,
+                                         Filter = filter
+                                     };
 
                 if (openFileDialog.ShowDialog() == true)
                     return openFileDialog.FileNames;
             }
             else
             {
-                Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
-                ofd.Title = title;
-                ofd.CheckFileExists = true;
-                ofd.RestoreDirectory = true;
-                ofd.Multiselect = true;
-                ofd.Filter = filter;
+                var ofd = new Microsoft.Win32.OpenFileDialog
+                          {
+                              Title = title,
+                              CheckFileExists = true,
+                              RestoreDirectory = true,
+                              Multiselect = true,
+                              Filter = filter
+                          };
 
                 if (ofd.ShowDialog() == true)
                     return ofd.FileNames;
@@ -108,36 +120,37 @@ namespace MarkPad.Services.Implementation
 
         public string GetFileSavePath(string title, string defaultExt, string filter)
         {
-            if (VistaSaveFileDialog.IsVistaFileDialogSupported)
+            if (VistaFileDialog.IsVistaFileDialogSupported)
             {
-                VistaSaveFileDialog saveFileDialog = new VistaSaveFileDialog();
-                saveFileDialog.Title = title;
-                saveFileDialog.DefaultExt = defaultExt;
-                saveFileDialog.CheckFileExists = false;
-                saveFileDialog.RestoreDirectory = true;
+                var saveFileDialog = new VistaSaveFileDialog
+                                     {
+                                         Title = title,
+                                         DefaultExt = defaultExt,
+                                         CheckFileExists = false,
+                                         RestoreDirectory = true,
+                                         Filter = filter
+                                     };
 
-                saveFileDialog.Filter = filter;
 
                 if (saveFileDialog.ShowDialog() == true)
                     return saveFileDialog.FileName;
             }
             else
             {
-                Microsoft.Win32.SaveFileDialog ofd = new Microsoft.Win32.SaveFileDialog();
-                ofd.Title = title;
-                ofd.DefaultExt = defaultExt;
-                ofd.CheckFileExists = false;
-                ofd.RestoreDirectory = true;
-
-                ofd.Filter = filter;
-
+                var ofd = new Microsoft.Win32.SaveFileDialog
+                          {
+                              Title = title,
+                              DefaultExt = defaultExt,
+                              CheckFileExists = false,
+                              RestoreDirectory = true,
+                              Filter = filter
+                          };
+                
                 if (ofd.ShowDialog() == true)
                     return ofd.FileName;
             }
 
             return "";
         }
-
-        #endregion
     }
 }

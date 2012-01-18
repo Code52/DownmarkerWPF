@@ -15,5 +15,6 @@ namespace MarkPad.Metaweblog
         public object postid;
         public string userid;
         public string wp_slug;
+        public string format;
     }
 }

@@ -130,6 +130,8 @@
       <DependentUpon>HyperlinkEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="HyperlinkEditor\HyperlinkEditorViewModel.cs" />
+    <Compile Include="OpenFromWeb\Entry.cs" />
+    <Compile Include="Settings\FetchedBlogInfo.cs" />
     <Compile Include="Metaweblog\Generated\MetaWeblog.generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -224,6 +226,9 @@
     <EmbeddedResource Include="..\..\lib\AwesomiumProcess">
       <Link>Libs\x86\AwesomiumProcess</Link>
     </EmbeddedResource>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Metaweblog\Generated\BloggerAPI.json" />
     <None Include="Metaweblog\Generated\MetaWeblog.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

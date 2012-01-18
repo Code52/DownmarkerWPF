@@ -24,7 +24,6 @@ namespace MarkPad.Document
 
         private string title;
         private string filename;
-        private Post post;
 
         public DocumentViewModel(IDialogService dialogService, ISettingsService settings, IWindowManager windowManager)
         {
@@ -35,7 +34,7 @@ namespace MarkPad.Document
             title = "New Document";
             Original = "";
             Document = new TextDocument();
-            post = new Post();
+            Post = new Post();
             timer = new DispatcherTimer();
             timer.Tick += TimerTick;
             timer.Interval = delay;
@@ -59,13 +58,13 @@ namespace MarkPad.Document
 
         public void OpenFromWeb(Post post)
         {
-            this.post = post;
+            Post = post;
             title = post.permalink;
             Document.Text = post.description;
             Original = post.description;
         }
 
-        public Post Post { get { return post; } }
+        public Post Post { get; private set; }
 
         public void Update()
         {
@@ -133,25 +132,20 @@ namespace MarkPad.Document
             var saveResult = dialogService.ShowConfirmationWithCancel("MarkPad", "Save modifications.", "Do you want to save your changes to '" + title + "'?",
                 new ButtonExtras(ButtonType.Yes, "Save",
                     string.IsNullOrEmpty(filename) ? "The file has not been saved yet" : "The file will be saved to " + Path.GetFullPath(filename)),
-                new ButtonExtras(ButtonType.No, "Close", "Close the document without saving the modifications"),
+                new ButtonExtras(ButtonType.No, "Don't Save", "Close the document without saving the modifications"),
                 new ButtonExtras(ButtonType.Cancel, "Cancel", "Don't close the document")
             );
-            bool result = false;
+            var result = false;
 
             // true = Yes
-            if (saveResult == true)
+            switch (saveResult)
             {
-                result = Save();
-            }
-            // false = No
-            else if (saveResult == false)
-            {
-                result = true;
-            }
-            // no result = Cancel
-            else if (!saveResult.HasValue)
-            {
-                result = false;
+                case true:
+                    result = Save();
+                    break;
+                case false:
+                    result = true;
+                    break;
             }
 
             callback(result);
@@ -159,7 +153,7 @@ namespace MarkPad.Document
 
         public void Print()
         {
-            var view = this.GetView() as DocumentView;
+            var view = GetView() as DocumentView;
             if (view != null)
             {
                 view.wb.Print();
@@ -168,27 +162,21 @@ namespace MarkPad.Document
 
         public bool DistractionFree { get; set; }
 
-        public void Publish(string postTitle, string[] categories, BlogSetting blog)
+        public void Publish(string postid, string postTitle, string[] categories, BlogSetting blog)
         {
             if (categories == null) categories = new string[0];
 
             var proxy = new MetaWeblog(blog.WebAPI);
 
             var newpost = new Post();
-
-            var permalink = this.DisplayName.Split('.')[0] == "New Document"
-                                ? postTitle
-                                : this.DisplayName.Split('.')[0];
-
-            if (newpost.postid != null && !string.IsNullOrWhiteSpace(newpost.postid.ToString()))
-            {
-                newpost = proxy.GetPost(newpost.postid.ToString(), blog.Username, blog.Password);
-            }
-
             try
             {
-                if (string.IsNullOrWhiteSpace(newpost.permalink))
+                if (string.IsNullOrWhiteSpace(postid))
                 {
+                    var permalink = DisplayName.Split('.')[0] == "New Document"
+                                ? postTitle
+                                : DisplayName.Split('.')[0];
+
                     newpost = new Post
                                {
                                    permalink = permalink,
@@ -204,12 +192,15 @@ namespace MarkPad.Document
                 }
                 else
                 {
+                    newpost = proxy.GetPost(postid, blog.Username, blog.Password);
                     newpost.title = postTitle;
                     newpost.description = blog.Language == "HTML" ? RenderBody : Document.Text;
                     newpost.categories = categories;
+                    newpost.format = blog.Language;
 
-                    proxy.EditPost(newpost.postid.ToString(), blog.Username, blog.Password, newpost, true);
+                    proxy.EditPost(postid, blog.Username, blog.Password, newpost, true);
 
+                    //Not sure what this is doing??
                     settings.Set(newpost.permalink, newpost);
                     settings.Save();
                 }
@@ -227,7 +218,7 @@ namespace MarkPad.Document
                 dialogService.ShowError("Error Publishing", ex.Message, "");
             }
 
-            this.post = newpost;
+            Post = newpost;
             Original = Document.Text;
             title = postTitle;
             NotifyOfPropertyChange(() => DisplayName);
@@ -236,7 +227,7 @@ namespace MarkPad.Document
         public MarkPadHyperlink GetHyperlink(MarkPadHyperlink hyperlink)
         {
             var viewModel = new HyperlinkEditorViewModel(hyperlink.Text, hyperlink.Url);
-            this.windowManager.ShowDialog(viewModel);
+            windowManager.ShowDialog(viewModel);
             if (!viewModel.WasCancelled)
             {
                 hyperlink.Set(viewModel.Text, viewModel.Url);
