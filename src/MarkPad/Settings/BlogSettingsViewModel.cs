@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net;
+using System.Threading.Tasks;
 using Caliburn.Micro;
-using CookComputing.XmlRpc;
 using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
 
@@ -87,35 +87,53 @@ namespace MarkPad.Settings
             }
         }
 
+        public void SetCurrentBlogPassword(object password)
+        {
+            if (CurrentBlog == null)
+                return;
+
+            CurrentBlog.Password = password.ToString();
+        }
+
         public void FetchBlogs()
         {
             this.SelectedAPIBlog = null;
-            try
+
+            var proxy = new MetaWeblog(CurrentBlog.WebAPI);
+
+            this.APIBlogs = new ObservableCollection<FetchedBlogInfo>();
+
+            var taskBlogInfo = Task<BlogInfo[]>.Factory.FromAsync(
+                                   proxy.BeginGetUsersBlogs,
+                                   proxy.EndGetUsersBlogs,
+                                   "MarkPad",
+                                   CurrentBlog.Username,
+                                   CurrentBlog.Password,
+                                   null);
+
+            taskBlogInfo.ContinueWith(continueParam =>
             {
-                var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
-                ((IXmlRpcProxy)proxy).Url = CurrentBlog.WebAPI;
-
-                var blogs = proxy.GetUsersBlogs("MarkPad", CurrentBlog.Username, CurrentBlog.Password);
-
-                this.APIBlogs = new ObservableCollection<FetchedBlogInfo>();
-
-                foreach (var blogInfo in blogs)
+                if (continueParam.Exception != null)
                 {
-                    this.APIBlogs.Add(new FetchedBlogInfo { Name = blogInfo.blogName, BlogInfo = blogInfo });
+                    var message = continueParam.Exception.Message;
+
+                    var aggEx = continueParam.Exception as AggregateException;
+                    if (aggEx != null)
+                        message = String.Join(Environment.NewLine, aggEx.InnerExceptions.Select(ex => ex.Message));
+
+                    dialogService.ShowError("Markpad", "There was a problem contacting the website. Check the settings and try again.", message);
+                    return;
                 }
-            }
-            catch (WebException ex)
-            {
-                dialogService.ShowError("Fetch Failed", ex.Message, "");
-            }
-            catch (XmlRpcException ex)
-            {
-                dialogService.ShowError("Fetch Failed", ex.Message, "");
-            }
-            catch (XmlRpcFaultException ex)
-            {
-                dialogService.ShowError("Fetch Failed", ex.Message, "");
-            }
+
+                var newAPIBlogs = new ObservableCollection<FetchedBlogInfo>();
+
+                foreach (var blogInfo in continueParam.Result)
+                {
+                    newAPIBlogs.Add(new FetchedBlogInfo { Name = blogInfo.blogName, BlogInfo = blogInfo });
+                }
+
+                this.APIBlogs = newAPIBlogs;
+            }, TaskScheduler.FromCurrentSynchronizationContext());
         }
     }
 

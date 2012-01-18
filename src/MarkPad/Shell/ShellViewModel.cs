@@ -101,13 +101,6 @@ namespace MarkPad.Shell
                 eventAggregator.Publish(new FileOpenEvent(p));
         }
 
-        public void OpenDocument(string path)
-        {
-            var doc = documentCreator();
-            doc.Open(path);
-            MDI.Open(doc);
-        }
-
         public void SaveDocument()
         {
             var doc = MDI.ActiveItem as DocumentViewModel;
@@ -127,7 +120,9 @@ namespace MarkPad.Shell
 
         public void Handle(FileOpenEvent message)
         {
-            OpenDocument(message.Path);
+            var doc = documentCreator();
+            doc.Open(message.Path);
+            MDI.Open(doc);
         }
 
         public void ShowSettings()
