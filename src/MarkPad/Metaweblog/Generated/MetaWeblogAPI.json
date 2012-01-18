@@ -1,0 +1,11 @@
+﻿metaWeblog.newPost, string, string blogid, string username, string password, Post post, bool publish
+
+metaWeblog.editPost, bool, string postid, string username, string password, Post post, bool publish
+
+metaWeblog.getPost, Post, string postid, string username, string password
+
+metaWeblog.getCategories, CategoryInfo[], string blogid, string username, string password
+
+metaWeblog.getRecentPosts, Post[], string blogid, string username, string password, int numberOfPosts
+
+metaWeblog.newMediaObject, MediaObjectInfo, string blogid, string username, string password, MediaObject mediaObject

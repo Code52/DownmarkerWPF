@@ -4,10 +4,11 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Caliburn.Micro;
-using CookComputing.XmlRpc;
 using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
 
@@ -85,35 +86,53 @@ namespace MarkPad.Settings
             }
         }
 
+        public void SetCurrentBlogPassword(object password)
+        {
+            if (CurrentBlog == null)
+                return;
+
+            CurrentBlog.Password = password.ToString();
+        }
+
         public void FetchBlogs()
         {
             SelectedAPIBlog = null;
-            try
-            {
-                var proxy = XmlRpcProxyGen.Create<IMetaWeblog>();
-                ((IXmlRpcProxy)proxy).Url = CurrentBlog.WebAPI;
 
-                var blogs = proxy.GetUsersBlogs("MarkPad", CurrentBlog.Username, CurrentBlog.Password);
+            var proxy = new MetaWeblog(CurrentBlog.WebAPI);
 
                 APIBlogs = new ObservableCollection<FetchedBlogInfo>();
 
-                foreach (var blogInfo in blogs)
+            var taskBlogInfo = Task<BlogInfo[]>.Factory.FromAsync(
+                                   proxy.BeginGetUsersBlogs,
+                                   proxy.EndGetUsersBlogs,
+                                   "MarkPad",
+                                   CurrentBlog.Username,
+                                   CurrentBlog.Password,
+                                   null);
+
+            taskBlogInfo.ContinueWith(continueParam =>
+            {
+                if (continueParam.Exception != null)
                 {
-                    APIBlogs.Add(new FetchedBlogInfo { Name = blogInfo.blogName, BlogInfo = blogInfo });
+                    var message = continueParam.Exception.Message;
+
+                    var aggEx = continueParam.Exception as AggregateException;
+                    if (aggEx != null)
+                        message = String.Join(Environment.NewLine, aggEx.InnerExceptions.Select(ex => ex.Message));
+
+                    dialogService.ShowError("Markpad", "There was a problem contacting the website. Check the settings and try again.", message);
+                    return;
                 }
-            }
-            catch (WebException ex)
-            {
-                dialogService.ShowError("Fetch Failed", ex.Message, "");
-            }
-            catch (XmlRpcException ex)
-            {
-                dialogService.ShowError("Fetch Failed", ex.Message, "");
-            }
-            catch (XmlRpcFaultException ex)
-            {
-                dialogService.ShowError("Fetch Failed", ex.Message, "");
-            }
+
+                var newAPIBlogs = new ObservableCollection<FetchedBlogInfo>();
+
+                foreach (var blogInfo in continueParam.Result)
+                {
+                    newAPIBlogs.Add(new FetchedBlogInfo { Name = blogInfo.blogName, BlogInfo = blogInfo });
+                }
+
+                APIBlogs = newAPIBlogs;
+            }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         public void DiscoverAddress()
@@ -137,15 +156,6 @@ namespace MarkPad.Settings
                 .ContinueWith<bool>(c => DiscoverIfNescessary(c, webAPI))
                 .ContinueWith(HandleResult)
                 .ContinueWith(HideBusy);
-
-
-            //WebRequest webRequest = WebRequest.Create(webAPI);
-            //Task.Factory.FromAsync<WebResponse>(webRequest.BeginGetResponse, webRequest.EndGetResponse, null)
-            //    .ContinueWith(c=>
-            //                  {
-            //                      var response = new StreamReader(c.Result.GetResponseStream()).ReadToEnd()
-
-            //                  })
         }
 
         private bool ReadRsdXmlFile(Task<WebResponse> c)
@@ -181,15 +191,39 @@ namespace MarkPad.Settings
         {
             if (taskToContinue.IsFaulted || !taskToContinue.Result)
             {
-                WebRequest webRequest = WebRequest.Create(webAPI);
-                Task.Factory.FromAsync<WebResponse>(webRequest.BeginGetResponse, webRequest.EndGetResponse, null)
-                    .ContinueWith(c =>
+                var webRequest = WebRequest.Create(webAPI);
+                return Task.Factory.FromAsync<WebResponse>(webRequest.BeginGetResponse, webRequest.EndGetResponse, null)
+                    .ContinueWith<bool>(c =>
                     {
-                        var response = new StreamReader(c.Result.GetResponseStream()).ReadToEnd();
+                        using(var streamReader = new StreamReader(c.Result.GetResponseStream()))
+                        {
+                            var response = streamReader.ReadToEnd();
+                            var link = Regex.Match(response, "(?<link>\\<link .*?type=\"application/rsd\\+xml\".*?/\\>)", RegexOptions.IgnoreCase);
+                            var @group = link.Groups["link"];
+                            if (!@group.Success) return false;
+                            var rsdLocation = Regex.Match(@group.Value, "href=\"(?<link>.*?)\"");
+                            if (!rsdLocation.Groups["link"].Success) return false;
+                            var rsdUri = new Uri(rsdLocation.Groups["link"].Value, UriKind.RelativeOrAbsolute);
+                            if (!rsdUri.IsAbsoluteUri)
+                                rsdUri = new Uri(new Uri(webAPI, UriKind.Absolute), rsdUri);
 
-                        //TODO parse page to get <link rel="EditURI" type="application/rsd+xml" href="<metawebloguri>" /> from page
+                            webRequest = WebRequest.Create(rsdUri);
+                            using (var rsdReader = new StreamReader(webRequest.GetResponse().GetResponseStream()))
+                            {
+                                var rds = rsdReader.ReadToEnd();
+                                var apiLinkMatch = Regex.Match(rds, "(?<apiLink>\\<api .*?name=\"MetaWeblog\".*?/\\>)", RegexOptions.IgnoreCase);
+                                var apiLinkGroup = apiLinkMatch.Groups["apiLink"];
+                                if (!apiLinkGroup.Success) return false;
+                                var apiLink = Regex.Match(apiLinkGroup.Value, "apiLink=\"(?<apiLink>.*?)\"");
+                                var apiLinkAttributeGroup = apiLink.Groups["apiLink"];
+                                if (!apiLinkAttributeGroup.Success) return false;
+                                Execute.OnUIThread(() => CurrentBlog.WebAPI = apiLinkAttributeGroup.Value);
+                                return true;
+                            }
+                        }
                     })
-                    .Wait(); //Not ideal, but otherwise code gets too messy
+                    .Result; //Not ideal, but otherwise code gets too messy
+
             }
 
             return taskToContinue.Result;
@@ -198,8 +232,10 @@ namespace MarkPad.Settings
         private void HandleResult(Task<bool> obj)
         {
             if (obj.IsFaulted || !obj.Result)
+            {
                 dialogService.ShowError("Discovery failed", "Make sure you have a rsd.xml in the root of your blog, or put a link to it on your blog homepage head",
                     obj.IsFaulted ? GetErrorMessage(obj.Exception) : null);
+            }
         }
 
         private static string GetErrorMessage(Exception ex)

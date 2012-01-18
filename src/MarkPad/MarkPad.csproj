@@ -120,6 +120,11 @@
     </Compile>
     <Compile Include="About\AboutViewModel.cs" />
     <Compile Include="Document\MarkPadHyperlink.cs" />
+    <Compile Include="Framework\FrameworkExtensions.cs" />
+    <Compile Include="Framework\Dynamic.cs" />
+    <Compile Include="ExceptionDialog.xaml.cs">
+      <DependentUpon>ExceptionDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Framework\DebugLogger.cs" />
     <Compile Include="HyperlinkEditor\HyperlinkEditorView.xaml.cs">
       <DependentUpon>HyperlinkEditorView.xaml</DependentUpon>
@@ -127,6 +132,15 @@
     <Compile Include="HyperlinkEditor\HyperlinkEditorViewModel.cs" />
     <Compile Include="OpenFromWeb\Entry.cs" />
     <Compile Include="Settings\FetchedBlogInfo.cs" />
+    <Compile Include="Metaweblog\Generated\MetaWeblog.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MetaWeblog.tt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Metaweblog\MetaWeblog.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="SingleInstance.cs" />
     <Compile Include="Document\FormattingCommands.cs" />
     <Compile Include="Framework\ObjectExtensions.cs" />
@@ -173,7 +187,6 @@
     <Compile Include="Metaweblog\Category.cs" />
     <Compile Include="Metaweblog\CategoryInfo.cs" />
     <Compile Include="Metaweblog\Enclosure.cs" />
-    <Compile Include="Metaweblog\IMetaWeblog.cs" />
     <Compile Include="Metaweblog\MediaObject.cs" />
     <Compile Include="Metaweblog\MediaObjectInfo.cs" />
     <Compile Include="Metaweblog\Post.cs" />
@@ -188,6 +201,10 @@
     </Compile>
     <Compile Include="PublishDetails\PublishDetailsViewModel.cs" />
     <Compile Include="Shell\ShellViewModel.cs" />
+    <Page Include="ExceptionDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="HyperlinkEditor\HyperlinkEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -212,6 +229,12 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Metaweblog\Generated\BloggerAPI.json" />
+    <None Include="Metaweblog\Generated\MetaWeblog.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MetaWeblog.generated.cs</LastGenOutput>
+    </None>
+    <None Include="Metaweblog\Generated\MetaWeblogAPI.json" />
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
     <EmbeddedResource Include="Syntax\Markdown.xshd" />
@@ -312,6 +335,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
