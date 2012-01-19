@@ -162,25 +162,26 @@ namespace MarkPad.Settings
                 .ContinueWith(HideBusy);
         }
 
-        private bool ProcessRsdResponse(Task<WebResponse> c)
+        private bool ProcessRsdResponse(Task<WebResponse> webResponseTask)
         {
-            var webResponse = (HttpWebResponse)c.Result;
-
-            if(webResponse.StatusCode == HttpStatusCode.OK)
+            using(HttpWebResponse webResponse = (HttpWebResponse)webResponseTask.Result)
             {
-                using(var responseStream = webResponse.GetResponseStream())
+                if(webResponse.StatusCode == HttpStatusCode.OK)
                 {
-                    var apiElement = XDocument.Load(responseStream)
-                        .Element(XName.Get("rsd", RsdNamespace))
-                        .Element(XName.Get("service", RsdNamespace))
-                        .Element(XName.Get("apis", RsdNamespace))
-                        .Elements(XName.Get("api", RsdNamespace))
-                        .SingleOrDefault(e => e.Attribute("name").Value.ToLower() == "metaweblog");
-
-                    if(apiElement != null)
+                    using(var responseStream = webResponse.GetResponseStream())
                     {
-                        Execute.OnUIThread(() => CurrentBlog.WebAPI = apiElement.Attribute("apiLink").Value);
-                        return true;
+                        var apiElement = XDocument.Load(responseStream)
+                            .Element(XName.Get("rsd", RsdNamespace))
+                            .Element(XName.Get("service", RsdNamespace))
+                            .Element(XName.Get("apis", RsdNamespace))
+                            .Elements(XName.Get("api", RsdNamespace))
+                            .SingleOrDefault(e => e.Attribute("name").Value.ToLower() == "metaweblog");
+
+                        if(apiElement != null)
+                        {
+                            Execute.OnUIThread(() => CurrentBlog.WebAPI = apiElement.Attribute("apiLink").Value);
+                            return true;
+                        }
                     }
                 }
             }
@@ -192,7 +193,7 @@ namespace MarkPad.Settings
         {
             TaskCompletionSource<bool> taskCompletionSource = new TaskCompletionSource<bool>();
             
-            // If the original
+            // Only do discovery if the original task faulted or returned logical failure
             if(taskToContinue.IsFaulted || !taskToContinue.Result)
             {
                 Trace.WriteLine(string.Format("Rsd.xml does not exist, trying to discover via link. Error was {0}", taskToContinue.Exception), "INFO");
@@ -204,68 +205,49 @@ namespace MarkPad.Settings
                 // Add a continuation that will only execute if the request succeeds and proceses the response to look for a <link> to the RSD
                 webAPIRequestTask.ContinueWith(webAPIRequestAntecedent =>
                     {
-                        WebResponse webAPIResponse = webAPIRequestAntecedent.Result;
-
-                        try
+                        using(WebResponse webAPIResponse = webAPIRequestAntecedent.Result)
+                        using(var streamReader = new StreamReader(webAPIResponse.GetResponseStream()))
                         {
-                            using(var streamReader = new StreamReader(webAPIResponse.GetResponseStream()))
-                            {
-                                var response = streamReader.ReadToEnd();
-                                var link = Regex.Match(response, "(?<link>\\<link .*?type=\"application/rsd\\+xml\".*?/\\>)", RegexOptions.IgnoreCase);
-                                var @group = link.Groups["link"];
+                            var response = streamReader.ReadToEnd();
+                            var link = Regex.Match(response, "(?<link>\\<link .*?type=\"application/rsd\\+xml\".*?/\\>)", RegexOptions.IgnoreCase);
+                            var @group = link.Groups["link"];
 
-                                if(!@group.Success)
+                            if(!@group.Success)
+                            {
+                                taskCompletionSource.SetResult(false);
+                            }
+                            else
+                            {
+                                var rsdLocation = Regex.Match(@group.Value, "href=\"(?<link>.*?)\"");
+                                if(!rsdLocation.Groups["link"].Success)
                                 {
                                     taskCompletionSource.SetResult(false);
                                 }
                                 else
                                 {
-                                    var rsdLocation = Regex.Match(@group.Value, "href=\"(?<link>.*?)\"");
-                                    if(!rsdLocation.Groups["link"].Success)
-                                    {
-                                        taskCompletionSource.SetResult(false);
-                                    }
-                                    else
-                                    {
-                                        var rsdUri = new Uri(rsdLocation.Groups["link"].Value, UriKind.RelativeOrAbsolute);
-                                        if(!rsdUri.IsAbsoluteUri)
-                                            rsdUri = new Uri(new Uri(webAPI, UriKind.Absolute), rsdUri);
+                                    var rsdUri = new Uri(rsdLocation.Groups["link"].Value, UriKind.RelativeOrAbsolute);
+                                    if(!rsdUri.IsAbsoluteUri)
+                                        rsdUri = new Uri(new Uri(webAPI, UriKind.Absolute), rsdUri);
 
-                                        WebRequest rdsWebRequest = WebRequest.Create(rsdUri);
+                                    WebRequest rdsWebRequest = WebRequest.Create(rsdUri);
 
-                                        Task<WebResponse> rdsWebRequestTask = Task.Factory.FromAsync<WebResponse>(rdsWebRequest.BeginGetResponse, rdsWebRequest.EndGetResponse, null);
+                                    Task<WebResponse> rdsWebRequestTask = Task.Factory.FromAsync<WebResponse>(rdsWebRequest.BeginGetResponse, rdsWebRequest.EndGetResponse, null);
 
-                                        // Add a continuation that will only execute if the request succeeds and continues processing the RSD
-                                        rdsWebRequestTask.ContinueWith(rdsWebRequestAntecedent =>
-                                                {
-                                                    WebResponse rdsWebResponse = rdsWebRequestAntecedent.Result;
-
-                                                    try
-                                                    {
-                                                        taskCompletionSource.SetResult(ProcessRsdResponse(rdsWebRequestAntecedent));
-                                                    }
-                                                    finally
-                                                    {
-                                                        // No matter what happens, make sure we clean up the web response
-                                                        rdsWebResponse.Close();
-                                                    }
-                                                },
-                                                TaskContinuationOptions.NotOnFaulted);
-
-                                        // Add a continuation that will only execute if the request faults and propagates the exception via the TCS
-                                        rdsWebRequestTask.ContinueWith(rdsWebRequestAntecdent =>
+                                    // Add a continuation that will only execute if the request succeeds and continues processing the RSD
+                                    rdsWebRequestTask.ContinueWith(rdsWebRequestAntecedent =>
                                             {
-                                                taskCompletionSource.SetException(rdsWebRequestAntecdent.Exception);
+                                                taskCompletionSource.SetResult(ProcessRsdResponse(rdsWebRequestAntecedent));
                                             },
-                                            TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.OnlyOnFaulted);
-                                    }
+                                            TaskContinuationOptions.NotOnFaulted);
+
+                                    // Add a continuation that will only execute if the request faults and propagates the exception via the TCS
+                                    rdsWebRequestTask.ContinueWith(rdsWebRequestAntecdent =>
+                                        {
+                                            taskCompletionSource.SetException(rdsWebRequestAntecdent.Exception);
+                                        },
+                                        TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.OnlyOnFaulted);
                                 }
                             }
-                        }
-                        finally
-                        {
-                            // No matter what happens, make sure we clean up the web response
-                            webAPIResponse.Close();
                         }
                     },
                     TaskContinuationOptions.NotOnFaulted);
@@ -279,6 +261,7 @@ namespace MarkPad.Settings
             }
             else
             {
+                // The original request found the RDS, no need for discovery
                 taskCompletionSource.SetResult(true);
             }
 
