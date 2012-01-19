@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Caliburn.Micro;
@@ -100,7 +100,7 @@ namespace MarkPad.Settings
 
             var proxy = new MetaWeblog(CurrentBlog.WebAPI);
 
-                APIBlogs = new ObservableCollection<FetchedBlogInfo>();
+            APIBlogs = new ObservableCollection<FetchedBlogInfo>();
 
             var taskBlogInfo = Task<BlogInfo[]>.Factory.FromAsync(
                                    proxy.BeginGetUsersBlogs,
@@ -183,7 +183,6 @@ namespace MarkPad.Settings
                 }
             }
 
-
             return false;
         }
 
@@ -191,11 +190,13 @@ namespace MarkPad.Settings
         {
             if (taskToContinue.IsFaulted || !taskToContinue.Result)
             {
+                Trace.WriteLine(string.Format("Tsd.xml does not exist, trying to discover via link. Error was {0}", taskToContinue.Exception), "INFO");
+
                 var webRequest = WebRequest.Create(webAPI);
                 return Task.Factory.FromAsync<WebResponse>(webRequest.BeginGetResponse, webRequest.EndGetResponse, null)
                     .ContinueWith<bool>(c =>
                     {
-                        using(var streamReader = new StreamReader(c.Result.GetResponseStream()))
+                        using (var streamReader = new StreamReader(c.Result.GetResponseStream()))
                         {
                             var response = streamReader.ReadToEnd();
                             var link = Regex.Match(response, "(?<link>\\<link .*?type=\"application/rsd\\+xml\".*?/\\>)", RegexOptions.IgnoreCase);
