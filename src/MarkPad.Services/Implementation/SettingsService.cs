@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
@@ -10,8 +11,6 @@ namespace MarkPad.Services.Implementation
 {
     internal class SettingsService : ISettingsService
     {
-        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
         private IsolatedStorageScope scope = IsolatedStorageScope.Assembly | IsolatedStorageScope.User | IsolatedStorageScope.Roaming;
 
         private const string Filename = "settings.bin";
@@ -58,7 +57,7 @@ namespace MarkPad.Services.Implementation
             }
             catch (Exception e)
             {
-                logger.WarnException(e.Message, e);
+                Trace.WriteLine(e, "WARN");
             }
         }
 
