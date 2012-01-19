@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Caliburn.Micro;
+using MarkPad.Framework;
 using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
 
@@ -104,37 +105,32 @@ namespace MarkPad.Settings
 
             APIBlogs = new ObservableCollection<FetchedBlogInfo>();
 
-            var taskBlogInfo = Task<BlogInfo[]>.Factory.FromAsync(
-                                   proxy.BeginGetUsersBlogs,
-                                   proxy.EndGetUsersBlogs,
-                                   "MarkPad",
-                                   CurrentBlog.Username,
-                                   CurrentBlog.Password,
-                                   null);
+            proxy
+                .GetUsersBlogsAsync("MarkPad", CurrentBlog.Username, CurrentBlog.Password)
+                .ContinueWith(UpdateBlogList, TaskScheduler.FromCurrentSynchronizationContext())
+                .ContinueWith(HandleFetchError);
+        }
 
-            taskBlogInfo.ContinueWith(continueParam =>
+        private void UpdateBlogList(Task<BlogInfo[]> t)
+        {
+            t.PropagateExceptions();
+
+            var newAPIBlogs = new ObservableCollection<FetchedBlogInfo>();
+
+            foreach (var blogInfo in t.Result)
             {
-                if (continueParam.Exception != null)
-                {
-                    var message = continueParam.Exception.Message;
+                newAPIBlogs.Add(new FetchedBlogInfo { Name = blogInfo.blogName, BlogInfo = blogInfo });
+            }
 
-                    var aggEx = continueParam.Exception as AggregateException;
-                    if (aggEx != null)
-                        message = String.Join(Environment.NewLine, aggEx.InnerExceptions.Select(ex => ex.Message));
+            APIBlogs = newAPIBlogs;
+        }
 
-                    dialogService.ShowError("Markpad", "There was a problem contacting the website. Check the settings and try again.", message);
-                    return;
-                }
+        private void HandleFetchError(Task t)
+        {
+            if (!t.IsFaulted)
+                return;
 
-                var newAPIBlogs = new ObservableCollection<FetchedBlogInfo>();
-
-                foreach (var blogInfo in continueParam.Result)
-                {
-                    newAPIBlogs.Add(new FetchedBlogInfo { Name = blogInfo.blogName, BlogInfo = blogInfo });
-                }
-
-                APIBlogs = newAPIBlogs;
-            }, TaskScheduler.FromCurrentSynchronizationContext());
+            dialogService.ShowError("Markpad", "There was a problem contacting the website. Check the settings and try again.", t.Exception.GetErrorMessage());
         }
 
         public void DiscoverAddress()
@@ -273,13 +269,8 @@ namespace MarkPad.Settings
             if (obj.IsFaulted || !obj.Result)
             {
                 dialogService.ShowError("Discovery failed", "Make sure you have a rsd.xml in the root of your blog, or put a link to it on your blog homepage head",
-                    obj.IsFaulted ? GetErrorMessage(obj.Exception) : null);
+                    obj.IsFaulted ? obj.Exception.GetErrorMessage() : null);
             }
-        }
-
-        private static string GetErrorMessage(Exception ex)
-        {
-            return ((AggregateException)ex).Flatten().InnerException.Message;
         }
 
         private void HideBusy(Task obj)

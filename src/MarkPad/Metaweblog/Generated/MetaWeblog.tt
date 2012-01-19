@@ -39,6 +39,7 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.Threading.Tasks;
 using CookComputing.XmlRpc;
 
 namespace MarkPad.Metaweblog
@@ -61,6 +62,15 @@ namespace MarkPad.Metaweblog
         { 
             return (<#= method.Type #>)EndInvoke(asr); 
         } 
+
+        public Task<<#= method.Type #>> <#= method.MethodName #>Async(<#= method.ParametersAsDeclaration #>)
+        {
+<# if (method.Parameters.Count <= 3)  {#>
+            return Task<<#= method.Type #>>.Factory.FromAsync(Begin<#= method.MethodName #>, End<#= method.MethodName #>, <#= method.ParametersAsUsed #>, null);
+<# } else { #>
+            return Task<<#= method.Type #>>.Factory.FromAsync(Begin<#= method.MethodName #>(<#= method.ParametersAsUsed #>, null, null), End<#= method.MethodName #>);
+<# } #>
+        }
 
 <# } #>
     }
