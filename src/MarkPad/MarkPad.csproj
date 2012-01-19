@@ -126,6 +126,7 @@
       <DependentUpon>ExceptionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Framework\DebugLogger.cs" />
+    <Compile Include="Framework\TaskExtensions.cs" />
     <Compile Include="HyperlinkEditor\HyperlinkEditorView.xaml.cs">
       <DependentUpon>HyperlinkEditorView.xaml</DependentUpon>
     </Compile>
