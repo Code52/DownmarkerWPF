@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Net;
+using System.Threading.Tasks;
 using Caliburn.Micro;
-using CookComputing.XmlRpc;
+using MarkPad.Framework;
 using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
@@ -48,31 +48,32 @@ namespace MarkPad.OpenFromWeb
 
         public void Fetch()
         {
+            Posts = new ObservableCollection<Entry>();
+
             var proxy = new MetaWeblog(this.SelectedBlog.WebAPI);
 
-            try
-            {
-                var posts = proxy.GetRecentPosts(SelectedBlog.BlogInfo.blogid, SelectedBlog.Username, SelectedBlog.Password, 100);
+            proxy
+                .GetRecentPostsAsync(SelectedBlog.BlogInfo.blogid, SelectedBlog.Username, SelectedBlog.Password, 100)
+                .ContinueWith(UpdateBlogPosts, TaskScheduler.FromCurrentSynchronizationContext())
+                .ContinueWith(HandleFetchError);
+        }
 
-                Posts = new ObservableCollection<Entry>();
+        private void UpdateBlogPosts(Task<Post[]> t)
+        {
+            t.PropagateExceptions();
 
-                foreach (var p in posts)
-                {
-                    Posts.Add(new Entry { Key = p.title, Value = p });
-                }
-            }
-            catch (WebException ex)
+            foreach (var p in t.Result)
             {
-                dialogService.ShowError("Error Fetching Posts", ex.Message, "");
+                Posts.Add(new Entry { Key = p.title, Value = p });
             }
-            catch (XmlRpcException ex)
-            {
-                dialogService.ShowError("Error Fetching Posts", ex.Message, "");
-            }
-            catch (XmlRpcFaultException ex)
-            {
-                dialogService.ShowError("Error Fetching Posts", ex.Message, "");
-            }
+        }
+
+        private void HandleFetchError(Task t)
+        {
+            if (!t.IsFaulted)
+                return;
+
+            dialogService.ShowError("Markpad", "There was a problem contacting the website. Check the settings and try again.", t.Exception.GetErrorMessage());
         }
     }
 }

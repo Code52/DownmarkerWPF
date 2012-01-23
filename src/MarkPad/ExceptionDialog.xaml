@@ -82,6 +82,7 @@
         </Grid>
 
         <StackPanel HorizontalAlignment="Right" Grid.Row="4" Height="25" Margin="10" Orientation="Horizontal">
+            <Button Width="75" Click="CopyToClipboard" Content="Copy" Margin="0 0 5 0" />
             <Button Width="75" Click="TryClose" Content="Close" />
         </StackPanel>
 
