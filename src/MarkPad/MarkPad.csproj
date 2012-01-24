@@ -93,6 +93,10 @@
     <Reference Include="MarkdownSharp">
       <HintPath>..\..\packages\MarkdownSharp.1.13.0.0\lib\35\MarkdownSharp.dll</HintPath>
     </Reference>
+    <Reference Include="NHunspell">
+      <HintPath>..\..\lib\Hunspell.0.9.6.0\lib\net20\NHunspell.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Ookii.Dialogs.Wpf">
       <HintPath>..\..\packages\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
     </Reference>
@@ -151,6 +155,8 @@
     </Compile>
     <Compile Include="Settings\BlogSettingsViewModel.cs" />
     <Compile Include="Framework\MarkdownHelpers.cs" />
+    <Compile Include="SpellCheck\DictionariesLoader.cs" />
+    <Compile Include="SpellCheck\SpellCheckBackgroundRenderer.cs" />
     <Page Include="About\AboutView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -239,6 +245,8 @@
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
     <EmbeddedResource Include="Syntax\Markdown.xshd" />
+    <EmbeddedResource Include="SpellCheck\Dictionaries\en_AU.aff" />
+    <EmbeddedResource Include="SpellCheck\Dictionaries\en_AU.dic" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Document\DocumentView.xaml">
@@ -308,6 +316,9 @@
     <EmbeddedResource Include="markpaddoc.ico" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="..\..\lib\Hunspell.0.9.6.0\lib\Hunspellx86.dll">
+      <Link>Libs\x86\Hunspellx86.dll</Link>
+    </EmbeddedResource>
     <Content Include="Themes\ChaosSquirrel\style.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
