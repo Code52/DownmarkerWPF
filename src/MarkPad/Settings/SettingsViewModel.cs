@@ -35,6 +35,9 @@ namespace MarkPad.Settings
 
                 FileMDownBinding = key.GetSubKeyNames().Contains(Constants.DefaultExtensions[2]) &&
                     !string.IsNullOrEmpty(key.OpenSubKey(Constants.DefaultExtensions[2]).GetValue("").ToString());
+
+                FileMKDBinding = key.GetSubKeyNames().Contains(Constants.DefaultExtensions[3]) &&
+                    !string.IsNullOrEmpty(key.OpenSubKey(Constants.DefaultExtensions[3]).GetValue("").ToString());
             }
 
             var blogs = settingsService.Get<List<BlogSetting>>("Blogs") ?? new List<BlogSetting>();
@@ -45,6 +48,7 @@ namespace MarkPad.Settings
         public bool FileMDBinding { get; set; }
         public bool FileMarkdownBinding { get; set; }
         public bool FileMDownBinding { get; set; }
+        public bool FileMKDBinding { get;	set; }
 
         public BlogSetting CurrentBlog { get; set; }
         public ObservableCollection<BlogSetting> Blogs { get; set; }
@@ -129,7 +133,8 @@ namespace MarkPad.Settings
                     {
                         if ((i == 0 && FileMDBinding) ||
                             (i == 1 && FileMarkdownBinding) ||
-                            (i == 2 && FileMDownBinding))
+                            (i == 2 && FileMDownBinding) ||
+                            (i == 3 && FileMKDBinding))
                             extensionKey.SetValue("", markpadKeyName);
                         else
                             extensionKey.SetValue("", "");
