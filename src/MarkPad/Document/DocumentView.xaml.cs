@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml;
-using Caliburn.Micro;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
@@ -27,16 +26,14 @@ namespace MarkPad.Document
         static readonly char[] WordBreakers = new[] { ' ', '\r', '\n' };
 
         Regex WordSeparatorRegex = new Regex("-[^\\w]+|^'[^\\w]+|[^\\w]+'[^\\w]+|[^\\w]+-[^\\w]+|[^\\w]+'$|[^\\w]+-$|^-$|^'$|[^\\w'-]", RegexOptions.Compiled);
+        Regex UriFinderRegex = new Regex("(http|ftp|https|mailto):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?", RegexOptions.Compiled);
 
         private ScrollViewer documentScrollViewer;
-        private readonly IEventAggregator eventAggregator;
         private SpellCheckBackgroundRenderer spellCheckRenderer;
         private Hunspell hunspell;
 
         public DocumentView()
         {
-            eventAggregator = IoC.Get<IEventAggregator>();
-
             InitializeComponent();
             Loaded += DocumentViewLoaded;
             wb.Loaded += WbLoaded;
@@ -68,27 +65,33 @@ namespace MarkPad.Document
 
                 ReadOnlyCollection<VisualLine> visualLines = Editor.TextArea.TextView.VisualLines;
 
-                foreach (VisualLine current in visualLines)
+                foreach (VisualLine currentLine in visualLines)
                 {
-                    string text = Editor.Document.GetText(current.FirstDocumentLine.Offset, current.LastDocumentLine.EndOffset - current.FirstDocumentLine.Offset);
                     int startIndex = 0;
-                    text = Regex.Replace(text, "[\\u2018\\u2019\\u201A\\u201B\\u2032\\u2035]", "'");
 
-                    var query = WordSeparatorRegex.Split(text)
+                    string originalText = Editor.Document.GetText(currentLine.FirstDocumentLine.Offset, currentLine.LastDocumentLine.EndOffset - currentLine.FirstDocumentLine.Offset);
+                    originalText = Regex.Replace(originalText, "[\\u2018\\u2019\\u201A\\u201B\\u2032\\u2035]", "'");
+
+                    var textWithoutURLs = UriFinderRegex.Replace(originalText, "");
+
+                    var query = WordSeparatorRegex.Split(textWithoutURLs)
                         .Where(s => !string.IsNullOrEmpty(s));
 
-                    foreach (var current2 in query)
+                    foreach (var word in query)
                     {
-                        string text2 = current2.Trim('\'', '_', '-');
-                        int num = current.FirstDocumentLine.Offset + text.IndexOf(text2, startIndex);
-                        if (!hunspell.Spell(text2))
+                        string trimmedWord = word.Trim('\'', '_', '-');
+
+                        int num = currentLine.FirstDocumentLine.Offset + originalText.IndexOf(trimmedWord, startIndex);
+
+                        if (!hunspell.Spell(trimmedWord))
                         {
                             TextSegment textSegment = new TextSegment();
                             textSegment.StartOffset = num;
-                            textSegment.Length = current2.Length;
+                            textSegment.Length = word.Length;
                             this.spellCheckRenderer.ErrorSegments.Add(textSegment);
                         }
-                        startIndex = text.IndexOf(current2, startIndex) + current2.Length;
+
+                        startIndex = originalText.IndexOf(word, startIndex) + word.Length;
                     }
                 }
             }
