@@ -47,11 +47,14 @@
 
         <StackPanel Grid.Row="1">
             <TextBlock Text="Set Markpad as default for file extensions:" />
-            <CheckBox x:Name="FileMDBinding" Content=".md" />
-            <CheckBox x:Name="FileMDownBinding" Content=".mdown" />
-            <CheckBox x:Name="FileMarkdownBinding" Content=".markdown" />
-			<CheckBox x:Name="FileMKDBinding" Content=".mkd"  />
-		</StackPanel>
+            <ItemsControl ItemsSource="{Binding Extensions}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox IsChecked="{Binding Enabled}" Content="{Binding Extension}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
         <StackPanel Grid.Row="2" Margin="0 10 0 0">
             <TextBlock Text="Blog Sites" />
             <StackPanel Orientation="Horizontal">
