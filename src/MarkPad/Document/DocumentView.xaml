@@ -513,7 +513,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="{Binding DistractionFree, Converter={shared:BoolToGridLengthConverter Invert=True}}" />
+            <ColumnDefinition x:Name="webBrowserColumn" Width="{Binding DistractionFree, Converter={shared:BoolToGridLengthConverter Invert=True}}" />
         </Grid.ColumnDefinitions>
 
         <controls:FloatingToolBar x:Name="floatingToolBar" PlacementTarget="{Binding ElementName=Editor}" CommandTarget="{Binding ElementName=root}" VerticalOffset="-60" HorizontalOffset="-30">

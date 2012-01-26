@@ -37,6 +37,8 @@ namespace MarkPad.Document
             Loaded += DocumentViewLoaded;
             wb.Loaded += WbLoaded;
 
+            SizeChanged += new SizeChangedEventHandler(DocumentViewSizeChanged);
+
             Editor.TextArea.SelectionChanged += SelectionChanged;
 
             Editor.PreviewMouseLeftButtonUp += HandleMouseUp;
@@ -58,6 +60,19 @@ namespace MarkPad.Document
         void TextView_VisualLinesChanged(object sender, EventArgs e)
         {
             DoSpellCheck();
+        }
+        
+        void DocumentViewSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // Hide web browser when the window is too small for it to make much sense
+            if (e.NewSize.Width <= 350)
+            {
+                webBrowserColumn.MaxWidth = 0;
+            }
+            else
+            {
+                webBrowserColumn.MaxWidth = double.MaxValue;
+            }
         }
 
         void WbLoaded(object sender, RoutedEventArgs e)
