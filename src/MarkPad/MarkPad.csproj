@@ -155,8 +155,7 @@
     </Compile>
     <Compile Include="Settings\BlogSettingsViewModel.cs" />
     <Compile Include="Framework\MarkdownHelpers.cs" />
-    <Compile Include="SpellCheck\DictionariesLoader.cs" />
-    <Compile Include="SpellCheck\SpellCheckBackgroundRenderer.cs" />
+    <Compile Include="Document\SpellCheckBackgroundRenderer.cs" />
     <Page Include="About\AboutView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -245,8 +244,6 @@
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
     <EmbeddedResource Include="Syntax\Markdown.xshd" />
-    <EmbeddedResource Include="SpellCheck\Dictionaries\en_AU.aff" />
-    <EmbeddedResource Include="SpellCheck\Dictionaries\en_AU.dic" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Document\DocumentView.xaml">

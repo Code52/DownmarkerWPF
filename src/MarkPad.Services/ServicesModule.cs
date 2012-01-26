@@ -10,6 +10,7 @@ namespace MarkPad.Services
         {
             builder.RegisterType<DialogService>().As<IDialogService>();
             builder.RegisterType<SettingsService>().As<ISettingsService>().SingleInstance();
+            builder.RegisterType<SpellingService>().As<ISpellingService>().SingleInstance();
         }
     }
 }

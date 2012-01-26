@@ -5,7 +5,7 @@ using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
 
-namespace MarkPad.SpellCheck
+namespace MarkPad.Document
 {
     public class SpellCheckBackgroundRenderer : IBackgroundRenderer
     {

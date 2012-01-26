@@ -7,14 +7,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml;
+using Caliburn.Micro;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
 using MarkPad.Framework;
-using MarkPad.SpellCheck;
+using MarkPad.Services.Interfaces;
 using MarkPad.XAML;
-using NHunspell;
 
 namespace MarkPad.Document
 {
@@ -23,14 +23,12 @@ namespace MarkPad.Document
         private const int NumSpaces = 4;
         private const string Spaces = "    ";
 
-        static readonly char[] WordBreakers = new[] { ' ', '\r', '\n' };
-
         Regex WordSeparatorRegex = new Regex("-[^\\w]+|^'[^\\w]+|[^\\w]+'[^\\w]+|[^\\w]+-[^\\w]+|[^\\w]+'$|[^\\w]+-$|^-$|^'$|[^\\w'-]", RegexOptions.Compiled);
         Regex UriFinderRegex = new Regex("(http|ftp|https|mailto):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?", RegexOptions.Compiled);
 
         private ScrollViewer documentScrollViewer;
         private SpellCheckBackgroundRenderer spellCheckRenderer;
-        private Hunspell hunspell;
+        private ISpellingService hunspell;
 
         public DocumentView()
         {
@@ -42,8 +40,7 @@ namespace MarkPad.Document
 
             Editor.PreviewMouseLeftButtonUp += HandleMouseUp;
 
-            hunspell = new Hunspell();
-            DictionariesLoader.Load(hunspell);
+            hunspell = IoC.Get<ISpellingService>();
 
             spellCheckRenderer = new SpellCheckBackgroundRenderer();
 
