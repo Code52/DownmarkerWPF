@@ -1,12 +1,14 @@
 ﻿<Window x:Class="MarkPad.Settings.SettingsView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:shared="http://schemas.markpad.net/winfx/xaml/shared"
         Icon="../markpad.ico"
         xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
         MouseLeftButtonDown="DragMoveWindow" 
         ShowInTaskbar="False"
         SnapsToDevicePixels="True"
-        WindowStartupLocation="CenterOwner" Width="300" Height="365" ResizeMode="NoResize">
+        WindowStartupLocation="CenterOwner" Width="300" Height="370" ResizeMode="NoResize"
+>
     <i:Interaction.Behaviors>
     <Behaviours:BorderlessWindowBehavior ResizeWithGrip="False" />
     </i:Interaction.Behaviors>
@@ -35,7 +37,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="93" />
-            <RowDefinition Height="107*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <TextBlock TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Segoe UI" FontWeight="Light" FontSize="29.333" Text="settings" />
@@ -55,7 +58,7 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </StackPanel>
-        <StackPanel Grid.Row="2" Margin="0 10 0 0">
+        <StackPanel Grid.Row="2">
             <TextBlock Text="Blog Sites" />
             <StackPanel Orientation="Horizontal">
                 <ListBox x:Name="Blogs" SelectedItem="CurrentBlog"
@@ -68,7 +71,19 @@
                 </StackPanel>
             </StackPanel>
         </StackPanel>
-        <StackPanel HorizontalAlignment="Right" Grid.Row="3" Height="25" Margin="10" Orientation="Horizontal">
+        
+        <StackPanel Grid.Row="3">
+            <TextBlock Text="Language" />
+            <ComboBox x:Name="Languages">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={shared:EnumDisplayConverter}}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+        
+        <StackPanel HorizontalAlignment="Right" Grid.Row="4" Height="25" Margin="10" Orientation="Horizontal">
             <Button Width="75" x:Name="Accept" Content="OK" Margin="0 0 5 0" />
             <Button Width="75" x:Name="Cancel" Content="Cancel" />
         </StackPanel>

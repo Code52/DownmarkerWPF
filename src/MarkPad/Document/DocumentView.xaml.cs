@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -7,22 +8,31 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml;
 using Caliburn.Micro;
+using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using ICSharpCode.AvalonEdit.Rendering;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
+using MarkPad.Services.Interfaces;
 using MarkPad.XAML;
 
 namespace MarkPad.Document
 {
-    public partial class DocumentView
+    public partial class DocumentView : IHandle<SpellingEvent>
     {
+        private const int NumSpaces = 4;
+        private const string Spaces = "    ";
+
+        Regex WordSeparatorRegex = new Regex("-[^\\w]+|^'[^\\w]+|[^\\w]+'[^\\w]+|[^\\w]+-[^\\w]+|[^\\w]+'$|[^\\w]+-$|^-$|^'$|[^\\w'-]", RegexOptions.Compiled);
+        Regex UriFinderRegex = new Regex("(http|ftp|https|mailto):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?", RegexOptions.Compiled);
+
         private ScrollViewer documentScrollViewer;
-        private readonly IEventAggregator eventAggregator;
+        private SpellCheckBackgroundRenderer spellCheckRenderer;
+        private ISpellingService hunspell;
+
         public DocumentView()
         {
-            eventAggregator = IoC.Get<IEventAggregator>();
-
             InitializeComponent();
             Loaded += DocumentViewLoaded;
             wb.Loaded += WbLoaded;
@@ -33,6 +43,13 @@ namespace MarkPad.Document
 
             Editor.PreviewMouseLeftButtonUp += HandleMouseUp;
 
+            hunspell = IoC.Get<ISpellingService>();
+
+            spellCheckRenderer = new SpellCheckBackgroundRenderer();
+
+            Editor.TextArea.TextView.BackgroundRenderers.Add(spellCheckRenderer);
+            Editor.TextArea.TextView.VisualLinesChanged += TextView_VisualLinesChanged;
+
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleBold, (x, y) => ToggleBold(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleItalic, (x, y) => ToggleItalic(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCode, (x, y) => ToggleCode(), CanEditDocument));
@@ -40,6 +57,11 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
         }
 
+        void TextView_VisualLinesChanged(object sender, EventArgs e)
+        {
+            DoSpellCheck();
+        }
+        
         void DocumentViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
             // Hide web browser when the window is too small for it to make much sense
@@ -89,6 +111,45 @@ namespace MarkPad.Document
             Editor.Focus();
         }
 
+        private void DoSpellCheck()
+        {
+            if (this.Editor.TextArea.TextView.VisualLinesValid)
+            {
+                this.spellCheckRenderer.ErrorSegments.Clear();
+
+                ReadOnlyCollection<VisualLine> visualLines = Editor.TextArea.TextView.VisualLines;
+
+                foreach (VisualLine currentLine in visualLines)
+                {
+                    int startIndex = 0;
+
+                    string originalText = Editor.Document.GetText(currentLine.FirstDocumentLine.Offset, currentLine.LastDocumentLine.EndOffset - currentLine.FirstDocumentLine.Offset);
+                    originalText = Regex.Replace(originalText, "[\\u2018\\u2019\\u201A\\u201B\\u2032\\u2035]", "'");
+
+                    var textWithoutURLs = UriFinderRegex.Replace(originalText, "");
+
+                    var query = WordSeparatorRegex.Split(textWithoutURLs)
+                        .Where(s => !string.IsNullOrEmpty(s));
+
+                    foreach (var word in query)
+                    {
+                        string trimmedWord = word.Trim('\'', '_', '-');
+
+                        int num = currentLine.FirstDocumentLine.Offset + originalText.IndexOf(trimmedWord, startIndex);
+
+                        if (!hunspell.Spell(trimmedWord))
+                        {
+                            TextSegment textSegment = new TextSegment();
+                            textSegment.StartOffset = num;
+                            textSegment.Length = word.Length;
+                            this.spellCheckRenderer.ErrorSegments.Add(textSegment);
+                        }
+
+                        startIndex = originalText.IndexOf(word, startIndex) + word.Length;
+                    }
+                }
+            }
+        }
 
         internal void ToggleBold()
         {
@@ -108,7 +169,7 @@ namespace MarkPad.Document
 
         internal void ToggleCode()
         {
-            if (Editor.SelectedText.Contains(NewLine))
+            if (Editor.SelectedText.Contains(Environment.NewLine))
                 ToggleCodeBlock();
             else
             {
@@ -118,7 +179,6 @@ namespace MarkPad.Document
                 Editor.SelectedText = selectedText.ToggleCode(!selectedText.IsCode());
             }
         }
-
 
         private string GetSelectedText()
         {
@@ -130,17 +190,14 @@ namespace MarkPad.Document
             return textArea.Selection.GetText(textArea.Document);
         }
 
-        private const string NewLine = "\r\n";
-        private const int NumSpaces = 4;
-        private const string Spaces = "    ";
         private void ToggleCodeBlock()
         {
-            var lines = Editor.SelectedText.Split(NewLine.ToCharArray());
+            var lines = Editor.SelectedText.Split(Environment.NewLine.ToCharArray());
             if (lines[0].Length > 4)
             {
                 if (lines[0].Substring(0, 4) == Spaces)
                 {
-                    Editor.SelectedText = Editor.SelectedText.Replace((NewLine + Spaces), NewLine);
+                    Editor.SelectedText = Editor.SelectedText.Replace((Environment.NewLine + Spaces), Environment.NewLine);
 
                     // remember the first line
                     if (Editor.SelectedText.Length >= NumSpaces)
@@ -154,10 +211,8 @@ namespace MarkPad.Document
                 }
             }
 
-            Editor.SelectedText = Spaces + Editor.SelectedText.Replace(NewLine, NewLine + Spaces);
+            Editor.SelectedText = Spaces + Editor.SelectedText.Replace(Environment.NewLine, Environment.NewLine + Spaces);
         }
-
-        static readonly char[] WordBreakers = new[] { ' ', '\r', '\n' };
 
         internal void SetHyperlink()
         {
@@ -181,7 +236,7 @@ namespace MarkPad.Document
                 .ExecuteSafely(vm =>
                                    {
                                        hyperlink = vm.GetHyperlink(hyperlink);
-                                       textArea.Selection.ReplaceSelectionWithText(textArea, 
+                                       textArea.Selection.ReplaceSelectionWithText(textArea,
                                            string.Format("[{0}]({1})", hyperlink.Text, hyperlink.Url));
                                    });
         }
@@ -212,6 +267,12 @@ namespace MarkPad.Document
             {
                 e.CanExecute = !Editor.TextArea.Selection.IsEmpty;
             }
+        }
+
+        void IHandle<SpellingEvent>.Handle(SpellingEvent message)
+        {
+            DoSpellCheck();
+            Editor.TextArea.TextView.Redraw();
         }
     }
 }

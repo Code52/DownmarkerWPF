@@ -41,6 +41,9 @@
     <Reference Include="Autofac.Configuration">
       <HintPath>..\..\packages\Autofac.2.5.2.830\lib\NET40\Autofac.Configuration.dll</HintPath>
     </Reference>
+    <Reference Include="NHunspell">
+      <HintPath>..\..\lib\Hunspell.0.9.6.0\lib\net20\NHunspell.dll</HintPath>
+    </Reference>
     <Reference Include="Ookii.Dialogs.Wpf">
       <HintPath>..\..\packages\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
     </Reference>
@@ -60,17 +63,30 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Implementation\SpellingService.cs" />
     <Compile Include="Implementation\DialogMessageService.cs" />
     <Compile Include="Implementation\DialogService.cs" />
     <Compile Include="Implementation\SettingsService.cs" />
     <Compile Include="Interfaces\ButtonExtras.cs" />
+    <Compile Include="Interfaces\ISpellingService.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />
     <Compile Include="Interfaces\ISettingsService.cs" />
     <Compile Include="ServicesModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\MarkPad.XAML\MarkPad.XAML.csproj">
+      <Project>{F5C76E3F-AC91-477D-86DE-778850F3E14B}</Project>
+      <Name>MarkPad.XAML</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Implementation\Dictionaries\en_AU.aff" />
+    <EmbeddedResource Include="Implementation\Dictionaries\en_AU.dic" />
+    <EmbeddedResource Include="Implementation\Dictionaries\en_CA.aff" />
+    <EmbeddedResource Include="Implementation\Dictionaries\en_CA.dic" />
+    <EmbeddedResource Include="Implementation\Dictionaries\en_US.aff" />
+    <EmbeddedResource Include="Implementation\Dictionaries\en_US.dic" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
