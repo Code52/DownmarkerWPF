@@ -176,14 +176,14 @@
             </Grid.RowDefinitions>
             <TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold" FontSize="10.667" Margin="30,10,0,0"><Run Text="MARKPAD"/></TextBlock>
             <TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold" FontSize="10.667" Margin="30,10,0,0"><Run Language="en-au" Text="MARKPAD"/></TextBlock>
-            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Margin="30,30,30,10">
-                <StackPanel.Resources>
+            <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Margin="30,30,30,10">
+                <WrapPanel.Resources>
                     <Style TargetType="Button" BasedOn="{StaticResource ChromelessButtonStyle}">
                         <Setter Property="FontSize" Value="13.333" />
                         <Setter Property="Margin" Value="0,0,20,0" />
                         <Setter Property="FontWeight" Value="Bold" />
                     </Style>
-                </StackPanel.Resources>
+                </WrapPanel.Resources>
                 <Button x:Name="NewDocument" Content="NEW" />
                 <Button x:Name="NewJekyllDocument" Content="NEW JEKYLL PAGE" />
                 <Button x:Name="OpenDocument" Content="OPEN" />
@@ -192,7 +192,7 @@
                 <Button x:Name="SaveAllDocuments" Content="SAVE ALL" />
                 <Button x:Name="PrintDocument" Content="PRINT" />
                 <Button x:Name="PublishDocument" Content="PUBLISH" />
-            </StackPanel>
+            </WrapPanel>
             <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Orientation="Horizontal">
                 <Button x:Name="ShowSettings" Content="SETTINGS" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" Margin="0,0,0,0" FontWeight="Bold" />
                 <TextBlock Margin="10,0"><Run Text="|"/></TextBlock>

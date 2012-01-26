@@ -27,6 +27,8 @@ namespace MarkPad.Document
             Loaded += DocumentViewLoaded;
             wb.Loaded += WbLoaded;
 
+            SizeChanged += new SizeChangedEventHandler(DocumentViewSizeChanged);
+
             Editor.TextArea.SelectionChanged += SelectionChanged;
 
             Editor.PreviewMouseLeftButtonUp += HandleMouseUp;
@@ -36,6 +38,19 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCode, (x, y) => ToggleCode(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCodeBlock, (x, y) => ToggleCodeBlock(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
+        }
+
+        void DocumentViewSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // Hide web browser when the window is too small for it to make much sense
+            if (e.NewSize.Width <= 350)
+            {
+                webBrowserColumn.MaxWidth = 0;
+            }
+            else
+            {
+                webBrowserColumn.MaxWidth = double.MaxValue;
+            }
         }
 
         void WbLoaded(object sender, RoutedEventArgs e)
