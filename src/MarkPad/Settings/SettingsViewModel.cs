@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Caliburn.Micro;
+using MarkPad.Framework.Events;
 using MarkPad.Services.Interfaces;
 using Microsoft.Win32;
 
@@ -12,6 +13,9 @@ namespace MarkPad.Settings
 {
     public class SettingsViewModel : Screen
     {
+        private const string BlogsSettingsKey = "Blogs";
+        private const string DictionariesSettingsKey = "Dictionaries";
+
         public class ExtensionViewModel : PropertyChangedBase
         {
             public ExtensionViewModel(string extension, bool enabled)
@@ -20,7 +24,7 @@ namespace MarkPad.Settings
                 this.Enabled = enabled;
             }
 
-            public string Extension { get; set; }
+            public string Extension { get; private set; }
             public bool Enabled { get; set; }
         }
 
@@ -45,14 +49,19 @@ namespace MarkPad.Settings
                     .ToArray();
             }
 
-            var blogs = settingsService.Get<List<BlogSetting>>("Blogs") ?? new List<BlogSetting>();
+            var blogs = settingsService.Get<List<BlogSetting>>(BlogsSettingsKey) ?? new List<BlogSetting>();
 
             Blogs = new ObservableCollection<BlogSetting>(blogs);
+
+            Languages = Enum.GetValues(typeof(SpellingLanguages)).OfType<SpellingLanguages>().ToArray();
+            SelectedLanguage = settingsService.Get<SpellingLanguages>(DictionariesSettingsKey);
         }
 
         public IEnumerable<ExtensionViewModel> Extensions { get; set; }
         public BlogSetting CurrentBlog { get; set; }
         public ObservableCollection<BlogSetting> Blogs { get; set; }
+        public IEnumerable<SpellingLanguages> Languages { get; set; }
+        public SpellingLanguages SelectedLanguage { get; set; }
 
         public override string DisplayName
         {
@@ -111,8 +120,14 @@ namespace MarkPad.Settings
         {
             UpdateExtensionRegistryKeys();
 
-            settingsService.Set("Blogs", Blogs.ToList());
+            var spellingService = IoC.Get<ISpellingService>();
+            spellingService.SetLanguage(SelectedLanguage);
+
+            settingsService.Set(BlogsSettingsKey, Blogs.ToList());
+            settingsService.Set(DictionariesSettingsKey, SelectedLanguage);
             settingsService.Save();
+
+            IoC.Get<IEventAggregator>().Publish(new SpellingEvent());
 
             TryClose();
         }

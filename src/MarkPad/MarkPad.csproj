@@ -93,6 +93,10 @@
     <Reference Include="MarkdownSharp">
       <HintPath>..\..\packages\MarkdownSharp.1.13.0.0\lib\35\MarkdownSharp.dll</HintPath>
     </Reference>
+    <Reference Include="NHunspell">
+      <HintPath>..\..\lib\Hunspell.0.9.6.0\lib\net20\NHunspell.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Ookii.Dialogs.Wpf">
       <HintPath>..\..\packages\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
     </Reference>
@@ -120,6 +124,7 @@
     </Compile>
     <Compile Include="About\AboutViewModel.cs" />
     <Compile Include="Document\MarkPadHyperlink.cs" />
+    <Compile Include="Framework\Events\SpellingEvent.cs" />
     <Compile Include="Framework\FrameworkExtensions.cs" />
     <Compile Include="Framework\Dynamic.cs" />
     <Compile Include="ExceptionDialog.xaml.cs">
@@ -151,6 +156,7 @@
     </Compile>
     <Compile Include="Settings\BlogSettingsViewModel.cs" />
     <Compile Include="Framework\MarkdownHelpers.cs" />
+    <Compile Include="Document\SpellCheckBackgroundRenderer.cs" />
     <Page Include="About\AboutView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -308,6 +314,9 @@
     <EmbeddedResource Include="markpaddoc.ico" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="..\..\lib\Hunspell.0.9.6.0\lib\Hunspellx86.dll">
+      <Link>Libs\x86\Hunspellx86.dll</Link>
+    </EmbeddedResource>
     <Content Include="Themes\ChaosSquirrel\style.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

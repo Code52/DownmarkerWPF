@@ -74,8 +74,53 @@ namespace MarkPad
                 // is not in the PATH.
                 // Once it is loaded, the DllImport directives that use the DLL will use
                 // the one that is already loaded into the process.
-                LoadLibrary(dllPath);
+                var pointer = LoadLibrary(dllPath);
+
+                if (lib.EndsWith("Hunspellx86.dll"))
+                {
+                    // The nhunspell assembly tries to do it's own loading, which fails
+                    // so to help it along we set the internal pointer correctly.
+
+                    LoadHunspellLibrary(pointer);
+                }
             }
+        }
+
+        private static void LoadHunspellLibrary(IntPtr pointer)
+        {
+            // The pointer we want to set is private, so here comes the reflection voodoo.
+
+            var hunspellAssembly = Assembly.GetAssembly(typeof(NHunspell.Hunspell));
+
+            var marshalType = hunspellAssembly.GetType("NHunspell.MarshalHunspellDll");
+
+            var dllHandleField = marshalType.GetField("dllHandle", BindingFlags.NonPublic | BindingFlags.Static);
+
+            dllHandleField.SetValue(null, pointer);
+
+            var getDelegateMethod = marshalType.GetMethod("GetDelegate", BindingFlags.NonPublic | BindingFlags.Static);
+
+            SetHunspellDelegate(marshalType, getDelegateMethod, "HunspellInit", "HunspellInitDelegate");
+            SetHunspellDelegate(marshalType, getDelegateMethod, "HunspellFree", "HunspellFreeDelegate");
+            SetHunspellDelegate(marshalType, getDelegateMethod, "HunspellAdd", "HunspellAddDelegate");
+            SetHunspellDelegate(marshalType, getDelegateMethod, "HunspellAddWithAffix", "HunspellAddWithAffixDelegate");
+            SetHunspellDelegate(marshalType, getDelegateMethod, "HunspellSpell", "HunspellSpellDelegate");
+            SetHunspellDelegate(marshalType, getDelegateMethod, "HunspellSuggest", "HunspellSuggestDelegate");
+            SetHunspellDelegate(marshalType, getDelegateMethod, "HunspellAnalyze", "HunspellAnalyzeDelegate");
+            SetHunspellDelegate(marshalType, getDelegateMethod, "HunspellStem", "HunspellStemDelegate");
+            SetHunspellDelegate(marshalType, getDelegateMethod, "HunspellGenerate", "HunspellGenerateDelegate");
+            SetHunspellDelegate(marshalType, getDelegateMethod, "HyphenInit", "HyphenInitDelegate");
+            SetHunspellDelegate(marshalType, getDelegateMethod, "HyphenFree", "HyphenFreeDelegate");
+            SetHunspellDelegate(marshalType, getDelegateMethod, "HyphenHyphenate", "HyphenHyphenateDelegate");
+        }
+
+        private static void SetHunspellDelegate(Type marshalType, MethodInfo getDelegateMethod, string call, string delegateName)
+        {
+            var delegateField = marshalType.GetField(call, BindingFlags.NonPublic | BindingFlags.Static);
+
+            var delegateType = marshalType.GetNestedType(delegateName, BindingFlags.NonPublic);
+
+            delegateField.SetValue(null, getDelegateMethod.Invoke(null, new object[] { call, delegateType }));
         }
 
         internal static Assembly LoadAssembly(string fullName)
