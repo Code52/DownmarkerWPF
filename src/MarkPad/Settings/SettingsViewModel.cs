@@ -12,6 +12,18 @@ namespace MarkPad.Settings
 {
     public class SettingsViewModel : Screen
     {
+        public class ExtensionViewModel : PropertyChangedBase
+        {
+            public ExtensionViewModel(string extension, bool enabled)
+            {
+                this.Extension = extension;
+                this.Enabled = enabled;
+            }
+
+            public string Extension { get; set; }
+            public bool Enabled { get; set; }
+        }
+
         private const string markpadKeyName = "markpad.md";
 
         private readonly ISettingsService settingsService;
@@ -27,17 +39,10 @@ namespace MarkPad.Settings
 
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes"))
             {
-                FileMDBinding = key.GetSubKeyNames().Contains(Constants.DefaultExtensions[0]) &&
-                    !string.IsNullOrEmpty(key.OpenSubKey(Constants.DefaultExtensions[0]).GetValue("").ToString());
-
-                FileMarkdownBinding = key.GetSubKeyNames().Contains(Constants.DefaultExtensions[1]) &&
-                    !string.IsNullOrEmpty(key.OpenSubKey(Constants.DefaultExtensions[1]).GetValue("").ToString());
-
-                FileMDownBinding = key.GetSubKeyNames().Contains(Constants.DefaultExtensions[2]) &&
-                    !string.IsNullOrEmpty(key.OpenSubKey(Constants.DefaultExtensions[2]).GetValue("").ToString());
-
-                FileMKDBinding = key.GetSubKeyNames().Contains(Constants.DefaultExtensions[3]) &&
-                    !string.IsNullOrEmpty(key.OpenSubKey(Constants.DefaultExtensions[3]).GetValue("").ToString());
+                this.Extensions = Constants.DefaultExtensions
+                    .Select(s => new ExtensionViewModel(s,
+                        key.GetSubKeyNames().Contains(s) && !string.IsNullOrEmpty(key.OpenSubKey(s).GetValue("").ToString())))
+                    .ToArray();
             }
 
             var blogs = settingsService.Get<List<BlogSetting>>("Blogs") ?? new List<BlogSetting>();
@@ -45,11 +50,7 @@ namespace MarkPad.Settings
             Blogs = new ObservableCollection<BlogSetting>(blogs);
         }
 
-        public bool FileMDBinding { get; set; }
-        public bool FileMarkdownBinding { get; set; }
-        public bool FileMDownBinding { get; set; }
-        public bool FileMKDBinding { get;	set; }
-
+        public IEnumerable<ExtensionViewModel> Extensions { get; set; }
         public BlogSetting CurrentBlog { get; set; }
         public ObservableCollection<BlogSetting> Blogs { get; set; }
 
@@ -127,14 +128,11 @@ namespace MarkPad.Settings
 
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes", true))
             {
-                for (int i = 0; i < Constants.DefaultExtensions.Length; i++)
+                foreach (var ext in Extensions)
                 {
-                    using (RegistryKey extensionKey = key.CreateSubKey(Constants.DefaultExtensions[i]))
+                    using (RegistryKey extensionKey = key.CreateSubKey(ext.Extension))
                     {
-                        if ((i == 0 && FileMDBinding) ||
-                            (i == 1 && FileMarkdownBinding) ||
-                            (i == 2 && FileMDownBinding) ||
-                            (i == 3 && FileMKDBinding))
+                        if (ext.Enabled)
                             extensionKey.SetValue("", markpadKeyName);
                         else
                             extensionKey.SetValue("", "");
