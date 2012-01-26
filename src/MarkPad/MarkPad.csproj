@@ -124,6 +124,7 @@
     </Compile>
     <Compile Include="About\AboutViewModel.cs" />
     <Compile Include="Document\MarkPadHyperlink.cs" />
+    <Compile Include="Framework\Events\SpellingEvent.cs" />
     <Compile Include="Framework\FrameworkExtensions.cs" />
     <Compile Include="Framework\Dynamic.cs" />
     <Compile Include="ExceptionDialog.xaml.cs">

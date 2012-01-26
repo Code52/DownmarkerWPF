@@ -24,18 +24,24 @@ namespace MarkPad.Services.Implementation
 
         public SpellingService()
         {
-            SetLanguage(SpellingLanguages.Australian, true);
         }
 
         public bool Spell(string word)
         {
+            if (speller == null)
+                return true;
+
             return speller.Spell(word);
         }
 
-        public void SetLanguage(SpellingLanguages language, bool clearOthers = false)
+        public void ClearLanguages()
         {
-            if (clearOthers)
-                speller = new Hunspell();
+            speller = null;
+        }
+
+        public void SetLanguage(SpellingLanguages language)
+        {
+            speller = new Hunspell();
 
             var languageKey = langLookup[language];
 

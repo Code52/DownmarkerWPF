@@ -13,12 +13,13 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
 using MarkPad.Framework;
+using MarkPad.Framework.Events;
 using MarkPad.Services.Interfaces;
 using MarkPad.XAML;
 
 namespace MarkPad.Document
 {
-    public partial class DocumentView
+    public partial class DocumentView : IHandle<SpellingEvent>
     {
         private const int NumSpaces = 4;
         private const string Spaces = "    ";
@@ -56,42 +57,7 @@ namespace MarkPad.Document
 
         void TextView_VisualLinesChanged(object sender, EventArgs e)
         {
-            if (this.Editor.TextArea.TextView.VisualLinesValid)
-            {
-                this.spellCheckRenderer.ErrorSegments.Clear();
-
-                ReadOnlyCollection<VisualLine> visualLines = Editor.TextArea.TextView.VisualLines;
-
-                foreach (VisualLine currentLine in visualLines)
-                {
-                    int startIndex = 0;
-
-                    string originalText = Editor.Document.GetText(currentLine.FirstDocumentLine.Offset, currentLine.LastDocumentLine.EndOffset - currentLine.FirstDocumentLine.Offset);
-                    originalText = Regex.Replace(originalText, "[\\u2018\\u2019\\u201A\\u201B\\u2032\\u2035]", "'");
-
-                    var textWithoutURLs = UriFinderRegex.Replace(originalText, "");
-
-                    var query = WordSeparatorRegex.Split(textWithoutURLs)
-                        .Where(s => !string.IsNullOrEmpty(s));
-
-                    foreach (var word in query)
-                    {
-                        string trimmedWord = word.Trim('\'', '_', '-');
-
-                        int num = currentLine.FirstDocumentLine.Offset + originalText.IndexOf(trimmedWord, startIndex);
-
-                        if (!hunspell.Spell(trimmedWord))
-                        {
-                            TextSegment textSegment = new TextSegment();
-                            textSegment.StartOffset = num;
-                            textSegment.Length = word.Length;
-                            this.spellCheckRenderer.ErrorSegments.Add(textSegment);
-                        }
-
-                        startIndex = originalText.IndexOf(word, startIndex) + word.Length;
-                    }
-                }
-            }
+            DoSpellCheck();
         }
 
         void WbLoaded(object sender, RoutedEventArgs e)
@@ -128,6 +94,46 @@ namespace MarkPad.Document
 
             // set default focus to the editor
             Editor.Focus();
+        }
+
+        private void DoSpellCheck()
+        {
+            if (this.Editor.TextArea.TextView.VisualLinesValid)
+            {
+                this.spellCheckRenderer.ErrorSegments.Clear();
+
+                ReadOnlyCollection<VisualLine> visualLines = Editor.TextArea.TextView.VisualLines;
+
+                foreach (VisualLine currentLine in visualLines)
+                {
+                    int startIndex = 0;
+
+                    string originalText = Editor.Document.GetText(currentLine.FirstDocumentLine.Offset, currentLine.LastDocumentLine.EndOffset - currentLine.FirstDocumentLine.Offset);
+                    originalText = Regex.Replace(originalText, "[\\u2018\\u2019\\u201A\\u201B\\u2032\\u2035]", "'");
+
+                    var textWithoutURLs = UriFinderRegex.Replace(originalText, "");
+
+                    var query = WordSeparatorRegex.Split(textWithoutURLs)
+                        .Where(s => !string.IsNullOrEmpty(s));
+
+                    foreach (var word in query)
+                    {
+                        string trimmedWord = word.Trim('\'', '_', '-');
+
+                        int num = currentLine.FirstDocumentLine.Offset + originalText.IndexOf(trimmedWord, startIndex);
+
+                        if (!hunspell.Spell(trimmedWord))
+                        {
+                            TextSegment textSegment = new TextSegment();
+                            textSegment.StartOffset = num;
+                            textSegment.Length = word.Length;
+                            this.spellCheckRenderer.ErrorSegments.Add(textSegment);
+                        }
+
+                        startIndex = originalText.IndexOf(word, startIndex) + word.Length;
+                    }
+                }
+            }
         }
 
         internal void ToggleBold()
@@ -246,6 +252,12 @@ namespace MarkPad.Document
             {
                 e.CanExecute = !Editor.TextArea.Selection.IsEmpty;
             }
+        }
+
+        void IHandle<SpellingEvent>.Handle(SpellingEvent message)
+        {
+            DoSpellCheck();
+            Editor.TextArea.TextView.Redraw();
         }
     }
 }

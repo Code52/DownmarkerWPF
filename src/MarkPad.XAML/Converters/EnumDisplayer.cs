@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Resources;
 
@@ -30,67 +28,39 @@ namespace MarkPad.XAML.Converters
 
     public class EnumDisplayConverter : MarkupConverter
     {
-        private Type type;
-        private IDictionary displayValues;
-        private IDictionary reverseValues;
+        private static Dictionary<object, string> displayValues = new Dictionary<object, string>();
+        private static Dictionary<string, object> reverseValues = new Dictionary<string, object>();
 
         public EnumDisplayConverter()
         {
         }
 
-        public EnumDisplayConverter(Type type)
+        private void GetDisplayString(object value)
         {
-            this.Type = type;
-        }
+            var valueType = value.GetType();
 
-        public Type Type
-        {
-            get { return type; }
-            set
+            var fields = valueType.GetFields(BindingFlags.Public | BindingFlags.Static);
+            foreach (var field in fields)
             {
-                if (!value.IsEnum)
-                    throw new ArgumentException("parameter is not an Enumermated type", "value");
-                this.type = value;
-            }
-        }
-
-        public ReadOnlyCollection<string> DisplayNames
-        {
-            get
-            {
-                Type displayValuesType = typeof(Dictionary<,>)
-                                        .GetGenericTypeDefinition().MakeGenericType(typeof(string), type);
-                this.displayValues = (IDictionary)Activator.CreateInstance(displayValuesType);
-
-                this.reverseValues =
-                   (IDictionary)Activator.CreateInstance(typeof(Dictionary<,>)
-                            .GetGenericTypeDefinition()
-                            .MakeGenericType(type, typeof(string)));
-
-                var fields = type.GetFields(BindingFlags.Public | BindingFlags.Static);
-                foreach (var field in fields)
-                {
-                    DisplayStringAttribute[] a = (DisplayStringAttribute[])
+                DisplayStringAttribute[] a = (DisplayStringAttribute[])
                                                 field.GetCustomAttributes(typeof(DisplayStringAttribute), false);
 
-                    string displayString = GetDisplayStringValue(a);
-                    object enumValue = field.GetValue(null);
+                string displayString = GetDisplayStringValue(a, valueType);
+                object enumValue = field.GetValue(null);
 
-                    if (displayString == null)
-                    {
-                        displayString = enumValue.ToString();
-                    }
-                    if (displayString != null)
-                    {
-                        displayValues.Add(enumValue, displayString);
-                        reverseValues.Add(displayString, enumValue);
-                    }
+                if (displayString == null)
+                {
+                    displayString = enumValue.ToString();
                 }
-                return new List<string>((IEnumerable<string>)displayValues.Values).AsReadOnly();
+                if (displayString != null)
+                {
+                    displayValues.Add(enumValue, displayString);
+                    reverseValues.Add(displayString, enumValue);
+                }
             }
         }
 
-        private string GetDisplayStringValue(DisplayStringAttribute[] a)
+        private string GetDisplayStringValue(DisplayStringAttribute[] a, Type type)
         {
             if (a == null || a.Length == 0) return null;
             DisplayStringAttribute dsa = a[0];
@@ -104,12 +74,18 @@ namespace MarkPad.XAML.Converters
 
         protected override object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            if (!displayValues.ContainsKey(value))
+                GetDisplayString(value);
+
             return displayValues[value];
         }
 
         protected override object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return reverseValues[value];
+            if (!reverseValues.ContainsKey(value.ToString()))
+                return null;
+
+            return reverseValues[value.ToString()];
         }
     }
 }

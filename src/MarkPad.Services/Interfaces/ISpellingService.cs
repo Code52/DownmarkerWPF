@@ -12,7 +12,8 @@ namespace MarkPad.Services.Interfaces
 
     public interface ISpellingService
     {
-        void SetLanguage(SpellingLanguages language, bool clearOthers = false);
+        void ClearLanguages();
+        void SetLanguage(SpellingLanguages language);
 
         bool Spell(string word);
     }
