@@ -4,9 +4,11 @@ namespace MarkPad.Services.Interfaces
 {
     public enum SpellingLanguages
     {
+        [DisplayString("English (Australia)")]
         Australian,
+        [DisplayString("English (Canada)")]
         Canadian,
-        [DisplayString("United States")]
+        [DisplayString("English (United States)")]
         UnitedStates
     }
 
