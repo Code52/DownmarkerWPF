@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using MarkdownSharp;
+using MarkdownDeep;
 
 namespace MarkPad.Document
 {
     static class DocumentParser
     {
-        private static readonly Markdown MarkdownParser = new Markdown();
+        private static readonly Markdown markdown = new Markdown();
 
         public static string Parse(string source)
         {
@@ -57,12 +57,17 @@ namespace MarkPad.Document
                 contents = components[0];
             }
 
-            return MarkdownParser.Transform(contents);
+            return MarkdownConvert(contents);
+        }
+
+        private static string MarkdownConvert(string contents)
+        {
+            return markdown.Transform(contents);
         }
 
         private static string ToHtml(string header, string contents)
         {
-            var body = MarkdownParser.Transform(contents);
+            var body = MarkdownConvert(contents);
 
             string themeName;
             string head = "";

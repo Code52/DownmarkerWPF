@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 using Caliburn.Micro;
 using CookComputing.XmlRpc;
@@ -15,6 +16,8 @@ namespace MarkPad.Document
 {
     internal class DocumentViewModel : Screen
     {
+        private static ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
+
         private readonly IDialogService dialogService;
         private readonly ISettingsService settings;
         private readonly IWindowManager windowManager;
@@ -43,7 +46,21 @@ namespace MarkPad.Document
         private void TimerTick(object sender, EventArgs e)
         {
             timer.Stop();
-            NotifyOfPropertyChange(() => Render);
+
+            Task.Factory.StartNew<string>(text =>
+            {
+                return DocumentParser.Parse(text.ToString());
+            }, Document.Text)
+            .ContinueWith(s =>
+            {
+                if (s.IsFaulted)
+                {
+                    Log.Error(s.Exception);
+                    return;
+                }
+
+                this.Render = s.Result;
+            }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         public void Open(string path)
@@ -54,6 +71,8 @@ namespace MarkPad.Document
             var text = File.ReadAllText(path);
             Document.Text = text;
             Original = text;
+
+            Update();
         }
 
         public void OpenFromWeb(Post post)
@@ -62,6 +81,8 @@ namespace MarkPad.Document
             title = post.permalink;
             Document.Text = post.description;
             Original = post.description;
+
+            Update();
         }
 
         public Post Post { get; private set; }
@@ -101,15 +122,7 @@ namespace MarkPad.Document
 
         public string Original { get; set; }
 
-        public string Render
-        {
-            get { return DocumentParser.Parse(Document.Text); }
-        }
-
-        public string RenderBody
-        {
-            get { return DocumentParser.GetBodyContents(Document.Text); }
-        }
+        public string Render { get; private set; }
 
         public bool HasChanges
         {
@@ -180,6 +193,8 @@ namespace MarkPad.Document
             var newpost = new Post();
             try
             {
+                var renderBody = DocumentParser.GetBodyContents(Document.Text);
+
                 if (string.IsNullOrWhiteSpace(postid))
                 {
                     var permalink = DisplayName.Split('.')[0] == "New Document"
@@ -191,7 +206,7 @@ namespace MarkPad.Document
                                    permalink = permalink,
                                    title = postTitle,
                                    dateCreated = DateTime.Now,
-                                   description = blog.Language == "HTML" ? RenderBody : Document.Text,
+                                   description = blog.Language == "HTML" ? renderBody : Document.Text,
                                    categories = categories
                                };
                     newpost.postid = proxy.NewPost(blog.BlogInfo.blogid, blog.Username, blog.Password, newpost, true);
@@ -203,7 +218,7 @@ namespace MarkPad.Document
                 {
                     newpost = proxy.GetPost(postid, blog.Username, blog.Password);
                     newpost.title = postTitle;
-                    newpost.description = blog.Language == "HTML" ? RenderBody : Document.Text;
+                    newpost.description = blog.Language == "HTML" ? renderBody : Document.Text;
                     newpost.categories = categories;
                     newpost.format = blog.Language;
 

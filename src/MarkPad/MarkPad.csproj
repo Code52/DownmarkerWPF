@@ -90,8 +90,8 @@
     <Reference Include="MahApps.Metro">
       <HintPath>..\..\packages\MahApps.Metro.0.4.0.17\lib\net40\MahApps.Metro.dll</HintPath>
     </Reference>
-    <Reference Include="MarkdownSharp">
-      <HintPath>..\..\packages\MarkdownSharp.1.13.0.0\lib\35\MarkdownSharp.dll</HintPath>
+    <Reference Include="MarkdownDeep">
+      <HintPath>..\..\packages\MarkdownDeep.NET.1.4\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
     </Reference>
     <Reference Include="NHunspell">
       <HintPath>..\..\lib\Hunspell.0.9.6.0\lib\net20\NHunspell.dll</HintPath>

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -61,7 +61,7 @@ namespace MarkPad.Document
         {
             DoSpellCheck();
         }
-        
+
         void DocumentViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
             // Hide web browser when the window is too small for it to make much sense
@@ -117,7 +117,7 @@ namespace MarkPad.Document
             {
                 this.spellCheckRenderer.ErrorSegments.Clear();
 
-                ReadOnlyCollection<VisualLine> visualLines = Editor.TextArea.TextView.VisualLines;
+                IEnumerable<VisualLine> visualLines = Editor.TextArea.TextView.VisualLines.AsParallel();
 
                 foreach (VisualLine currentLine in visualLines)
                 {
