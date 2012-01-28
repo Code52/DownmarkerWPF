@@ -175,7 +175,6 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold" FontSize="10.667" Margin="30,10,0,0"><Run Text="MARKPAD"/></TextBlock>
-            <TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold" FontSize="10.667" Margin="30,10,0,0"><Run Language="en-au" Text="MARKPAD"/></TextBlock>
             <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Margin="30,30,30,10">
                 <WrapPanel.Resources>
                     <Style TargetType="Button" BasedOn="{StaticResource ChromelessButtonStyle}">
