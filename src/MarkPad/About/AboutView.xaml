@@ -6,7 +6,7 @@
          ResizeMode="NoResize"
          MouseLeftButtonDown="DragMoveWindow"
         ShowInTaskbar="False"
-        Title="AboutView" Height="545" Width="424" WindowStartupLocation="CenterOwner">
+        Title="AboutView" Height="575" Width="450" WindowStartupLocation="CenterOwner">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -40,7 +40,7 @@
         <StackPanel Margin="60,10,60,0">
             <Image Margin="0" Source="/MarkPad;component/icon.png" Height="150" Width="150" HorizontalAlignment="Center"/>
             <TextBlock TextWrapping="Wrap" FontWeight="Bold" FontSize="69.333" HorizontalAlignment="Left" Margin="-4,0,0,0"><Run Text="MarkPad"/></TextBlock>
-            <TextBlock Margin="0,-18,0,0" TextWrapping="Wrap" FontWeight="Bold" HorizontalAlignment="Left" Height="20.83"><Run Text="version "/><Run Text=" "/><Run Text="{Binding Version, Mode=OneTime}" /></TextBlock>
+            <TextBlock Margin="0,-18,0,0" TextWrapping="Wrap" FontWeight="Bold" HorizontalAlignment="Left" Height="20.83"><Run Text="version "/><Run Text=" "/><Run Text="{Binding Version, Mode=OneTime}" /><Run Text=" "/><Run Text="{Binding Configuration, Mode=OneTime}" /></TextBlock>
             <TextBlock TextWrapping="Wrap" Foreground="#FF41B1E1" Margin="0,-7,-0.001,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontFamily="Segoe UI Light" FontSize="18.667"><Run Text="a code52 project"/></TextBlock>
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Margin="0,8,0,0" FontFamily="Segoe UI Light" FontSize="32" Text="a project by" />
             <TextBlock Text="{Binding Authors}" TextWrapping="Wrap" Margin="0,4,0,0" />

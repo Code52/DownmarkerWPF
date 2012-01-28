@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Caliburn.Micro;
 
@@ -14,6 +15,19 @@ namespace MarkPad.About
             }
         }
 
+        public string Configuration
+        {
+            get
+            {
+                var attr = Assembly.GetExecutingAssembly()
+                    .GetCustomAttributes(typeof(AssemblyConfigurationAttribute), false)
+                    .OfType<AssemblyConfigurationAttribute>()
+                    .FirstOrDefault() ?? new AssemblyConfigurationAttribute("");
+
+                return attr.Configuration;
+            }
+        }
+
         private readonly List<string> authors = new List<string>
                                                     {
                                                          "Cameron MacFarland",
@@ -23,7 +37,11 @@ namespace MarkPad.About
                                                          "Paul Stovell",
                                                          "Andrew Tobin",
                                                          "Brendan Forster",
-                                                         "Paul Jenkins"
+                                                         "Paul Jenkins",
+                                                         "Drew Marsh",
+                                                         "Brandon Montgomery",
+                                                         "Ben Scott",
+                                                         "Scott Hanselman"
                                                      };
         public string Authors
         {
@@ -37,11 +55,9 @@ namespace MarkPad.About
                                                          "Caliburn Micro",
                                                          "AvalonEdit",
                                                          "MahApps.Metro",
-                                                         "NLog",
                                                          "Ookii Dialogs",
                                                          "XML-RPC.NET",
-                                                         "MarkdownSharp",
-                                                         "JSON.NET",
+                                                         "MarkdownDeep",
                                                          "Notify Property Weaver"
                                                      };
         public string Components
