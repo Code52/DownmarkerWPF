@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <DirectoryRef Id="INSTALLLOCATION">
+      <Component Id="MarkPadFiles" Guid="4ac9e15b-89c1-4fde-84c9-286ef9d24af8">
+        <RegistryKey Root="HKCU" Key="Software\Code52\MarkPad" Action="createAndRemoveOnUninstall">
+          <RegistryValue Name="Version" Value="[ProductVersion]" Type="string" KeyPath="yes" />
+        </RegistryKey>
+        <CreateFolder />
+        <RemoveFolder Id="RemoveAppRootDirectory" On="uninstall" />
+        <File Id="MarkPad.exe" Source="..\MarkPad\bin\Debug\MarkPad.exe" />
+        <File Id="MarkPad.exe.config" Source="..\MarkPad\bin\Debug\MarkPad.exe.config" />
+      </Component>
+      <Directory Id="Themes" Name="Themes">
+        <Component Id="ThemesComponent" Guid="f1d42693-68f1-4872-a0ed-1ce4aa0565b9">
+          <RegistryKey Root="HKCU" Key="Software\Code52\MarkPad" Action="createAndRemoveOnUninstall">
+            <RegistryValue Name="Version" Value="[ProductVersion]" Type="string" KeyPath="yes" />
+          </RegistryKey>
+          <RemoveFolder Id="ThemesComponent" On="uninstall" />
+        </Component>
+      </Directory>
+    </DirectoryRef>
+  </Fragment>
+</Wix>
