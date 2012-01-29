@@ -255,8 +255,9 @@ namespace MarkPad.Document
             if (!viewModel.WasCancelled)
             {
                 hyperlink.Set(viewModel.Text, viewModel.Url);
+				return hyperlink;
             }
-            return hyperlink;
+            return null;
         }
     }
 }

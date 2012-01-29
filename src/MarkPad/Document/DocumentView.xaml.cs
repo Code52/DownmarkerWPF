@@ -236,8 +236,11 @@ namespace MarkPad.Document
                 .ExecuteSafely(vm =>
                                    {
                                        hyperlink = vm.GetHyperlink(hyperlink);
-                                       textArea.Selection.ReplaceSelectionWithText(textArea,
-                                           string.Format("[{0}]({1})", hyperlink.Text, hyperlink.Url));
+									   if (hyperlink != null)
+									   {
+									   		textArea.Selection.ReplaceSelectionWithText(textArea,
+									   			string.Format("[{0}]({1})", hyperlink.Text, hyperlink.Url));
+									   }
                                    });
         }
 
