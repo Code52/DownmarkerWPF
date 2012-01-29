@@ -87,6 +87,8 @@
     <EmbeddedResource Include="Implementation\Dictionaries\en_CA.dic" />
     <EmbeddedResource Include="Implementation\Dictionaries\en_US.aff" />
     <EmbeddedResource Include="Implementation\Dictionaries\en_US.dic" />
+    <EmbeddedResource Include="Implementation\Dictionaries\es_ES.aff" />
+    <EmbeddedResource Include="Implementation\Dictionaries\es_ES.dic" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
