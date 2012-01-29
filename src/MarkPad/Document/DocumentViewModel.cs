@@ -16,7 +16,7 @@ namespace MarkPad.Document
 {
     internal class DocumentViewModel : Screen
     {
-        private static ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
+        private static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
 
         private readonly IDialogService dialogService;
         private readonly ISettingsService settings;
