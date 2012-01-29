@@ -10,7 +10,7 @@ namespace MarkPad.Services.Implementation
 {
     public class SpellingService : ISpellingService
     {
-        private static Dictionary<SpellingLanguages, string> langLookup;
+        private static readonly Dictionary<SpellingLanguages, string> langLookup;
 
         static SpellingService()
         {

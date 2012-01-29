@@ -16,7 +16,7 @@ namespace MarkPad.Document
 {
     internal class DocumentViewModel : Screen
     {
-        private static ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
+        private static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
 
         private readonly IDialogService dialogService;
         private readonly ISettingsService settings;
@@ -255,8 +255,9 @@ namespace MarkPad.Document
             if (!viewModel.WasCancelled)
             {
                 hyperlink.Set(viewModel.Text, viewModel.Url);
+				return hyperlink;
             }
-            return hyperlink;
+            return null;
         }
     }
 }

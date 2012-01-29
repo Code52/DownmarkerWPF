@@ -28,8 +28,8 @@ namespace MarkPad.XAML.Converters
 
     public class EnumDisplayConverter : MarkupConverter
     {
-        private static Dictionary<object, string> displayValues = new Dictionary<object, string>();
-        private static Dictionary<string, object> reverseValues = new Dictionary<string, object>();
+        private static readonly Dictionary<object, string> displayValues = new Dictionary<object, string>();
+        private static readonly Dictionary<string, object> reverseValues = new Dictionary<string, object>();
 
         public EnumDisplayConverter()
         {
