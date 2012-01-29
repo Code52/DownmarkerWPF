@@ -9,7 +9,9 @@ namespace MarkPad.Services.Interfaces
         [DisplayString("English (Canada)")]
         Canadian,
         [DisplayString("English (United States)")]
-        UnitedStates
+        UnitedStates,
+        [DisplayString("Spanish (Spain)")]
+        Spain
     }
 
     public interface ISpellingService

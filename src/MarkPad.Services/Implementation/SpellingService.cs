@@ -18,6 +18,7 @@ namespace MarkPad.Services.Implementation
             langLookup.Add(SpellingLanguages.Australian, "en_AU");
             langLookup.Add(SpellingLanguages.Canadian, "en_CA");
             langLookup.Add(SpellingLanguages.UnitedStates, "en_US");
+            langLookup.Add(SpellingLanguages.Spain, "es_ES");
         }
 
         private Hunspell speller;
