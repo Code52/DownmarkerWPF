@@ -24,12 +24,12 @@ namespace MarkPad.Document
         private const int NumSpaces = 4;
         private const string Spaces = "    ";
 
-        Regex WordSeparatorRegex = new Regex("-[^\\w]+|^'[^\\w]+|[^\\w]+'[^\\w]+|[^\\w]+-[^\\w]+|[^\\w]+'$|[^\\w]+-$|^-$|^'$|[^\\w'-]", RegexOptions.Compiled);
-        Regex UriFinderRegex = new Regex("(http|ftp|https|mailto):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?", RegexOptions.Compiled);
+    	private readonly Regex WordSeparatorRegex = new Regex("-[^\\w]+|^'[^\\w]+|[^\\w]+'[^\\w]+|[^\\w]+-[^\\w]+|[^\\w]+'$|[^\\w]+-$|^-$|^'$|[^\\w'-]", RegexOptions.Compiled);
+    	private readonly Regex UriFinderRegex = new Regex("(http|ftp|https|mailto):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?", RegexOptions.Compiled);
 
         private ScrollViewer documentScrollViewer;
-        private SpellCheckBackgroundRenderer spellCheckRenderer;
-        private ISpellingService hunspell;
+        private readonly SpellCheckBackgroundRenderer spellCheckRenderer;
+        private readonly ISpellingService hunspell;
 
         public DocumentView()
         {
@@ -236,8 +236,11 @@ namespace MarkPad.Document
                 .ExecuteSafely(vm =>
                                    {
                                        hyperlink = vm.GetHyperlink(hyperlink);
-                                       textArea.Selection.ReplaceSelectionWithText(textArea,
-                                           string.Format("[{0}]({1})", hyperlink.Text, hyperlink.Url));
+									   if (hyperlink != null)
+									   {
+									   		textArea.Selection.ReplaceSelectionWithText(textArea,
+									   			string.Format("[{0}]({1})", hyperlink.Text, hyperlink.Url));
+									   }
                                    });
         }
 
