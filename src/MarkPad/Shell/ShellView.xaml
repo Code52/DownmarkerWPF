@@ -12,8 +12,10 @@
     xmlns:Shell="clr-namespace:MarkPad.Shell" 
     mc:Ignorable="d" 
     MouseLeftButtonDown="DragMoveWindow"
+    DragOver="WindowDragOver"
     Icon="../markpad.ico"
     SnapsToDevicePixels="True"
+    AllowDrop="True"
     KeyDown="WindowKeyDown"
     d:DataContext="{d:DesignInstance Shell:ShellViewModel}">
 
@@ -22,6 +24,11 @@
     </i:Interaction.Behaviors>
 
     <i:Interaction.Triggers>
+        <i:EventTrigger EventName="PreviewDrop">
+            <cm:ActionMessage MethodName="OpenDocument">
+                <cm:Parameter Value="$filenames" />
+            </cm:ActionMessage>
+        </i:EventTrigger>
         <s:InputBindingTrigger>
             <s:InputBindingTrigger.InputBinding>
                 <KeyBinding Modifiers="Ctrl" Key="N" />
