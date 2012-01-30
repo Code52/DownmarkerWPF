@@ -22,7 +22,7 @@ namespace MarkPad.HyperlinkEditor
             TryClose();
         }
 
-        public void Close()
+		public void Accept()
         {
             TryClose();
         }

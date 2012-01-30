@@ -7,10 +7,10 @@
         MouseLeftButtonDown="DragMoveWindow" 
         ShowInTaskbar="False"
         SnapsToDevicePixels="True"
-        WindowStartupLocation="CenterOwner" Width="300" Height="370" ResizeMode="NoResize"
->
+        WindowStartupLocation="CenterOwner" Width="300" Height="370" ResizeMode="NoResize">
+
     <i:Interaction.Behaviors>
-    <Behaviours:BorderlessWindowBehavior ResizeWithGrip="False" />
+        <Behaviours:BorderlessWindowBehavior ResizeWithGrip="False" />
     </i:Interaction.Behaviors>
 
     <Window.Resources>
