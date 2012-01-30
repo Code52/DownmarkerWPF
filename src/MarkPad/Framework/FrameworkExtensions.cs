@@ -1,4 +1,4 @@
-﻿namespace Caliburn.Micro
+namespace Caliburn.Micro
 {
     #region Namespaces
     using System;

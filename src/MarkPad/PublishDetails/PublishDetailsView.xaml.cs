@@ -1,4 +1,4 @@
-﻿using System.Windows.Input;
+using System.Windows.Input;
 using MarkPad.Services.Interfaces;
 
 namespace MarkPad.PublishDetails

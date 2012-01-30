@@ -1,4 +1,4 @@
-﻿namespace MarkPad.Document
+namespace MarkPad.Document
 {
     public class MarkPadHyperlink
     {

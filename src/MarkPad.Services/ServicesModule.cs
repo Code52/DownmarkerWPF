@@ -1,4 +1,4 @@
-﻿using Autofac;
+using Autofac;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 

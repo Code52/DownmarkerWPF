@@ -1,4 +1,4 @@
-﻿using MarkPad.Services.Interfaces;
+using MarkPad.Services.Interfaces;
 using Ookii.Dialogs.Wpf;
 
 namespace MarkPad.Services.Implementation

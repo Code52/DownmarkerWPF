@@ -1,4 +1,4 @@
-﻿namespace MarkPad.Services.Interfaces
+namespace MarkPad.Services.Interfaces
 {
     public interface IDialogService
     {

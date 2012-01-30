@@ -1,4 +1,4 @@
-﻿using MarkPad.XAML.Converters;
+using MarkPad.XAML.Converters;
 
 namespace MarkPad.Services.Interfaces
 {
