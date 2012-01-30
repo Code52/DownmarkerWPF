@@ -21,7 +21,7 @@
         <RemoveFolder Id="RemoveAppRootDirectory" On="uninstall" />
         
         <File Id="MarkPad.exe" Source="$(var.BUILDPATH)\MarkPad.exe">
-          <netfx:NativeImage Id="ngen_evORElution.exe" Priority="0" AppBaseDirectory="INSTALLLOCATION" />
+          <netfx:NativeImage Id="ngen_MarkPad.exe" Priority="0" AppBaseDirectory="INSTALLLOCATION" />
         </File>
         
         <File Id="MarkPad.exe.config" Source="$(var.BUILDPATH)\MarkPad.exe.config" />
