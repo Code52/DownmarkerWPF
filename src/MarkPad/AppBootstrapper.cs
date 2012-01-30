@@ -11,6 +11,7 @@ using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.Services;
 using MarkPad.Shell;
+using System.Windows;
 
 namespace MarkPad
 {
@@ -60,12 +61,14 @@ namespace MarkPad
 
             DumpIconsForDocuments();
 
+            ExtendCaliburn();
+
             Container.Resolve<IEventAggregator>().Publish(new AppReadyEvent());
 
             // Handle the original arguments from the first run of this app.
             ((App)Application).HandleArguments(Environment.GetCommandLineArgs());
         }
-
+                
         protected override void OnExit(object sender, EventArgs e)
         {
             jumpList.Dispose();
@@ -123,6 +126,19 @@ namespace MarkPad
                     stm.CopyTo(outFile);
                 }
             }
+        }
+
+        private void ExtendCaliburn()
+        {
+            MessageBinder.SpecialValues.Add("$filenames", context =>
+            {
+                var args = context.EventArgs as DragEventArgs;
+
+                if (args == null || !args.Data.GetDataPresent(System.Windows.DataFormats.FileDrop)) 
+                    return null;
+                
+                return (string[])args.Data.GetData(System.Windows.DataFormats.FileDrop);
+            });
         }
 
         public IEventAggregator GetEventAggregator()

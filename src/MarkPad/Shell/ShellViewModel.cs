@@ -102,6 +102,12 @@ namespace MarkPad.Shell
                 eventAggregator.Publish(new FileOpenEvent(p));
         }
 
+        public void OpenDocument(IEnumerable<string> filenames)
+        {
+            foreach(var fn in filenames)
+                eventAggregator.Publish(new FileOpenEvent(fn));
+        }
+
         public void SaveDocument()
         {
             var doc = MDI.ActiveItem as DocumentViewModel;

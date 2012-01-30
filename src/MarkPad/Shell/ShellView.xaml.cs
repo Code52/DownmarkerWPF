@@ -33,6 +33,13 @@ namespace MarkPad.Shell
             }
         }
 
+        private void WindowDragOver(object sender, DragEventArgs e)
+        {
+            bool isFileDrop = e.Data.GetDataPresent(DataFormats.FileDrop);
+            e.Effects = isFileDrop ? DragDropEffects.Move : DragDropEffects.None;
+            e.Handled = true;
+        }
+
         private void WindowKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.F9)
@@ -64,5 +71,7 @@ namespace MarkPad.Shell
         {
             ToggleCheatSheet();
         }
+
+        
     }
 }
