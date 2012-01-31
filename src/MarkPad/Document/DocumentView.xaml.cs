@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -7,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml;
+using Awesomium.Core;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
@@ -36,6 +38,7 @@ namespace MarkPad.Document
             InitializeComponent();
             Loaded += DocumentViewLoaded;
             wb.Loaded += WbLoaded;
+            wb.OpenExternalLink += WebControl_LinkClicked;
 
             SizeChanged += new SizeChangedEventHandler(DocumentViewSizeChanged);
 
@@ -55,6 +58,11 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCode, (x, y) => ToggleCode(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCodeBlock, (x, y) => ToggleCodeBlock(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
+        }
+
+        void WebControl_LinkClicked(object sender, OpenExternalLinkEventArgs e)
+        {
+            Process.Start(e.Url);
         }
 
         void TextView_VisualLinesChanged(object sender, EventArgs e)

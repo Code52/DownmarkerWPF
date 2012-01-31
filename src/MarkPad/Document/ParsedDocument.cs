@@ -8,6 +8,11 @@ namespace MarkPad.Document
     {
         private static readonly Markdown markdown = new Markdown();
 
+        static DocumentParser() 
+        {
+            markdown.NewWindowForExternalLinks = true;
+        }
+
         public static string Parse(string source)
         {
             const string delimiter = "---";
