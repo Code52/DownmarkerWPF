@@ -20,44 +20,22 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.Services", "src\Mar
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
-		Debug|x86 = Debug|x86
-		Release|Any CPU = Release|Any CPU
 		Release|Mixed Platforms = Release|Mixed Platforms
-		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Debug|x86.ActiveCfg = Debug|x86
-		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Debug|x86.Build.0 = Debug|x86
-		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Release|Any CPU.ActiveCfg = Release|x86
 		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Release|Mixed Platforms.Build.0 = Release|x86
-		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Release|x86.ActiveCfg = Release|x86
-		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Release|x86.Build.0 = Release|x86
-		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{F5C76E3F-AC91-477D-86DE-778850F3E14B}.Release|x86.ActiveCfg = Release|Any CPU
-		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
