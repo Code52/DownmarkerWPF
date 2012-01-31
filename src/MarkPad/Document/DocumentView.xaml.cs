@@ -36,6 +36,7 @@ namespace MarkPad.Document
             InitializeComponent();
             Loaded += DocumentViewLoaded;
             wb.Loaded += WbLoaded;
+            wb.OpenExternalLink += WebControl_LinkClicked;
 
             SizeChanged += new SizeChangedEventHandler(DocumentViewSizeChanged);
 
@@ -55,6 +56,11 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCode, (x, y) => ToggleCode(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCodeBlock, (x, y) => ToggleCodeBlock(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
+        }
+
+        void WebControl_LinkClicked(object sender, Awesomium.Core.OpenExternalLinkEventArgs e)
+        {
+            System.Diagnostics.Process.Start(e.Url);
         }
 
         void TextView_VisualLinesChanged(object sender, EventArgs e)
