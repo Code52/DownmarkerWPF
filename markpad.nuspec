@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>markpad</id>
+    <title>Markpad</title>
+    <version>1.0.1</version>
+    <authors>Code52</authors>
+    <owners>Code52</owners>
+    <projectUrl>http://code52.org/DownmarkerWPF/</projectUrl>
+    <iconUrl>http://code52.org/DownmarkerWPF/icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A WPF Markdown editor inspired by Downmarker.</description>
+    <summary>A WPF Markdown editor inspired by Downmarker.</summary>
+    <tags>markdown downmarker wpf markpad chocolatey</tags>
+  </metadata>
+  <files>
+    <file src="chocolateyInstall.ps1" target="tools\chocolateyInstall.ps1" />
+  </files>
+</package>

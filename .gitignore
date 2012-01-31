@@ -5,5 +5,6 @@ Packages
 *.suo
 *.user
 *.dat
+*.nupkg
 
 _Resharper*
