@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -7,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml;
+using Awesomium.Core;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
@@ -58,9 +60,9 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
         }
 
-        void WebControl_LinkClicked(object sender, Awesomium.Core.OpenExternalLinkEventArgs e)
+        void WebControl_LinkClicked(object sender, OpenExternalLinkEventArgs e)
         {
-            System.Diagnostics.Process.Start(e.Url);
+            Process.Start(e.Url);
         }
 
         void TextView_VisualLinesChanged(object sender, EventArgs e)
