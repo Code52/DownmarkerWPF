@@ -7,3 +7,4 @@ Packages
 *.dat
 
 _Resharper*
+msbuild.log
