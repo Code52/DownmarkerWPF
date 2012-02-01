@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Text.RegularExpressions;
+using Awesomium.Core;
 using MarkdownDeep;
 
 namespace MarkPad.Document
@@ -75,12 +77,24 @@ namespace MarkPad.Document
             var body = MarkdownConvert(contents);
 
             string themeName;
-            string head = "";
+            var head = "";
+            var scripts = "";
 
             if (TryGetHeaderValue(header, "theme", out themeName))
-                head = String.Format(@"<link rel=""stylesheet"" type=""text/css"" href=""{0}/style.css"" />", themeName);
+            {
+                var path = Path.Combine(WebCore.BaseDirectory, themeName);
+                foreach(var stylesheet in Directory.GetFiles(path, "*.css"))
+                {
+                    head += String.Format("<link rel=\"stylesheet\" type=\"text/css href=\"{0}/{1}\" />\r\n", themeName, Path.GetFileName(stylesheet));
+                }
 
-            var document = String.Format("<html>\r\n<head>\r\n{0}\r\n</head>\r\n<body>\r\n{1}\r\n</body>\r\n</html>", head, body);
+                foreach (var stylesheet in Directory.GetFiles(path, "*.js"))
+                {
+                    scripts += String.Format("<script type=\"text/javascript\" src=\"{0}/{1}\"></script>\r\n", themeName, Path.GetFileName(stylesheet));
+                }
+            }
+
+            var document = String.Format("<html>\r\n<head>\r\n{0}\r\n</head>\r\n<body>\r\n{1}\r\n{2}\r\n</body>\r\n</html>", head, body, scripts);
 
             return document;
         }
