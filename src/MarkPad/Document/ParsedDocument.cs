@@ -85,7 +85,7 @@ namespace MarkPad.Document
                 var path = Path.Combine(WebCore.BaseDirectory, themeName);
                 foreach(var stylesheet in Directory.GetFiles(path, "*.css"))
                 {
-                    head += String.Format("<link rel=\"stylesheet\" type=\"text/css href=\"{0}/{1}\" />\r\n", themeName, Path.GetFileName(stylesheet));
+                    head += String.Format("<link rel=\"stylesheet\" type=\"text/css\" href=\"{0}/{1}\" />\r\n", themeName, Path.GetFileName(stylesheet));
                 }
 
                 foreach (var stylesheet in Directory.GetFiles(path, "*.js"))
