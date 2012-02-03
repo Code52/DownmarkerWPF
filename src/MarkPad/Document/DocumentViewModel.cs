@@ -112,9 +112,37 @@ namespace MarkPad.Document
                 NotifyOfPropertyChange(() => DisplayName);
             }
 
-            File.WriteAllText(filename, Document.Text);
-            Original = Document.Text;
+            try
+            {
+                File.WriteAllText(filename, Document.Text);
+                Original = Document.Text;
+            }
+            catch(Exception)
+            {
+                var saveResult = dialogService.ShowConfirmation("MarkPad", "Cannot save file",
+                                                String.Format("Do you want to save changes for {0} to a different file?", title), 
+                                                new ButtonExtras(ButtonType.Yes, "Save", "Save the file at a different location."),
+                                                new ButtonExtras(ButtonType.No, "Do not save", "The file will be considered a New Document.  The next save will prompt for a file location."));
 
+                string prevFileName = filename;
+                string prevTitle = title;
+
+                title = "New Document";
+                filename = "";
+                if (saveResult)
+                {
+                    saveResult = Save();
+                    if (!saveResult)  //We decide not to save, keep existing title and filename 
+                    {
+                        title = prevTitle;
+                        filename = prevFileName;
+                    }
+                }
+
+                NotifyOfPropertyChange(() => DisplayName);
+                return saveResult;
+            }
+             
             return true;
         }
 
@@ -255,7 +283,7 @@ namespace MarkPad.Document
             if (!viewModel.WasCancelled)
             {
                 hyperlink.Set(viewModel.Text, viewModel.Url);
-				return hyperlink;
+                return hyperlink;
             }
             return null;
         }
