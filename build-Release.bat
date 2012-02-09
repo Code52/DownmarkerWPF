@@ -1,6 +1,6 @@
 @ECHO OFF
 
-SET build=%~dp0\build.bat
+SET build="%~dp0\build.bat"
 
 :: Pass the configuration parameter and all other parameters
 CALL %build% Release
