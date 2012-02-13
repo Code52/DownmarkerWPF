@@ -48,6 +48,9 @@ namespace MarkPad.Shell
                 files.Insert(0, openedFile);
                 settingsService.Set("RecentFiles", files);
 
+                // Sometimes the settings and the jumplist can get out of sequence.
+                index = currentFiles.ToList().IndexOf(openedFile);
+
                 jumpList.JumpItems.RemoveAt(index);
                 InsertFileFirst(openedFile);
             }
