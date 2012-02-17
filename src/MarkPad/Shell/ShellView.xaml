@@ -6,11 +6,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:s="http://schemas.markpad.net/winfx/xaml/shared"
-    xmlns:fw="clr-namespace:MarkPad.Framework"
     xmlns:cm="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
-    xmlns:Shell="clr-namespace:MarkPad.Shell" 
-    mc:Ignorable="d" 
+    xmlns:Shell="clr-namespace:MarkPad.Shell" xmlns:sys="clr-namespace:System;assembly=mscorlib" mc:Ignorable="d" 
     MouseLeftButtonDown="DragMoveWindow"
     DragOver="WindowDragOver"
     Icon="../markpad.ico"
@@ -96,6 +94,11 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MarkPad;component/Styles/MarkPad.Accents.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            
+            <sys:String x:Key="WindowCommandsMinimiseToolTip">Minimise</sys:String>
+            <sys:String x:Key="WindowCommandsMaximiseToolTip">Maximise</sys:String>
+            <sys:String x:Key="WindowCommandsRestoreToolTip">Restore</sys:String>
+            <sys:String x:Key="WindowCommandsCloseToolTip">Close</sys:String>
             <Storyboard x:Key="ShowCheatSheet">
                 <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="cheatSheetDropdown">
                     <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
@@ -203,9 +206,9 @@
                 <Button x:Name="ShowSettings" Content="SETTINGS" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" Margin="0,0,0,0" FontWeight="Bold" />
                 <TextBlock Margin="10,0"><Run Text="|"/></TextBlock>
                 <Button x:Name="ShowAbout" Content="ABOUT" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" Margin="0,0,20,0" FontWeight="Bold" />
-                <Button Click="ButtonMinimiseOnClick"  Style="{DynamicResource ChromelessButtonStyle}" Content="0" FontFamily="Marlett" />
-                <Button Click="ButtonMaxRestoreOnClick" x:Name="maxRestore" Style="{DynamicResource ChromelessButtonStyle}" Content="1" FontFamily="Marlett" />
-                <Button x:Name="TryClose" Style="{DynamicResource ChromelessButtonStyle}" Content="r" FontFamily="Marlett" />
+                <Button Click="ButtonMinimiseOnClick"   ToolTip="{DynamicResource WindowCommandsMinimiseToolTip}" Style="{DynamicResource ChromelessButtonStyle}" Content="0" FontFamily="Marlett" />
+                <Button Click="ButtonMaxRestoreOnClick"   ToolTip="{DynamicResource WindowCommandsMaximiseToolTip}" x:Name="maxRestore" Style="{DynamicResource ChromelessButtonStyle}" Content="1" FontFamily="Marlett" />
+                <Button x:Name="TryClose" ToolTip="{DynamicResource WindowCommandsCloseToolTip}" Style="{DynamicResource ChromelessButtonStyle}" Content="r" FontFamily="Marlett" />
             </StackPanel>
             <Rectangle HorizontalAlignment="Left" Stroke="Black" Width="10" StrokeThickness="0" Margin="0,10">
                 <Rectangle.Fill>

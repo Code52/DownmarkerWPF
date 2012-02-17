@@ -21,15 +21,27 @@ namespace MarkPad.Shell
 
         private void ButtonMaxRestoreOnClick(object sender, RoutedEventArgs e)
         {
-            if (WindowState == WindowState.Maximized)
+            WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+        }
+
+
+        protected override void OnStateChanged(System.EventArgs e)
+        {
+            RefreshMaximiseIconState();
+            base.OnStateChanged(e);
+        }
+
+        private void RefreshMaximiseIconState()
+        {
+            if (WindowState == WindowState.Normal)
             {
                 maxRestore.Content = "1";
-                WindowState = WindowState.Normal;
+                maxRestore.SetResourceReference(ToolTipProperty, "WindowCommandsMaximiseToolTip");
             }
             else
             {
                 maxRestore.Content = "2";
-                WindowState = WindowState.Maximized;
+                maxRestore.SetResourceReference(ToolTipProperty, "WindowCommandsRestoreToolTip");
             }
         }
 
