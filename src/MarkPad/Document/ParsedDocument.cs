@@ -17,52 +17,18 @@ namespace MarkPad.Document
 
         public static string Parse(string source)
         {
-            const string delimiter = "---";
-
-            var components = source.Split(new[] { delimiter }, 2, StringSplitOptions.RemoveEmptyEntries);
-
             string header;
             string contents;
-
-            if (components.Length == 0)
-            {
-                header = "";
-                contents = "";
-            }
-            else if (components.Length == 2)
-            {
-                header = components[0];
-                contents = components[1];
-            }
-            else
-            {
-                header = "";
-                contents = components[0];
-            }
+            SplitHeaderAndContents(source, out header, out contents);
 
             return ToHtml(header, contents);
         }
 
         public static string GetBodyContents(string source)
         {
-            const string delimiter = "---";
-
-            var components = source.Split(new[] { delimiter }, 2, StringSplitOptions.RemoveEmptyEntries);
-
+            string header;
             string contents;
-
-            if (components.Length == 0)
-            {
-                contents = "";
-            }
-            else if (components.Length == 2)
-            {
-                contents = components[1];
-            }
-            else
-            {
-                contents = components[0];
-            }
+            SplitHeaderAndContents(source, out header, out contents);
 
             return MarkdownConvert(contents);
         }
@@ -107,6 +73,20 @@ namespace MarkPad.Document
             value = match.Success ? match.Result("$1").Trim() : String.Empty;
 
             return match.Success;
+        }
+
+        private static void SplitHeaderAndContents(string source, out string header, out string contents)
+        {
+            var match = Regex.Match(source, @"^---\S*\r\n(.*?)\r\n---\r\n(.*)$", 
+                RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (match.Success)
+            {
+                header = match.Groups[1].Value;
+                contents = match.Groups[2].Value;
+                return;
+            }
+            header = "";
+            contents = source;
         }
     }
 }
