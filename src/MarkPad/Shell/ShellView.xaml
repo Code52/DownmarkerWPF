@@ -10,6 +10,7 @@
     xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
     xmlns:Shell="clr-namespace:MarkPad.Shell" xmlns:sys="clr-namespace:System;assembly=mscorlib" mc:Ignorable="d" 
     MouseLeftButtonDown="DragMoveWindow"
+    MouseMove="MoveWindow"
     DragOver="WindowDragOver"
     Icon="../markpad.ico"
     SnapsToDevicePixels="True"
