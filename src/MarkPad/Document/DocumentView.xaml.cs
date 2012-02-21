@@ -21,7 +21,7 @@ using MarkPad.XAML;
 
 namespace MarkPad.Document
 {
-    public partial class DocumentView : IHandle<SpellingEvent>
+    public partial class DocumentView : IHandle<SettingsChangedEvent>
     {
         private const int NumSpaces = 4;
         private const string Spaces = "    ";
@@ -83,9 +83,40 @@ namespace MarkPad.Document
             }
         }
 
+        /// <summary>
+        /// Get the font size that was set in the settings.
+        /// </summary>
+        /// <returns>Font size.</returns>
+        private int GetFontSize()
+        {
+            return 12 + ((DocumentViewModel) DataContext).GetFontSize();
+        }
+
+        /// <summary>
+        /// Turn the font size into a zoom level for the browser.
+        /// </summary>
+        /// <returns></returns>
+        private int GetZoomLevel()
+        {
+            // The default font size 12 corresponds to 100 (which maps to 0 here); for an increment of 1, we add 50/6 to the number.
+            // For 18 we end up with 150, which looks really fine. TODO: Feel free to try to further outline this, but this is a good start.
+            var zoom = 100 + ((DocumentViewModel)DataContext).GetFontSize() * 40 / 6;
+
+            // Limit the zoom by the limits of Awesomium.NET.
+            if (zoom < 50)  zoom = 50;
+            if (zoom > 500) zoom = 500;
+            return zoom;
+        }
+
+        private void WbProcentualZoom()
+        {
+            wb.Zoom = GetZoomLevel();
+            wb.ExecuteJavascript("window.scrollTo(0," + documentScrollViewer.VerticalOffset / (documentScrollViewer.ExtentHeight - documentScrollViewer.ViewportHeight) + " * (document.body.scrollHeight - document.body.clientHeight));");
+        }
+
         void WbLoaded(object sender, RoutedEventArgs e)
         {
-            wb.ExecuteJavascript("window.scrollTo(0," + documentScrollViewer.VerticalOffset + ");");
+            WbProcentualZoom();
         }
 
         private void DocumentViewLoaded(object sender, RoutedEventArgs e)
@@ -100,23 +131,28 @@ namespace MarkPad.Document
 
             if (documentScrollViewer != null)
             {
-                documentScrollViewer.ScrollChanged += (i, j) => wb.ExecuteJavascript("window.scrollTo(0," + j.VerticalOffset + ");");
+                documentScrollViewer.ScrollChanged += (i, j) => WbProcentualZoom();
                 var x = ((DocumentViewModel)DataContext);
                 x.Document.TextChanged += (i, j) =>
-                                              {
-                                                  wb.LoadCompleted += (k, l) => wb.ExecuteJavascript("window.scrollTo(0," + documentScrollViewer.VerticalOffset + ");");
-                                              };
+                    {
+                        Editor.FontSize = GetFontSize();
+                        wb.LoadCompleted += (k, l) => WbProcentualZoom();
+                    };
             }
 
-            //  AvalonEdit hijacks Ctrl+I. We need to free that mutha up
+            // AvalonEdit hijacks Ctrl+I. We need to free that mutha up
             var editCommandBindings = Editor.TextArea.DefaultInputHandler.Editing.CommandBindings;
 
             editCommandBindings
                 .FirstOrDefault(b => b.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.IndentSelection)
                 .ExecuteSafely(b => editCommandBindings.Remove(b));
 
-            // set default focus to the editor
+            // Set font size and focus on the editor.
+            Editor.FontSize = GetFontSize();
             Editor.Focus();
+
+            // Set zoom level of the preview.
+            wb.Zoom = GetZoomLevel();
         }
 
         private void DoSpellCheck()
@@ -280,10 +316,13 @@ namespace MarkPad.Document
             }
         }
 
-        void IHandle<SpellingEvent>.Handle(SpellingEvent message)
+        void IHandle<SettingsChangedEvent>.Handle(SettingsChangedEvent message)
         {
             DoSpellCheck();
             Editor.TextArea.TextView.Redraw();
+
+            Editor.FontSize = GetFontSize();
+            wb.Zoom = GetZoomLevel();
         }
     }
 }
