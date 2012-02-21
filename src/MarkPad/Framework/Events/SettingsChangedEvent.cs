@@ -1,6 +1,6 @@
 namespace MarkPad.Framework.Events
 {
-    public class SettingsEvent
+    public class SettingsChangedEvent
     {
     }
 }

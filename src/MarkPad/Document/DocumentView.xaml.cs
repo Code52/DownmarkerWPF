@@ -18,11 +18,10 @@ using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.Services.Interfaces;
 using MarkPad.XAML;
-using MarkPad.Settings;
 
 namespace MarkPad.Document
 {
-    public partial class DocumentView : IHandle<SettingsEvent>
+    public partial class DocumentView : IHandle<SettingsChangedEvent>
     {
         private const int NumSpaces = 4;
         private const string Spaces = "    ";
@@ -317,7 +316,7 @@ namespace MarkPad.Document
             }
         }
 
-        void IHandle<SettingsEvent>.Handle(SettingsEvent message)
+        void IHandle<SettingsChangedEvent>.Handle(SettingsChangedEvent message)
         {
             DoSpellCheck();
             Editor.TextArea.TextView.Redraw();

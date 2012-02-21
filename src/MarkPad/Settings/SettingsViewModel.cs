@@ -133,7 +133,7 @@ namespace MarkPad.Settings
             settingsService.Set(FontSettingsKey, SelectedFontSize);
             settingsService.Save();
 
-            IoC.Get<IEventAggregator>().Publish(new SettingsEvent());
+            IoC.Get<IEventAggregator>().Publish(new SettingsChangedEvent());
 
             TryClose();
         }
