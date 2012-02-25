@@ -15,6 +15,7 @@ namespace MarkPad.Settings
     {
         private const string BlogsSettingsKey = "Blogs";
         private const string DictionariesSettingsKey = "Dictionaries";
+        public const string FontSettingsKey = "Font";
 
         public class ExtensionViewModel : PropertyChangedBase
         {
@@ -55,6 +56,8 @@ namespace MarkPad.Settings
 
             Languages = Enum.GetValues(typeof(SpellingLanguages)).OfType<SpellingLanguages>().ToArray();
             SelectedLanguage = settingsService.Get<SpellingLanguages>(DictionariesSettingsKey);
+            FontSizes = Enum.GetValues(typeof(FontSizes)).OfType<FontSizes>().ToArray();
+            SelectedFontSize = settingsService.Get<FontSizes>(FontSettingsKey);
         }
 
         public IEnumerable<ExtensionViewModel> Extensions { get; set; }
@@ -62,6 +65,8 @@ namespace MarkPad.Settings
         public ObservableCollection<BlogSetting> Blogs { get; set; }
         public IEnumerable<SpellingLanguages> Languages { get; set; }
         public SpellingLanguages SelectedLanguage { get; set; }
+        public IEnumerable<FontSizes> FontSizes { get; set; }
+        public FontSizes SelectedFontSize { get; set; }
 
         public override string DisplayName
         {
@@ -125,9 +130,10 @@ namespace MarkPad.Settings
 
             settingsService.Set(BlogsSettingsKey, Blogs.ToList());
             settingsService.Set(DictionariesSettingsKey, SelectedLanguage);
+            settingsService.Set(FontSettingsKey, SelectedFontSize);
             settingsService.Save();
 
-            IoC.Get<IEventAggregator>().Publish(new SpellingEvent());
+            IoC.Get<IEventAggregator>().Publish(new SettingsChangedEvent());
 
             TryClose();
         }

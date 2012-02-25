@@ -287,5 +287,10 @@ namespace MarkPad.Document
             }
             return null;
         }
+
+        public int GetFontSize()
+        {
+            return (int) settings.Get<FontSizes>(SettingsViewModel.FontSettingsKey);
+        }
     }
 }
