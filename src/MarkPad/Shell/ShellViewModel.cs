@@ -12,6 +12,7 @@ using MarkPad.PublishDetails;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
 using Ookii.Dialogs.Wpf;
+using System.Linq;
 
 namespace MarkPad.Shell
 {
@@ -98,14 +99,20 @@ namespace MarkPad.Shell
             if (path == null)
                 return;
 
-            foreach (var p in path)
-                eventAggregator.Publish(new FileOpenEvent(p));
+            OpenDocument(path);
         }
 
         public void OpenDocument(IEnumerable<string> filenames)
         {
-            foreach(var fn in filenames)
-                eventAggregator.Publish(new FileOpenEvent(fn));
+            foreach (var fn in filenames)
+            {
+                DocumentViewModel openedDoc = GetOpenedDocument(fn);
+
+                if (openedDoc != null)
+                    MDI.ActivateItem(openedDoc);
+                else
+                    eventAggregator.Publish(new FileOpenEvent(fn));
+            }
         }
 
         public void SaveDocument()
@@ -158,6 +165,21 @@ namespace MarkPad.Shell
             {
                 doc.Print();
             }
+        }
+
+        /// <summary>
+        /// Returns opened document with a given filename. 
+        /// </summary>
+        /// <param name="filename">Fully qualified path to the document file.</param>
+        /// <returns>Opened document or null if file hasn't been yet opened.</returns>
+        private DocumentViewModel GetOpenedDocument(string filename)
+        {
+            if (filename == null)
+                return null;
+
+            IEnumerable<DocumentViewModel> openedDocs = MDI.Items.Cast<DocumentViewModel>();
+
+            return openedDocs.Where(doc => doc != null && filename.Equals(doc.FileName)).FirstOrDefault();
         }
 
         private DocumentView GetDocument()
