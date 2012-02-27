@@ -37,19 +37,19 @@ namespace MarkPad.Shell
             if (!IsWin7())
                 return;
 
-            var currentFiles = jumpList.JumpItems.OfType<JumpTask>().Select(t => t.Arguments);
+            var currentFiles = jumpList.JumpItems.OfType<JumpTask>().Select(t => t.Arguments).ToList();
 
             if (currentFiles.Contains(openedFile))
             {
                 // find file in list
                 var files = settingsService.Get<List<string>>("RecentFiles");
                 var index = files.IndexOf(openedFile);
-                files.RemoveAt(index);
+                if (index >= 0) files.RemoveAt(index);
                 files.Insert(0, openedFile);
                 settingsService.Set("RecentFiles", files);
 
                 // Sometimes the settings and the jumplist can get out of sequence.
-                index = currentFiles.ToList().IndexOf(openedFile);
+                index = currentFiles.IndexOf(openedFile);
 
                 jumpList.JumpItems.RemoveAt(index);
                 InsertFileFirst(openedFile);
