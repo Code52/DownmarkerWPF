@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <PropertyGroup>
+    <ReferencesPath Condition=" '$(ReferencesPath)' == '' ">bin\References\</ReferencesPath>
+  </PropertyGroup>
+
+  <UsingTask AssemblyFile="Analects.Loader.BuildTasks.dll" TaskName="Analects.Loader.BuildTasks.Compress" />
+
   <Target Name="AfterResolveReferences">
+    <Copy SourceFiles="@(ReferenceCopyLocalPaths)" DestinationFolder="$(IntermediateOutputPath)" Condition="'%(Extension)'=='.dll' or '%(Extension)'=='.pdb' ">
+      <Output TaskParameter="DestinationFiles" ItemName="CompressedReferences" />
+    </Copy>
+
+    <Compress File="%(CompressedReferences.FullPath)" ZipFile="%(CompressedReferences.FullPath).cmp" />
+
     <ItemGroup>
-      <EmbeddedResource Include="@(ReferenceCopyLocalPaths)" Condition=" '%(ReferenceCopyLocalPaths.Extension)' == '.dll' or '%(ReferenceCopyLocalPaths.Extension)' == '.pdb' ">
-        <LogicalName>$(RootNamespace).Libs.%(ReferenceCopyLocalPaths.DestinationSubDirectory)%(ReferenceCopyLocalPaths.Filename)%(ReferenceCopyLocalPaths.Extension)</LogicalName>
+      <EmbeddedResource Include="%(CompressedReferences.FullPath).cmp">
+        <LogicalName>$(RootNamespace).Libs.%(CompressedReferences.DestinationSubDirectory)%(CompressedReferences.Filename)%(CompressedReferences.Extension)</LogicalName>
       </EmbeddedResource>
     </ItemGroup>
   </Target>
@@ -21,7 +33,7 @@
 
     <Copy
         SourceFiles="@(ReferenceCopyLocalPaths)"
-        DestinationFiles="@(ReferenceCopyLocalPaths->'$(OutDir)..\References\%(DestinationSubDirectory)%(Filename)%(Extension)')"
+        DestinationFiles="@(ReferenceCopyLocalPaths->'$(MSBuildProjectDirectory)\$(ReferencesPath)%(DestinationSubDirectory)%(Filename)%(Extension)')"
         SkipUnchangedFiles="$(SkipCopyUnchangedFiles)"
         OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
         Retries="$(CopyRetryCount)"
