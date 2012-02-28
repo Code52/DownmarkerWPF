@@ -144,9 +144,7 @@
       <DependentUpon>MetaWeblog.tt</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Metaweblog\MetaWeblog.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Metaweblog\MetaWeblog.cs" />
     <Compile Include="SingleInstance.cs" />
     <Compile Include="Document\FormattingCommands.cs" />
     <Compile Include="Framework\ObjectExtensions.cs" />
@@ -233,6 +231,9 @@
     <EmbeddedResource Include="..\..\lib\AwesomiumProcess">
       <Link>Libs\x86\AwesomiumProcess</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\..\tools\wyUpdate\client.wyc">
+      <Link>Libs\x86\client.wyc</Link>
+    </EmbeddedResource>
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
@@ -317,6 +318,9 @@
     <EmbeddedResource Include="..\..\lib\Hunspell.0.9.6.0\lib\Hunspellx86.dll">
       <Link>Libs\x86\Hunspellx86.dll</Link>
     </EmbeddedResource>
+    <Content Include="..\..\tools\wyUpdate\wyUpdate.exe">
+      <Link>Libs\x86\wyUpdate.exe</Link>
+    </Content>
     <Content Include="Themes\ChaosSquirrel\style.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
