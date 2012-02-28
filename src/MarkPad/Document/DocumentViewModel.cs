@@ -278,7 +278,10 @@ namespace MarkPad.Document
 
         public MarkPadHyperlink GetHyperlink(MarkPadHyperlink hyperlink)
         {
-            var viewModel = new HyperlinkEditorViewModel(hyperlink.Text, hyperlink.Url);
+            var viewModel = new HyperlinkEditorViewModel(hyperlink.Text, hyperlink.Url)
+                                {
+                                    IsUrlFocussed = !String.IsNullOrWhiteSpace(hyperlink.Text)
+                                };
             windowManager.ShowDialog(viewModel);
             if (!viewModel.WasCancelled)
             {
