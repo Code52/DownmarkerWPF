@@ -5,9 +5,7 @@
 		<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 		<title>{{ site.appname }}</title>
-		<link rel="stylesheet" type="text/css" href="/css/style.css" />
-		<link rel="shortcut icon" href="/img/favicon.ico" />
-
+		<link rel="shortcut icon" href="favicon.ico" />
 		<style>
 			body 
 			{ 
@@ -23,6 +21,8 @@
 			img { border: none;}
 
 			#code52 { color: #41b1e1; font-family: Segoe UI Light, Segoe WP Light, Segoe UI, Helvetica, sans-serif; }
+			#code52 a, #code52 a:visited { color: #41b1e1; text-decoration:none; }
+			#code52 a:hover { text-decoration:underline; }
 			#apptitle { font-family: Segoe UI; font-weight:bold;}
 			#container {  width: 900px; margin-left:auto; margin-right:auto;  margin-top:25px; }
 			#features { margin-top:25px; margin-bottom:25px;}
@@ -36,19 +36,28 @@
 			}
 			#screenshotbordertop {margin-top:-22px;}
 			#screenshotborderbottom {margin-bottom:20px;}
-
 			#downloads { margin-left:auto; margin-right:auto; width:435px;font-size:2em; }
 			#downloads a { text-align:left;}
 			#downloads div {text-align:center;}
-#downloads a img {margin-right:15px; margin-bottom:-5px;}
+			#downloads a img {margin-right:15px; margin-bottom:-5px;}
+			
 			.accent { color: #{{site.accent}};}
 			.feature { float:left; width: 245px; margin-right:50px;}
 			.feature h2 { font-size: 1.15em; margin-top:0px; margin-bottom:0px;}
+			
+			
+			@media screen and (max-width:900px)
+			{
+				body { width:auto; padding:10px;}
+				#container { width : 100%;  }
+				img { max-width:100%; }
+				.screenshotborder { display:none; }
+			}
 		</style>
 	</head>
 	<body>
 		<div id="container">
-			<div id="code52">a code 52 project</div>
+			<div id="code52"><a href="http://www.code52.org">a code 52 project</a></div>
 			<h1>{{site.appslogan}} <span id="apptitle" class="accent">{{ site.appname }}</span></h1>
 			<div id="screenshot">
 				<img src="screenshot.png" />
@@ -74,8 +83,7 @@
 			{{content}}
 			<img src="dropshadow_border_bottom.png" id="screenshotborderbottom" class="screenshotborder" />
 			<div id="downloads">
-				<a href="{{ site.downloadurl}}"><img src="windows.png" /> Download for Windows</a>
-				<div>or</div>
+				<a href="{{ site.downloadurl}}"><img src="windows.png" /> Download for Windows</a><br /><br />
 				<a href="http://github.com/{{ site.username }}/{{ site.reponame }}"><img src="github.png" />Get the source</a>
 			</div>
 		</div>

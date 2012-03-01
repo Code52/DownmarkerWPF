@@ -1,7 +1,3 @@
-permalink: /:title.html
-auto: true
-markdown: rdiscount
-exclude: rakefile.rb, server.bat, config.ru
 appname: MarkPad
 appslogan: 'Markdown works <em>better</em> with'
 username: Code52
@@ -9,12 +5,12 @@ reponame: DownmarkerWPF
 accent: ff3333
 darkaccent: d41c1c
 description: A WPF Markdown editor inspired by <a href="https://bitbucket.org/wcoenen/downmarker">Downmarker</a>. Read the original brief on <a href="http://code52.org">Code52</a>
-downloadurl: https://github.com/downloads/Code52/DownmarkerWPF/Markpad.1.0.1.zip
+downloadurl: https://github.com/downloads/Code52/DownmarkerWPF/MarkPad.82.zip
+
 feature1title: 'Side-by-side Preview'
-#feature2title: 'Auto-updating, single exe'
+feature2title: 'Single exe, portable'
 feature3title: 'Spellchecker'
 
-
 feature1desc: 'Markdown is easy to grok, but how do you know its going to turn out perfect? A side-by-side preview, rendered in real time, thats how!'
-#feature2desc: 'Portable, right ouf of the box. And you don’t lose out on updates'
+feature2desc: 'Portable, right out of the box. Everything is in a single executable.'
 feature3desc: 'Markdown can be done in any text editor, but why must the experience degrade to Notepad? No more. MarkPad has spellchecker and a floating syntax tool bar'
