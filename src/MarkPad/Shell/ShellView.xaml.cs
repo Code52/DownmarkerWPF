@@ -1,4 +1,3 @@
-using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
@@ -7,6 +6,13 @@ namespace MarkPad.Shell
 {
     public partial class ShellView
     {
+        public ShellView()
+        {
+            InitializeComponent();
+           
+
+        }
+
         private bool CheatSheetVisible = false;
         private void DragMoveWindow(object sender, MouseButtonEventArgs e)
         {

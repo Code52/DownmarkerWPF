@@ -11,14 +11,16 @@ using MarkPad.OpenFromWeb;
 using MarkPad.PublishDetails;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
+using MarkPad.Updater;
 using Ookii.Dialogs.Wpf;
-//using wyDay.Controls;
+using wyDay.Controls;
 
 namespace MarkPad.Shell
 {
     internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>
     {
         private readonly IEventAggregator eventAggregator;
+        private readonly Func<UpdaterViewModel> updaterCreator;
         private readonly IDialogService dialogService;
         private readonly IWindowManager windowManager;
         private readonly ISettingsService settingsService;
@@ -26,79 +28,33 @@ namespace MarkPad.Shell
         private readonly Func<SettingsViewModel> settingsCreator;
         private readonly Func<AboutViewModel> aboutCreator;
         private readonly Func<OpenFromWebViewModel> openFromWebCreator;
-        //private readonly AutomaticUpdaterBackend autoupdater;
-
+        
         public ShellViewModel(
             IDialogService dialogService,
             IWindowManager windowManager,
             ISettingsService settingsService,
             IEventAggregator eventAggregator,
             MDIViewModel mdi,
+            UpdaterViewModel updaterViewModel,
             Func<DocumentViewModel> documentCreator,
             Func<SettingsViewModel> settingsCreator,
             Func<AboutViewModel> aboutCreator,
             Func<OpenFromWebViewModel> openFromWebCreator)
         {
             this.eventAggregator = eventAggregator;
+            this.updaterCreator = updaterCreator;
             this.dialogService = dialogService;
             this.windowManager = windowManager;
             this.settingsService = settingsService;
             this.MDI = mdi;
+            Updater = updaterViewModel;
             this.documentCreator = documentCreator;
             this.settingsCreator = settingsCreator;
             this.aboutCreator = aboutCreator;
             this.openFromWebCreator = openFromWebCreator;
-
-            UpdateState = UpdateState.Unchecked;
-        }
-
-        //    autoupdater = new AutomaticUpdaterBackend
-        //    {
-        //        GUID = "code52-markpad2", //yes, this is the recommend "GUID" format
-        //        UpdateType = UpdateType.DoNothing,
-        //    };
-
-        //    autoupdater.ReadyToBeInstalled += AutoupdaterReadyToBeInstalled;
-        //    autoupdater.UpdateSuccessful += autoupdater_UpdateSuccessful;
-        //    autoupdater.CheckingFailed += AutoupdaterCheckingFailed;
-        //    autoupdater.DownloadingFailed += AutoupdaterDownloadingFailed;
-        //    autoupdater.ExtractingFailed += AutoupdaterExtractingFailed;
-        //    autoupdater.UpdateFailed += AutoupdaterUpdateFailed;
-        //    autoupdater.Initialize();
-        //    autoupdater.AppLoaded();
-
-        //    ActivateItem(mdi);
-        //}
-
-        //void AutoupdaterUpdateFailed(object sender, FailArgs e)
-        //{
-        //    UpdateState = UpdateState.Error;
-        //}
-
-        //void AutoupdaterExtractingFailed(object sender, FailArgs e)
-        //{
-        //    UpdateState = UpdateState.Error;
-        //}
-
-        //void AutoupdaterDownloadingFailed(object sender, FailArgs e)
-        //{
-        //    UpdateState = UpdateState.Error;
-        //}
-
-        //void AutoupdaterCheckingFailed(object sender, FailArgs e)
-        //{
-        //    UpdateState = UpdateState.Error;
-        //}
-
-        //void autoupdater_UpdateSuccessful(object sender, SuccessArgs e)
-        //{
             
-        //}
-
-        //void AutoupdaterReadyToBeInstalled(object sender, EventArgs e)
-        //{
-        //    UpdateState = UpdateState.UpdatePending;
-        //}
+            ActivateItem(mdi);
+        }
 
         public override string DisplayName
         {
@@ -107,6 +63,7 @@ namespace MarkPad.Shell
         }
 
         public MDIViewModel MDI { get; private set; }
+        public UpdaterViewModel Updater { get; set; }
 
         public override void CanClose(Action<bool> callback)
         {
@@ -296,20 +253,7 @@ namespace MarkPad.Shell
             doc.OpenFromWeb(post);
             MDI.Open(doc);
         }
-
-        public UpdateState UpdateState { get; set; }
-
-        public void CheckForUpdate()
-        {
-            //autoupdater.ForceCheckForUpdate();
-        }
     }
 
-    public enum UpdateState
-    {
-        Unchecked,
-        UpToDate,
-        UpdatePending,
-        Error
-    }
+
 }

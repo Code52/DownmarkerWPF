@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="MarkPad.Updater.UpdaterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <StackPanel Orientation="Horizontal">
+        <TextBlock Text="{Binding Progress}" Visibility="Collapsed">
+            <TextBlock.Style>
+                <Style TargetType="{x:Type TextBlock}" >
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding UpdateState}" Value="Downloading">
+                            <Setter Property="TextBlock.Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+        <Button x:Name="CheckForUpdate" FontFamily="/MarkPad;component/Fonts/#Entypo" FontSize="28" Margin="0,-15,10,0">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ChromelessButtonStyle}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding UpdateState}" Value="Unchecked">
+                            <Setter Property="Button.Content" Value="d" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding UpdateState}" Value="UpToDate">
+                            <Setter Property="Button.Content" Value="W" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding UpdateState}" Value="UpdatePending">
+                            <Setter Property="Button.Content" Value="?" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding UpdateState}" Value="Downloading">
+                            <Setter Property="Button.Content" Value="x" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+    </StackPanel>
+</UserControl>
