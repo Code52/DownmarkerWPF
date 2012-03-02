@@ -12,6 +12,7 @@ using MarkPad.PublishDetails;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
 using Ookii.Dialogs.Wpf;
+//using wyDay.Controls;
 
 namespace MarkPad.Shell
 {
@@ -25,6 +26,7 @@ namespace MarkPad.Shell
         private readonly Func<SettingsViewModel> settingsCreator;
         private readonly Func<AboutViewModel> aboutCreator;
         private readonly Func<OpenFromWebViewModel> openFromWebCreator;
+        //private readonly AutomaticUpdaterBackend autoupdater;
 
         public ShellViewModel(
             IDialogService dialogService,
@@ -47,8 +49,56 @@ namespace MarkPad.Shell
             this.aboutCreator = aboutCreator;
             this.openFromWebCreator = openFromWebCreator;
 
-            ActivateItem(mdi);
+            UpdateState = UpdateState.Unchecked;
         }
+
+        //    autoupdater = new AutomaticUpdaterBackend
+        //    {
+        //        GUID = "code52-markpad2", //yes, this is the recommend "GUID" format
+        //        UpdateType = UpdateType.DoNothing,
+        //    };
+
+        //    autoupdater.ReadyToBeInstalled += AutoupdaterReadyToBeInstalled;
+        //    autoupdater.UpdateSuccessful += autoupdater_UpdateSuccessful;
+        //    autoupdater.CheckingFailed += AutoupdaterCheckingFailed;
+        //    autoupdater.DownloadingFailed += AutoupdaterDownloadingFailed;
+        //    autoupdater.ExtractingFailed += AutoupdaterExtractingFailed;
+        //    autoupdater.UpdateFailed += AutoupdaterUpdateFailed;
+        //    autoupdater.Initialize();
+        //    autoupdater.AppLoaded();
+
+        //    ActivateItem(mdi);
+        //}
+
+        //void AutoupdaterUpdateFailed(object sender, FailArgs e)
+        //{
+        //    UpdateState = UpdateState.Error;
+        //}
+
+        //void AutoupdaterExtractingFailed(object sender, FailArgs e)
+        //{
+        //    UpdateState = UpdateState.Error;
+        //}
+
+        //void AutoupdaterDownloadingFailed(object sender, FailArgs e)
+        //{
+        //    UpdateState = UpdateState.Error;
+        //}
+
+        //void AutoupdaterCheckingFailed(object sender, FailArgs e)
+        //{
+        //    UpdateState = UpdateState.Error;
+        //}
+
+        //void autoupdater_UpdateSuccessful(object sender, SuccessArgs e)
+        //{
+            
+        //}
+
+        //void AutoupdaterReadyToBeInstalled(object sender, EventArgs e)
+        //{
+        //    UpdateState = UpdateState.UpdatePending;
+        //}
 
         public override string DisplayName
         {
@@ -89,12 +139,16 @@ namespace MarkPad.Shell
             const string title = "New Post";
             const string description = "Some Description";
             var date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss zzz");
-            return string.Format("---\r\nlayout: post\r\ntitle: {0}\r\npermalink: {1}\r\ndescription: {2}\r\ndate: {3}\r\ntags: \"some tags here\"\r\n---\r\n\r\n", title, permalink, description, date);
+            return
+                string.Format(
+                    "---\r\nlayout: post\r\ntitle: {0}\r\npermalink: {1}\r\ndescription: {2}\r\ndate: {3}\r\ntags: \"some tags here\"\r\n---\r\n\r\n",
+                    title, permalink, description, date);
         }
 
         public void OpenDocument()
         {
-            var path = dialogService.GetFileOpenPath("Open a markdown document.", Constants.ExtensionFilter + "|Any File (*.*)|*.*");
+            var path = dialogService.GetFileOpenPath("Open a markdown document.",
+                                                     Constants.ExtensionFilter + "|Any File (*.*)|*.*");
             if (path == null)
                 return;
 
@@ -104,7 +158,7 @@ namespace MarkPad.Shell
 
         public void OpenDocument(IEnumerable<string> filenames)
         {
-            foreach(var fn in filenames)
+            foreach (var fn in filenames)
                 eventAggregator.Publish(new FileOpenEvent(fn));
         }
 
@@ -204,12 +258,13 @@ namespace MarkPad.Shell
             var doc = MDI.ActiveItem as DocumentViewModel;
             if (doc != null)
             {
-                var pd = new Details { Title = doc.Post.title, Categories = doc.Post.categories };
+                var pd = new Details {Title = doc.Post.title, Categories = doc.Post.categories};
                 var detailsResult = windowManager.ShowDialog(new PublishDetailsViewModel(pd, blogs));
                 if (detailsResult != true)
                     return;
 
-                doc.Publish(doc.Post.postid == null ? null : doc.Post.postid.ToString(), pd.Title, pd.Categories, pd.Blog);
+                doc.Publish(doc.Post.postid == null ? null : doc.Post.postid.ToString(), pd.Title, pd.Categories,
+                            pd.Blog);
             }
         }
 
@@ -218,9 +273,10 @@ namespace MarkPad.Shell
             var blogs = settingsService.Get<List<BlogSetting>>("Blogs");
             if (blogs == null || blogs.Count == 0)
             {
-                var setupBlog = dialogService.ShowConfirmation("No blogs setup", "Do you want to setup a blog?", "", 
-                    new ButtonExtras(ButtonType.Yes, "Yes", "Setup a blog"),
-                    new ButtonExtras(ButtonType.No, "No", "Don't setup a blog now"));
+                var setupBlog = dialogService.ShowConfirmation("No blogs setup", "Do you want to setup a blog?", "",
+                                                               new ButtonExtras(ButtonType.Yes, "Yes", "Setup a blog"),
+                                                               new ButtonExtras(ButtonType.No, "No",
+                                                                                "Don't setup a blog now"));
 
                 if (setupBlog)
                     ShowSettings();
@@ -240,5 +296,20 @@ namespace MarkPad.Shell
             doc.OpenFromWeb(post);
             MDI.Open(doc);
         }
+
+        public UpdateState UpdateState { get; set; }
+
+        public void CheckForUpdate()
+        {
+            //autoupdater.ForceCheckForUpdate();
+        }
+    }
+
+    public enum UpdateState
+    {
+        Unchecked,
+        UpToDate,
+        UpdatePending,
+        Error
     }
 }
