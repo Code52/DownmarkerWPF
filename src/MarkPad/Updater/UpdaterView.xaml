@@ -24,7 +24,7 @@
                 </Style>
             </TextBlock.Style>
         </TextBlock>
-        <Button x:Name="CheckForUpdate" FontFamily="/MarkPad;component/Fonts/#Entypo" FontSize="28" Margin="0,-15,10,0">
+        <Button x:Name="CheckForUpdate" FontFamily="../Fonts/#Entypo" FontSize="28" Margin="0,-15,10,-15">
             <Button.Style>
                 <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ChromelessButtonStyle}">
                     <Style.Triggers>
