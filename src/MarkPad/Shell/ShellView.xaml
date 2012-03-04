@@ -279,48 +279,48 @@
         </Grid>
     	<Grid>
     		<Grid.RowDefinitions>
-    			<RowDefinition Height="Auto" MinHeight="66" />
+    			<RowDefinition Height="Auto" MinHeight="58" />
     			<RowDefinition />
     		</Grid.RowDefinitions>
-    		<TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold" FontSize="10.667" Margin="30,10,0,0"><Run Text="MARKPAD"/></TextBlock>
-    		<WrapPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Margin="30,24.186,0,0">
+    		<TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold" FontSize="10.667" Margin="30,10,0,0" Visibility="Collapsed"><Run Text="MARKPAD"/></TextBlock>
+    		<WrapPanel UseLayoutRounding="False" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Margin="30,9,0,0">
     			<WrapPanel.Resources>
     				<Style TargetType="{x:Type Button}" BasedOn="{StaticResource ChromelessButtonStyle}">
-    					<Setter Property="FontSize" Value="16.333" />
+    					<Setter Property="FontSize" Value="20" />
     					<Setter Property="Margin" Value="0,0,20,0" />
-    					<Setter Property="FontWeight" Value="Bold" />
+    					<Setter Property="FontWeight" Value="Light" />
     				</Style>
     			</WrapPanel.Resources>
-    			<Button x:Name="ShowNew" Content="NEW">
+    			<Button x:Name="ShowNew" Content="new">
     				<i:Interaction.Triggers>
     					<i:EventTrigger EventName="Click">
     						<ei:GoToStateAction StateName="NewState"/>
     					</i:EventTrigger>
     				</i:Interaction.Triggers>
 					</Button>
-    			<Button x:Name="ShowOpen" Content="OPEN" >
+    			<Button x:Name="ShowOpen" Content="open" >
     				<i:Interaction.Triggers>
     					<i:EventTrigger EventName="Click">
     						<ei:GoToStateAction StateName="OpenState"/>
     					</i:EventTrigger>
     				</i:Interaction.Triggers>
     			</Button>
-				<Button x:Name="ShowSave" Content="SAVE" >
+				<Button x:Name="ShowSave" Content="save" >
     				<i:Interaction.Triggers>
     					<i:EventTrigger EventName="Click">
     						<ei:GoToStateAction StateName="SaveState"/>
     					</i:EventTrigger>
     				</i:Interaction.Triggers>
     			</Button>
-    			<Button x:Name="PrintDocument" Content="PRINT" />
-    			<Button x:Name="PublishDocument" Content="PUBLISH" />
+    			<Button x:Name="PrintDocument" Content="print" />
+    			<Button x:Name="PublishDocument" Content="publish" />
     		</WrapPanel>
     		<WrapPanel x:Name="newItems" Margin="30,0,0,0" Opacity="0.995" VerticalAlignment="Bottom" Height="20" RenderTransformOrigin="0.5,0.5" d:LayoutOverrides="VerticalAlignment, GridBox">
     			<WrapPanel.Resources>
     				<Style TargetType="{x:Type Button}" BasedOn="{StaticResource ChromelessButtonStyle}">
-    					<Setter Property="FontSize" Value="13.333" />
+    					<Setter Property="FontSize" Value="13" />
     					<Setter Property="Margin" Value="0,0,20,0" />
-    					<Setter Property="FontWeight" Value="Bold" />
+    					<Setter Property="FontWeight" Value="SemiBold" />
     				</Style>
     			</WrapPanel.Resources>
                 <WrapPanel.RenderTransform>
@@ -331,15 +331,15 @@
                         <TranslateTransform/>
                     </TransformGroup>
                 </WrapPanel.RenderTransform>
-                <Button x:Name="NewDocument" Content="NEW" />
-    			<Button x:Name="NewJekyllDocument" Content="NEW JEKYLL PAGE" />
+                <Button x:Name="NewDocument" Content="BLANK PAGE" />
+    			<Button x:Name="NewJekyllDocument" Content="JEKYLL PAGE" />
     		</WrapPanel>
     		<WrapPanel x:Name="saveItems" Visibility="Collapsed" Opacity="0" Margin="30,0,0,0" VerticalAlignment="Bottom" Height="20" RenderTransformOrigin="0.5,0.5" d:LayoutOverrides="VerticalAlignment, GridBox">
     			<WrapPanel.Resources>
     				<Style TargetType="{x:Type Button}" BasedOn="{StaticResource ChromelessButtonStyle}">
-    					<Setter Property="FontSize" Value="13.333" />
+    					<Setter Property="FontSize" Value="13" />
     					<Setter Property="Margin" Value="0,0,20,0" />
-    					<Setter Property="FontWeight" Value="Bold" />
+    					<Setter Property="FontWeight" Value="SemiBold" />
     				</Style>
     			</WrapPanel.Resources>
     			<WrapPanel.RenderTransform>
@@ -356,9 +356,9 @@
             <WrapPanel x:Name="openItems" Visibility="Collapsed"  Opacity="0" Margin="30,0,0,0" VerticalAlignment="Bottom" Height="20" RenderTransformOrigin="0.5,0.5" d:LayoutOverrides="VerticalAlignment, GridBox">
     			<WrapPanel.Resources>
     				<Style TargetType="{x:Type Button}" BasedOn="{StaticResource ChromelessButtonStyle}">
-    					<Setter Property="FontSize" Value="13.333" />
+    					<Setter Property="FontSize" Value="13" />
     					<Setter Property="Margin" Value="0,0,20,0" />
-    					<Setter Property="FontWeight" Value="Bold" />
+    					<Setter Property="FontWeight" Value="SemiBold" />
     				</Style>
     			</WrapPanel.Resources>
                 <WrapPanel.RenderTransform>
@@ -380,7 +380,7 @@
     			<Button Click="ButtonMaxRestoreOnClick"   ToolTip="{DynamicResource WindowCommandsMaximiseToolTip}" x:Name="maxRestore" Style="{DynamicResource ChromelessButtonStyle}" Content="1" FontFamily="Marlett" />
     			<Button x:Name="TryClose" ToolTip="{DynamicResource WindowCommandsCloseToolTip}" Style="{DynamicResource ChromelessButtonStyle}" Content="r" FontFamily="Marlett" />
     		</StackPanel>
-    		<Rectangle HorizontalAlignment="Left" Stroke="Black" Width="10" StrokeThickness="0" Margin="0,10">
+    		<Rectangle HorizontalAlignment="Left" Stroke="Black" Width="10" StrokeThickness="0" Margin="0,10,0,0">
     			<Rectangle.Fill>
     				<SolidColorBrush Color="{DynamicResource HighlightDarkColor}" />
     			</Rectangle.Fill>
