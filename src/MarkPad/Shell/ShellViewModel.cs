@@ -47,6 +47,7 @@ namespace MarkPad.Shell
             this.aboutCreator = aboutCreator;
             this.openFromWebCreator = openFromWebCreator;
 
+            Settings = settingsCreator();
             ActivateItem(mdi);
         }
 
@@ -56,7 +57,9 @@ namespace MarkPad.Shell
             set { }
         }
 
+        public string CurrentState { get; set; }
         public MDIViewModel MDI { get; private set; }
+        public SettingsViewModel Settings { get; private set; }
 
         public override void CanClose(Action<bool> callback)
         {
@@ -134,7 +137,8 @@ namespace MarkPad.Shell
 
         public void ShowSettings()
         {
-            windowManager.ShowDialog(settingsCreator());
+            CurrentState = "ShowSettings";
+            //windowManager.ShowDialog(settingsCreator());
         }
 
         public void ShowAbout()

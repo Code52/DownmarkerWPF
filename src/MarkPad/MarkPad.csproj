@@ -150,6 +150,9 @@
     <Compile Include="Metaweblog\MetaWeblog.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Settings\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SingleInstance.cs" />
     <Compile Include="Document\FormattingCommands.cs" />
     <Compile Include="Framework\ObjectExtensions.cs" />
@@ -178,9 +181,6 @@
     <Compile Include="AppBootstrapper.cs" />
     <Compile Include="Framework\Events\AppReadyEvent.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Settings\SettingsView.xaml.cs">
-      <DependentUpon>SettingsView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Settings\SettingsViewModel.cs" />
     <Compile Include="Document\DocumentView.xaml.cs">
       <DependentUpon>DocumentView.xaml</DependentUpon>
@@ -223,6 +223,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Settings\SettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\MarkPad.Accents.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -257,10 +261,6 @@
     <Page Include="MDI\MDIView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Settings\SettingsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="OpenFromWeb\OpenFromWebView.xaml">
       <Generator>MSBuild:Compile</Generator>
