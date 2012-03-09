@@ -83,7 +83,7 @@
             </StackPanel>
 
             <StackPanel Grid.Row="2" HorizontalAlignment="Right" Height="25" Margin="10,20,0,10" Orientation="Horizontal">
-                <Button Width="75" x:Name="Accept" Content="OK" Click="OkClick" IsEnabled="{Binding CurrentBlog.IsBlogSettingCompleted}" Margin="0 0 5 0" />
+				<Button Width="75" x:Name="Accept" Content="OK" Click="OkClick" IsEnabled="{Binding CurrentBlog.IsBlogSettingCompleted}" Margin="0 0 5 0" />
                 <Button Width="75" x:Name="Cancel" Content="Cancel" Click="CancelClick" IsCancel="True" />
             </StackPanel>
         </Grid>

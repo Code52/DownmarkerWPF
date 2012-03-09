@@ -67,8 +67,8 @@
                          Height="100" Width="200" />
                 <StackPanel  Margin="5 0 0 0" VerticalAlignment="Top">
                     <Button x:Name="AddBlog" Content="Add New" Height="25" VerticalAlignment="Top"/>
-                    <Button x:Name="EditBlog" Content="Edit" Height="25" Margin="0 5 0 0" VerticalAlignment="Top"/>
-                    <Button x:Name="RemoveBlog" Content="Remove" Margin="0 5 0 0" Height="25" VerticalAlignment="Top"/>
+                    <Button x:Name="EditBlog" Content="Edit" IsEnabled="{Binding CanEditBlog}" Height="25" Margin="0 5 0 0" VerticalAlignment="Top"/>
+                    <Button x:Name="RemoveBlog" Content="Remove" IsEnabled="{Binding CanRemoveBlog}" Margin="0 5 0 0" Height="25" VerticalAlignment="Top"/>
                 </StackPanel>
             </StackPanel>
         </StackPanel>
