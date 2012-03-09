@@ -216,16 +216,20 @@ namespace MarkPad.Shell
         public void OpenFromWeb()
         {
             var blogs = settingsService.Get<List<BlogSetting>>("Blogs");
-            if (blogs == null || blogs.Count == 0)
-            {
-                var setupBlog = dialogService.ShowConfirmation("No blogs setup", "Do you want to setup a blog?", "", 
-                    new ButtonExtras(ButtonType.Yes, "Yes", "Setup a blog"),
-                    new ButtonExtras(ButtonType.No, "No", "Don't setup a blog now"));
+			if (blogs == null || blogs.Count == 0)
+			{
+				var setupBlog = dialogService.ShowConfirmation(
+					"Open from web",
+					"Do you want to configure a blog site?",
+					"No blog sites have been configured. To open a document from the web, MarkPad first needs to be integrated with a blog site.");
 
-                if (setupBlog)
-                    ShowSettings();
-                return;
-            }
+				if (!setupBlog)
+					return;
+
+				var settings = settingsCreator();
+				if (!settings.AddBlog())
+					return;
+			}
 
             var openFromWeb = openFromWebCreator();
             openFromWeb.InitializeBlogs(blogs);
