@@ -138,7 +138,6 @@ namespace MarkPad.Shell
         public void ShowSettings()
         {
             CurrentState = "ShowSettings";
-            //windowManager.ShowDialog(settingsCreator());
         }
 
         public void ShowAbout()
@@ -193,9 +192,7 @@ namespace MarkPad.Shell
             GetDocument()
                 .ExecuteSafely(v => v.SetHyperlink());
         }
-
-
-
+        
         public void PublishDocument()
         {
             var blogs = settingsService.Get<List<BlogSetting>>("Blogs");

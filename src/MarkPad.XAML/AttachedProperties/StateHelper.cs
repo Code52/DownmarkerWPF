@@ -21,13 +21,13 @@ namespace MarkPad.XAML.AttachedProperties
 
         private static void OnVisualStateNameChanged(object sender, DependencyPropertyChangedEventArgs args)
         {
-            string visualStateName = (string)args.NewValue;
+            var visualStateName = (string)args.NewValue;
             var control = sender as Grid;
             if (control == null)
                 throw new InvalidOperationException("This attached property only supports types derived from Control.");
 
             // Apply the visual state.
-            var x = VisualStateManager.GoToState(control, visualStateName, true);
+            VisualStateManager.GoToElementState(control, visualStateName, true);
         }
     }
 }
