@@ -15,7 +15,7 @@ using Ookii.Dialogs.Wpf;
 
 namespace MarkPad.Shell
 {
-    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>
+    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>
     {
         private readonly IEventAggregator eventAggregator;
         private readonly IDialogService dialogService;
@@ -240,6 +240,11 @@ namespace MarkPad.Shell
             var doc = documentCreator();
             doc.OpenFromWeb(post);
             MDI.Open(doc);
+        }
+
+        public void Handle(SettingsCloseEvent message)
+        {
+            CurrentState = "HideSettings";
         }
     }
 }

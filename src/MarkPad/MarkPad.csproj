@@ -153,6 +153,7 @@
     <Compile Include="Settings\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Framework\Events\SettingsCloseEvent.cs" />
     <Compile Include="SingleInstance.cs" />
     <Compile Include="Document\FormattingCommands.cs" />
     <Compile Include="Framework\ObjectExtensions.cs" />

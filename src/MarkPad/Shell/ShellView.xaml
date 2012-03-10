@@ -392,7 +392,7 @@
                 <Button Content="SETTINGS" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" Margin="0,0,20,0" FontWeight="Bold">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
-                            <ei:GoToStateAction StateName="ShowSettings"/>
+                            <cm:ActionMessage MethodName="ShowSettings" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Button>

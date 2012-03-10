@@ -3,9 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Custom="http://schemas.markpad.net/winfx/xaml/shared"
+             xmlns:Custom="http://schemas.markpad.net/winfx/xaml/shared" xmlns:cal="http://www.caliburnproject.org"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
              x:Class="MarkPad.Settings.SettingsView" 
              mc:Ignorable="d">
     <UserControl.Resources>
@@ -14,14 +13,15 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colours.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MarkPad;component/Styles/MarkPad.Accents.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
     	<Rectangle Fill="#3F000000" Stroke="Black" StrokeThickness="0"/>
     	<Grid Margin="130,0,0,0"  Background="Black">
-    		<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="settings" VerticalAlignment="Top" Foreground="White" FontSize="48" Margin="50,-14.668,0,0" FontWeight="Light"/>
-    		<Button Content="➔" Style="{StaticResource MetroCircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="58" Foreground="White" Height="58" RenderTransformOrigin="0.5,0.5" FontSize="40" Margin="-7.625,-8,0,0" Padding="1,-5,1,1" Clip="M50.333,8 L-1.667,8 L-1.667,59.843 L50.333,59.843 z">
+    		<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="settings" VerticalAlignment="Top" Foreground="White" FontSize="48" Margin="70,-14.668,0,0" FontWeight="Light"/>
+            <Button Content="➔" Style="{StaticResource MetroCircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="58" Foreground="White" Height="58" RenderTransformOrigin="0.5,0.5" FontSize="40" Margin="-7.625,-8,0,0" Padding="1,-5,1,1" Clip="M50.333,8 L-1.667,8 L-1.667,59.843 L50.333,59.843 z">
     			<Button.RenderTransform>
     				<TransformGroup>
     					<ScaleTransform ScaleY="1" ScaleX="-1"/>
@@ -30,15 +30,13 @@
     					<TranslateTransform/>
     				</TransformGroup>
     			</Button.RenderTransform>
-
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
-                        <ei:GoToStateAction StateName="HideSettings"/>
+                        <cal:ActionMessage MethodName="HideSettings" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Button>
-    		<ScrollViewer HorizontalScrollBarVisibility="Disabled" Margin="50,50,0,0" >
-
+    		<ScrollViewer HorizontalScrollBarVisibility="Disabled" Margin="70,50,0,0" >
     			<ItemsControl Background="{x:Null}" 
     				BorderBrush="{x:Null}" 
     				Foreground="White" 
@@ -63,16 +61,16 @@
     								DisplayMemberPath="BlogName"
     								Height="100" Width="178" Background="{x:Null}" BorderBrush="White" BorderThickness="2" />
     							<StackPanel  Margin="5 0 0 0" VerticalAlignment="Top">
-    								<Button x:Name="AddBlog" Content="Add New" Height="25" VerticalAlignment="Top"/>
-    								<Button x:Name="EditBlog" Content="Edit" Height="25" Margin="0 5 0 0" VerticalAlignment="Top"/>
-    								<Button x:Name="RemoveBlog" Content="Remove" Margin="0 5 0 0" Height="25" VerticalAlignment="Top"/>
+                                    <Button x:Name="AddBlog" Style="{DynamicResource SquareButtonStyle}" Content="Add New" Width="70" Height="30" VerticalAlignment="Top"/>
+                                    <Button x:Name="EditBlog" Style="{DynamicResource SquareButtonStyle}" Content="Edit"  Width="70" Height="30" Margin="0 5 0 0" VerticalAlignment="Top"/>
+                                    <Button x:Name="RemoveBlog" Style="{DynamicResource SquareButtonStyle}" Content="Remove"  Width="70" Margin="0 5 0 0" Height="30" VerticalAlignment="Top"/>
     							</StackPanel>
     						</StackPanel>
     					</StackPanel>
     				</Grid>
     				<Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,20,20,0" Width="190">
     					<TextBlock TextWrapping="Wrap" FontSize="26.667" FontWeight="Light" Text="language"/>
-    					<ComboBox x:Name="Languages" ItemsSource="{Binding Languages}"  VerticalAlignment="Top" Margin="0,35,0,0">
+                        <ComboBox x:Name="Languages" ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}"  VerticalAlignment="Top" Margin="0,35,0,0">
     						<ComboBox.ItemTemplate>
     							<DataTemplate>
     								<TextBlock Text="{Binding Converter={Custom:EnumDisplayConverter}}" />

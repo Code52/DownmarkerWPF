@@ -35,12 +35,14 @@ namespace MarkPad.Settings
         private readonly IWindowManager windowManager;
 
         private readonly Func<BlogSettingsViewModel> blogSettingsCreator;
+        private readonly IEventAggregator eventAggregator;
 
-        public SettingsViewModel(ISettingsService settingsService, IWindowManager windowManager, Func<BlogSettingsViewModel> blogSettingsCreator)
+        public SettingsViewModel(ISettingsService settingsService, IWindowManager windowManager, Func<BlogSettingsViewModel> blogSettingsCreator, IEventAggregator eventAggregator)
         {
             this.settingsService = settingsService;
             this.windowManager = windowManager;
             this.blogSettingsCreator = blogSettingsCreator;
+            this.eventAggregator = eventAggregator;
 
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes"))
             {
@@ -137,10 +139,20 @@ namespace MarkPad.Settings
 
             TryClose();
         }
-
+        public override void TryClose(bool? dialogResult)
+        {
+            eventAggregator.Publish(new SettingsCloseEvent());
+            base.TryClose(dialogResult);
+        }
         public void Cancel()
         {
+            eventAggregator.Publish(new SettingsCloseEvent());
             TryClose();
+        }
+
+        public void HideSettings()
+        {
+            eventAggregator.Publish(new SettingsCloseEvent());
         }
 
         private void UpdateExtensionRegistryKeys()
