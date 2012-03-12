@@ -17,73 +17,71 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
-    	<Rectangle Fill="#3F000000" Stroke="Black" StrokeThickness="0"/>
-    	<Grid Margin="130,0,0,0"  Background="Black">
-    		<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="settings" VerticalAlignment="Top" Foreground="White" FontSize="48" Margin="70,-14.668,0,0" FontWeight="Light"/>
-            <Button Content="➔" Style="{StaticResource MetroCircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="58" Foreground="White" Height="58" RenderTransformOrigin="0.5,0.5" FontSize="40" Margin="-7.625,-8,0,0" Padding="1,-5,1,1" Clip="M50.333,8 L-1.667,8 L-1.667,59.843 L50.333,59.843 z">
-    			<Button.RenderTransform>
-    				<TransformGroup>
-    					<ScaleTransform ScaleY="1" ScaleX="-1"/>
-    					<SkewTransform AngleY="0" AngleX="0"/>
-    					<RotateTransform Angle="0"/>
-    					<TranslateTransform/>
-    				</TransformGroup>
-    			</Button.RenderTransform>
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Click">
-                        <cal:ActionMessage MethodName="HideSettings" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </Button>
-    		<ScrollViewer HorizontalScrollBarVisibility="Disabled" Margin="70,50,0,0" >
-    			<ItemsControl Background="{x:Null}" 
-    				BorderBrush="{x:Null}" 
-    				Foreground="White" 
-    				VerticalContentAlignment="Top" 
-    				HorizontalContentAlignment="Stretch">
-    				<StackPanel VerticalAlignment="Top" Margin="0,0,50,0">
-    					<TextBlock TextWrapping="Wrap" FontSize="26.667" FontWeight="Light" Text="file extensions"/>
-    					<TextBlock Text="Set Markpad as default for file extensions:" />
-    					<ItemsControl ItemsSource="{Binding Extensions}" >
-    						<ItemsControl.ItemTemplate>
-    							<DataTemplate>
-    								<CheckBox IsChecked="{Binding Enabled}" Foreground="White" Content="{Binding Extension}" />
-    							</DataTemplate>
-    						</ItemsControl.ItemTemplate>
-    					</ItemsControl>
-    				</StackPanel>
-    				<Grid Margin="0,20,0,0">
-    					<StackPanel>
-    						<TextBlock FontSize="26.667" FontWeight="Light" Text="blogs"/>
-    						<StackPanel Orientation="Horizontal">
-    							<ListBox x:Name="Blogs" SelectedItem="CurrentBlog"
-    								DisplayMemberPath="BlogName"
-    								Height="100" Width="178" Background="{x:Null}" BorderBrush="White" BorderThickness="2" />
-    							<StackPanel  Margin="5 0 0 0" VerticalAlignment="Top">
-                                    <Button x:Name="AddBlog" Style="{DynamicResource SquareButtonStyle}" Content="Add New" Width="70" Height="30" VerticalAlignment="Top"/>
-                                    <Button x:Name="EditBlog" Style="{DynamicResource SquareButtonStyle}" Content="Edit"  Width="70" Height="30" Margin="0 5 0 0" VerticalAlignment="Top"/>
-                                    <Button x:Name="RemoveBlog" Style="{DynamicResource SquareButtonStyle}" Content="Remove"  Width="70" Margin="0 5 0 0" Height="30" VerticalAlignment="Top"/>
-    							</StackPanel>
-    						</StackPanel>
-    					</StackPanel>
-    				</Grid>
-    				<Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,20,20,0" Width="190">
-    					<TextBlock TextWrapping="Wrap" FontSize="26.667" FontWeight="Light" Text="language"/>
-                        <ComboBox x:Name="Languages" ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}"  VerticalAlignment="Top" Margin="0,35,0,0">
-    						<ComboBox.ItemTemplate>
-    							<DataTemplate>
-    								<TextBlock Text="{Binding Converter={Custom:EnumDisplayConverter}}" />
-    							</DataTemplate>
-    						</ComboBox.ItemTemplate>
-    					</ComboBox>
-    				</Grid>
-    				<StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,20,0,20">
-    					<TextBlock TextWrapping="Wrap" FontSize="26.667" FontWeight="Light" Text="display size"/>
-    					<Slider />
-    				</StackPanel>
-    			</ItemsControl>
-    		</ScrollViewer>
-    	</Grid>
-    </Grid>
+    <Grid  Background="Black">
+		<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="settings" VerticalAlignment="Top" Foreground="White" FontSize="48" Margin="70,-14.668,0,0" FontWeight="Light"/>
+		<Button Content="➔" Style="{StaticResource MetroCircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="58" Foreground="White" Height="58" RenderTransformOrigin="0.5,0.5" FontSize="40" Margin="-7.625,-8,0,0" Padding="1,-5,1,1" Clip="M50.333,8 L-1.667,8 L-1.667,59.843 L50.333,59.843 z">
+			<Button.RenderTransform>
+				<TransformGroup>
+					<ScaleTransform ScaleY="1" ScaleX="-1"/>
+					<SkewTransform AngleY="0" AngleX="0"/>
+					<RotateTransform Angle="0"/>
+					<TranslateTransform/>
+				</TransformGroup>
+			</Button.RenderTransform>
+			<i:Interaction.Triggers>
+				<i:EventTrigger EventName="Click">
+					<cal:ActionMessage MethodName="HideSettings" />
+				</i:EventTrigger>
+			</i:Interaction.Triggers>
+		</Button>
+		<ScrollViewer HorizontalScrollBarVisibility="Disabled" Margin="70,50,0,0" >
+			<ItemsControl Background="{x:Null}" 
+				BorderBrush="{x:Null}" 
+				Foreground="White" 
+				VerticalContentAlignment="Top" 
+				HorizontalContentAlignment="Stretch">
+				<StackPanel VerticalAlignment="Top" Margin="0,0,50,0">
+					<TextBlock TextWrapping="Wrap" FontSize="26.667" FontWeight="Light" Text="file extensions"/>
+					<TextBlock Text="Set Markpad as default for file extensions:" />
+					<ItemsControl ItemsSource="{Binding Extensions}" >
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<CheckBox IsChecked="{Binding Enabled}" Foreground="White" Content="{Binding Extension}" />
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</StackPanel>
+				<Grid Margin="0,20,0,0">
+					<StackPanel>
+						<TextBlock FontSize="26.667" FontWeight="Light" Text="blogs"/>
+						<StackPanel Orientation="Horizontal">
+							<ListBox x:Name="Blogs" SelectedItem="CurrentBlog"
+								DisplayMemberPath="BlogName"
+								Height="100" Width="178" Background="{x:Null}" BorderBrush="White" BorderThickness="2" />
+							<StackPanel  Margin="5 0 0 0" VerticalAlignment="Top">
+								<Button x:Name="AddBlog" Style="{DynamicResource SquareButtonStyle}" Content="Add New" Width="70" Height="30" VerticalAlignment="Top"/>
+								<Button x:Name="EditBlog" Style="{DynamicResource SquareButtonStyle}" Content="Edit"  Width="70" Height="30" Margin="0 5 0 0" VerticalAlignment="Top"/>
+								<Button x:Name="RemoveBlog" Style="{DynamicResource SquareButtonStyle}" Content="Remove"  Width="70" Margin="0 5 0 0" Height="30" VerticalAlignment="Top"/>
+							</StackPanel>
+						</StackPanel>
+					</StackPanel>
+				</Grid>
+				<Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,20,20,0" Width="190">
+					<TextBlock TextWrapping="Wrap" FontSize="26.667" FontWeight="Light" Text="language"/>
+					<ComboBox x:Name="Languages" ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}"  VerticalAlignment="Top" Margin="0,35,0,0">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding Converter={Custom:EnumDisplayConverter}}" />
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
+				</Grid>
+				<StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,20,0,20">
+					<TextBlock TextWrapping="Wrap" FontSize="26.667" FontWeight="Light" Text="display size"/>
+					<Slider />
+				</StackPanel>
+			</ItemsControl>
+		</ScrollViewer>
+		<Grid HorizontalAlignment="Left" VerticalAlignment="Top"/>
+	</Grid>
 </UserControl>

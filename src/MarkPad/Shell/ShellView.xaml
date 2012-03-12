@@ -145,6 +145,74 @@
     				<VisualTransition GeneratedDuration="0" To="SaveState"/>
                     <VisualTransition GeneratedDuration="0" To="NewState" />
                     <VisualTransition GeneratedDuration="0" To="OpenState"/>
+                    <VisualTransition GeneratedDuration="0" To="ShowSettings">
+                    	<Storyboard>
+                    		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="settingsControl">
+                    			<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                    			<DiscreteObjectKeyFrame KeyTime="0:0:0.4" Value="{x:Static Visibility.Visible}"/>
+                    		</ObjectAnimationUsingKeyFrames>
+                    		<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="settingsControl">
+                    			<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                    			<EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1">
+                    				<EasingDoubleKeyFrame.EasingFunction>
+                    					<CircleEase EasingMode="EaseIn"/>
+                    				</EasingDoubleKeyFrame.EasingFunction>
+                    			</EasingDoubleKeyFrame>
+                    		</DoubleAnimationUsingKeyFrames>
+                    		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="settingsShadow">
+                    			<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                    			<DiscreteObjectKeyFrame KeyTime="0:0:0.4" Value="{x:Static Visibility.Visible}"/>
+                    		</ObjectAnimationUsingKeyFrames>
+                    		<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="settingsShadow">
+                    			<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                    			<EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1"/>
+                    		</DoubleAnimationUsingKeyFrames>
+                    		<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="settingsControl">
+                    			<EasingDoubleKeyFrame KeyTime="0" Value="150">
+                    				<EasingDoubleKeyFrame.EasingFunction>
+                    					<CubicEase EasingMode="EaseOut"/>
+                    				</EasingDoubleKeyFrame.EasingFunction>
+                    			</EasingDoubleKeyFrame>
+                    			<EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="0">
+                    				<EasingDoubleKeyFrame.EasingFunction>
+                    					<CircleEase EasingMode="EaseOut"/>
+                    				</EasingDoubleKeyFrame.EasingFunction>
+                    			</EasingDoubleKeyFrame>
+                    		</DoubleAnimationUsingKeyFrames>
+                    	</Storyboard>
+                    </VisualTransition>
+                    <VisualTransition GeneratedDuration="0" To="HideSettings">
+                    	<Storyboard>
+                    		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="settingsShadow">
+                    			<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                    			<DiscreteObjectKeyFrame KeyTime="0:0:0.4" Value="{x:Static Visibility.Collapsed}"/>
+                    		</ObjectAnimationUsingKeyFrames>
+                    		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="settingsControl">
+                    			<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                    			<DiscreteObjectKeyFrame KeyTime="0:0:0.4" Value="{x:Static Visibility.Collapsed}"/>
+                    		</ObjectAnimationUsingKeyFrames>
+                    		<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="settingsShadow">
+                    			<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                    			<EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="0">
+                    				<EasingDoubleKeyFrame.EasingFunction>
+                    					<CircleEase EasingMode="EaseIn"/>
+                    				</EasingDoubleKeyFrame.EasingFunction>
+                    			</EasingDoubleKeyFrame>
+                    		</DoubleAnimationUsingKeyFrames>
+                    		<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="settingsControl">
+                    			<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                    			<EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="0">
+                    				<EasingDoubleKeyFrame.EasingFunction>
+                    					<CircleEase EasingMode="EaseIn"/>
+                    				</EasingDoubleKeyFrame.EasingFunction>
+                    			</EasingDoubleKeyFrame>
+                    		</DoubleAnimationUsingKeyFrames>
+                    		<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="settingsControl">
+                    			<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                    			<EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="150"/>
+                    		</DoubleAnimationUsingKeyFrames>
+                    	</Storyboard>
+                    </VisualTransition>
     			</VisualStateGroup.Transitions>
     			<VisualState x:Name="SaveState">
     				<Storyboard>
@@ -246,11 +314,18 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="settingsControl">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
                         </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="settingsShadow">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                        </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
+                    
                 </VisualState>
                 <VisualState x:Name="HideSettings">
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="settingsControl">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="settingsShadow">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
@@ -412,6 +487,16 @@
     			Margin="10,0"
     			Grid.Row="1" />
     	</Grid>
-        <Settings:SettingsView x:Name="settingsControl" Visibility="Collapsed"  DataContext="{Binding Settings}" Margin="0"  />
+        <Rectangle x:Name="settingsShadow" Fill="#3F000000" Stroke="Black" StrokeThickness="0" Visibility="Collapsed"/>
+        <Settings:SettingsView x:Name="settingsControl" Visibility="Collapsed"  DataContext="{Binding Settings}" Margin="100,0,0,0" RenderTransformOrigin="0.5,0.5"  >
+        	<Settings:SettingsView.RenderTransform>
+        		<TransformGroup>
+        			<ScaleTransform/>
+        			<SkewTransform/>
+        			<RotateTransform/>
+        			<TranslateTransform/>
+        		</TransformGroup>
+        	</Settings:SettingsView.RenderTransform>
+        </Settings:SettingsView>
     </Grid>
 </Window>
