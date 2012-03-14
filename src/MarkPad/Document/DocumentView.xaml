@@ -538,7 +538,8 @@
             Margin="10,10,10,-5" 
             TextOptions.TextFormattingMode="Display"
             VerticalAlignment="Stretch"
-            HorizontalAlignment="Stretch" Padding="0,0,10,0">
+            HorizontalAlignment="Stretch" Padding="0,0,10,0"
+            PreviewKeyDown="EditorPreviewKeyDown">
             <avalonedit:TextEditor.Effect>
                 <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.25" Direction="270" />
             </avalonedit:TextEditor.Effect>
