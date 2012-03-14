@@ -61,7 +61,17 @@ namespace MarkPad.Settings
         }
 
         public IEnumerable<ExtensionViewModel> Extensions { get; set; }
-        public BlogSetting CurrentBlog { get; set; }
+		private BlogSetting currentBlog;
+		public BlogSetting CurrentBlog
+		{
+			get { return currentBlog; }
+			set
+			{
+				currentBlog = value;
+				this.NotifyOfPropertyChange(() => CanEditBlog);
+				this.NotifyOfPropertyChange(() => CanRemoveBlog);
+			}
+		}
         public ObservableCollection<BlogSetting> Blogs { get; set; }
         public IEnumerable<SpellingLanguages> Languages { get; set; }
         public SpellingLanguages SelectedLanguage { get; set; }
@@ -74,7 +84,7 @@ namespace MarkPad.Settings
             set { }
         }
 
-        public void AddBlog()
+        public bool AddBlog()
         {
             var blog = new BlogSetting { BlogName = "New", Language = "HTML" };
 
@@ -87,14 +97,17 @@ namespace MarkPad.Settings
             if (result != true)
             {
                 blog.CancelEdit();
-                return;
+                return false;
             }
 
             blog.EndEdit();
 
             Blogs.Add(blog);
+
+			return true;
         }
 
+		public bool CanEditBlog { get { return CurrentBlog != null; } }
         public void EditBlog()
         {
             if (CurrentBlog == null) return;
@@ -115,6 +128,7 @@ namespace MarkPad.Settings
             CurrentBlog.EndEdit();
         }
 
+		public bool CanRemoveBlog { get { return CurrentBlog != null; } }
         public void RemoveBlog()
         {
             if (CurrentBlog != null)

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -9,10 +10,10 @@ namespace MarkPad
 {
     internal class Loader
     {
-        const string LibsFolder = "Libs";
+        private const string LibsFolder = "Libs";
 
-        static readonly Dictionary<string, Assembly> Libraries = new Dictionary<string, Assembly>();
-        static readonly Dictionary<string, Assembly> ReflectionOnlyLibraries = new Dictionary<string, Assembly>();
+        private static readonly Dictionary<string, Assembly> libraries = new Dictionary<string, Assembly>();
+        private static readonly Dictionary<string, Assembly> reflectionOnlyLibraries = new Dictionary<string, Assembly>();
 
         [STAThread]
         public static void Main()
@@ -51,13 +52,14 @@ namespace MarkPad
                 if (!File.Exists(dllPath))
                 {
                     using (Stream stm = Assembly.GetExecutingAssembly().GetManifestResourceStream(lib))
+                    using (var decompress = new DeflateStream(stm, CompressionMode.Decompress))
                     {
                         // Copy the assembly to the temporary file
                         try
                         {
                             using (Stream outFile = File.Create(dllPath))
                             {
-                                stm.CopyTo(outFile);
+                                decompress.CopyTo(outFile);
                             }
                         }
                         catch
@@ -123,7 +125,7 @@ namespace MarkPad
             delegateField.SetValue(null, getDelegateMethod.Invoke(null, new object[] { call, delegateType }));
         }
 
-        internal static Assembly LoadAssembly(string fullName)
+        private static Assembly LoadAssembly(string fullName)
         {
             Assembly a;
 
@@ -132,8 +134,8 @@ namespace MarkPad
             var assemblyName = executingAssembly.GetName();
 
             var shortName = new AssemblyName(fullName).Name;
-            if (Libraries.ContainsKey(shortName))
-                return Libraries[shortName];
+            if (libraries.ContainsKey(shortName))
+                return libraries[shortName];
 
             var resourceName = String.Format("{0}.{2}.{1}.dll", assemblyName.Name, shortName, LibsFolder);
             var actualName = executingAssembly.GetManifestResourceNames().FirstOrDefault(n => string.Equals(n, resourceName, StringComparison.OrdinalIgnoreCase));
@@ -150,7 +152,7 @@ namespace MarkPad
 
                 if (string.IsNullOrEmpty(actualName))
                 {
-                    Libraries[shortName] = null;
+                    libraries[shortName] = null;
                     return null;
                 }
 
@@ -163,18 +165,19 @@ namespace MarkPad
 
                 if (!File.Exists(dllPath))
                 {
-                    Libraries[shortName] = null;
+                    libraries[shortName] = null;
                     return null;
                 }
 
                 a = Assembly.LoadFile(dllPath);
-                Libraries[shortName] = a;
+                libraries[shortName] = a;
                 return a;
             }
 
-            using (var s = executingAssembly.GetManifestResourceStream(actualName))
+            using (var stm = executingAssembly.GetManifestResourceStream(actualName))
+            using (var decompress = new DeflateStream(stm, CompressionMode.Decompress))
             {
-                var data = new BinaryReader(s).ReadBytes((int)s.Length);
+                var data = ReadFully(decompress);
 
                 byte[] debugData = null;
                 if (executingAssembly.GetManifestResourceNames().Contains(String.Format("{0}.{2}.{1}.pdb", assemblyName.Name, shortName, LibsFolder)))
@@ -188,52 +191,67 @@ namespace MarkPad
                 if (debugData != null)
                 {
                     a = Assembly.Load(data, debugData);
-                    Libraries[shortName] = a;
+                    libraries[shortName] = a;
                     return a;
                 }
                 a = Assembly.Load(data);
-                Libraries[shortName] = a;
+                libraries[shortName] = a;
                 return a;
             }
         }
 
-        internal static Assembly ReflectionOnlyLoadAssembly(string fullName)
+        private static Assembly ReflectionOnlyLoadAssembly(string fullName)
         {
             var executingAssembly = Assembly.GetExecutingAssembly();
 
             var assemblyName = Assembly.GetExecutingAssembly().GetName();
 
             string shortName = new AssemblyName(fullName).Name;
-            if (ReflectionOnlyLibraries.ContainsKey(shortName))
-                return ReflectionOnlyLibraries[shortName];
+            if (reflectionOnlyLibraries.ContainsKey(shortName))
+                return reflectionOnlyLibraries[shortName];
 
             var resourceName = String.Format("{0}.{2}.{1}.dll", assemblyName.Name, shortName, LibsFolder);
 
             if (!executingAssembly.GetManifestResourceNames().Contains(resourceName))
             {
-                ReflectionOnlyLibraries[shortName] = null;
+                reflectionOnlyLibraries[shortName] = null;
                 return null;
             }
 
-            using (var s = executingAssembly.GetManifestResourceStream(resourceName))
+            using (var stm = executingAssembly.GetManifestResourceStream(resourceName))
+            using (var decompress = new DeflateStream(stm, CompressionMode.Decompress))
             {
-                var data = new BinaryReader(s).ReadBytes((int)s.Length);
+                var data = ReadFully(decompress);
 
                 var a = Assembly.ReflectionOnlyLoad(data);
-                ReflectionOnlyLibraries[shortName] = a;
+                reflectionOnlyLibraries[shortName] = a;
 
                 return a;
             }
         }
 
-        internal static Assembly FindAssembly(object sender, ResolveEventArgs args)
+        private static Assembly FindAssembly(object sender, ResolveEventArgs args)
         {
             return LoadAssembly(args.Name);
         }
 
-        internal static Assembly FindReflectionOnlyAssembly(object sender, ResolveEventArgs args)
+        private static Assembly FindReflectionOnlyAssembly(object sender, ResolveEventArgs args)
         {
             return ReflectionOnlyLoadAssembly(args.Name);
+        }
+
+        private static byte[] ReadFully(Stream input)
+        {
+            byte[] buffer = new byte[16 * 1024];
+            using (MemoryStream ms = new MemoryStream())
+            {
+                int read;
+                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    ms.Write(buffer, 0, read);
+                }
+                return ms.ToArray();
+            }
         }
     }
 }
