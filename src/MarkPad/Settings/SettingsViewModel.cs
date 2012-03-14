@@ -74,7 +74,7 @@ namespace MarkPad.Settings
             set { }
         }
 
-        public void AddBlog()
+        public bool AddBlog()
         {
             var blog = new BlogSetting { BlogName = "New", Language = "HTML" };
 
@@ -87,12 +87,14 @@ namespace MarkPad.Settings
             if (result != true)
             {
                 blog.CancelEdit();
-                return;
+                return false;
             }
 
             blog.EndEdit();
 
             Blogs.Add(blog);
+
+			return true;
         }
 
         public void EditBlog()
