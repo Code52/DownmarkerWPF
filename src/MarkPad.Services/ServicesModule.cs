@@ -10,6 +10,7 @@ namespace MarkPad.Services
 
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<SiteContextGenerator>().As<ISiteContextGenerator>();
             builder.RegisterType<DialogService>().As<IDialogService>();
             builder.RegisterType<SettingsService>().As<ISettingsService>().SingleInstance();
             builder.RegisterType<SpellingService>().As<ISpellingService>().SingleInstance().OnActivating(args =>

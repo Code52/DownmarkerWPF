@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,9 +13,11 @@ using System.Xml;
 using Awesomium.Core;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
+using MarkPad.Extensions;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.Services.Interfaces;
@@ -26,8 +30,8 @@ namespace MarkPad.Document
         private const int NumSpaces = 4;
         private const string Spaces = "    ";
 
-    	private readonly Regex WordSeparatorRegex = new Regex("-[^\\w]+|^'[^\\w]+|[^\\w]+'[^\\w]+|[^\\w]+-[^\\w]+|[^\\w]+'$|[^\\w]+-$|^-$|^'$|[^\\w'-]", RegexOptions.Compiled);
-    	private readonly Regex UriFinderRegex = new Regex("(http|ftp|https|mailto):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?", RegexOptions.Compiled);
+        private readonly Regex WordSeparatorRegex = new Regex("-[^\\w]+|^'[^\\w]+|[^\\w]+'[^\\w]+|[^\\w]+-[^\\w]+|[^\\w]+'$|[^\\w]+-$|^-$|^'$|[^\\w'-]", RegexOptions.Compiled);
+        private readonly Regex UriFinderRegex = new Regex("(http|ftp|https|mailto):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?", RegexOptions.Compiled);
 
         private ScrollViewer documentScrollViewer;
         private readonly SpellCheckBackgroundRenderer spellCheckRenderer;
@@ -58,7 +62,9 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCode, (x, y) => ToggleCode(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCodeBlock, (x, y) => ToggleCodeBlock(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
+
         }
+
 
         void WebControl_LinkClicked(object sender, OpenExternalLinkEventArgs e)
         {
@@ -89,7 +95,7 @@ namespace MarkPad.Document
         /// <returns>Font size.</returns>
         private int GetFontSize()
         {
-            return 12 + ((DocumentViewModel) DataContext).GetFontSize();
+            return 12 + ((DocumentViewModel)DataContext).GetFontSize();
         }
 
         /// <summary>
@@ -103,7 +109,7 @@ namespace MarkPad.Document
             var zoom = 100 + ((DocumentViewModel)DataContext).GetFontSize() * 40 / 6;
 
             // Limit the zoom by the limits of Awesomium.NET.
-            if (zoom < 50)  zoom = 50;
+            if (zoom < 50) zoom = 50;
             if (zoom > 500) zoom = 500;
             return zoom;
         }
@@ -280,11 +286,11 @@ namespace MarkPad.Document
                 .ExecuteSafely(vm =>
                                    {
                                        hyperlink = vm.GetHyperlink(hyperlink);
-									   if (hyperlink != null)
-									   {
-									   		textArea.Selection.ReplaceSelectionWithText(textArea,
-									   			string.Format("[{0}]({1})", hyperlink.Text, hyperlink.Url));
-									   }
+                                       if (hyperlink != null)
+                                       {
+                                           textArea.Selection.ReplaceSelectionWithText(textArea,
+                                               string.Format("[{0}]({1})", hyperlink.Text, hyperlink.Url));
+                                       }
                                    });
         }
 
@@ -323,6 +329,32 @@ namespace MarkPad.Document
 
             Editor.FontSize = GetFontSize();
             wb.Zoom = GetZoomLevel();
+        }
+
+        private void EditorPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (Keyboard.Modifiers != ModifierKeys.Control || e.Key != Key.V) return;
+            (DataContext as DocumentViewModel)
+                .ExecuteSafely(d =>
+                {
+                    var siteContext = d.SiteContext;
+                    var images = Clipboard.GetDataObject().GetImages();
+                    if (images.Any() && siteContext != null)
+                    {
+                        var sb = new StringBuilder();
+                        var textArea = Editor.TextArea;
+
+                        foreach (var dataImage in images)
+                        {
+                            var relativePath = siteContext.SaveImage(dataImage.Bitmap);
+
+                            sb.AppendLine(string.Format("![{0}]({1})", Path.GetFileNameWithoutExtension(relativePath), relativePath));
+                        }
+
+                        textArea.Selection.ReplaceSelectionWithText(textArea, sb.ToString().Trim());
+                        e.Handled = true;
+                    }
+                });
         }
     }
 }
