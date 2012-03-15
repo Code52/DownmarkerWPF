@@ -1,4 +1,4 @@
-﻿using System.Windows.Media.Imaging;
+﻿using System.Drawing;
 
 namespace MarkPad.Services.Interfaces
 {
@@ -7,9 +7,9 @@ namespace MarkPad.Services.Interfaces
         /// <summary>
         /// Saves the image to the file system
         /// </summary>
-        /// <param name="getImage"></param>
+        /// <param name="image"></param>
         /// <returns>The relative path to the image</returns>
-        string SaveImage(BitmapSource getImage);
+        string SaveImage(Bitmap image);
 
         string ConvertToAbsolutePaths(string htmlDocument);
     }

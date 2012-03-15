@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
 using MarkPad.Services.Interfaces;
@@ -19,9 +20,12 @@ namespace MarkPad.Services.Implementation
             filenameWithPath = filename;
         }
 
-        public string SaveImage(BitmapSource getImage)
+        public string SaveImage(Bitmap image)
         {
             var absoluteImagePath = Path.Combine(basePath, "img");
+
+            if (!Directory.Exists(absoluteImagePath))
+                Directory.CreateDirectory(absoluteImagePath);
 
             var filename = Path.GetFileNameWithoutExtension(filenameWithPath);
             var count = 1;
@@ -34,9 +38,7 @@ namespace MarkPad.Services.Implementation
 
             using (var stream = new FileStream(Path.Combine(absoluteImagePath, imageFilename), FileMode.Create))
             {
-                var encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(getImage));
-                encoder.Save(stream);
+                image.Save(stream, ImageFormat.Png);
             }
 
             var enumerable = imageFilename.Replace(basePath, string.Empty).TrimStart('\\', '/') //Get rid of starting /

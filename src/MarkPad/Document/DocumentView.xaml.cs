@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +17,7 @@ using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
+using MarkPad.Extensions;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.Services.Interfaces;
@@ -336,13 +338,21 @@ namespace MarkPad.Document
                 .ExecuteSafely(d =>
                 {
                     var siteContext = d.SiteContext;
-                    if (Clipboard.ContainsImage() && siteContext != null)
+                    var images = Clipboard.GetDataObject().GetImages();
+                    if (images.Any() && siteContext != null)
                     {
-                        var relativePath = siteContext.SaveImage(Clipboard.GetImage());
-
+                        var sb = new StringBuilder();
                         var textArea = Editor.TextArea;
-                        var newText = string.Format("![{0}]({1})", Path.GetFileNameWithoutExtension(relativePath), relativePath);
-                        textArea.Selection.ReplaceSelectionWithText(textArea, newText);
+
+                        foreach (var dataImage in images)
+                        {
+                            var relativePath = siteContext.SaveImage(dataImage.Bitmap);
+
+                            sb.AppendLine(string.Format("![{0}]({1})", Path.GetFileNameWithoutExtension(relativePath), relativePath));
+                        }
+
+                        textArea.Selection.ReplaceSelectionWithText(textArea, sb.ToString().Trim());
+                        e.Handled = true;
                     }
                 });
         }
