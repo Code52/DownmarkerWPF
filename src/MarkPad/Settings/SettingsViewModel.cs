@@ -37,13 +37,15 @@ namespace MarkPad.Settings
         private readonly ISettingsService settingsService;
         private readonly IWindowManager windowManager;
 
-        private readonly Func<BlogSettingsViewModel> blogSettingsCreator;
+		private readonly Func<BlogSettingsViewModel> blogSettingsCreator;
+		private readonly Func<FontSelectionViewModel> fontSelectionCreator;
 
-        public SettingsViewModel(ISettingsService settingsService, IWindowManager windowManager, Func<BlogSettingsViewModel> blogSettingsCreator)
+        public SettingsViewModel(ISettingsService settingsService, IWindowManager windowManager, Func<BlogSettingsViewModel> blogSettingsCreator, Func<FontSelectionViewModel> fontSelectionCreator)
         {
             this.settingsService = settingsService;
             this.windowManager = windowManager;
             this.blogSettingsCreator = blogSettingsCreator;
+			this.fontSelectionCreator = fontSelectionCreator;
 
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes"))
             {
@@ -59,10 +61,9 @@ namespace MarkPad.Settings
 
             Languages = Enum.GetValues(typeof(SpellingLanguages)).OfType<SpellingLanguages>().ToArray();
             SelectedLanguage = settingsService.Get<SpellingLanguages>(DictionariesSettingsKey);
-            FontSizes = Enum.GetValues(typeof(FontSizes)).OfType<FontSizes>().ToArray();
-            SelectedFontSize = settingsService.Get<FontSizes>(FontSizeSettingsKey);
-			FontFamilies = Fonts.SystemFontFamilies.OrderBy(f => f.Source);
-			SelectedFontFamily = Fonts.SystemFontFamilies.First(f => f.Source == settingsService.Get<string>(FontFamilySettingsKey));
+
+			SelectedFontSize = settingsService.Get<FontSizes>(FontSizeSettingsKey);
+			SelectedFontFamily = Fonts.SystemFontFamilies.First(f => f.Source == settingsService.Get<string>(SettingsViewModel.FontFamilySettingsKey));
         }
 
         public IEnumerable<ExtensionViewModel> Extensions { get; set; }
@@ -80,10 +81,26 @@ namespace MarkPad.Settings
         public ObservableCollection<BlogSetting> Blogs { get; set; }
         public IEnumerable<SpellingLanguages> Languages { get; set; }
         public SpellingLanguages SelectedLanguage { get; set; }
-        public IEnumerable<FontSizes> FontSizes { get; set; }
-        public FontSizes SelectedFontSize { get; set; }
-		public IEnumerable<FontFamily> FontFamilies { get; set; }
+		public FontSizes SelectedFontSize { get; set; }
 		public FontFamily SelectedFontFamily { get; set; }
+
+		public int SelectedActualFontSize
+		{
+			get
+			{
+				return 12 + (int)SelectedFontSize;
+			}
+		}
+		public string EditorFontPreviewLabel
+		{
+			get
+			{
+				return string.Format(
+					"Editor font ({0}, {1} pt)",
+					SelectedFontFamily.Source,
+					SelectedActualFontSize);
+			}
+		}
 
         public override string DisplayName
         {
@@ -141,6 +158,19 @@ namespace MarkPad.Settings
             if (CurrentBlog != null)
                 Blogs.Remove(CurrentBlog);
         }
+
+		public void SelectFont()
+		{
+			var fontSelection = fontSelectionCreator();
+			fontSelection.SelectedFontFamily = SelectedFontFamily;
+			fontSelection.SelectedFontSize = SelectedFontSize;
+
+			var result = windowManager.ShowDialog(fontSelection);
+			if (result != true) return;
+
+			SelectedFontFamily = fontSelection.SelectedFontFamily;
+			SelectedFontSize = fontSelection.SelectedFontSize;
+		}
 
         public void Accept()
         {
