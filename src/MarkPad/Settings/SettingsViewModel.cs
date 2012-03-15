@@ -8,6 +8,8 @@ using Caliburn.Micro;
 using MarkPad.Framework.Events;
 using MarkPad.Services.Interfaces;
 using Microsoft.Win32;
+using System.Windows;
+using System.Windows.Media;
 
 namespace MarkPad.Settings
 {
@@ -15,7 +17,8 @@ namespace MarkPad.Settings
     {
         private const string BlogsSettingsKey = "Blogs";
         private const string DictionariesSettingsKey = "Dictionaries";
-        public const string FontSettingsKey = "Font";
+        public const string FontSizeSettingsKey = "Font";
+		public const string FontFamilySettingsKey = "FontFamily";
 
         public class ExtensionViewModel : PropertyChangedBase
         {
@@ -57,7 +60,9 @@ namespace MarkPad.Settings
             Languages = Enum.GetValues(typeof(SpellingLanguages)).OfType<SpellingLanguages>().ToArray();
             SelectedLanguage = settingsService.Get<SpellingLanguages>(DictionariesSettingsKey);
             FontSizes = Enum.GetValues(typeof(FontSizes)).OfType<FontSizes>().ToArray();
-            SelectedFontSize = settingsService.Get<FontSizes>(FontSettingsKey);
+            SelectedFontSize = settingsService.Get<FontSizes>(FontSizeSettingsKey);
+			FontFamilies = Fonts.SystemFontFamilies.OrderBy(f => f.Source);
+			SelectedFontFamily = Fonts.SystemFontFamilies.First(f => f.Source == settingsService.Get<string>(FontFamilySettingsKey));
         }
 
         public IEnumerable<ExtensionViewModel> Extensions { get; set; }
@@ -77,6 +82,8 @@ namespace MarkPad.Settings
         public SpellingLanguages SelectedLanguage { get; set; }
         public IEnumerable<FontSizes> FontSizes { get; set; }
         public FontSizes SelectedFontSize { get; set; }
+		public IEnumerable<FontFamily> FontFamilies { get; set; }
+		public FontFamily SelectedFontFamily { get; set; }
 
         public override string DisplayName
         {
@@ -144,7 +151,8 @@ namespace MarkPad.Settings
 
             settingsService.Set(BlogsSettingsKey, Blogs.ToList());
             settingsService.Set(DictionariesSettingsKey, SelectedLanguage);
-            settingsService.Set(FontSettingsKey, SelectedFontSize);
+            settingsService.Set(FontSizeSettingsKey, SelectedFontSize);
+			settingsService.Set(FontFamilySettingsKey, SelectedFontFamily.Source);
             settingsService.Save();
 
             IoC.Get<IEventAggregator>().Publish(new SettingsChangedEvent());

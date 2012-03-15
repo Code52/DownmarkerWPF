@@ -7,7 +7,7 @@
         MouseLeftButtonDown="DragMoveWindow" 
         ShowInTaskbar="False"
         SnapsToDevicePixels="True"
-        WindowStartupLocation="CenterOwner" Width="300" Height="400" ResizeMode="NoResize">
+        WindowStartupLocation="CenterOwner" Width="300" Height="440" ResizeMode="NoResize">
 
     <i:Interaction.Behaviors>
         <Behaviours:BorderlessWindowBehavior ResizeWithGrip="False" />
@@ -85,15 +85,17 @@
         </StackPanel>
         
         <StackPanel Grid.Row="4" Margin="0 5 0 0">
-            <TextBlock Text="Display Font Size"></TextBlock>
-            <ComboBox x:Name="FontSizes">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Converter={shared:EnumDisplayConverter}}" />
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-        </StackPanel>
+			<TextBlock Text="Display Font Family"></TextBlock>
+			<ComboBox x:Name="FontFamilies" DisplayMemberPath="Source"/>
+			<TextBlock Text="Display Font Size"></TextBlock>
+			<ComboBox x:Name="FontSizes">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Converter={shared:EnumDisplayConverter}}" />
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+		</StackPanel>
         
         <StackPanel HorizontalAlignment="Right" Grid.Row="5" Height="25" Margin="10" Orientation="Horizontal">
             <Button Width="75" x:Name="Accept" Content="OK" Margin="0 0 5 0" />

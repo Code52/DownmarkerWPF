@@ -11,6 +11,9 @@ using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
 using Ookii.Dialogs.Wpf;
+using System.Windows.Media;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MarkPad.Document
 {
@@ -326,7 +329,23 @@ namespace MarkPad.Document
 
         public int GetFontSize()
         {
-            return (int) settings.Get<FontSizes>(SettingsViewModel.FontSettingsKey);
+            return (int) settings.Get<FontSizes>(SettingsViewModel.FontSizeSettingsKey);
         }
+		public FontFamily GetFontFamily()
+		{
+			var configuredSource = settings.Get<string>(SettingsViewModel.FontFamilySettingsKey);
+			var fontFamily = TryGetFontFamilyFromStack(configuredSource, "Segoe UI", "Arial");
+			if (fontFamily == null) throw new Exception("Cannot find configured font family or fallback fonts");
+			return fontFamily;			
+		}
+		FontFamily TryGetFontFamilyFromStack(params string[] sources)
+		{
+			foreach (var source in sources)
+			{
+				var fontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == source);
+				if (fontFamily != null) return fontFamily;
+			}
+			return null;
+		}
     }
 }
