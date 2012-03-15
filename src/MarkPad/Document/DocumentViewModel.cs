@@ -169,11 +169,11 @@ namespace MarkPad.Document
 
         public override void CanClose(Action<bool> callback)
         {
-            DocumentView view = (DocumentView)this.GetView();
+            var view = GetView() as DocumentView;
 
             if (!HasChanges)
             {
-                view.wb.Close();
+                CheckAndCloseView(view);
                 callback(true);
                 return;
             }
@@ -198,12 +198,21 @@ namespace MarkPad.Document
             }
 
             // Close browser if tab is being closed
-            if (result == true)
+            if (result)
             {
-                view.wb.Close();
+                CheckAndCloseView(view);
             }
 
             callback(result);
+        }
+
+        private static void CheckAndCloseView(DocumentView view)
+        {
+            if (view != null
+                && view.wb != null)
+            {
+                view.wb.Close();
+            }
         }
 
         public void Print()
