@@ -33,7 +33,7 @@ namespace MarkPad.Services.Implementation
         private static bool IsJekyllSite(string filename, DirectoryInfo directory)
         {
             return 
-                filename.IndexOf("_posts", StringComparison.InvariantCultureIgnoreCase) == -1 ||
+                filename.IndexOf("_posts", StringComparison.InvariantCultureIgnoreCase) != -1 ||
                 ContainsJekyllConfigFile(directory);
         }
 
