@@ -25,8 +25,10 @@ namespace MarkPad.Extensions
 
             else if (e.GetDataPresent("System.String"))
             {
-                //Should check that its really an URL!
                 var url = (string)e.GetData("System.String");
+                if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
+                    return images;
+
                 var wc = new WebClient();
                 var originalData = wc.DownloadData(url);
 
