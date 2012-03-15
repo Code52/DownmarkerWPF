@@ -69,5 +69,11 @@ namespace MarkPad.Services.Implementation
             using (var stream = new IsolatedStorageFileStream(Filename, FileMode.Create, isoStore))
                 formatter.Serialize(stream, storage);
         }
+
+		public void SetAsDefault<T>(string key, T value)
+		{
+			if (!storage.ContainsKey(key))
+				Set(key, value);
+		}
     }
 }

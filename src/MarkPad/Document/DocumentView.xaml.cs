@@ -22,6 +22,7 @@ using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.Services.Interfaces;
 using MarkPad.XAML;
+using System.Windows.Media;
 
 namespace MarkPad.Document
 {
@@ -98,6 +99,12 @@ namespace MarkPad.Document
             return 12 + ((DocumentViewModel)DataContext).GetFontSize();
         }
 
+		private FontFamily GetFontFamily()
+		{
+			var documentViewModel = (DocumentViewModel)DataContext;
+			return documentViewModel.GetFontFamily();
+		}
+
         /// <summary>
         /// Turn the font size into a zoom level for the browser.
         /// </summary>
@@ -142,6 +149,7 @@ namespace MarkPad.Document
                 x.Document.TextChanged += (i, j) =>
                     {
                         Editor.FontSize = GetFontSize();
+						Editor.FontFamily = GetFontFamily();
                         wb.LoadCompleted += (k, l) => WbProcentualZoom();
                     };
             }
@@ -155,6 +163,7 @@ namespace MarkPad.Document
 
             // Set font size and focus on the editor.
             Editor.FontSize = GetFontSize();
+			Editor.FontFamily = GetFontFamily();
             Editor.Focus();
 
             // Set zoom level of the preview.
@@ -328,6 +337,7 @@ namespace MarkPad.Document
             Editor.TextArea.TextView.Redraw();
 
             Editor.FontSize = GetFontSize();
+			Editor.FontFamily = GetFontFamily();
             wb.Zoom = GetZoomLevel();
         }
 

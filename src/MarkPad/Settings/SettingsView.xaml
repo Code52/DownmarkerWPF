@@ -7,7 +7,7 @@
         MouseLeftButtonDown="DragMoveWindow" 
         ShowInTaskbar="False"
         SnapsToDevicePixels="True"
-        WindowStartupLocation="CenterOwner" Width="300" Height="400" ResizeMode="NoResize">
+        WindowStartupLocation="CenterOwner" Width="300" Height="435" ResizeMode="NoResize">
 
     <i:Interaction.Behaviors>
         <Behaviours:BorderlessWindowBehavior ResizeWithGrip="False" />
@@ -37,7 +37,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="93" />
-            <RowDefinition Height="AUto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -85,15 +85,30 @@
         </StackPanel>
         
         <StackPanel Grid.Row="4" Margin="0 5 0 0">
-            <TextBlock Text="Display Font Size"></TextBlock>
-            <ComboBox x:Name="FontSizes">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Converter={shared:EnumDisplayConverter}}" />
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-        </StackPanel>
+			<TextBlock x:Name="EditorFontPreviewLabel" Text="Editor font"/>			
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="50"/>
+				</Grid.ColumnDefinitions>
+
+				<Border Grid.Column="0" BorderBrush="{x:Null}" Background="#d9d9d9" Height="50">
+					<TextBlock TextWrapping="Wrap"
+							   TextAlignment="Center"
+							   VerticalAlignment="Center"
+							   FontFamily="{Binding SelectedFontFamily}"
+							   FontSize="{Binding SelectedActualFontSize}"
+							   Text="MarkPad is an editor for Markdown"/>					
+				</Border>
+				<Button
+					x:Name="SelectFont" 
+					Grid.Column="1" 
+					Content="Select" 
+					Margin="5 0 0 0" 
+					Height="25" 
+					VerticalAlignment="Top"/>
+			</Grid>
+		</StackPanel>
         
         <StackPanel HorizontalAlignment="Right" Grid.Row="5" Height="25" Margin="10" Orientation="Horizontal">
             <Button Width="75" x:Name="Accept" Content="OK" Margin="0 0 5 0" />
