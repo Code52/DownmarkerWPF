@@ -5,5 +5,6 @@ namespace MarkPad.Services.Interfaces
         T Get<T>(string key);
         void Set<T>(string key, T value);
         void Save();
+		void SetAsDefault<T>(string key, T value);
     }
 }

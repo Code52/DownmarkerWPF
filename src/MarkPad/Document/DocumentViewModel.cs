@@ -11,6 +11,9 @@ using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
 using Ookii.Dialogs.Wpf;
+using System.Windows.Media;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MarkPad.Document
 {
@@ -21,18 +24,21 @@ namespace MarkPad.Document
         private readonly IDialogService dialogService;
         private readonly ISettingsService settings;
         private readonly IWindowManager windowManager;
+		private readonly ISiteContextGenerator siteContextGenerator;
 
         private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
         private readonly DispatcherTimer timer;
 
         private string title;
         private string filename;
+        private ISiteContext siteContext;
 
-        public DocumentViewModel(IDialogService dialogService, ISettingsService settings, IWindowManager windowManager)
+        public DocumentViewModel(IDialogService dialogService, ISettingsService settings, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator)
         {
             this.dialogService = dialogService;
             this.settings = settings;
             this.windowManager = windowManager;
+            this.siteContextGenerator = siteContextGenerator;
 
             title = "New Document";
             Original = "";
@@ -47,10 +53,7 @@ namespace MarkPad.Document
         {
             timer.Stop();
 
-            Task.Factory.StartNew<string>(text =>
-            {
-                return DocumentParser.Parse(text.ToString());
-            }, Document.Text)
+            Task.Factory.StartNew(text => DocumentParser.Parse(text.ToString()), Document.Text)
             .ContinueWith(s =>
             {
                 if (s.IsFaulted)
@@ -59,7 +62,13 @@ namespace MarkPad.Document
                     return;
                 }
 
-                this.Render = s.Result;
+                var result = s.Result;
+                if (siteContext != null)
+                {
+                    result = siteContext.ConvertToAbsolutePaths(result);
+                }
+
+                Render = result;
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
@@ -73,6 +82,7 @@ namespace MarkPad.Document
             Original = text;
 
             Update();
+            EvaluateContext();
         }
 
         public void OpenFromWeb(Post post)
@@ -83,6 +93,7 @@ namespace MarkPad.Document
             Original = post.description;
 
             Update();
+            EvaluateContext();
         }
 
         public Post Post { get; private set; }
@@ -110,6 +121,7 @@ namespace MarkPad.Document
                 filename = path;
                 title = new FileInfo(filename).Name;
                 NotifyOfPropertyChange(() => DisplayName);
+                EvaluateContext();
             }
 
             try
@@ -146,6 +158,11 @@ namespace MarkPad.Document
             return true;
         }
 
+        private void EvaluateContext()
+        {
+            siteContext = siteContextGenerator.GetContext(filename);
+        }
+
         public TextDocument Document { get; set; }
 
         public string Original { get; set; }
@@ -162,13 +179,18 @@ namespace MarkPad.Document
             get { return title; }
         }
 
+        public string FileName
+        {
+            get { return filename; } 
+        }
+
         public override void CanClose(Action<bool> callback)
         {
-            DocumentView view = (DocumentView)this.GetView();
+            var view = GetView() as DocumentView;
 
             if (!HasChanges)
             {
-                view.wb.Close();
+                CheckAndCloseView(view);
                 callback(true);
                 return;
             }
@@ -195,10 +217,19 @@ namespace MarkPad.Document
             // Close browser if tab is being closed
             if (result == true)
             {
-                view.wb.Close();
+                CheckAndCloseView(view);
             }
 
             callback(result);
+        }
+
+        private static void CheckAndCloseView(DocumentView view)
+        {
+            if (view != null
+                && view.wb != null)
+            {
+                view.wb.Close();
+            }
         }
 
         public void Print()
@@ -211,6 +242,11 @@ namespace MarkPad.Document
         }
 
         public bool DistractionFree { get; set; }
+
+        public ISiteContext SiteContext
+        {
+            get { return siteContext; }
+        }
 
         public void Publish(string postid, string postTitle, string[] categories, BlogSetting blog)
         {
@@ -278,7 +314,10 @@ namespace MarkPad.Document
 
         public MarkPadHyperlink GetHyperlink(MarkPadHyperlink hyperlink)
         {
-            var viewModel = new HyperlinkEditorViewModel(hyperlink.Text, hyperlink.Url);
+            var viewModel = new HyperlinkEditorViewModel(hyperlink.Text, hyperlink.Url)
+                                {
+                                    IsUrlFocussed = !String.IsNullOrWhiteSpace(hyperlink.Text)
+                                };
             windowManager.ShowDialog(viewModel);
             if (!viewModel.WasCancelled)
             {
@@ -290,7 +329,23 @@ namespace MarkPad.Document
 
         public int GetFontSize()
         {
-            return (int) settings.Get<FontSizes>(SettingsViewModel.FontSettingsKey);
+            return (int) settings.Get<FontSizes>(SettingsViewModel.FontSizeSettingsKey);
         }
+		public FontFamily GetFontFamily()
+		{
+			var configuredSource = settings.Get<string>(SettingsViewModel.FontFamilySettingsKey);
+			var fontFamily = TryGetFontFamilyFromStack(configuredSource, "Segoe UI", "Arial");
+			if (fontFamily == null) throw new Exception("Cannot find configured font family or fallback fonts");
+			return fontFamily;			
+		}
+		FontFamily TryGetFontFamilyFromStack(params string[] sources)
+		{
+			foreach (var source in sources)
+			{
+				var fontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == source);
+				if (fontFamily != null) return fontFamily;
+			}
+			return null;
+		}
     }
 }
