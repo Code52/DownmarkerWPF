@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 
 namespace MarkPad.Updater
 {
@@ -8,14 +7,19 @@ namespace MarkPad.Updater
         public string Message { get; set; }
         public bool WasCancelled { get; private set; }
 
-        public void Cancel()
+        public UpdaterChangesViewModel()
         {
             WasCancelled = true;
+        }
+
+        public void Cancel()
+        {
             TryClose();
         }
 
         public void Accept()
         {
+            WasCancelled = false;
             TryClose();
         }
     }

@@ -1,11 +1,37 @@
-﻿<Window x:Class="MarkPad.Updater.UpdaterChangesView"
+﻿<Controls:MetroWindow x:Class="MarkPad.Updater.UpdaterChangesView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="UpdaterView" Height="300" Width="300">
-    <Grid>
-        <Button x:Name="Accept" Content="Restart Markpad and Apply" VerticalAlignment="Bottom" Margin="113,0,8,8"/>
-    	<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Margin="8,8,0,0" FontSize="21.333"><Run Language="en-au" Text="Update Available"/></TextBlock>
-    	<TextBlock x:Name="Message" Margin="8,36.373,8,40" TextWrapping="Wrap" Text="TextBlock"/>
-        
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" 
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Height="300" Width="300"
+        ShowInTaskbar="False"
+        ShowTitleBar="false">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colours.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MarkPad;component/Styles/MarkPad.Accents.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Window.Background>
+        <LinearGradientBrush MappingMode="Absolute" StartPoint="0,0" EndPoint="0,150">
+            <GradientStop Color="#FFDEDEDE"/>
+            <GradientStop Color="White" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Background>
+    
+    <Grid Margin="10">      
+        <TextBlock  TextWrapping="Wrap"  FontSize="21.333" Text="update available"/>
+        <ScrollViewer Margin="0,50,0,50" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            
+            <TextBlock x:Name="Message" TextWrapping="Wrap" Text="TextBlock"/>
+        </ScrollViewer>
+        <Button x:Name="Accept" Content="Restart Markpad and Apply" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
     </Grid>
-</Window>
+</Controls:MetroWindow>
