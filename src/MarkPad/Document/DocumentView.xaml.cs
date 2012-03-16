@@ -96,7 +96,7 @@ namespace MarkPad.Document
         /// <returns>Font size.</returns>
         private int GetFontSize()
         {
-            return 12 + ((DocumentViewModel)DataContext).GetFontSize();
+            return Constants.FONT_SIZE_ENUM_ADJUSTMENT + ((DocumentViewModel)DataContext).GetFontSize();
         }
 
 		private FontFamily GetFontFamily()

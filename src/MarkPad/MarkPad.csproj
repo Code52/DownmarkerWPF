@@ -132,6 +132,7 @@
     <Compile Include="Extensions\DataImage.cs" />
     <Compile Include="Framework\Events\SettingsChangedEvent.cs" />
     <Compile Include="Framework\FocusExtension.cs" />
+    <Compile Include="Framework\FontHelpers.cs" />
     <Compile Include="Framework\FrameworkExtensions.cs" />
     <Compile Include="Framework\Dynamic.cs" />
     <Compile Include="ExceptionDialog.xaml.cs">

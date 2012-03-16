@@ -14,6 +14,7 @@ using Ookii.Dialogs.Wpf;
 using System.Windows.Media;
 using System.Collections.Generic;
 using System.Linq;
+using MarkPad.Framework;
 
 namespace MarkPad.Document
 {
@@ -334,18 +335,9 @@ namespace MarkPad.Document
 		public FontFamily GetFontFamily()
 		{
 			var configuredSource = settings.Get<string>(SettingsViewModel.FontFamilySettingsKey);
-			var fontFamily = TryGetFontFamilyFromStack(configuredSource, "Segoe UI", "Arial");
+			var fontFamily = FontHelpers.TryGetFontFamilyFromStack(configuredSource, "Segoe UI", "Arial");
 			if (fontFamily == null) throw new Exception("Cannot find configured font family or fallback fonts");
 			return fontFamily;			
-		}
-		FontFamily TryGetFontFamilyFromStack(params string[] sources)
-		{
-			foreach (var source in sources)
-			{
-				var fontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == source);
-				if (fontFamily != null) return fontFamily;
-			}
-			return null;
 		}
     }
 }
