@@ -13,6 +13,7 @@ using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
 using Ookii.Dialogs.Wpf;
 using System.Linq;
+using System.Reflection;
 
 namespace MarkPad.Shell
 {
@@ -218,7 +219,24 @@ namespace MarkPad.Shell
                 .ExecuteSafely(v => v.SetHyperlink());
         }
 
+        public void ShowHelp()
+        {
+            var creator = documentCreator();
+            creator.Original = GetHelpText(); // set the Original so it isn't marked as requiring a save unless we change it
+            creator.Document.Text = creator.Original;
+            MDI.Open(creator);
+            creator.Update(); // ensure that the markdown is rendered
+        }
 
+        private string GetHelpText()
+        {
+            var resourcePath = "MarkPad.Help.md";
+            using (var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath))
+            using (var streamReader = new System.IO.StreamReader(resourceStream))
+            {
+                return streamReader.ReadToEnd();
+            }
+        }
 
         public void PublishDocument()
         {
