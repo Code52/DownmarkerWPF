@@ -54,7 +54,8 @@ namespace MarkPad.Shell
 
 		private void InitialiseDefaultSettings()
 		{
-			settingsService.SetAsDefault(SettingsViewModel.FontFamilySettingsKey, "Segoe UI");
+			settingsService.SetAsDefault(SettingsViewModel.FontFamilySettingsKey, Constants.DEFAULT_EDITOR_FONT_FAMILY);
+			settingsService.SetAsDefault(SettingsViewModel.FontSizeSettingsKey, Constants.DEFAULT_EDITOR_FONT_SIZE);
 		}
 
         public override string DisplayName
