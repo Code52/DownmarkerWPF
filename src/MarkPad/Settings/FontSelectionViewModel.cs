@@ -29,7 +29,7 @@ namespace MarkPad.Settings
 		{
 			get
 			{
-				return 12 + (int)SelectedFontSize;
+				return Constants.FONT_SIZE_ENUM_ADJUSTMENT + (int)SelectedFontSize;
 			}
 		}
 

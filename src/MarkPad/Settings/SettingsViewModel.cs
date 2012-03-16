@@ -10,6 +10,7 @@ using MarkPad.Services.Interfaces;
 using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Media;
+using MarkPad.Framework;
 
 namespace MarkPad.Settings
 {
@@ -88,7 +89,7 @@ namespace MarkPad.Settings
 		{
 			get
 			{
-				return 12 + (int)SelectedFontSize;
+				return Constants.FONT_SIZE_ENUM_ADJUSTMENT + (int)SelectedFontSize;
 			}
 		}
 		public string EditorFontPreviewLabel
@@ -170,6 +171,12 @@ namespace MarkPad.Settings
 
 			SelectedFontFamily = fontSelection.SelectedFontFamily;
 			SelectedFontSize = fontSelection.SelectedFontSize;
+		}
+
+		public void ResetFont()
+		{
+			SelectedFontFamily = FontHelpers.TryGetFontFamilyFromStack(Constants.DEFAULT_EDITOR_FONT_FAMILY);
+			SelectedFontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
 		}
 
         public void Accept()
