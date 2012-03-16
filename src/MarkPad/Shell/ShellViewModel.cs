@@ -48,8 +48,14 @@ namespace MarkPad.Shell
             this.aboutCreator = aboutCreator;
             this.openFromWebCreator = openFromWebCreator;
 
+			InitialiseDefaultSettings();
             ActivateItem(mdi);
         }
+
+		private void InitialiseDefaultSettings()
+		{
+			settingsService.SetAsDefault(SettingsViewModel.FontFamilySettingsKey, "Segoe UI");
+		}
 
         public override string DisplayName
         {
