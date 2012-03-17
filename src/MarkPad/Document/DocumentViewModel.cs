@@ -2,19 +2,17 @@ using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using ICSharpCode.AvalonEdit.Document;
+using MarkPad.Framework;
 using MarkPad.HyperlinkEditor;
 using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
 using Ookii.Dialogs.Wpf;
-using System.Windows.Media;
-using System.Collections.Generic;
-using System.Linq;
-using MarkPad.Framework;
 
 namespace MarkPad.Document
 {
@@ -216,7 +214,7 @@ namespace MarkPad.Document
             }
 
             // Close browser if tab is being closed
-            if (result == true)
+            if (result)
             {
                 CheckAndCloseView(view);
             }

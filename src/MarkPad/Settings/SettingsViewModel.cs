@@ -4,13 +4,12 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows.Media;
 using Caliburn.Micro;
+using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.Services.Interfaces;
 using Microsoft.Win32;
-using System.Windows;
-using System.Windows.Media;
-using MarkPad.Framework;
 
 namespace MarkPad.Settings
 {
@@ -25,15 +24,15 @@ namespace MarkPad.Settings
         {
             public ExtensionViewModel(string extension, bool enabled)
             {
-                this.Extension = extension;
-                this.Enabled = enabled;
+                Extension = extension;
+                Enabled = enabled;
             }
 
             public string Extension { get; private set; }
             public bool Enabled { get; set; }
         }
 
-        private const string markpadKeyName = "markpad.md";
+        private const string MarkpadKeyName = "markpad.md";
 
         private readonly ISettingsService settingsService;
         private readonly IWindowManager windowManager;
@@ -48,7 +47,7 @@ namespace MarkPad.Settings
             this.blogSettingsCreator = blogSettingsCreator;
 			this.fontSelectionCreator = fontSelectionCreator;
 
-            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes"))
+            using (var key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes"))
             {
                 this.Extensions = Constants.DefaultExtensions
                     .Select(s => new ExtensionViewModel(s,
@@ -64,7 +63,7 @@ namespace MarkPad.Settings
             SelectedLanguage = settingsService.Get<SpellingLanguages>(DictionariesSettingsKey);
 
 			SelectedFontSize = settingsService.Get<FontSizes>(FontSizeSettingsKey);
-			SelectedFontFamily = Fonts.SystemFontFamilies.First(f => f.Source == settingsService.Get<string>(SettingsViewModel.FontFamilySettingsKey));
+			SelectedFontFamily = Fonts.SystemFontFamilies.First(f => f.Source == settingsService.Get<string>(FontFamilySettingsKey));
         }
 
         public IEnumerable<ExtensionViewModel> Extensions { get; set; }
@@ -75,8 +74,8 @@ namespace MarkPad.Settings
 			set
 			{
 				currentBlog = value;
-				this.NotifyOfPropertyChange(() => CanEditBlog);
-				this.NotifyOfPropertyChange(() => CanRemoveBlog);
+				NotifyOfPropertyChange(() => CanEditBlog);
+				NotifyOfPropertyChange(() => CanRemoveBlog);
 			}
 		}
         public ObservableCollection<BlogSetting> Blogs { get; set; }
@@ -204,31 +203,31 @@ namespace MarkPad.Settings
 
         private void UpdateExtensionRegistryKeys()
         {
-            string exePath = Assembly.GetEntryAssembly().Location;
+            var exePath = Assembly.GetEntryAssembly().Location;
 
-            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes", true))
+            using (var key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes", true))
             {
                 foreach (var ext in Extensions)
                 {
-                    using (RegistryKey extensionKey = key.CreateSubKey(ext.Extension))
+                    using (var extensionKey = key.CreateSubKey(ext.Extension))
                     {
                         if (ext.Enabled)
-                            extensionKey.SetValue("", markpadKeyName);
+                            extensionKey.SetValue("", MarkpadKeyName);
                         else
                             extensionKey.SetValue("", "");
                     }
                 }
 
-                using (RegistryKey markpadKey = key.CreateSubKey(markpadKeyName))
+                using (var markpadKey = key.CreateSubKey(MarkpadKeyName))
                 {
-                    using (RegistryKey defaultIconKey = markpadKey.CreateSubKey("DefaultIcon"))
+                    using (var defaultIconKey = markpadKey.CreateSubKey("DefaultIcon"))
                     {
                         defaultIconKey.SetValue("", Path.Combine(Constants.IconDir, Constants.Icons[0]));
                     }
 
-                    using (RegistryKey shellKey = markpadKey.CreateSubKey("shell"))
+                    using (var shellKey = markpadKey.CreateSubKey("shell"))
                     {
-                        using (RegistryKey openKey = shellKey.CreateSubKey("open"))
+                        using (var openKey = shellKey.CreateSubKey("open"))
                         {
                             using (RegistryKey commandKey = openKey.CreateSubKey("command"))
                             {
