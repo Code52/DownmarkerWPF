@@ -59,18 +59,25 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </StackPanel>
-        <StackPanel Grid.Row="2">
+
+		<StackPanel Grid.Row="2" Margin="0 5 0 0">
             <TextBlock Text="Blog Sites" />
-            <StackPanel Orientation="Horizontal">
-                <ListBox x:Name="Blogs" SelectedItem="CurrentBlog"
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="70"/>
+				</Grid.ColumnDefinitions>
+				
+				<ListBox x:Name="Blogs" SelectedItem="CurrentBlog"
                          DisplayMemberPath="BlogName"
-                         Height="100" Width="200" />
-                <StackPanel  Margin="5 0 0 0" VerticalAlignment="Top">
+						 Grid.Column="0"
+                         Height="100" />
+                <StackPanel  Margin="5 0 0 0" VerticalAlignment="Top" Grid.Column="1">
                     <Button x:Name="AddBlog" Content="Add New" Height="25" VerticalAlignment="Top"/>
                     <Button x:Name="EditBlog" Content="Edit" Height="25" Margin="0 5 0 0" VerticalAlignment="Top"/>
                     <Button x:Name="RemoveBlog" Content="Remove" Margin="0 5 0 0" Height="25" VerticalAlignment="Top"/>
                 </StackPanel>
-            </StackPanel>
+			</Grid>
         </StackPanel>
         
         <StackPanel Grid.Row="3" Margin="0 5 0 0">
@@ -89,10 +96,10 @@
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="50"/>
+					<ColumnDefinition Width="70"/>
 				</Grid.ColumnDefinitions>
 
-				<Border Grid.Column="0" BorderBrush="{x:Null}" Background="#d9d9d9" Height="50">
+				<Border Grid.Column="0" BorderBrush="{x:Null}" Background="#d9d9d9" Height="55">
 					<TextBlock TextWrapping="Wrap"
 							   TextAlignment="Center"
 							   VerticalAlignment="Center"
@@ -100,17 +107,22 @@
 							   FontSize="{Binding SelectedActualFontSize}"
 							   Text="MarkPad is an editor for Markdown"/>					
 				</Border>
-				<Button
-					x:Name="SelectFont" 
-					Grid.Column="1" 
-					Content="Select" 
-					Margin="5 0 0 0" 
-					Height="25" 
-					VerticalAlignment="Top"/>
+				<StackPanel Grid.Column="1" Margin="5 0 0 0" Orientation="Vertical">
+					<Button x:Name="SelectFont" 
+							Content="Select"
+							Height="25" 
+							VerticalAlignment="Top"/>
+					<Button x:Name="ResetFont" 
+							Content="Reset"
+							Height="25" 
+							Margin="0 5 0 0"
+							VerticalAlignment="Top"/>
+				</StackPanel>
+				
 			</Grid>
 		</StackPanel>
         
-        <StackPanel HorizontalAlignment="Right" Grid.Row="5" Height="25" Margin="10" Orientation="Horizontal">
+        <StackPanel HorizontalAlignment="Right" Grid.Row="5" Height="25" Margin="0 10 0 0" Orientation="Horizontal">
             <Button Width="75" x:Name="Accept" Content="OK" Margin="0 0 5 0" />
             <Button Width="75" x:Name="Cancel" Content="Cancel" />
         </StackPanel>

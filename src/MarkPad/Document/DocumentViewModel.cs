@@ -2,18 +2,17 @@ using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using ICSharpCode.AvalonEdit.Document;
+using MarkPad.Framework;
 using MarkPad.HyperlinkEditor;
 using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
 using Ookii.Dialogs.Wpf;
-using System.Windows.Media;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MarkPad.Document
 {
@@ -215,7 +214,7 @@ namespace MarkPad.Document
             }
 
             // Close browser if tab is being closed
-            if (result == true)
+            if (result)
             {
                 CheckAndCloseView(view);
             }
@@ -334,18 +333,9 @@ namespace MarkPad.Document
 		public FontFamily GetFontFamily()
 		{
 			var configuredSource = settings.Get<string>(SettingsViewModel.FontFamilySettingsKey);
-			var fontFamily = TryGetFontFamilyFromStack(configuredSource, "Segoe UI", "Arial");
+			var fontFamily = FontHelpers.TryGetFontFamilyFromStack(configuredSource, "Segoe UI", "Arial");
 			if (fontFamily == null) throw new Exception("Cannot find configured font family or fallback fonts");
 			return fontFamily;			
-		}
-		FontFamily TryGetFontFamilyFromStack(params string[] sources)
-		{
-			foreach (var source in sources)
-			{
-				var fontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == source);
-				if (fontFamily != null) return fontFamily;
-			}
-			return null;
 		}
     }
 }

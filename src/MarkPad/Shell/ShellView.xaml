@@ -202,6 +202,7 @@
                 <Button x:Name="SaveAllDocuments" Content="SAVE ALL" />
                 <Button x:Name="PrintDocument" Content="PRINT" />
                 <Button x:Name="PublishDocument" Content="PUBLISH" />
+                <Button x:Name="ShowHelp" Content="HELP" />
             </WrapPanel>
             <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Orientation="Horizontal">
                 <!--<Controls:AutomaticUpdater 

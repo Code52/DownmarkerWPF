@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using Caliburn.Micro;
 using MarkPad.About;
 using MarkPad.Document;
@@ -12,9 +15,6 @@ using MarkPad.PublishDetails;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
 using MarkPad.Updater;
-using Ookii.Dialogs.Wpf;
-using System.Linq;
-using wyDay.Controls;
 
 namespace MarkPad.Shell
 {
@@ -60,8 +60,10 @@ namespace MarkPad.Shell
 
 		private void InitialiseDefaultSettings()
 		{
-			settingsService.SetAsDefault(SettingsViewModel.FontFamilySettingsKey, "Segoe UI");
+			settingsService.SetAsDefault(SettingsViewModel.FontFamilySettingsKey, Constants.DEFAULT_EDITOR_FONT_FAMILY);
+			settingsService.SetAsDefault(SettingsViewModel.FontSizeSettingsKey, Constants.DEFAULT_EDITOR_FONT_SIZE);
 		}
+
         public override string DisplayName
         {
             get { return "MarkPad"; }
@@ -192,8 +194,9 @@ namespace MarkPad.Shell
 
             IEnumerable<DocumentViewModel> openedDocs = MDI.Items.Cast<DocumentViewModel>();
 
-            return openedDocs.Where(doc => doc != null && filename.Equals(doc.FileName)).FirstOrDefault();
+            return openedDocs.FirstOrDefault(doc => doc != null && filename.Equals(doc.FileName));
         }
+
         private DocumentView GetDocument()
         {
             return (MDI.ActiveItem as DocumentViewModel)
@@ -224,7 +227,24 @@ namespace MarkPad.Shell
                 .ExecuteSafely(v => v.SetHyperlink());
         }
 
+       public void ShowHelp()
+        {
+            var creator = documentCreator();
+            creator.Original = GetHelpText(); // set the Original so it isn't marked as requiring a save unless we change it
+            creator.Document.Text = creator.Original;
+            MDI.Open(creator);
+            creator.Update(); // ensure that the markdown is rendered
+        }
 
+        private static string GetHelpText()
+        {
+            const string helpResourceFile = "MarkPad.Help.md";
+            using (var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(helpResourceFile))
+            using (var streamReader = new StreamReader(resourceStream))
+            {
+                return streamReader.ReadToEnd();
+            }
+        }
 
         public void PublishDocument()
         {
@@ -243,8 +263,7 @@ namespace MarkPad.Shell
                 if (detailsResult != true)
                     return;
 
-                doc.Publish(doc.Post.postid == null ? null : doc.Post.postid.ToString(), pd.Title, pd.Categories,
-                            pd.Blog);
+                doc.Publish(doc.Post.postid == null ? null : doc.Post.postid.ToString(), pd.Title, pd.Categories, pd.Blog);
             }
         }
 
@@ -281,6 +300,4 @@ namespace MarkPad.Shell
             MDI.Open(doc);
         }
     }
-
-
 }
