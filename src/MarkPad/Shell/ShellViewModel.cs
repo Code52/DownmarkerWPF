@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using Caliburn.Micro;
 using MarkPad.About;
 using MarkPad.Document;
@@ -11,9 +14,6 @@ using MarkPad.OpenFromWeb;
 using MarkPad.PublishDetails;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
-using Ookii.Dialogs.Wpf;
-using System.Linq;
-using System.Reflection;
 
 namespace MarkPad.Shell
 {
@@ -185,9 +185,9 @@ namespace MarkPad.Shell
             if (filename == null)
                 return null;
 
-            IEnumerable<DocumentViewModel> openedDocs = MDI.Items.Cast<DocumentViewModel>();
+            var openedDocs = MDI.Items.Cast<DocumentViewModel>();
 
-            return openedDocs.Where(doc => doc != null && filename.Equals(doc.FileName)).FirstOrDefault();
+            return openedDocs.FirstOrDefault(doc => doc != null && filename.Equals(doc.FileName));
         }
 
         private DocumentView GetDocument()
@@ -229,11 +229,11 @@ namespace MarkPad.Shell
             creator.Update(); // ensure that the markdown is rendered
         }
 
-        private string GetHelpText()
+        private static string GetHelpText()
         {
-            var resourcePath = "MarkPad.Help.md";
-            using (var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath))
-            using (var streamReader = new System.IO.StreamReader(resourceStream))
+            const string helpResourceFile = "MarkPad.Help.md";
+            using (var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(helpResourceFile))
+            using (var streamReader = new StreamReader(resourceStream))
             {
                 return streamReader.ReadToEnd();
             }
