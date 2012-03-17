@@ -21,7 +21,6 @@ namespace MarkPad.Shell
     internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>
     {
         private readonly IEventAggregator eventAggregator;
-        private readonly Func<UpdaterViewModel> updaterCreator;
         private readonly IDialogService dialogService;
         private readonly IWindowManager windowManager;
         private readonly ISettingsService settingsService;
@@ -29,7 +28,7 @@ namespace MarkPad.Shell
         private readonly Func<SettingsViewModel> settingsCreator;
         private readonly Func<AboutViewModel> aboutCreator;
         private readonly Func<OpenFromWebViewModel> openFromWebCreator;
-        
+
         public ShellViewModel(
             IDialogService dialogService,
             IWindowManager windowManager,
@@ -43,26 +42,25 @@ namespace MarkPad.Shell
             Func<OpenFromWebViewModel> openFromWebCreator)
         {
             this.eventAggregator = eventAggregator;
-            this.updaterCreator = updaterCreator;
             this.dialogService = dialogService;
             this.windowManager = windowManager;
             this.settingsService = settingsService;
-            this.MDI = mdi;
+            MDI = mdi;
             Updater = updaterViewModel;
             this.documentCreator = documentCreator;
             this.settingsCreator = settingsCreator;
             this.aboutCreator = aboutCreator;
             this.openFromWebCreator = openFromWebCreator;
-            
-			InitialiseDefaultSettings();
+
+            InitialiseDefaultSettings();
             ActivateItem(mdi);
         }
 
-		private void InitialiseDefaultSettings()
-		{
-			settingsService.SetAsDefault(SettingsViewModel.FontFamilySettingsKey, Constants.DEFAULT_EDITOR_FONT_FAMILY);
-			settingsService.SetAsDefault(SettingsViewModel.FontSizeSettingsKey, Constants.DEFAULT_EDITOR_FONT_SIZE);
-		}
+        private void InitialiseDefaultSettings()
+        {
+            settingsService.SetAsDefault(SettingsViewModel.FontFamilySettingsKey, Constants.DEFAULT_EDITOR_FONT_FAMILY);
+            settingsService.SetAsDefault(SettingsViewModel.FontSizeSettingsKey, Constants.DEFAULT_EDITOR_FONT_SIZE);
+        }
 
         public override string DisplayName
         {
@@ -81,7 +79,7 @@ namespace MarkPad.Shell
 
         public void Exit()
         {
-            this.TryClose();
+            TryClose();
         }
 
         public void NewDocument()
@@ -105,7 +103,6 @@ namespace MarkPad.Shell
             const string description = "Some Description";
             var date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss zzz");
             return string.Format("---\r\nlayout: post\r\ntitle: {0}\r\npermalink: {1}\r\ndescription: {2}\r\ndate: {3}\r\ntags: \"some tags here\"\r\n---\r\n\r\n", title, permalink, description, date);
-
         }
 
         public void OpenDocument()
@@ -180,7 +177,7 @@ namespace MarkPad.Shell
             {
                 doc.Print();
             }
-		}
+        }
 
         /// <summary>
         /// Returns opened document with a given filename. 
@@ -192,7 +189,7 @@ namespace MarkPad.Shell
             if (filename == null)
                 return null;
 
-            IEnumerable<DocumentViewModel> openedDocs = MDI.Items.Cast<DocumentViewModel>();
+            var openedDocs = MDI.Items.Cast<DocumentViewModel>();
 
             return openedDocs.FirstOrDefault(doc => doc != null && filename.Equals(doc.FileName));
         }
@@ -227,7 +224,7 @@ namespace MarkPad.Shell
                 .ExecuteSafely(v => v.SetHyperlink());
         }
 
-       public void ShowHelp()
+        public void ShowHelp()
         {
             var creator = documentCreator();
             creator.Original = GetHelpText(); // set the Original so it isn't marked as requiring a save unless we change it
@@ -258,7 +255,7 @@ namespace MarkPad.Shell
             var doc = MDI.ActiveItem as DocumentViewModel;
             if (doc != null)
             {
-                var pd = new Details {Title = doc.Post.title, Categories = doc.Post.categories};
+                var pd = new Details { Title = doc.Post.title, Categories = doc.Post.categories };
                 var detailsResult = windowManager.ShowDialog(new PublishDetailsViewModel(pd, blogs));
                 if (detailsResult != true)
                     return;
@@ -273,18 +270,17 @@ namespace MarkPad.Shell
             if (blogs == null || blogs.Count == 0)
             {
                 var setupBlog = dialogService.ShowConfirmation(
-					"Open from web",
-					"Do you want to configure a blog site?",
-					"No blog sites have been configured. To open a document from the web, MarkPad first needs to be integrated with a blog site.");
+                    "Open from web",
+                    "Do you want to configure a blog site?",
+                    "No blog sites have been configured. To open a document from the web, MarkPad first needs to be integrated with a blog site.");
 
-				if (!setupBlog)
-					return;
+                if (!setupBlog)
+                    return;
 
-				var settings = settingsCreator();
-				if (!settings.AddBlog())
-					return;                    
+                var settings = settingsCreator();
+                if (!settings.AddBlog())
+                    return;
             }
-
 
             var openFromWeb = openFromWebCreator();
             openFromWeb.InitializeBlogs(blogs);
