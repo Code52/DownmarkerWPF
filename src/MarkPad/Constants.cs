@@ -34,6 +34,10 @@ namespace MarkPad
 
 		public const string DEFAULT_EDITOR_FONT_FAMILY = "Segoe UI";
 		public const FontSizes DEFAULT_EDITOR_FONT_SIZE = FontSizes.FontSize12;
+		public const bool DEFAULT_IS_SPELL_CHECK_ENABLED = true;
+
+		public const string SETTINGS_IS_SPELL_CHECK_ENABLED_KEY = "IsSpellCheckEnabled";
+
 		public const int FONT_SIZE_ENUM_ADJUSTMENT = 12;
     }
 }

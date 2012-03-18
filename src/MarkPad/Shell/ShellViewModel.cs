@@ -57,6 +57,7 @@ namespace MarkPad.Shell
 		{
 			settingsService.SetAsDefault(SettingsViewModel.FontFamilySettingsKey, Constants.DEFAULT_EDITOR_FONT_FAMILY);
 			settingsService.SetAsDefault(SettingsViewModel.FontSizeSettingsKey, Constants.DEFAULT_EDITOR_FONT_SIZE);
+			settingsService.SetAsDefault(Constants.SETTINGS_IS_SPELL_CHECK_ENABLED_KEY, Constants.DEFAULT_IS_SPELL_CHECK_ENABLED);
 		}
 
         public override string DisplayName

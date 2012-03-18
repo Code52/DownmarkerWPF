@@ -64,6 +64,7 @@ namespace MarkPad.Settings
 
 			SelectedFontSize = settingsService.Get<FontSizes>(FontSizeSettingsKey);
 			SelectedFontFamily = Fonts.SystemFontFamilies.First(f => f.Source == settingsService.Get<string>(FontFamilySettingsKey));
+			IsSpellCheckEnabled = settingsService.Get<bool>(Constants.SETTINGS_IS_SPELL_CHECK_ENABLED_KEY);
         }
 
         public IEnumerable<ExtensionViewModel> Extensions { get; set; }
@@ -83,6 +84,7 @@ namespace MarkPad.Settings
         public SpellingLanguages SelectedLanguage { get; set; }
 		public FontSizes SelectedFontSize { get; set; }
 		public FontFamily SelectedFontFamily { get; set; }
+		public bool IsSpellCheckEnabled { get; set; }
 
 		public int SelectedActualFontSize
 		{
@@ -189,6 +191,7 @@ namespace MarkPad.Settings
             settingsService.Set(DictionariesSettingsKey, SelectedLanguage);
             settingsService.Set(FontSizeSettingsKey, SelectedFontSize);
 			settingsService.Set(FontFamilySettingsKey, SelectedFontFamily.Source);
+			settingsService.Set(Constants.SETTINGS_IS_SPELL_CHECK_ENABLED_KEY, IsSpellCheckEnabled);
             settingsService.Save();
 
             IoC.Get<IEventAggregator>().Publish(new SettingsChangedEvent());
