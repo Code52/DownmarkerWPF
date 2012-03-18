@@ -328,11 +328,11 @@ namespace MarkPad.Document
 
         public int GetFontSize()
         {
-            return (int) settings.Get<FontSizes>(SettingsViewModel.FontSizeSettingsKey);
+            return (int) settings.Get<FontSizes>(Constants.SETTINGS_FONT_SIZE_KEY);
         }
 		public FontFamily GetFontFamily()
 		{
-			var configuredSource = settings.Get<string>(SettingsViewModel.FontFamilySettingsKey);
+			var configuredSource = settings.Get<string>(Constants.SETTINGS_FONT_FAMILY_KEY);
 			var fontFamily = FontHelpers.TryGetFontFamilyFromStack(configuredSource, "Segoe UI", "Arial");
 			if (fontFamily == null) throw new Exception("Cannot find configured font family or fallback fonts");
 			return fontFamily;			

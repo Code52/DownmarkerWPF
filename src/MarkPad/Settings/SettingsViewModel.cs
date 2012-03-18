@@ -15,11 +15,6 @@ namespace MarkPad.Settings
 {
     public class SettingsViewModel : Screen
     {
-        private const string BlogsSettingsKey = "Blogs";
-        private const string DictionariesSettingsKey = "Dictionaries";
-        public const string FontSizeSettingsKey = "Font";
-		public const string FontFamilySettingsKey = "FontFamily";
-
         public class ExtensionViewModel : PropertyChangedBase
         {
             public ExtensionViewModel(string extension, bool enabled)
@@ -55,15 +50,15 @@ namespace MarkPad.Settings
                     .ToArray();
             }
 
-            var blogs = settingsService.Get<List<BlogSetting>>(BlogsSettingsKey) ?? new List<BlogSetting>();
+            var blogs = settingsService.Get<List<BlogSetting>>(Constants.SETTINGS_BLOGS_KEY) ?? new List<BlogSetting>();
 
             Blogs = new ObservableCollection<BlogSetting>(blogs);
 
             Languages = Enum.GetValues(typeof(SpellingLanguages)).OfType<SpellingLanguages>().ToArray();
-            SelectedLanguage = settingsService.Get<SpellingLanguages>(DictionariesSettingsKey);
+			SelectedLanguage = settingsService.Get<SpellingLanguages>(Constants.SETTINGS_DICTIONARIES_KEY);
 
-			SelectedFontSize = settingsService.Get<FontSizes>(FontSizeSettingsKey);
-			SelectedFontFamily = Fonts.SystemFontFamilies.First(f => f.Source == settingsService.Get<string>(FontFamilySettingsKey));
+			SelectedFontSize = settingsService.Get<FontSizes>(Constants.SETTINGS_FONT_SIZE_KEY);
+			SelectedFontFamily = Fonts.SystemFontFamilies.First(f => f.Source == settingsService.Get<string>(Constants.SETTINGS_FONT_FAMILY_KEY));
 			IsSpellCheckEnabled = settingsService.Get<bool>(Constants.SETTINGS_IS_SPELL_CHECK_ENABLED_KEY);
         }
 
@@ -187,10 +182,10 @@ namespace MarkPad.Settings
             var spellingService = IoC.Get<ISpellingService>();
             spellingService.SetLanguage(SelectedLanguage);
 
-            settingsService.Set(BlogsSettingsKey, Blogs.ToList());
-            settingsService.Set(DictionariesSettingsKey, SelectedLanguage);
-            settingsService.Set(FontSizeSettingsKey, SelectedFontSize);
-			settingsService.Set(FontFamilySettingsKey, SelectedFontFamily.Source);
+			settingsService.Set(Constants.SETTINGS_BLOGS_KEY, Blogs.ToList());
+			settingsService.Set(Constants.SETTINGS_DICTIONARIES_KEY, SelectedLanguage);
+			settingsService.Set(Constants.SETTINGS_FONT_SIZE_KEY, SelectedFontSize);
+			settingsService.Set(Constants.SETTINGS_FONT_FAMILY_KEY, SelectedFontFamily.Source);
 			settingsService.Set(Constants.SETTINGS_IS_SPELL_CHECK_ENABLED_KEY, IsSpellCheckEnabled);
             settingsService.Save();
 

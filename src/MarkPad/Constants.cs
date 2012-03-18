@@ -37,6 +37,10 @@ namespace MarkPad
 		public const bool DEFAULT_IS_SPELL_CHECK_ENABLED = true;
 
 		public const string SETTINGS_IS_SPELL_CHECK_ENABLED_KEY = "IsSpellCheckEnabled";
+        public const string SETTINGS_BLOGS_KEY = "Blogs";
+		public const string SETTINGS_DICTIONARIES_KEY = "Dictionaries";
+        public const string SETTINGS_FONT_SIZE_KEY = "Font";
+		public const string SETTINGS_FONT_FAMILY_KEY = "FontFamily";
 
 		public const int FONT_SIZE_ENUM_ADJUSTMENT = 12;
     }

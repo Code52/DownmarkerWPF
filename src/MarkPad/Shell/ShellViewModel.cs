@@ -55,8 +55,8 @@ namespace MarkPad.Shell
 
 		private void InitialiseDefaultSettings()
 		{
-			settingsService.SetAsDefault(SettingsViewModel.FontFamilySettingsKey, Constants.DEFAULT_EDITOR_FONT_FAMILY);
-			settingsService.SetAsDefault(SettingsViewModel.FontSizeSettingsKey, Constants.DEFAULT_EDITOR_FONT_SIZE);
+			settingsService.SetAsDefault(Constants.SETTINGS_FONT_FAMILY_KEY, Constants.DEFAULT_EDITOR_FONT_FAMILY);
+			settingsService.SetAsDefault(Constants.SETTINGS_FONT_SIZE_KEY, Constants.DEFAULT_EDITOR_FONT_SIZE);
 			settingsService.SetAsDefault(Constants.SETTINGS_IS_SPELL_CHECK_ENABLED_KEY, Constants.DEFAULT_IS_SPELL_CHECK_ENABLED);
 		}
 
