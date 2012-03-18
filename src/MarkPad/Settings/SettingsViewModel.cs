@@ -8,6 +8,7 @@ using System.Windows.Media;
 using Caliburn.Micro;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
+using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 using Microsoft.Win32;
 
@@ -15,41 +16,40 @@ namespace MarkPad.Settings
 {
     public class SettingsViewModel : Screen
     {
+        public const string FontSizeSettingsKey = "Font";
+        public const string FontFamilySettingsKey = "FontFamily";
+        public IEnumerable<ExtensionViewModel> Extensions { get; set; }
+        public IEnumerable<FontSizes> FontSizes { get; set; }
+        public IEnumerable<FontFamily> FontFamilies { get; set; }
+        public ObservableCollection<BlogSetting> Blogs { get; set; }
+        public IEnumerable<SpellingLanguages> Languages { get; set; }
+        public SpellingLanguages SelectedLanguage { get; set; }
+        public FontSizes SelectedFontSize { get; set; }
+        public FontFamily SelectedFontFamily { get; set; }
+
         private const string BlogsSettingsKey = "Blogs";
         private const string DictionariesSettingsKey = "Dictionaries";
-        public const string FontSizeSettingsKey = "Font";
-		public const string FontFamilySettingsKey = "FontFamily";
-
-        public class ExtensionViewModel : PropertyChangedBase
-        {
-            public ExtensionViewModel(string extension, bool enabled)
-            {
-                Extension = extension;
-                Enabled = enabled;
-            }
-
-            public string Extension { get; private set; }
-            public bool Enabled { get; set; }
-        }
-
         private const string MarkpadKeyName = "markpad.md";
 
         private readonly ISettingsService settingsService;
         private readonly IWindowManager windowManager;
-
-		private readonly Func<BlogSettingsViewModel> blogSettingsCreator;
-		private readonly Func<FontSelectionViewModel> fontSelectionCreator;
-
-        public SettingsViewModel(ISettingsService settingsService, IWindowManager windowManager, Func<BlogSettingsViewModel> blogSettingsCreator, Func<FontSelectionViewModel> fontSelectionCreator)
+        private readonly IEventAggregator eventAggregator;
+        private readonly Func<BlogSettingsViewModel> blogSettingsCreator;
+        
+        public SettingsViewModel(
+            ISettingsService settingsService,
+            IWindowManager windowManager,
+            IEventAggregator eventAggregator,
+            Func<BlogSettingsViewModel> blogSettingsCreator)
         {
             this.settingsService = settingsService;
             this.windowManager = windowManager;
+            this.eventAggregator = eventAggregator;
             this.blogSettingsCreator = blogSettingsCreator;
-			this.fontSelectionCreator = fontSelectionCreator;
-
-            using (var key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes"))
+            
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes"))
             {
-                this.Extensions = Constants.DefaultExtensions
+                Extensions = Constants.DefaultExtensions
                     .Select(s => new ExtensionViewModel(s,
                         key.GetSubKeyNames().Contains(s) && !string.IsNullOrEmpty(key.OpenSubKey(s).GetValue("").ToString())))
                     .ToArray();
@@ -60,47 +60,52 @@ namespace MarkPad.Settings
             Blogs = new ObservableCollection<BlogSetting>(blogs);
 
             Languages = Enum.GetValues(typeof(SpellingLanguages)).OfType<SpellingLanguages>().ToArray();
-            SelectedLanguage = settingsService.Get<SpellingLanguages>(DictionariesSettingsKey);
+            FontSizes = Enum.GetValues(typeof(FontSizes)).OfType<FontSizes>().ToArray();
+            FontFamilies = Fonts.SystemFontFamilies.OrderBy(f => f.Source);
 
-			SelectedFontSize = settingsService.Get<FontSizes>(FontSizeSettingsKey);
-			SelectedFontFamily = Fonts.SystemFontFamilies.First(f => f.Source == settingsService.Get<string>(FontFamilySettingsKey));
+            SelectedLanguage = settingsService.Get<SpellingLanguages>(DictionariesSettingsKey);
+            
+            var fontFamily = settingsService.Get<string>(FontFamilySettingsKey);
+            SelectedFontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == fontFamily);
+            SelectedFontSize = settingsService.Get<FontSizes>(FontSizeSettingsKey);
+
+            if (SelectedFontFamily == null)
+            {
+                SelectedFontFamily = FontHelpers.TryGetFontFamilyFromStack(Constants.DEFAULT_EDITOR_FONT_FAMILY);
+                SelectedFontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
+            }
         }
 
-        public IEnumerable<ExtensionViewModel> Extensions { get; set; }
-		private BlogSetting currentBlog;
-		public BlogSetting CurrentBlog
-		{
-			get { return currentBlog; }
-			set
-			{
-				currentBlog = value;
-				NotifyOfPropertyChange(() => CanEditBlog);
-				NotifyOfPropertyChange(() => CanRemoveBlog);
-			}
-		}
-        public ObservableCollection<BlogSetting> Blogs { get; set; }
-        public IEnumerable<SpellingLanguages> Languages { get; set; }
-        public SpellingLanguages SelectedLanguage { get; set; }
-		public FontSizes SelectedFontSize { get; set; }
-		public FontFamily SelectedFontFamily { get; set; }
+        private BlogSetting currentBlog;
+        public BlogSetting CurrentBlog
+        {
+            get { return currentBlog; }
+            set
+            {
+                currentBlog = value;
+                NotifyOfPropertyChange(() => CanEditBlog);
+                NotifyOfPropertyChange(() => CanRemoveBlog);
+            }
+        }
 
-		public int SelectedActualFontSize
-		{
-			get
-			{
-				return Constants.FONT_SIZE_ENUM_ADJUSTMENT + (int)SelectedFontSize;
-			}
-		}
-		public string EditorFontPreviewLabel
-		{
-			get
-			{
-				return string.Format(
-					"Editor font ({0}, {1} pt)",
-					SelectedFontFamily.Source,
-					SelectedActualFontSize);
-			}
-		}
+        public int SelectedActualFontSize
+        {
+            get
+            {
+                return Constants.FONT_SIZE_ENUM_ADJUSTMENT + (int)SelectedFontSize;
+            }
+        }
+
+        public string EditorFontPreviewLabel
+        {
+            get
+            {
+                return string.Format(
+                    "Editor font ({0}, {1} pt)",
+                    SelectedFontFamily.Source,
+                    SelectedActualFontSize);
+            }
+        }
 
         public override string DisplayName
         {
@@ -128,10 +133,11 @@ namespace MarkPad.Settings
 
             Blogs.Add(blog);
 
-			return true;
+            return true;
         }
 
-		public bool CanEditBlog { get { return currentBlog != null; } }
+        public bool CanEditBlog { get { return currentBlog != null; } }
+
         public void EditBlog()
         {
             if (CurrentBlog == null) return;
@@ -152,31 +158,19 @@ namespace MarkPad.Settings
             CurrentBlog.EndEdit();
         }
 
-		public bool CanRemoveBlog { get { return currentBlog != null; } }
-		public void RemoveBlog()
+        public bool CanRemoveBlog { get { return currentBlog != null; } }
+
+        public void RemoveBlog()
         {
             if (CurrentBlog != null)
                 Blogs.Remove(CurrentBlog);
         }
 
-		public void SelectFont()
-		{
-			var fontSelection = fontSelectionCreator();
-			fontSelection.SelectedFontFamily = SelectedFontFamily;
-			fontSelection.SelectedFontSize = SelectedFontSize;
-
-			var result = windowManager.ShowDialog(fontSelection);
-			if (result != true) return;
-
-			SelectedFontFamily = fontSelection.SelectedFontFamily;
-			SelectedFontSize = fontSelection.SelectedFontSize;
-		}
-
-		public void ResetFont()
-		{
-			SelectedFontFamily = FontHelpers.TryGetFontFamilyFromStack(Constants.DEFAULT_EDITOR_FONT_FAMILY);
-			SelectedFontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
-		}
+        public void ResetFont()
+        {
+            SelectedFontFamily = FontHelpers.TryGetFontFamilyFromStack(Constants.DEFAULT_EDITOR_FONT_FAMILY);
+            SelectedFontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
+        }
 
         public void Accept()
         {
@@ -188,17 +182,16 @@ namespace MarkPad.Settings
             settingsService.Set(BlogsSettingsKey, Blogs.ToList());
             settingsService.Set(DictionariesSettingsKey, SelectedLanguage);
             settingsService.Set(FontSizeSettingsKey, SelectedFontSize);
-			settingsService.Set(FontFamilySettingsKey, SelectedFontFamily.Source);
+            settingsService.Set(FontFamilySettingsKey, SelectedFontFamily.Source);
             settingsService.Save();
 
             IoC.Get<IEventAggregator>().Publish(new SettingsChangedEvent());
-
-            TryClose();
         }
 
-        public void Cancel()
+        public void HideSettings()
         {
-            TryClose();
+            eventAggregator.Publish(new SettingsCloseEvent());
+            Accept();
         }
 
         private void UpdateExtensionRegistryKeys()
@@ -211,10 +204,7 @@ namespace MarkPad.Settings
                 {
                     using (var extensionKey = key.CreateSubKey(ext.Extension))
                     {
-                        if (ext.Enabled)
-                            extensionKey.SetValue("", MarkpadKeyName);
-                        else
-                            extensionKey.SetValue("", "");
+                        extensionKey.SetValue("", ext.Enabled ? MarkpadKeyName : "");
                     }
                 }
 

@@ -12,19 +12,20 @@ using MarkPad.MDI;
 using MarkPad.Metaweblog;
 using MarkPad.OpenFromWeb;
 using MarkPad.PublishDetails;
+using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
+using Ookii.Dialogs.Wpf;
 
 namespace MarkPad.Shell
 {
-    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>
+    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>
     {
         private readonly IEventAggregator eventAggregator;
         private readonly IDialogService dialogService;
         private readonly IWindowManager windowManager;
         private readonly ISettingsService settingsService;
         private readonly Func<DocumentViewModel> documentCreator;
-        private readonly Func<SettingsViewModel> settingsCreator;
         private readonly Func<AboutViewModel> aboutCreator;
         private readonly Func<OpenFromWebViewModel> openFromWebCreator;
 
@@ -34,8 +35,8 @@ namespace MarkPad.Shell
             ISettingsService settingsService,
             IEventAggregator eventAggregator,
             MDIViewModel mdi,
+            SettingsViewModel settingsCreator,
             Func<DocumentViewModel> documentCreator,
-            Func<SettingsViewModel> settingsCreator,
             Func<AboutViewModel> aboutCreator,
             Func<OpenFromWebViewModel> openFromWebCreator)
         {
@@ -45,19 +46,19 @@ namespace MarkPad.Shell
             this.settingsService = settingsService;
             this.MDI = mdi;
             this.documentCreator = documentCreator;
-            this.settingsCreator = settingsCreator;
             this.aboutCreator = aboutCreator;
             this.openFromWebCreator = openFromWebCreator;
 
-			InitialiseDefaultSettings();
+            Settings = settingsCreator;
+            InitialiseDefaultSettings();
             ActivateItem(mdi);
         }
 
-		private void InitialiseDefaultSettings()
-		{
-			settingsService.SetAsDefault(SettingsViewModel.FontFamilySettingsKey, Constants.DEFAULT_EDITOR_FONT_FAMILY);
-			settingsService.SetAsDefault(SettingsViewModel.FontSizeSettingsKey, Constants.DEFAULT_EDITOR_FONT_SIZE);
-		}
+        private void InitialiseDefaultSettings()
+        {
+            settingsService.SetAsDefault(SettingsViewModel.FontFamilySettingsKey, Constants.DEFAULT_EDITOR_FONT_FAMILY);
+            settingsService.SetAsDefault(SettingsViewModel.FontSizeSettingsKey, Constants.DEFAULT_EDITOR_FONT_SIZE);
+        }
 
         public override string DisplayName
         {
@@ -65,7 +66,9 @@ namespace MarkPad.Shell
             set { }
         }
 
+        public string CurrentState { get; set; }
         public MDIViewModel MDI { get; private set; }
+        public SettingsViewModel Settings { get; private set; }
 
         public override void CanClose(Action<bool> callback)
         {
@@ -149,7 +152,7 @@ namespace MarkPad.Shell
 
         public void ShowSettings()
         {
-            windowManager.ShowDialog(settingsCreator());
+            CurrentState = "ShowSettings";
         }
 
         public void ShowAbout()
@@ -265,17 +268,13 @@ namespace MarkPad.Shell
             var blogs = settingsService.Get<List<BlogSetting>>("Blogs");
             if (blogs == null || blogs.Count == 0)
             {
-                var setupBlog = dialogService.ShowConfirmation(
-					"Open from web",
-					"Do you want to configure a blog site?",
-					"No blog sites have been configured. To open a document from the web, MarkPad first needs to be integrated with a blog site.");
+                var setupBlog = dialogService.ShowConfirmation("No blogs setup", "Do you want to setup a blog?", "",
+                    new ButtonExtras(ButtonType.Yes, "Yes", "Setup a blog"),
+                    new ButtonExtras(ButtonType.No, "No", "Don't setup a blog now"));
 
-				if (!setupBlog)
-					return;
-
-				var settings = settingsCreator();
-				if (!settings.AddBlog())
-					return;                    
+                if (setupBlog)
+                    ShowSettings();
+                return;
             }
 
             var openFromWeb = openFromWebCreator();
@@ -290,6 +289,11 @@ namespace MarkPad.Shell
             var doc = documentCreator();
             doc.OpenFromWeb(post);
             MDI.Open(doc);
+        }
+
+        public void Handle(SettingsCloseEvent message)
+        {
+            CurrentState = "HideSettings";
         }
     }
 }
