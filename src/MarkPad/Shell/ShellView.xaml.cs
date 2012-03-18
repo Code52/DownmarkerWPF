@@ -6,7 +6,6 @@ namespace MarkPad.Shell
 {
     public partial class ShellView
     {
-        private bool CheatSheetVisible = false;
         private void DragMoveWindow(object sender, MouseButtonEventArgs e)
         {
             if (e.RightButton != MouseButtonState.Pressed && e.MiddleButton != MouseButtonState.Pressed && e.LeftButton == MouseButtonState.Pressed)
@@ -75,38 +74,6 @@ namespace MarkPad.Shell
             bool isFileDrop = e.Data.GetDataPresent(DataFormats.FileDrop);
             e.Effects = isFileDrop ? DragDropEffects.Move : DragDropEffects.None;
             e.Handled = true;
-        }
-
-        private void WindowKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.F9)
-            {
-                ToggleCheatSheet();
-            }
-        }
-
-        private void ToggleCheatSheet()
-        {
-            if (CheatSheetVisible)
-            {
-                var sb = Resources["HideCheatSheet"] as Storyboard;
-                if (sb == null)
-                    return;
-                sb.Begin();
-            }
-            else
-            {
-                var sb = Resources["ShowCheatSheet"] as Storyboard;
-                if (sb == null)
-                    return;
-                sb.Begin();
-            }
-
-            CheatSheetVisible = !CheatSheetVisible;
-        }
-        private void DismissCheatSheet(object sender, RoutedEventArgs e)
-        {
-            ToggleCheatSheet();
         }
     }
 }

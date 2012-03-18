@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using Caliburn.Micro;
 using MarkPad.About;
 using MarkPad.Document;
@@ -11,7 +14,6 @@ using MarkPad.OpenFromWeb;
 using MarkPad.PublishDetails;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
-using Ookii.Dialogs.Wpf;
 
 namespace MarkPad.Shell
 {
@@ -48,9 +50,15 @@ namespace MarkPad.Shell
             this.openFromWebCreator = openFromWebCreator;
 
             Settings = settingsCreator();
+			InitialiseDefaultSettings();
             ActivateItem(mdi);
         }
 
+		private void InitialiseDefaultSettings()
+		{
+			settingsService.SetAsDefault(SettingsViewModel.FontFamilySettingsKey, Constants.DEFAULT_EDITOR_FONT_FAMILY);
+			settingsService.SetAsDefault(SettingsViewModel.FontSizeSettingsKey, Constants.DEFAULT_EDITOR_FONT_SIZE);
+		}
         public override string DisplayName
         {
             get { return "MarkPad"; }
@@ -101,14 +109,20 @@ namespace MarkPad.Shell
             if (path == null)
                 return;
 
-            foreach (var p in path)
-                eventAggregator.Publish(new FileOpenEvent(p));
+            OpenDocument(path);
         }
 
         public void OpenDocument(IEnumerable<string> filenames)
         {
-            foreach(var fn in filenames)
-                eventAggregator.Publish(new FileOpenEvent(fn));
+            foreach (var fn in filenames)
+            {
+                DocumentViewModel openedDoc = GetOpenedDocument(fn);
+
+                if (openedDoc != null)
+                    MDI.ActivateItem(openedDoc);
+                else
+                    eventAggregator.Publish(new FileOpenEvent(fn));
+            }
         }
 
         public void SaveDocument()
@@ -163,6 +177,21 @@ namespace MarkPad.Shell
             }
         }
 
+        /// <summary>
+        /// Returns opened document with a given filename. 
+        /// </summary>
+        /// <param name="filename">Fully qualified path to the document file.</param>
+        /// <returns>Opened document or null if file hasn't been yet opened.</returns>
+        private DocumentViewModel GetOpenedDocument(string filename)
+        {
+            if (filename == null)
+                return null;
+
+            var openedDocs = MDI.Items.Cast<DocumentViewModel>();
+
+            return openedDocs.FirstOrDefault(doc => doc != null && filename.Equals(doc.FileName));
+        }
+
         private DocumentView GetDocument()
         {
             return (MDI.ActiveItem as DocumentViewModel)
@@ -192,8 +221,26 @@ namespace MarkPad.Shell
             GetDocument()
                 .ExecuteSafely(v => v.SetHyperlink());
         }
-        
-        public void PublishDocument()
+		
+        public void ShowHelp()
+        {
+            var creator = documentCreator();
+            creator.Original = GetHelpText(); // set the Original so it isn't marked as requiring a save unless we change it
+            creator.Document.Text = creator.Original;
+            MDI.Open(creator);
+            creator.Update(); // ensure that the markdown is rendered
+        }
+
+        private static string GetHelpText()
+        {
+            const string helpResourceFile = "MarkPad.Help.md";
+            using (var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(helpResourceFile))
+            using (var streamReader = new StreamReader(resourceStream))
+            {
+                return streamReader.ReadToEnd();
+            }
+        }
+       public void PublishDocument()
         {
             var blogs = settingsService.Get<List<BlogSetting>>("Blogs");
             if (blogs == null || blogs.Count == 0)
@@ -219,13 +266,17 @@ namespace MarkPad.Shell
             var blogs = settingsService.Get<List<BlogSetting>>("Blogs");
             if (blogs == null || blogs.Count == 0)
             {
-                var setupBlog = dialogService.ShowConfirmation("No blogs setup", "Do you want to setup a blog?", "", 
-                    new ButtonExtras(ButtonType.Yes, "Yes", "Setup a blog"),
-                    new ButtonExtras(ButtonType.No, "No", "Don't setup a blog now"));
+                var setupBlog = dialogService.ShowConfirmation(
+					"Open from web",
+					"Do you want to configure a blog site?",
+					"No blog sites have been configured. To open a document from the web, MarkPad first needs to be integrated with a blog site.");
 
-                if (setupBlog)
-                    ShowSettings();
-                return;
+				if (!setupBlog)
+					return;
+
+				var settings = settingsCreator();
+				if (!settings.AddBlog())
+					return;                    
             }
 
             var openFromWeb = openFromWebCreator();

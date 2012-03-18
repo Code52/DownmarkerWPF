@@ -1,10 +1,9 @@
 bin
 obj
 Packages
-
 *.suo
 *.user
 *.dat
-
 _Resharper*
 msbuild.log
+*.cache

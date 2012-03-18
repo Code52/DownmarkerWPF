@@ -35,7 +35,10 @@ namespace MarkPad.Document
 
         private static string MarkdownConvert(string contents)
         {
-            return markdown.Transform(contents);
+            lock (markdown)
+            {
+                return markdown.Transform(contents);
+            }
         }
 
         private static string ToHtml(string header, string contents)

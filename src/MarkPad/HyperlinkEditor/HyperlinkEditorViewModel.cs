@@ -15,6 +15,7 @@ namespace MarkPad.HyperlinkEditor
 
         public string Text { get; set; }
         public string Url { get; set; }
+        public bool IsUrlFocussed { get; set; }
 
         public void Cancel()
         {
