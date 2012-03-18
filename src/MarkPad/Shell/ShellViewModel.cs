@@ -14,6 +14,7 @@ using MarkPad.OpenFromWeb;
 using MarkPad.PublishDetails;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
+using MarkPad.Updater;
 
 namespace MarkPad.Shell
 {
@@ -34,6 +35,7 @@ namespace MarkPad.Shell
             ISettingsService settingsService,
             IEventAggregator eventAggregator,
             MDIViewModel mdi,
+            UpdaterViewModel updaterViewModel,
             Func<DocumentViewModel> documentCreator,
             Func<SettingsViewModel> settingsCreator,
             Func<AboutViewModel> aboutCreator,
@@ -43,21 +45,22 @@ namespace MarkPad.Shell
             this.dialogService = dialogService;
             this.windowManager = windowManager;
             this.settingsService = settingsService;
-            this.MDI = mdi;
+            MDI = mdi;
+            Updater = updaterViewModel;
             this.documentCreator = documentCreator;
             this.settingsCreator = settingsCreator;
             this.aboutCreator = aboutCreator;
             this.openFromWebCreator = openFromWebCreator;
 
-			InitialiseDefaultSettings();
+            InitialiseDefaultSettings();
             ActivateItem(mdi);
         }
 
-		private void InitialiseDefaultSettings()
-		{
-			settingsService.SetAsDefault(SettingsViewModel.FontFamilySettingsKey, Constants.DEFAULT_EDITOR_FONT_FAMILY);
-			settingsService.SetAsDefault(SettingsViewModel.FontSizeSettingsKey, Constants.DEFAULT_EDITOR_FONT_SIZE);
-		}
+        private void InitialiseDefaultSettings()
+        {
+            settingsService.SetAsDefault(SettingsViewModel.FontFamilySettingsKey, Constants.DEFAULT_EDITOR_FONT_FAMILY);
+            settingsService.SetAsDefault(SettingsViewModel.FontSizeSettingsKey, Constants.DEFAULT_EDITOR_FONT_SIZE);
+        }
 
         public override string DisplayName
         {
@@ -66,6 +69,7 @@ namespace MarkPad.Shell
         }
 
         public MDIViewModel MDI { get; private set; }
+        public UpdaterViewModel Updater { get; set; }
 
         public override void CanClose(Action<bool> callback)
         {
@@ -75,7 +79,7 @@ namespace MarkPad.Shell
 
         public void Exit()
         {
-            this.TryClose();
+            TryClose();
         }
 
         public void NewDocument()
@@ -266,16 +270,16 @@ namespace MarkPad.Shell
             if (blogs == null || blogs.Count == 0)
             {
                 var setupBlog = dialogService.ShowConfirmation(
-					"Open from web",
-					"Do you want to configure a blog site?",
-					"No blog sites have been configured. To open a document from the web, MarkPad first needs to be integrated with a blog site.");
+                    "Open from web",
+                    "Do you want to configure a blog site?",
+                    "No blog sites have been configured. To open a document from the web, MarkPad first needs to be integrated with a blog site.");
 
-				if (!setupBlog)
-					return;
+                if (!setupBlog)
+                    return;
 
-				var settings = settingsCreator();
-				if (!settings.AddBlog())
-					return;                    
+                var settings = settingsCreator();
+                if (!settings.AddBlog())
+                    return;
             }
 
             var openFromWeb = openFromWebCreator();

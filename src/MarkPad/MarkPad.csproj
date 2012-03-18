@@ -68,6 +68,9 @@
     <Reference Include="Autofac.Configuration">
       <HintPath>..\..\packages\Autofac.2.5.2.830\lib\NET40\Autofac.Configuration.dll</HintPath>
     </Reference>
+    <Reference Include="AutomaticUpdaterWPF">
+      <HintPath>..\..\lib\AutomaticUpdaterWPF.dll</HintPath>
+    </Reference>
     <Reference Include="Awesomium.Core, Version=1.6.3.0, Culture=neutral, PublicKeyToken=e1a0d7c8071a5214, processorArchitecture=x86">
       <HintPath>..\..\lib\Awesomium.Core.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -91,7 +94,7 @@
       <HintPath>..\..\packages\AvalonEdit.4.1.0.8000\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
     <Reference Include="MahApps.Metro">
-      <HintPath>..\..\packages\MahApps.Metro.0.4.0.17\lib\net40\MahApps.Metro.dll</HintPath>
+      <HintPath>..\..\packages\MahApps.Metro.0.7.2.0\lib\net40\MahApps.Metro.dll</HintPath>
     </Reference>
     <Reference Include="MarkdownDeep">
       <HintPath>..\..\packages\MarkdownDeep.NET.1.4\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
@@ -109,7 +112,7 @@
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MahApps.Metro.0.4.0.17\lib\net40\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\..\packages\MahApps.Metro.0.7.2.0\lib\net40\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -183,6 +186,15 @@
     <Compile Include="Framework\ObjectExtensions.cs" />
     <Compile Include="Framework\MarkdownHelpers.cs" />
     <Compile Include="Document\SpellCheckBackgroundRenderer.cs" />
+    <Compile Include="Updater\UpdaterChangesViewModel.cs" />
+    <Compile Include="Updater\UpdaterChangesView.xaml.cs">
+      <DependentUpon>UpdaterChangesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Updater\UpdaterView.xaml.cs">
+      <DependentUpon>UpdaterView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Updater\UpdaterViewModel.cs" />
+    <Compile Include="Updater\UpdateState.cs" />
     <Page Include="About\AboutView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -254,6 +266,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Updater\UpdaterChangesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Updater\UpdaterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Loader.cs" />
@@ -262,6 +282,9 @@
     </Compile>
     <EmbeddedResource Include="..\..\lib\AwesomiumProcess">
       <Link>Libs\x86\AwesomiumProcess</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\tools\wyUpdate\client.wyc">
+      <Link>Updater\client.wyc</Link>
     </EmbeddedResource>
     <None Include="app.config">
       <SubType>Designer</SubType>
@@ -334,6 +357,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Fonts\Entypo.ttf" />
     <Resource Include="icon.png" />
     <Resource Include="markpad.ico" />
   </ItemGroup>
@@ -343,6 +367,9 @@
   <ItemGroup>
     <EmbeddedResource Include="..\..\lib\Hunspell.0.9.6.0\lib\Hunspellx86.dll">
       <Link>Libs\x86\Hunspellx86.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\tools\wyUpdate\wyUpdate.exe">
+      <Link>Updater\wyUpdate.exe</Link>
     </EmbeddedResource>
     <Content Include="Themes\ChaosSquirrel\style.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
