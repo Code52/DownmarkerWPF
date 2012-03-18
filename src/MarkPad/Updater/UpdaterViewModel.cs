@@ -1,23 +1,20 @@
 ﻿using System;
-using System.ComponentModel;
 using Caliburn.Micro;
-using MarkPad.Services.Interfaces;
 using wyDay.Controls;
 
 namespace MarkPad.Updater
 {
-    public class UpdaterViewModel : INotifyPropertyChanged
+    public class UpdaterViewModel : PropertyChangedBase
     {
         private readonly IWindowManager windowManager;
         private readonly Func<UpdaterChangesViewModel> changesCreator;
-        private readonly IDialogService dialogService;
-        public event PropertyChangedEventHandler PropertyChanged;
         static AutomaticUpdaterBackend au;
+
         public int Progress { get; private set; }
         public UpdateState UpdateState { get; set; }
         public bool Background { get; set; }
 
-        public UpdaterViewModel(IWindowManager windowManager, Func<UpdaterChangesViewModel> changesCreator )
+        public UpdaterViewModel(IWindowManager windowManager, Func<UpdaterChangesViewModel> changesCreator)
         {
             this.windowManager = windowManager;
             this.changesCreator = changesCreator;
@@ -33,7 +30,7 @@ namespace MarkPad.Updater
             au.UpToDate += AuUpToDate;
             au.UpdateAvailable += AuUpdateAvailable;
             au.UpdateSuccessful += AuUpdateSuccessful;
-            
+
             au.Initialize();
             au.AppLoaded();
             SetUpdateFlag();
@@ -74,7 +71,6 @@ namespace MarkPad.Updater
                     windowManager.ShowDialog(vm);
                     if (!vm.WasCancelled)
                         au.InstallNow();
-                    return;
                     break;
 
                 case UpdateStepOn.Nothing:
