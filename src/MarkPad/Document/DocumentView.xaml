@@ -1,4 +1,4 @@
-<UserControl
+﻿<UserControl
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -535,7 +535,7 @@
             Document="{Binding Document}"
             cal:Message.Attach="[Event TextChanged]=[Action Update]"
             Grid.Column="0"
-            Margin="10,10,10,-5" 
+            Margin="10,0,10,-5" 
             TextOptions.TextFormattingMode="Display"
             VerticalAlignment="Stretch"
             HorizontalAlignment="Stretch" Padding="0,0,10,0"
@@ -546,7 +546,7 @@
         </avalonedit:TextEditor>
 
 
-        <awe:WebControl x:Name="wb" UseLayoutRounding="True" Margin="10,10,10,-5" Grid.Column="1" HorizontalAlignment="Stretch" 
+        <awe:WebControl x:Name="wb" UseLayoutRounding="True" Margin="10,0,10,-5" Grid.Column="1" HorizontalAlignment="Stretch" 
                         shared:WebBrowserUtility.BindableContent="{Binding Render}">
             <awe:WebControl.Effect>
                 <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.25" Direction="270" />

@@ -1,3 +1,5 @@
+using MarkPad.Services.Implementation;
+
 namespace MarkPad.Services.Interfaces
 {
     public interface IDialogService

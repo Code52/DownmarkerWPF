@@ -96,6 +96,9 @@
     <Reference Include="MarkdownDeep">
       <HintPath>..\..\packages\MarkdownDeep.NET.1.4\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\Microsoft.Expression.Interactions.dll</HintPath>
+    </Reference>
     <Reference Include="NHunspell">
       <HintPath>..\..\lib\Hunspell.0.9.6.0\lib\net20\NHunspell.dll</HintPath>
       <Private>True</Private>
@@ -128,8 +131,8 @@
     </Compile>
     <Compile Include="About\AboutViewModel.cs" />
     <Compile Include="Document\MarkPadHyperlink.cs" />
-    <Compile Include="Extensions\DataObjectExtensions.cs" />
     <Compile Include="Extensions\DataImage.cs" />
+    <Compile Include="Extensions\DataObjectExtensions.cs" />
     <Compile Include="Framework\Events\SettingsChangedEvent.cs" />
     <Compile Include="Framework\FocusExtension.cs" />
     <Compile Include="Framework\FontHelpers.cs" />
@@ -154,9 +157,7 @@
     <Compile Include="Metaweblog\MetaWeblog.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Settings\BlogSetting.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Settings\BlogSetting.cs" />
     <Compile Include="Settings\BlogSettingsView.xaml.cs">
       <DependentUpon>BlogSettingsView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -164,13 +165,10 @@
     <Compile Include="Settings\BlogSettingsViewModel.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Settings\ExtensionViewModel.cs" />
     <Compile Include="Settings\FetchedBlogInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Settings\FontSelectionView.xaml.cs">
-      <DependentUpon>FontSelectionView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Settings\FontSelectionViewModel.cs" />
     <Compile Include="Settings\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -181,6 +179,7 @@
     <Compile Include="SingleInstance.cs" />
     <Compile Include="Document\FormattingCommands.cs" />
     <Compile Include="Framework\ObjectExtensions.cs" />
+    <Compile Include="Framework\Events\SettingsCloseEvent.cs" />
     <Compile Include="Framework\MarkdownHelpers.cs" />
     <Compile Include="Document\SpellCheckBackgroundRenderer.cs" />
     <Page Include="About\AboutView.xaml">
@@ -239,10 +238,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Settings\BlogSettingsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Settings\FontSelectionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
