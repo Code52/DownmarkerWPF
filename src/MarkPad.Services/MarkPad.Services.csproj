@@ -69,8 +69,8 @@
     <Compile Include="Implementation\DialogMessageService.cs" />
     <Compile Include="Implementation\DialogService.cs" />
     <Compile Include="Implementation\SettingsService.cs" />
-    <Compile Include="Implementation\ButtonExtras.cs" />
-    <Compile Include="Implementation\FontSizes.cs" />
+    <Compile Include="Interfaces\ButtonExtras.cs" />
+    <Compile Include="Interfaces\FontSizes.cs" />
     <Compile Include="Interfaces\ISiteContext.cs" />
     <Compile Include="Interfaces\ISiteContextGenerator.cs" />
     <Compile Include="Interfaces\ISpellingService.cs" />

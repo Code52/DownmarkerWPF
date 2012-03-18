@@ -15,6 +15,7 @@ using MarkPad.PublishDetails;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
 
+
 namespace MarkPad.Shell
 {
     internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>
@@ -109,10 +110,10 @@ namespace MarkPad.Shell
             if (path == null)
                 return;
 
-            OpenDocument(path);
+             OpenDocument(path);
         }
 
-        public void OpenDocument(IEnumerable<string> filenames)
+		public void OpenDocument(IEnumerable<string> filenames)
         {
             foreach (var fn in filenames)
             {
@@ -124,6 +125,7 @@ namespace MarkPad.Shell
                     eventAggregator.Publish(new FileOpenEvent(fn));
             }
         }
+
 
         public void SaveDocument()
         {
@@ -176,7 +178,7 @@ namespace MarkPad.Shell
                 doc.Print();
             }
         }
-
+		
         /// <summary>
         /// Returns opened document with a given filename. 
         /// </summary>
@@ -191,7 +193,6 @@ namespace MarkPad.Shell
 
             return openedDocs.FirstOrDefault(doc => doc != null && filename.Equals(doc.FileName));
         }
-
         private DocumentView GetDocument()
         {
             return (MDI.ActiveItem as DocumentViewModel)
@@ -222,7 +223,7 @@ namespace MarkPad.Shell
                 .ExecuteSafely(v => v.SetHyperlink());
         }
 		
-        public void ShowHelp()
+		public void ShowHelp()
         {
             var creator = documentCreator();
             creator.Original = GetHelpText(); // set the Original so it isn't marked as requiring a save unless we change it
@@ -266,17 +267,13 @@ namespace MarkPad.Shell
             var blogs = settingsService.Get<List<BlogSetting>>("Blogs");
             if (blogs == null || blogs.Count == 0)
             {
-                var setupBlog = dialogService.ShowConfirmation(
-					"Open from web",
-					"Do you want to configure a blog site?",
-					"No blog sites have been configured. To open a document from the web, MarkPad first needs to be integrated with a blog site.");
+                var setupBlog = dialogService.ShowConfirmation("No blogs setup", "Do you want to setup a blog?", "", 
+                    new ButtonExtras(ButtonType.Yes, "Yes", "Setup a blog"),
+                    new ButtonExtras(ButtonType.No, "No", "Don't setup a blog now"));
 
-				if (!setupBlog)
-					return;
-
-				var settings = settingsCreator();
-				if (!settings.AddBlog())
-					return;                    
+                if (setupBlog)
+                    ShowSettings();
+                return;
             }
 
             var openFromWeb = openFromWebCreator();

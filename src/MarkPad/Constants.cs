@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using MarkPad.Services.Implementation;
-using MarkPad.Services.Interfaces;
 
 namespace MarkPad
 {
@@ -32,7 +31,7 @@ namespace MarkPad
                 return Path.Combine(Path.GetTempPath(), String.Format("{0}.{1}", assemblyName.Name, assemblyName.Version));
             }
         }
-
+		
 		public const string DEFAULT_EDITOR_FONT_FAMILY = "Segoe UI";
 		public const FontSizes DEFAULT_EDITOR_FONT_SIZE = FontSizes.FontSize12;
 		public const int FONT_SIZE_ENUM_ADJUSTMENT = 12;
