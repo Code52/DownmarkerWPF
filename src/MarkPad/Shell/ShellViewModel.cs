@@ -12,8 +12,10 @@ using MarkPad.MDI;
 using MarkPad.Metaweblog;
 using MarkPad.OpenFromWeb;
 using MarkPad.PublishDetails;
+using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
+using Ookii.Dialogs.Wpf;
 
 
 namespace MarkPad.Shell

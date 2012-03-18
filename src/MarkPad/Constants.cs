@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using MarkPad.Services.Implementation;
+using MarkPad.Services.Interfaces;
 
 namespace MarkPad
 {
