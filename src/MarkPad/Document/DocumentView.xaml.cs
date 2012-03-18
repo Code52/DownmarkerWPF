@@ -23,6 +23,7 @@ using MarkPad.Framework.Events;
 using MarkPad.Services.Interfaces;
 using MarkPad.XAML;
 using System.Windows.Media;
+using MarkPad.Document.Addins;
 
 namespace MarkPad.Document
 {
@@ -30,20 +31,16 @@ namespace MarkPad.Document
     {
         private const int NumSpaces = 4;
         private const string Spaces = "    ";
-
-        private readonly Regex WordSeparatorRegex = new Regex("-[^\\w]+|^'[^\\w]+|[^\\w]+'[^\\w]+|[^\\w]+-[^\\w]+|[^\\w]+'$|[^\\w]+-$|^-$|^'$|[^\\w'-]", RegexOptions.Compiled);
-        private readonly Regex UriFinderRegex = new Regex("(http|ftp|https|mailto):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?", RegexOptions.Compiled);
-
+		
         private ScrollViewer documentScrollViewer;
-        private readonly SpellCheckBackgroundRenderer spellCheckRenderer;
-        private readonly ISpellingService hunspell;
 		private readonly ISettingsService settingsService;
 
-        public DocumentView(ISpellingService hunspell, ISettingsService settingsService)
+		List<IDocumentViewAddin> addins = new List<IDocumentViewAddin>();
+
+        public DocumentView(ISettingsService settingsService)
         {
             InitializeComponent();
 
-			this.hunspell = hunspell;
 			this.settingsService = settingsService;
 
             Loaded += DocumentViewLoaded;
@@ -56,10 +53,7 @@ namespace MarkPad.Document
 
             Editor.PreviewMouseLeftButtonUp += HandleMouseUp;
 
-            spellCheckRenderer = new SpellCheckBackgroundRenderer();
-
-            Editor.TextArea.TextView.BackgroundRenderers.Add(spellCheckRenderer);
-            Editor.TextArea.TextView.VisualLinesChanged += TextView_VisualLinesChanged;
+			ApplyAddins();
 
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleBold, (x, y) => ToggleBold(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleItalic, (x, y) => ToggleItalic(), CanEditDocument));
@@ -68,15 +62,26 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
         }
 
+		private void ApplyAddins()
+		{
+			if (IsSpellCheckEnabled && !addins.OfType<SpellCheckAddin>().Any())
+			{
+				var spellCheck = IoC.Get<SpellCheckAddin>();
+				spellCheck.ConnectTo(this);
+				addins.Add(spellCheck);
+			}
+			if (!IsSpellCheckEnabled && addins.OfType<SpellCheckAddin>().Any())
+			{
+				var spellCheck = addins.OfType<SpellCheckAddin>().First();
+				spellCheck.Disconnect();
+				addins.Remove(spellCheck);
+			}
+		}
+
 
         void WebControl_LinkClicked(object sender, OpenExternalLinkEventArgs e)
         {
             Process.Start(e.Url);
-        }
-
-        void TextView_VisualLinesChanged(object sender, EventArgs e)
-        {
-            DoSpellCheck();
         }
 
         void DocumentViewSizeChanged(object sender, SizeChangedEventArgs e)
@@ -179,54 +184,6 @@ namespace MarkPad.Document
             // Set zoom level of the preview.
             wb.Zoom = GetZoomLevel();
         }
-
-		private void DoSpellCheck()
-		{
-			if (!IsSpellCheckEnabled)
-				return;
-
-			if (!this.Editor.TextArea.TextView.VisualLinesValid)
-				return;
-
-			this.spellCheckRenderer.ErrorSegments.Clear();
-
-			IEnumerable<VisualLine> visualLines = Editor.TextArea.TextView.VisualLines.AsParallel();
-
-			foreach (VisualLine currentLine in visualLines)
-			{
-				int startIndex = 0;
-
-				string originalText = Editor.Document.GetText(currentLine.FirstDocumentLine.Offset, currentLine.LastDocumentLine.EndOffset - currentLine.FirstDocumentLine.Offset);
-				originalText = Regex.Replace(originalText, "[\\u2018\\u2019\\u201A\\u201B\\u2032\\u2035]", "'");
-
-				var textWithoutURLs = UriFinderRegex.Replace(originalText, "");
-
-				var query = WordSeparatorRegex.Split(textWithoutURLs)
-					.Where(s => !string.IsNullOrEmpty(s));
-
-				foreach (var word in query)
-				{
-					string trimmedWord = word.Trim('\'', '_', '-');
-
-					int num = currentLine.FirstDocumentLine.Offset + originalText.IndexOf(trimmedWord, startIndex);
-
-					if (!hunspell.Spell(trimmedWord))
-					{
-						TextSegment textSegment = new TextSegment();
-						textSegment.StartOffset = num;
-						textSegment.Length = word.Length;
-						this.spellCheckRenderer.ErrorSegments.Add(textSegment);
-					}
-
-					startIndex = originalText.IndexOf(word, startIndex) + word.Length;
-				}
-			}
-		}
-
-		private void ClearSpellCheckErrors()
-		{
-			spellCheckRenderer.ErrorSegments.Clear();
-		}
 
         internal void ToggleBold()
         {
@@ -351,15 +308,13 @@ namespace MarkPad.Document
 
         void IHandle<SettingsChangedEvent>.Handle(SettingsChangedEvent message)
         {
-            DoSpellCheck();
             Editor.TextArea.TextView.Redraw();
 
             Editor.FontSize = GetFontSize();
 			Editor.FontFamily = GetFontFamily();
             wb.Zoom = GetZoomLevel();
 
-			ClearSpellCheckErrors();
-			DoSpellCheck();
+			ApplyAddins();
         }
 
         private void EditorPreviewKeyDown(object sender, KeyEventArgs e)

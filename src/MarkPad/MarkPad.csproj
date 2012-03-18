@@ -127,7 +127,10 @@
       <DependentUpon>AboutView.xaml</DependentUpon>
     </Compile>
     <Compile Include="About\AboutViewModel.cs" />
+    <Compile Include="Document\Addins\IDocumentViewDecorator.cs" />
+    <Compile Include="Document\Addins\ServicesModule.cs" />
     <Compile Include="Document\MarkPadHyperlink.cs" />
+    <Compile Include="Document\Addins\SpellCheckDecorator.cs" />
     <Compile Include="Extensions\DataObjectExtensions.cs" />
     <Compile Include="Extensions\DataImage.cs" />
     <Compile Include="Framework\Events\SettingsChangedEvent.cs" />

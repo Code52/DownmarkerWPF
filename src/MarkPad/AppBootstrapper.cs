@@ -37,7 +37,8 @@ namespace MarkPad
 
         protected override void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterModule<ServicesModule>();
+			builder.RegisterModule<MarkPad.Document.Addins.ServicesModule>();
+            builder.RegisterModule<MarkPad.Services.ServicesModule>();
             builder.RegisterType<JumpListIntegration>().SingleInstance();
         }
 
