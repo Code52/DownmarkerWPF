@@ -6,14 +6,13 @@ namespace MarkPad.Shell
 {
     public partial class ShellView
     {
+        private bool CheatSheetVisible;
+
         public ShellView()
         {
             InitializeComponent();
-           
-
         }
 
-        private bool CheatSheetVisible = false;
         private void DragMoveWindow(object sender, MouseButtonEventArgs e)
         {
             if (e.RightButton != MouseButtonState.Pressed && e.MiddleButton != MouseButtonState.Pressed && e.LeftButton == MouseButtonState.Pressed)
@@ -35,7 +34,6 @@ namespace MarkPad.Shell
 
                     // Restore window to normal state.
                     WindowState = WindowState.Normal;
-
                 }
 
                 DragMove();
@@ -55,7 +53,6 @@ namespace MarkPad.Shell
         {
             WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
         }
-
 
         protected override void OnStateChanged(System.EventArgs e)
         {
@@ -111,6 +108,7 @@ namespace MarkPad.Shell
 
             CheatSheetVisible = !CheatSheetVisible;
         }
+
         private void DismissCheatSheet(object sender, RoutedEventArgs e)
         {
             ToggleCheatSheet();
