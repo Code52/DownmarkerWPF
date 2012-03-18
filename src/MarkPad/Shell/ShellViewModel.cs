@@ -26,7 +26,6 @@ namespace MarkPad.Shell
         private readonly IWindowManager windowManager;
         private readonly ISettingsService settingsService;
         private readonly Func<DocumentViewModel> documentCreator;
-        private readonly Func<SettingsViewModel> settingsCreator;
         private readonly Func<AboutViewModel> aboutCreator;
         private readonly Func<OpenFromWebViewModel> openFromWebCreator;
 
@@ -36,8 +35,8 @@ namespace MarkPad.Shell
             ISettingsService settingsService,
             IEventAggregator eventAggregator,
             MDIViewModel mdi,
+            SettingsViewModel settingsCreator,
             Func<DocumentViewModel> documentCreator,
-            Func<SettingsViewModel> settingsCreator,
             Func<AboutViewModel> aboutCreator,
             Func<OpenFromWebViewModel> openFromWebCreator)
         {
@@ -47,11 +46,10 @@ namespace MarkPad.Shell
             this.settingsService = settingsService;
             this.MDI = mdi;
             this.documentCreator = documentCreator;
-            this.settingsCreator = settingsCreator;
             this.aboutCreator = aboutCreator;
             this.openFromWebCreator = openFromWebCreator;
 
-            Settings = settingsCreator();
+            Settings = settingsCreator;
             InitialiseDefaultSettings();
             ActivateItem(mdi);
         }

@@ -59,11 +59,20 @@ namespace MarkPad.Settings
             Blogs = new ObservableCollection<BlogSetting>(blogs);
 
             Languages = Enum.GetValues(typeof(SpellingLanguages)).OfType<SpellingLanguages>().ToArray();
-            SelectedLanguage = settingsService.Get<SpellingLanguages>(DictionariesSettingsKey);
-            SelectedFontSize = settingsService.Get<FontSizes>(FontSizeSettingsKey);
-            SelectedFontFamily = Fonts.SystemFontFamilies.First(f => f.Source == settingsService.Get<string>(FontFamilySettingsKey));
             FontSizes = Enum.GetValues(typeof(FontSizes)).OfType<FontSizes>().ToArray();
             FontFamilies = Fonts.SystemFontFamilies.OrderBy(f => f.Source);
+
+            SelectedLanguage = settingsService.Get<SpellingLanguages>(DictionariesSettingsKey);
+            
+            var fontFamily = settingsService.Get<string>(FontFamilySettingsKey);
+            SelectedFontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == fontFamily);
+            SelectedFontSize = settingsService.Get<FontSizes>(FontSizeSettingsKey);
+
+            if (SelectedFontFamily == null)
+            {
+                SelectedFontFamily = FontHelpers.TryGetFontFamilyFromStack(Constants.DEFAULT_EDITOR_FONT_FAMILY);
+                SelectedFontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
+            }
         }
 
         private BlogSetting currentBlog;
