@@ -1,6 +1,5 @@
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
 
 namespace MarkPad.Shell
 {
@@ -13,12 +12,12 @@ namespace MarkPad.Shell
                 if (WindowState == WindowState.Maximized)
                 {
                     // Calcualting correct left coordinate for multi-screen system.
-                    double mouseX = PointToScreen(Mouse.GetPosition(this)).X;
-                    double width = RestoreBounds.Width;
-                    double left = mouseX - width / 2;
+                    var mouseX = PointToScreen(Mouse.GetPosition(this)).X;
+                    var width = RestoreBounds.Width;
+                    var left = mouseX - width / 2;
 
                     // Aligning window's position to fit the screen.
-                    double virtualScreenWidth = SystemParameters.VirtualScreenWidth;
+                    var virtualScreenWidth = SystemParameters.VirtualScreenWidth;
                     left = left < 0 ? 0 : left;
                     left = left + width > virtualScreenWidth ? virtualScreenWidth - width : left;
 
@@ -27,7 +26,6 @@ namespace MarkPad.Shell
 
                     // Restore window to normal state.
                     WindowState = WindowState.Normal;
-
                 }
 
                 DragMove();
@@ -47,7 +45,6 @@ namespace MarkPad.Shell
         {
             WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
         }
-
 
         protected override void OnStateChanged(System.EventArgs e)
         {
@@ -71,7 +68,7 @@ namespace MarkPad.Shell
 
         private void WindowDragOver(object sender, DragEventArgs e)
         {
-            bool isFileDrop = e.Data.GetDataPresent(DataFormats.FileDrop);
+            var isFileDrop = e.Data.GetDataPresent(DataFormats.FileDrop);
             e.Effects = isFileDrop ? DragDropEffects.Move : DragDropEffects.None;
             e.Handled = true;
         }

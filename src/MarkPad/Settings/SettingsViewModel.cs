@@ -66,7 +66,6 @@ namespace MarkPad.Settings
             FontFamilies = Fonts.SystemFontFamilies.OrderBy(f => f.Source);
         }
 
-
         private BlogSetting currentBlog;
         public BlogSetting CurrentBlog
         {
@@ -86,6 +85,7 @@ namespace MarkPad.Settings
                 return Constants.FONT_SIZE_ENUM_ADJUSTMENT + (int)SelectedFontSize;
             }
         }
+
         public string EditorFontPreviewLabel
         {
             get
@@ -156,7 +156,6 @@ namespace MarkPad.Settings
                 Blogs.Remove(CurrentBlog);
         }
 
-
         public void ResetFont()
         {
             SelectedFontFamily = FontHelpers.TryGetFontFamilyFromStack(Constants.DEFAULT_EDITOR_FONT_FAMILY);
@@ -219,6 +218,5 @@ namespace MarkPad.Settings
                 }
             }
         }
-
     }
 }
