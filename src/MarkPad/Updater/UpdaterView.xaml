@@ -14,6 +14,11 @@
             <sys:String x:Key="CheckingForUpdatesTooltip">Checking for updates, please hold..</sys:String>
             <sys:String x:Key="UpdatePendingTooltip">There is an update waiting!</sys:String>
             <sys:String x:Key="UpToDateTooltip">Up to date</sys:String>
+            <Storyboard x:Key="rotate">
+                <DoubleAnimationUsingKeyFrames RepeatBehavior="Forever" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="364"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
         </ResourceDictionary>
     </UserControl.Resources>
     <StackPanel Orientation="Horizontal">
@@ -28,13 +33,29 @@
                 </Style>
             </TextBlock.Style>
         </TextBlock>
-        <Button x:Name="CheckForUpdate" FontFamily="../Fonts/#Entypo" FontSize="28" Margin="0,-15,10,-15">
+        <Button x:Name="CheckForUpdate" FontFamily="../Fonts/#Entypo" FontSize="28" Margin="0,-15,10,-15" RenderTransformOrigin="0.45,0.5">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
             <Button.Style>
                 <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ChromelessButtonStyle}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding UpdateState}" Value="Unchecked">
                             <Setter Property="Button.Content" Value="d" />
                             <Setter Property="Button.ToolTip" Value="{DynamicResource CheckForUpdatesTooltip}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Background}" Value="True">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard x:Name="rotatestart" Storyboard="{StaticResource rotate}" />
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <StopStoryboard BeginStoryboardName="rotatestart" />
+                            </DataTrigger.ExitActions>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding UpdateState}" Value="UpToDate">
                             <Setter Property="Button.Content" Value="W" />

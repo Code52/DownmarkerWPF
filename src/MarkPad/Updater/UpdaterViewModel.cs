@@ -15,6 +15,8 @@ namespace MarkPad.Updater
         static AutomaticUpdaterBackend au;
         public int Progress { get; private set; }
         public UpdateState UpdateState { get; set; }
+        public bool Background { get; set; }
+
         public UpdaterViewModel(IWindowManager windowManager, Func<UpdaterChangesViewModel> changesCreator )
         {
             this.windowManager = windowManager;
@@ -74,8 +76,10 @@ namespace MarkPad.Updater
                         au.InstallNow();
                     return;
                     break;
+
                 case UpdateStepOn.Nothing:
-                    au.ForceCheckForUpdate(true);
+                    Background = true;
+                    au.ForceCheckForUpdate();
                     break;
 
             }
@@ -88,19 +92,23 @@ namespace MarkPad.Updater
                 case UpdateStepOn.ExtractingUpdate:
                 case UpdateStepOn.DownloadingUpdate:
                     UpdateState = UpdateState.Downloading;
+                    Background = true;
                     break;
 
                 case UpdateStepOn.UpdateDownloaded:
-                case UpdateStepOn.UpdateAvailable:                
+                case UpdateStepOn.UpdateAvailable:
+                    Background = false;
                     au.InstallNow();
                     break;
 
                 case UpdateStepOn.UpdateReadyToInstall:
                     UpdateState = UpdateState.UpdatePending;
+                    Background = false;
                     break;
 
                 default:
                     UpdateState = UpdateState.Unchecked;
+                    Background = false;
                     break;
             }
         }
