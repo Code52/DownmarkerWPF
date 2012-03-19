@@ -32,8 +32,15 @@ namespace MarkPad.Services.Implementation
 
         public T Get<T>(string key)
         {
-            if (storage.ContainsKey(key))
-                return (T)storage[key];
+			try
+			{
+				if (storage.ContainsKey(key))
+					return (T)storage[key];
+			}
+			catch (InvalidCastException e)
+			{
+				Trace.Write(e, "WARN");
+			}
             return default(T);
         }
 
