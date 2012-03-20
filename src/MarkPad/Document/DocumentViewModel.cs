@@ -12,7 +12,7 @@ using MarkPad.HyperlinkEditor;
 using MarkPad.Metaweblog;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
-using MarkPad.Settings;
+using MarkPad.Services.Settings;
 using Ookii.Dialogs.Wpf;
 
 namespace MarkPad.Document
@@ -22,7 +22,7 @@ namespace MarkPad.Document
         private static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
 
         private readonly IDialogService dialogService;
-        private readonly ISettingsService settings;
+        private readonly ISettingsProvider settings;
         private readonly IWindowManager windowManager;
 		private readonly ISiteContextGenerator siteContextGenerator;
 
@@ -33,7 +33,7 @@ namespace MarkPad.Document
         private string filename;
         private ISiteContext siteContext;
 
-        public DocumentViewModel(IDialogService dialogService, ISettingsService settings, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator)
+        public DocumentViewModel(IDialogService dialogService, ISettingsProvider settings, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator)
         {
             this.dialogService = dialogService;
             this.settings = settings;
@@ -274,9 +274,6 @@ namespace MarkPad.Document
                                    categories = categories
                                };
                     newpost.postid = proxy.NewPost(blog.BlogInfo.blogid, blog.Username, blog.Password, newpost, true);
-
-                    settings.Set(newpost.permalink, newpost);
-                    settings.Save();
                 }
                 else
                 {
@@ -287,10 +284,6 @@ namespace MarkPad.Document
                     newpost.format = blog.Language;
 
                     proxy.EditPost(postid, blog.Username, blog.Password, newpost, true);
-
-                    //Not sure what this is doing??
-                    settings.Set(newpost.permalink, newpost);
-                    settings.Save();
                 }
             }
             catch (WebException ex)
@@ -329,11 +322,12 @@ namespace MarkPad.Document
 
         public int GetFontSize()
         {
-            return (int) settings.Get<FontSizes>(SettingsViewModel.FontSizeSettingsKey);
+            return (int)settings.GetSettings<MarkpadSettings>().FontSize;
         }
+
 		public FontFamily GetFontFamily()
 		{
-			var configuredSource = settings.Get<string>(SettingsViewModel.FontFamilySettingsKey);
+		    var configuredSource = settings.GetSettings<MarkpadSettings>().FontFamily;
 			var fontFamily = FontHelpers.TryGetFontFamilyFromStack(configuredSource, "Segoe UI", "Arial");
 			if (fontFamily == null) throw new Exception("Cannot find configured font family or fallback fonts");
 			return fontFamily;			

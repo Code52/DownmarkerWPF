@@ -1,7 +1,6 @@
 using MarkPad.XAML.Converters;
 
 namespace MarkPad.Services.Implementation
-
 {
     public enum FontSizes
     {

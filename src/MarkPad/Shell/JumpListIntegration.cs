@@ -8,21 +8,22 @@ using System.Windows;
 using System.Windows.Shell;
 using Caliburn.Micro;
 using MarkPad.Framework.Events;
-using MarkPad.Services.Interfaces;
+using MarkPad.Services;
+using MarkPad.Services.Settings;
 
 namespace MarkPad.Shell
 {
     /// <summary>
     /// Class for interacting with the Windows7 JumpList
     /// </summary>
-    public class JumpListIntegration : IHandle<FileOpenEvent>, IHandle<AppReadyEvent>, IDisposable
+    public class JumpListIntegration : IHandle<FileOpenEvent>, IHandle<AppReadyEvent>
     {
-        private readonly ISettingsService settingsService;
+        private readonly ISettingsProvider settingsProvider;
         private JumpList jumpList;
 
-        public JumpListIntegration(ISettingsService settingsService)
+        public JumpListIntegration(ISettingsProvider settingsProvider)
         {
-            this.settingsService = settingsService;
+            this.settingsProvider = settingsProvider;
         }
 
         public void Handle(FileOpenEvent message)
@@ -42,11 +43,11 @@ namespace MarkPad.Shell
             if (currentFiles.Contains(openedFile))
             {
                 // find file in list
-                var files = settingsService.Get<List<string>>("RecentFiles");
-                var index = files.IndexOf(openedFile);
-                if (index >= 0) files.RemoveAt(index);
-                files.Insert(0, openedFile);
-                settingsService.Set("RecentFiles", files);
+                var markpadSettings = settingsProvider.GetSettings<MarkpadSettings>();
+                var index = markpadSettings.RecentFiles.IndexOf(openedFile);
+                if (index >= 0) markpadSettings.RecentFiles.RemoveAt(index);
+                markpadSettings.RecentFiles.Insert(0, openedFile);
+                settingsProvider.SaveSettings(markpadSettings);
 
                 // Sometimes the settings and the jumplist can get out of sequence.
                 index = currentFiles.IndexOf(openedFile);
@@ -57,12 +58,11 @@ namespace MarkPad.Shell
             else
             {
                 // update settings
-                var files = settingsService.Get<List<string>>("RecentFiles");
-                if (files == null) files = new List<string>();
+                var markpadSettings = settingsProvider.GetSettings<MarkpadSettings>();
 
-                files.Insert(0, openedFile);
-                if (files.Count > 5) files.RemoveAt(5);
-                settingsService.Set("RecentFiles", files);
+                markpadSettings.RecentFiles.Insert(0, openedFile);
+                if (markpadSettings.RecentFiles.Count > 5) markpadSettings.RecentFiles.RemoveAt(5);
+                settingsProvider.SaveSettings(markpadSettings.RecentFiles);
 
                 InsertFileFirst(openedFile);
             }
@@ -88,14 +88,9 @@ namespace MarkPad.Shell
 
             jumpList = GetJumpList();
 
-            var x = new Thread(new ParameterizedThreadStart(delegate { PopulateJumpList(settingsService.Get<List<string>>("RecentFiles")); }));
+            var x = new Thread(new ParameterizedThreadStart(delegate { PopulateJumpList(settingsProvider.GetSettings<MarkpadSettings>().RecentFiles); }));
             x.SetApartmentState(ApartmentState.STA);
             x.Start();
-        }
-
-        public void Dispose()
-        {
-            settingsService.Save();
         }
 
         private void PopulateJumpList(IEnumerable<string> recentFiles)

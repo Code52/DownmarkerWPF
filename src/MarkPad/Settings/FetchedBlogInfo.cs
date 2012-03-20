@@ -1,4 +1,5 @@
 using MarkPad.Metaweblog;
+using MarkPad.Services.Settings;
 
 namespace MarkPad.Settings
 {
