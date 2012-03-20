@@ -58,6 +58,9 @@
   <PropertyGroup>
     <ApplicationIcon>markpad.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>MarkPad.Loader</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac">
       <HintPath>..\..\packages\Autofac.2.5.2.830\lib\NET40\Autofac.dll</HintPath>
@@ -93,6 +96,9 @@
     <Reference Include="MarkdownDeep">
       <HintPath>..\..\packages\MarkdownDeep.NET.1.4\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\Microsoft.Expression.Interactions.dll</HintPath>
+    </Reference>
     <Reference Include="NHunspell">
       <HintPath>..\..\lib\Hunspell.0.9.6.0\lib\net20\NHunspell.dll</HintPath>
       <Private>True</Private>
@@ -102,6 +108,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -124,7 +131,11 @@
     </Compile>
     <Compile Include="About\AboutViewModel.cs" />
     <Compile Include="Document\MarkPadHyperlink.cs" />
+    <Compile Include="Extensions\DataImage.cs" />
+    <Compile Include="Extensions\DataObjectExtensions.cs" />
     <Compile Include="Framework\Events\SettingsChangedEvent.cs" />
+    <Compile Include="Framework\FocusExtension.cs" />
+    <Compile Include="Framework\FontHelpers.cs" />
     <Compile Include="Framework\FrameworkExtensions.cs" />
     <Compile Include="Framework\Dynamic.cs" />
     <Compile Include="ExceptionDialog.xaml.cs">
@@ -137,7 +148,6 @@
     </Compile>
     <Compile Include="HyperlinkEditor\HyperlinkEditorViewModel.cs" />
     <Compile Include="OpenFromWeb\Entry.cs" />
-    <Compile Include="Settings\FetchedBlogInfo.cs" />
     <Compile Include="Metaweblog\Generated\MetaWeblog.generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -147,14 +157,29 @@
     <Compile Include="Metaweblog\MetaWeblog.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="SingleInstance.cs" />
-    <Compile Include="Document\FormattingCommands.cs" />
-    <Compile Include="Framework\ObjectExtensions.cs" />
     <Compile Include="Settings\BlogSetting.cs" />
     <Compile Include="Settings\BlogSettingsView.xaml.cs">
       <DependentUpon>BlogSettingsView.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Settings\BlogSettingsViewModel.cs" />
+    <Compile Include="Settings\BlogSettingsViewModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Settings\ExtensionViewModel.cs" />
+    <Compile Include="Settings\FetchedBlogInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Settings\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Settings\SettingsViewModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SingleInstance.cs" />
+    <Compile Include="Document\FormattingCommands.cs" />
+    <Compile Include="Framework\ObjectExtensions.cs" />
+    <Compile Include="Framework\Events\SettingsCloseEvent.cs" />
     <Compile Include="Framework\MarkdownHelpers.cs" />
     <Compile Include="Document\SpellCheckBackgroundRenderer.cs" />
     <Page Include="About\AboutView.xaml">
@@ -175,10 +200,6 @@
     <Compile Include="AppBootstrapper.cs" />
     <Compile Include="Framework\Events\AppReadyEvent.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Settings\SettingsView.xaml.cs">
-      <DependentUpon>SettingsView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Settings\SettingsViewModel.cs" />
     <Compile Include="Document\DocumentView.xaml.cs">
       <DependentUpon>DocumentView.xaml</DependentUpon>
     </Compile>
@@ -217,8 +238,12 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Settings\BlogSettingsView.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Settings\SettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Styles\MarkPad.Accents.xaml">
       <SubType>Designer</SubType>
@@ -236,6 +261,7 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <EmbeddedResource Include="Help.md" />
     <None Include="Metaweblog\Generated\BloggerAPI.json" />
     <None Include="Metaweblog\Generated\MetaWeblog.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -254,10 +280,6 @@
     <Page Include="MDI\MDIView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Settings\SettingsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="OpenFromWeb\OpenFromWebView.xaml">
       <Generator>MSBuild:Compile</Generator>

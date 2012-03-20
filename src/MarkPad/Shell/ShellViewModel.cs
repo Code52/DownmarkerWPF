@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using Caliburn.Micro;
 using MarkPad.About;
 using MarkPad.Document;
@@ -9,21 +12,20 @@ using MarkPad.MDI;
 using MarkPad.Metaweblog;
 using MarkPad.OpenFromWeb;
 using MarkPad.PublishDetails;
+using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
 using Ookii.Dialogs.Wpf;
-using System.Linq;
 
 namespace MarkPad.Shell
 {
-    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>
+    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>
     {
         private readonly IEventAggregator eventAggregator;
         private readonly IDialogService dialogService;
         private readonly IWindowManager windowManager;
         private readonly ISettingsService settingsService;
         private readonly Func<DocumentViewModel> documentCreator;
-        private readonly Func<SettingsViewModel> settingsCreator;
         private readonly Func<AboutViewModel> aboutCreator;
         private readonly Func<OpenFromWebViewModel> openFromWebCreator;
 
@@ -33,8 +35,8 @@ namespace MarkPad.Shell
             ISettingsService settingsService,
             IEventAggregator eventAggregator,
             MDIViewModel mdi,
+            SettingsViewModel settingsCreator,
             Func<DocumentViewModel> documentCreator,
-            Func<SettingsViewModel> settingsCreator,
             Func<AboutViewModel> aboutCreator,
             Func<OpenFromWebViewModel> openFromWebCreator)
         {
@@ -44,11 +46,18 @@ namespace MarkPad.Shell
             this.settingsService = settingsService;
             this.MDI = mdi;
             this.documentCreator = documentCreator;
-            this.settingsCreator = settingsCreator;
             this.aboutCreator = aboutCreator;
             this.openFromWebCreator = openFromWebCreator;
 
+            Settings = settingsCreator;
+            InitialiseDefaultSettings();
             ActivateItem(mdi);
+        }
+
+        private void InitialiseDefaultSettings()
+        {
+            settingsService.SetAsDefault(SettingsViewModel.FontFamilySettingsKey, Constants.DEFAULT_EDITOR_FONT_FAMILY);
+            settingsService.SetAsDefault(SettingsViewModel.FontSizeSettingsKey, Constants.DEFAULT_EDITOR_FONT_SIZE);
         }
 
         public override string DisplayName
@@ -57,7 +66,9 @@ namespace MarkPad.Shell
             set { }
         }
 
+        public string CurrentState { get; set; }
         public MDIViewModel MDI { get; private set; }
+        public SettingsViewModel Settings { get; private set; }
 
         public override void CanClose(Action<bool> callback)
         {
@@ -141,7 +152,7 @@ namespace MarkPad.Shell
 
         public void ShowSettings()
         {
-            windowManager.ShowDialog(settingsCreator());
+            CurrentState = "ShowSettings";
         }
 
         public void ShowAbout()
@@ -177,9 +188,9 @@ namespace MarkPad.Shell
             if (filename == null)
                 return null;
 
-            IEnumerable<DocumentViewModel> openedDocs = MDI.Items.Cast<DocumentViewModel>();
+            var openedDocs = MDI.Items.Cast<DocumentViewModel>();
 
-            return openedDocs.Where(doc => doc != null && filename.Equals(doc.FileName)).FirstOrDefault();
+            return openedDocs.FirstOrDefault(doc => doc != null && filename.Equals(doc.FileName));
         }
 
         private DocumentView GetDocument()
@@ -212,7 +223,24 @@ namespace MarkPad.Shell
                 .ExecuteSafely(v => v.SetHyperlink());
         }
 
+        public void ShowHelp()
+        {
+            var creator = documentCreator();
+            creator.Original = GetHelpText(); // set the Original so it isn't marked as requiring a save unless we change it
+            creator.Document.Text = creator.Original;
+            MDI.Open(creator);
+            creator.Update(); // ensure that the markdown is rendered
+        }
 
+        private static string GetHelpText()
+        {
+            const string helpResourceFile = "MarkPad.Help.md";
+            using (var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(helpResourceFile))
+            using (var streamReader = new StreamReader(resourceStream))
+            {
+                return streamReader.ReadToEnd();
+            }
+        }
 
         public void PublishDocument()
         {
@@ -240,7 +268,7 @@ namespace MarkPad.Shell
             var blogs = settingsService.Get<List<BlogSetting>>("Blogs");
             if (blogs == null || blogs.Count == 0)
             {
-                var setupBlog = dialogService.ShowConfirmation("No blogs setup", "Do you want to setup a blog?", "", 
+                var setupBlog = dialogService.ShowConfirmation("No blogs setup", "Do you want to setup a blog?", "",
                     new ButtonExtras(ButtonType.Yes, "Yes", "Setup a blog"),
                     new ButtonExtras(ButtonType.No, "No", "Don't setup a blog now"));
 
@@ -261,6 +289,11 @@ namespace MarkPad.Shell
             var doc = documentCreator();
             doc.OpenFromWeb(post);
             MDI.Open(doc);
+        }
+
+        public void Handle(SettingsCloseEvent message)
+        {
+            CurrentState = "HideSettings";
         }
     }
 }
