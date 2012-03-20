@@ -62,7 +62,7 @@ namespace MarkPad.Shell
 
                 markpadSettings.RecentFiles.Insert(0, openedFile);
                 if (markpadSettings.RecentFiles.Count > 5) markpadSettings.RecentFiles.RemoveAt(5);
-                settingsProvider.SaveSettings(markpadSettings.RecentFiles);
+                settingsProvider.SaveSettings(markpadSettings);
 
                 InsertFileFirst(openedFile);
             }
