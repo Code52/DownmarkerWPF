@@ -10,18 +10,17 @@ using MarkPad.Services.Settings;
 
 namespace MarkPad.Services.Implementation
 {
+    [Obsolete]
     internal class SettingsService : ISettingsService
     {
-        private readonly ISettingsProvider provider;
+        
         private IsolatedStorageScope scope = IsolatedStorageScope.Assembly | IsolatedStorageScope.User | IsolatedStorageScope.Roaming;
 
         private const string Filename = "settings.bin";
         private Dictionary<string, object> storage = new Dictionary<string, object>();
 
-        public SettingsService(ISettingsProvider provider)
+        public SettingsService()
         {
-            this.provider = provider;
-
             storage = new Dictionary<string, object>();
 
             using (IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(scope, null, null))
