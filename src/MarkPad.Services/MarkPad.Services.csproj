@@ -80,6 +80,8 @@
     <Compile Include="ServicesModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Implementation\JekyllSiteContext.cs" />
+    <Compile Include="Settings\BlogInfo.cs" />
+    <Compile Include="Settings\BlogSetting.cs" />
     <Compile Include="Settings\SettingsProvider.cs" />
   </ItemGroup>
   <ItemGroup>
