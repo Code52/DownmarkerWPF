@@ -1,5 +1,8 @@
+using System;
+
 namespace MarkPad.Services.Interfaces
 {
+    [Obsolete]
     public interface ISettingsService
     {
         T Get<T>(string key);
