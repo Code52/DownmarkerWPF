@@ -82,6 +82,7 @@
     <Compile Include="Implementation\JekyllSiteContext.cs" />
     <Compile Include="Settings\BlogInfo.cs" />
     <Compile Include="Settings\BlogSetting.cs" />
+    <Compile Include="Settings\MarkPadSettings.cs" />
     <Compile Include="Settings\SettingsProvider.cs" />
   </ItemGroup>
   <ItemGroup>
