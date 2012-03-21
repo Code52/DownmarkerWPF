@@ -6,18 +6,22 @@ using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using MarkPad.Services.Interfaces;
+using MarkPad.Services.Settings;
 
 namespace MarkPad.Services.Implementation
 {
     internal class SettingsService : ISettingsService
     {
+        private readonly ISettingsProvider provider;
         private IsolatedStorageScope scope = IsolatedStorageScope.Assembly | IsolatedStorageScope.User | IsolatedStorageScope.Roaming;
 
         private const string Filename = "settings.bin";
         private Dictionary<string, object> storage = new Dictionary<string, object>();
 
-        public SettingsService()
+        public SettingsService(ISettingsProvider provider)
         {
+            this.provider = provider;
+
             storage = new Dictionary<string, object>();
 
             using (IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(scope, null, null))
