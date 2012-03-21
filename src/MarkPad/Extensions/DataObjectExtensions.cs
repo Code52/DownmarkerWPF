@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Point = System.Drawing.Point;
@@ -26,7 +27,7 @@ namespace MarkPad.Extensions
             else if (e.GetDataPresent("System.String"))
             {
                 var url = (string)e.GetData("System.String");
-                if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
+                if (!Uri.IsWellFormedUriString(url, UriKind.Absolute) || !IsImage(url))
                     return images;
 
                 var wc = new WebClient();
@@ -60,6 +61,18 @@ namespace MarkPad.Extensions
             }
 
             return images;
+        }
+
+        private static readonly string[] ImgExtensions = new[] {".png", ".jpg", ".jpeg", ".gif"};
+
+        private static bool IsImage(string url)
+        {
+            var extension = Path.GetExtension(url);
+
+            if (string.IsNullOrEmpty(extension))
+                return false;
+
+            return ImgExtensions.Contains(extension.ToLower());
         }
 
         // the CreateBitmapFromDib function was taken from 
