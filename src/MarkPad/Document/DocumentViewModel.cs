@@ -13,7 +13,6 @@ using MarkPad.Metaweblog;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;
-using MarkPad.Settings;
 using Ookii.Dialogs.Wpf;
 
 namespace MarkPad.Document
@@ -23,9 +22,9 @@ namespace MarkPad.Document
         private static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
 
         private readonly IDialogService dialogService;
-        private readonly ISettingsService settings;
+        private readonly ISettingsProvider settings;
         private readonly IWindowManager windowManager;
-		private readonly ISiteContextGenerator siteContextGenerator;
+        private readonly ISiteContextGenerator siteContextGenerator;
 
         private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
         private readonly DispatcherTimer timer;
@@ -34,7 +33,7 @@ namespace MarkPad.Document
         private string filename;
         private ISiteContext siteContext;
 
-        public DocumentViewModel(IDialogService dialogService, ISettingsService settings, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator)
+        public DocumentViewModel(IDialogService dialogService, ISettingsProvider settings, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator)
         {
             this.dialogService = dialogService;
             this.settings = settings;
@@ -130,10 +129,10 @@ namespace MarkPad.Document
                 File.WriteAllText(filename, Document.Text);
                 Original = Document.Text;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 var saveResult = dialogService.ShowConfirmation("MarkPad", "Cannot save file",
-                                                String.Format("Do you want to save changes for {0} to a different file?", title), 
+                                                String.Format("Do you want to save changes for {0} to a different file?", title),
                                                 new ButtonExtras(ButtonType.Yes, "Save", "Save the file at a different location."),
                                                 new ButtonExtras(ButtonType.No, "Do not save", "The file will be considered a New Document.  The next save will prompt for a file location."));
 
@@ -155,7 +154,7 @@ namespace MarkPad.Document
                 NotifyOfPropertyChange(() => DisplayName);
                 return saveResult;
             }
-             
+
             return true;
         }
 
@@ -182,7 +181,7 @@ namespace MarkPad.Document
 
         public string FileName
         {
-            get { return filename; } 
+            get { return filename; }
         }
 
         public override void CanClose(Action<bool> callback)
@@ -275,9 +274,6 @@ namespace MarkPad.Document
                                    categories = categories
                                };
                     newpost.postid = proxy.NewPost(blog.BlogInfo.blogid, blog.Username, blog.Password, newpost, true);
-
-                    settings.Set(newpost.permalink, newpost);
-                    settings.Save();
                 }
                 else
                 {
@@ -288,10 +284,6 @@ namespace MarkPad.Document
                     newpost.format = blog.Language;
 
                     proxy.EditPost(postid, blog.Username, blog.Password, newpost, true);
-
-                    //Not sure what this is doing??
-                    settings.Set(newpost.permalink, newpost);
-                    settings.Save();
                 }
             }
             catch (WebException ex)
@@ -330,14 +322,14 @@ namespace MarkPad.Document
 
         public int GetFontSize()
         {
-            return (int) settings.Get<FontSizes>(SettingsViewModel.FontSizeSettingsKey);
+            return (int)settings.GetSettings<MarkpadSettings>().FontSize;
         }
-		public FontFamily GetFontFamily()
-		{
-			var configuredSource = settings.Get<string>(SettingsViewModel.FontFamilySettingsKey);
-			var fontFamily = FontHelpers.TryGetFontFamilyFromStack(configuredSource, "Segoe UI", "Arial");
-			if (fontFamily == null) throw new Exception("Cannot find configured font family or fallback fonts");
-			return fontFamily;			
-		}
+        public FontFamily GetFontFamily()
+        {
+            var configuredSource = settings.GetSettings<MarkpadSettings>().FontFamily;
+            var fontFamily = FontHelpers.TryGetFontFamilyFromStack(configuredSource, "Segoe UI", "Arial");
+            if (fontFamily == null) throw new Exception("Cannot find configured font family or fallback fonts");
+            return fontFamily;
+        }
     }
 }
