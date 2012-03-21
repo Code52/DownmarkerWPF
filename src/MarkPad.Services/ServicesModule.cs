@@ -1,4 +1,3 @@
-using System;
 using Autofac;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
@@ -16,14 +15,8 @@ namespace MarkPad.Services
             builder.RegisterType<SpellingService>().As<ISpellingService>().SingleInstance().OnActivating(args =>
             {
                 var settingsService = args.Context.Resolve<ISettingsProvider>();
-
-                var settings = settingsService.GetSettings<BlogSetting>();
-
-                SpellingLanguages language;
-                if (Enum.TryParse(settings.Language, out language))
-                {
-                    args.Instance.SetLanguage(language);    
-                }
+                var settings = settingsService.GetSettings<MarkpadSettings>();
+                args.Instance.SetLanguage(settings.Language);    
             });
         }
     }
