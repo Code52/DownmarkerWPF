@@ -1,6 +1,6 @@
 using System;
 
-namespace MarkPad.Metaweblog
+namespace MarkPad.Services.Settings
 {
     [Serializable]
     public struct BlogInfo

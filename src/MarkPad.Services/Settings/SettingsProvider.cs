@@ -12,7 +12,6 @@ using System.Text;
 
 namespace MarkPad.Services.Settings
 {
-    // ReSharper disable InconsistentNaming
     public interface ISettingsProvider
     {
         /// <summary>
@@ -308,5 +307,4 @@ namespace MarkPad.Services.Settings
 #pragma warning restore 67
         }
     }
-    // ReSharper restore InconsistentNaming
 }

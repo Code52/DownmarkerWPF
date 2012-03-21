@@ -10,6 +10,7 @@
 using System;
 using System.Threading.Tasks;
 using CookComputing.XmlRpc;
+using MarkPad.Services.Settings;
 
 namespace MarkPad.Metaweblog
 {
