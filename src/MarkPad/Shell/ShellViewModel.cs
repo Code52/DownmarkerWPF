@@ -26,7 +26,7 @@ namespace MarkPad.Shell
         private readonly IEventAggregator eventAggregator;
         private readonly IDialogService dialogService;
         private readonly IWindowManager windowManager;
-        private readonly ISettingsService settingsService;
+        private readonly ISettingsProvider settingsService;
         private readonly Func<DocumentViewModel> documentCreator;
         private readonly Func<AboutViewModel> aboutCreator;
         private readonly Func<OpenFromWebViewModel> openFromWebCreator;
@@ -34,7 +34,7 @@ namespace MarkPad.Shell
         public ShellViewModel(
             IDialogService dialogService,
             IWindowManager windowManager,
-            ISettingsService settingsService,
+            ISettingsProvider settingsService,
             IEventAggregator eventAggregator,
             MDIViewModel mdi,
             SettingsViewModel settingsCreator,
@@ -60,8 +60,10 @@ namespace MarkPad.Shell
 
         private void InitialiseDefaultSettings()
         {
-            settingsService.SetAsDefault(SettingsViewModel.FontFamilySettingsKey, Constants.DEFAULT_EDITOR_FONT_FAMILY);
-            settingsService.SetAsDefault(SettingsViewModel.FontSizeSettingsKey, Constants.DEFAULT_EDITOR_FONT_SIZE);
+            var settings = settingsService.GetSettings<MarkpadSettings>();
+            settings.FontFamily = Constants.DEFAULT_EDITOR_FONT_FAMILY;
+            settings.FontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
+            settingsService.SaveSettings(settings);
         }
 
         public override string DisplayName
@@ -78,7 +80,6 @@ namespace MarkPad.Shell
         public override void CanClose(Action<bool> callback)
         {
             base.CanClose(callback);
-            settingsService.Save();
         }
 
         public void Exit()
@@ -258,7 +259,8 @@ namespace MarkPad.Shell
 
         public void PublishDocument()
         {
-            var blogs = settingsService.Get<List<BlogSetting>>("Blogs");
+            var settings = settingsService.GetSettings<MarkpadSettings>();
+            var blogs = settings.GetBlogs();
             if (blogs == null || blogs.Count == 0)
             {
                 dialogService.ShowError("Error Publishing Post", "No blogs available to publish to.", "");
@@ -279,7 +281,8 @@ namespace MarkPad.Shell
 
         public void OpenFromWeb()
         {
-            var blogs = settingsService.Get<List<BlogSetting>>("Blogs");
+            var settings = settingsService.GetSettings<MarkpadSettings>();
+            var blogs = settings.GetBlogs();
             if (blogs == null || blogs.Count == 0)
             {
                 var setupBlog = dialogService.ShowConfirmation("No blogs setup", "Do you want to setup a blog?", "",
@@ -298,7 +301,7 @@ namespace MarkPad.Shell
             if (result != true)
                 return;
 
-            var post = settingsService.Get<Post>("CurrentPost");
+            var post = openFromWeb.SelectedPost;
 
             var doc = documentCreator();
             doc.OpenFromWeb(post);
