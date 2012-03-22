@@ -105,6 +105,12 @@
             </s:InputBindingTrigger.InputBinding>
             <cm:ActionMessage MethodName="OpenDocument" />
         </s:InputBindingTrigger>
+        <s:InputBindingTrigger>
+            <s:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Ctrl" Key="W" />
+            </s:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="CloseDocument" />
+        </s:InputBindingTrigger>
     </i:Interaction.Triggers>
 
     <Window.Background>
