@@ -1,11 +1,13 @@
-﻿<UserControl
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Custom="http://schemas.markpad.net/winfx/xaml/shared" xmlns:cal="http://www.caliburnproject.org"
+             xmlns:Custom="http://schemas.markpad.net/winfx/xaml/shared" 
+             xmlns:cal="http://www.caliburnproject.org"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             x:Class="MarkPad.Settings.SettingsView" 
+             xmlns:Settings="clr-namespace:MarkPad.Settings" 
+             x:Class="MarkPad.Settings.SettingsView"
+             d:DataContext="{d:DesignInstance Settings:SettingsViewModel}"
              mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -59,9 +61,10 @@
                             <StackPanel>
                                 <TextBlock FontSize="26.667" FontWeight="Light" Text="blogs"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <ListBox x:Name="Blogs" SelectedItem="CurrentBlog"
-								DisplayMemberPath="BlogName"
-								Height="100" Width="178" Background="{x:Null}" BorderBrush="White" BorderThickness="2" />
+                                    <ListBox ItemsSource="{Binding Blogs}" SelectedItem="{Binding CurrentBlog}"
+								             DisplayMemberPath="BlogName"
+								             Height="100" Width="178" Background="{x:Null}" 
+                                             BorderBrush="White" BorderThickness="2" />
                                     <StackPanel  Margin="5 0 0 0" VerticalAlignment="Top">
                                         <Button x:Name="AddBlog" Style="{DynamicResource SquareButtonStyle}" Content="Add New" Width="70" Height="30" VerticalAlignment="Top">
                                             <i:Interaction.Triggers>
