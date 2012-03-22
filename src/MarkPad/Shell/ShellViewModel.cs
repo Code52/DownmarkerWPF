@@ -147,6 +147,15 @@ namespace MarkPad.Shell
             }
         }
 
+        public void CloseDocument()
+        {
+            var doc = MDI.ActiveItem as DocumentViewModel;
+            if (doc != null)
+            {
+                MDI.CloseItem(doc);
+            }
+        }
+
         public void Handle(FileOpenEvent message)
         {
             var doc = documentCreator();
