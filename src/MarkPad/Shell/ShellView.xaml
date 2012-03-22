@@ -18,6 +18,8 @@
     Icon="../markpad.ico"
     SnapsToDevicePixels="True"
     AllowDrop="True"
+    KeyDown="WindowKeyDown"
+    x:Name="window"
     d:DataContext="{d:DesignInstance {x:Type Shell:ShellViewModel}}">
 
     <Window.Resources>
@@ -401,6 +403,38 @@
                 <Button x:Name="OpenFromWeb" Content="OPEN FROM WEB" />
     		</WrapPanel>
     		<StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Orientation="Horizontal">
+                <!--<Controls:AutomaticUpdater 
+                    x:Name="au" 
+                    GUID="code52-markasdfpad-yawnface"
+                    BeforeChecking="au_BeforeChecking"
+                    BeforeDownloading="au_BeforeDownloading"
+                    CheckingFailed="au_CheckingFailed"
+                    DownloadingOrExtractingFailed="au_DownloadingOrExtractingFailed"
+                    UpdateFailed="au_UpdateFailed"
+                    UpdateType="CheckAndDownload"
+                    UpdateAvailable="au_UpdateAvailable"
+                    UpToDate="au_UpToDate"
+                    ReadyToBeInstalled="Au_OnReadyToBeInstalled"
+                    Visibility="Collapsed"
+                    KeepHidden="True" />
+                <Button x:Name="CheckForUpdate" DataContext="{Binding ElementName=window}" FontFamily="/MarkPad;component/Fonts/#Entypo" Click="CheckForUpdate_OnClick" FontSize="28" Margin="0,-15,10,0">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ChromelessButtonStyle}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding UpdateState}" Value="Unchecked">
+                                    <Setter Property="Button.Content" Value="d" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding UpdateState}" Value="UpToDate">
+                                    <Setter Property="Button.Content" Value="W" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding UpdateState}" Value="UpdatePending">
+                                    <Setter Property="Button.Content" Value="?" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>-->
+                <ContentControl x:Name="Updater" />
                 <Button Content="SETTINGS" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" FontWeight="Bold">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">

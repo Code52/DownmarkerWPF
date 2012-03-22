@@ -16,6 +16,7 @@ using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 using MarkPad.Settings;
 using Ookii.Dialogs.Wpf;
+using MarkPad.Updater;
 
 namespace MarkPad.Shell
 {
@@ -36,6 +37,7 @@ namespace MarkPad.Shell
             IEventAggregator eventAggregator,
             MDIViewModel mdi,
             SettingsViewModel settingsCreator,
+            UpdaterViewModel updaterViewModel,
             Func<DocumentViewModel> documentCreator,
             Func<AboutViewModel> aboutCreator,
             Func<OpenFromWebViewModel> openFromWebCreator)
@@ -44,7 +46,8 @@ namespace MarkPad.Shell
             this.dialogService = dialogService;
             this.windowManager = windowManager;
             this.settingsService = settingsService;
-            this.MDI = mdi;
+            MDI = mdi;
+            Updater = updaterViewModel;
             this.documentCreator = documentCreator;
             this.aboutCreator = aboutCreator;
             this.openFromWebCreator = openFromWebCreator;
@@ -69,6 +72,7 @@ namespace MarkPad.Shell
         public string CurrentState { get; set; }
         public MDIViewModel MDI { get; private set; }
         public SettingsViewModel Settings { get; private set; }
+        public UpdaterViewModel Updater { get; set; }
 
         public override void CanClose(Action<bool> callback)
         {
@@ -78,7 +82,7 @@ namespace MarkPad.Shell
 
         public void Exit()
         {
-            this.TryClose();
+            TryClose();
         }
 
         public void NewDocument()
@@ -274,7 +278,7 @@ namespace MarkPad.Shell
 
                 if (setupBlog)
                     ShowSettings();
-                return;
+					return;                    
             }
 
             var openFromWeb = openFromWebCreator();
