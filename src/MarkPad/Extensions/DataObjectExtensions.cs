@@ -24,19 +24,6 @@ namespace MarkPad.Extensions
                 images.Add(new DataImage { Bitmap = bitmap, BitmapSource = BitmapToSource(bitmap) });
             }
 
-            else if (e.GetDataPresent("System.String"))
-            {
-                var url = (string)e.GetData("System.String");
-                if (!Uri.IsWellFormedUriString(url, UriKind.Absolute) || !IsImage(url))
-                    return images;
-
-                var wc = new WebClient();
-                var originalData = wc.DownloadData(url);
-
-                var stream = new MemoryStream(originalData);
-                var x = new Bitmap(stream);
-                images.Add(new DataImage { Bitmap = x, BitmapSource = BitmapToSource(x) });
-            }
             else if (e.GetDataPresent(DataFormats.Bitmap))
             {
                 var bitmap = (Bitmap)e.GetData(DataFormats.Bitmap);
@@ -61,18 +48,6 @@ namespace MarkPad.Extensions
             }
 
             return images;
-        }
-
-        private static readonly string[] ImgExtensions = new[] {".png", ".jpg", ".jpeg", ".gif"};
-
-        private static bool IsImage(string url)
-        {
-            var extension = Path.GetExtension(url);
-
-            if (string.IsNullOrEmpty(extension))
-                return false;
-
-            return ImgExtensions.Contains(extension.ToLower());
         }
 
         // the CreateBitmapFromDib function was taken from 
