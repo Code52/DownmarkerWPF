@@ -4,7 +4,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Media.Imaging;
 using MarkPad.Services.Interfaces;
 
 namespace MarkPad.Services.Implementation
@@ -63,7 +62,10 @@ namespace MarkPad.Services.Implementation
                     continue;
 
 
-                var base64String = Convert.ToBase64String(File.ReadAllBytes(Path.Combine(basePath, url.TrimStart('/'))));
+                var filePath = Path.Combine(basePath, url.TrimStart('/'));
+                if (!File.Exists(filePath))
+                    continue;
+                var base64String = Convert.ToBase64String(File.ReadAllBytes(filePath));
                 htmlDocument = htmlDocument.Replace(replace, string.Format("src=\"data:image/png;base64,{0}\"", base64String));
             }
 
