@@ -7,3 +7,4 @@ Packages
 _Resharper*
 msbuild.log
 *.cache
+artifacts/
