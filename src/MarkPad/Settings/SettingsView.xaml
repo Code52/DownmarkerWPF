@@ -5,8 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Custom="http://schemas.markpad.net/winfx/xaml/shared" xmlns:cal="http://www.caliburnproject.org"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             x:Class="MarkPad.Settings.SettingsView" 
-             mc:Ignorable="d">
+             xmlns:Settings="clr-namespace:MarkPad.Settings" x:Class="MarkPad.Settings.SettingsView" 
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance Settings:SettingsViewModel}">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -59,7 +59,7 @@
                             <StackPanel>
                                 <TextBlock FontSize="26.667" FontWeight="Light" Text="blogs"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <ListBox x:Name="Blogs" SelectedItem="CurrentBlog"
+                                    <ListBox ItemsSource="{Binding Blogs}" SelectedItem="{Binding CurrentBlog}"
 								DisplayMemberPath="BlogName"
 								Height="100" Width="178" Background="{x:Null}" BorderBrush="White" BorderThickness="2" />
                                     <StackPanel  Margin="5 0 0 0" VerticalAlignment="Top">

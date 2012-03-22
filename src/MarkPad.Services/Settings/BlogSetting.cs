@@ -1,23 +1,28 @@
 using System;
 using System.ComponentModel;
-using Caliburn.Micro;
-using MarkPad.Metaweblog;
+using System.Runtime.Serialization;
 
-namespace MarkPad.Settings
+namespace MarkPad.Services.Settings
 {
-    [Serializable]
-    public class BlogSetting : PropertyChangedBase, IEditableObject
+    [DataContract]
+    public class BlogSetting : INotifyPropertyChanged, IEditableObject
     {
+        [DataMember]
         public string BlogName { get; set; }
 
+        [DataMember]
         public string WebAPI { get; set; }
 
+        [DataMember]
         public BlogInfo BlogInfo { get; set; }
 
+        [DataMember]
         public string Username { get; set; }
 
+        [DataMember]
         public string Password { get; set; }
 
+        [DataMember]
         public string Language { get; set; }
 
         public bool IsWebAPICompleted
@@ -82,6 +87,14 @@ namespace MarkPad.Settings
 
         public void EndEdit()
         {
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            var handler = PropertyChanged;
+            if (handler != null) handler(this, e);
         }
     }
 }

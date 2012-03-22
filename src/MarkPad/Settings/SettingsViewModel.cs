@@ -10,14 +10,13 @@ using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
+using MarkPad.Services.Settings;
 using Microsoft.Win32;
 
 namespace MarkPad.Settings
 {
     public class SettingsViewModel : Screen
     {
-        public const string FontSizeSettingsKey = "Font";
-        public const string FontFamilySettingsKey = "FontFamily";
         public IEnumerable<ExtensionViewModel> Extensions { get; set; }
         public IEnumerable<FontSizes> FontSizes { get; set; }
         public IEnumerable<FontFamily> FontFamilies { get; set; }
@@ -28,16 +27,15 @@ namespace MarkPad.Settings
         public FontFamily SelectedFontFamily { get; set; }
 
         private const string BlogsSettingsKey = "Blogs";
-        private const string DictionariesSettingsKey = "Dictionaries";
         private const string MarkpadKeyName = "markpad.md";
 
-        private readonly ISettingsService settingsService;
+        private readonly ISettingsProvider settingsService;
         private readonly IWindowManager windowManager;
         private readonly IEventAggregator eventAggregator;
         private readonly Func<BlogSettingsViewModel> blogSettingsCreator;
         
         public SettingsViewModel(
-            ISettingsService settingsService,
+            ISettingsProvider settingsService,
             IWindowManager windowManager,
             IEventAggregator eventAggregator,
             Func<BlogSettingsViewModel> blogSettingsCreator)
@@ -55,7 +53,8 @@ namespace MarkPad.Settings
                     .ToArray();
             }
 
-            var blogs = settingsService.Get<List<BlogSetting>>(BlogsSettingsKey) ?? new List<BlogSetting>();
+            var settings = settingsService.GetSettings<MarkpadSettings>();
+            var blogs = settings.GetBlogs();
 
             Blogs = new ObservableCollection<BlogSetting>(blogs);
 
@@ -63,16 +62,15 @@ namespace MarkPad.Settings
             FontSizes = Enum.GetValues(typeof(FontSizes)).OfType<FontSizes>().ToArray();
             FontFamilies = Fonts.SystemFontFamilies.OrderBy(f => f.Source);
 
-            SelectedLanguage = settingsService.Get<SpellingLanguages>(DictionariesSettingsKey);
-            
-            var fontFamily = settingsService.Get<string>(FontFamilySettingsKey);
+            SelectedLanguage = settings.Language;
+
+            var fontFamily = settings.FontFamily;
             SelectedFontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == fontFamily);
-            SelectedFontSize = settingsService.Get<FontSizes>(FontSizeSettingsKey);
+            SelectedFontSize = settings.FontSize;
 
             if (SelectedFontFamily == null)
             {
-                SelectedFontFamily = FontHelpers.TryGetFontFamilyFromStack(Constants.DEFAULT_EDITOR_FONT_FAMILY);
-                SelectedFontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
+                ResetFont();
             }
         }
 
@@ -168,8 +166,11 @@ namespace MarkPad.Settings
 
         public void ResetFont()
         {
-            SelectedFontFamily = FontHelpers.TryGetFontFamilyFromStack(Constants.DEFAULT_EDITOR_FONT_FAMILY);
-            SelectedFontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
+            var readSettingMetadata = settingsService.ReadSettingMetadata<MarkpadSettings>().ToArray();
+            var defaultFontFamily = (string)readSettingMetadata.Single(m => m.Property.Name == "FontFamily").DefaultValue;
+            var defaultFontSize = (FontSizes)readSettingMetadata.Single(m => m.Property.Name == "FontSize").DefaultValue;
+            SelectedFontFamily = FontHelpers.TryGetFontFamilyFromStack(defaultFontFamily);
+            SelectedFontSize = defaultFontSize;
         }
 
         public void Accept()
@@ -179,11 +180,14 @@ namespace MarkPad.Settings
             var spellingService = IoC.Get<ISpellingService>();
             spellingService.SetLanguage(SelectedLanguage);
 
-            settingsService.Set(BlogsSettingsKey, Blogs.ToList());
-            settingsService.Set(DictionariesSettingsKey, SelectedLanguage);
-            settingsService.Set(FontSizeSettingsKey, SelectedFontSize);
-            settingsService.Set(FontFamilySettingsKey, SelectedFontFamily.Source);
-            settingsService.Save();
+            var settings = settingsService.GetSettings<MarkpadSettings>();
+            
+            settings.SaveBlogs(Blogs.ToList());
+            settings.Language = SelectedLanguage;
+            settings.FontSize = SelectedFontSize;
+            settings.FontFamily = SelectedFontFamily.Source;
+
+            settingsService.SaveSettings(settings);
 
             IoC.Get<IEventAggregator>().Publish(new SettingsChangedEvent());
         }

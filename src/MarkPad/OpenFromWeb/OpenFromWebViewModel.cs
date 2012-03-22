@@ -5,18 +5,19 @@ using Caliburn.Micro;
 using MarkPad.Framework;
 using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
+using MarkPad.Services.Settings;
 using MarkPad.Settings;
 
 namespace MarkPad.OpenFromWeb
 {
     public class OpenFromWebViewModel : Screen
     {
-        private readonly ISettingsService settings;
+        private readonly ISettingsProvider settingsProvider;
         private readonly IDialogService dialogService;
 
-        public OpenFromWebViewModel(ISettingsService settings, IDialogService dialogService)
+        public OpenFromWebViewModel(ISettingsProvider settingsProvider, IDialogService dialogService)
         {
-            this.settings = settings;
+            this.settingsProvider = settingsProvider;
             this.dialogService = dialogService;
         }
 
@@ -34,15 +35,15 @@ namespace MarkPad.OpenFromWeb
         {
             get
             {
-                var post = settings.Get<Post>("CurrentPost");
-
-                return new Entry { Key = post.title, Value = post };
+                return new Entry { Key = SelectedPost.title, Value = SelectedPost };
             }
             set
             {
-                settings.Set("CurrentPost", value.Value);
+                SelectedPost = value.Value;
             }
         }
+
+        public Post SelectedPost { get; set; }
 
         public ObservableCollection<Entry> Posts { get; private set; }
 
@@ -73,7 +74,7 @@ namespace MarkPad.OpenFromWeb
             if (!t.IsFaulted)
                 return;
 
-            dialogService.ShowError("Markpad", "There was a problem contacting the website. Check the settings and try again.", t.Exception.GetErrorMessage());
+            dialogService.ShowError("Markpad", "There was a problem contacting the website. Check the settingsProvider and try again.", t.Exception.GetErrorMessage());
         }
     }
 }

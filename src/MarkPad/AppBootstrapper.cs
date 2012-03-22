@@ -68,13 +68,6 @@ namespace MarkPad
             // Handle the original arguments from the first run of this app.
             ((App)Application).HandleArguments(Environment.GetCommandLineArgs());
         }
-                
-        protected override void OnExit(object sender, EventArgs e)
-        {
-            jumpList.Dispose();
-
-            base.OnExit(sender, e);
-        }
 
         protected override void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
