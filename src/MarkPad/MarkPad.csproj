@@ -160,7 +160,6 @@
     <Compile Include="Metaweblog\MetaWeblog.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Settings\BlogSetting.cs" />
     <Compile Include="Settings\BlogSettingsView.xaml.cs">
       <DependentUpon>BlogSettingsView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -223,7 +222,6 @@
     </Compile>
     <Compile Include="MDI\MDIViewModel.cs" />
     <Compile Include="Shell\JumpListIntegration.cs" />
-    <Compile Include="Metaweblog\BlogInfo.cs" />
     <Compile Include="Metaweblog\Category.cs" />
     <Compile Include="Metaweblog\CategoryInfo.cs" />
     <Compile Include="Metaweblog\Enclosure.cs" />

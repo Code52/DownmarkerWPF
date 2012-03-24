@@ -12,6 +12,7 @@ using Caliburn.Micro;
 using MarkPad.Framework;
 using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
+using MarkPad.Services.Settings;
 
 namespace MarkPad.Settings
 {
