@@ -28,8 +28,6 @@ namespace MarkPad.Settings
         public FontSizes SelectedFontSize { get; set; }
         public FontFamily SelectedFontFamily { get; set; }
 
-        private const string BlogsSettingsKey = "Blogs";
-        private const string DictionariesSettingsKey = "Dictionaries";
         private const string MarkpadKeyName = "markpad.md";
 
         private readonly ISettingsProvider settingsService;
@@ -47,16 +45,18 @@ namespace MarkPad.Settings
             this.windowManager = windowManager;
             this.eventAggregator = eventAggregator;
             this.blogSettingsCreator = blogSettingsCreator;
+        }
 
-            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes"))
+        public void Initialize()
+        {
+            using (var key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes"))
             {
                 Extensions = Constants.DefaultExtensions
                     .Select(s => new ExtensionViewModel(s,
                         key.GetSubKeyNames().Contains(s) && !string.IsNullOrEmpty(key.OpenSubKey(s).GetValue("").ToString())))
                     .ToArray();
             }
-
-
+            
             var settings = settingsService.GetSettings<MarkpadSettings>();
             var blogs = settings.GetBlogs();
 

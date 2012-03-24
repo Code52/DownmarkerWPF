@@ -9,7 +9,6 @@ using MarkPad.Document;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.MDI;
-using MarkPad.Metaweblog;
 using MarkPad.OpenFromWeb;
 using MarkPad.PublishDetails;
 using MarkPad.Services.Implementation;
@@ -36,7 +35,7 @@ namespace MarkPad.Shell
             ISettingsProvider settingsService,
             IEventAggregator eventAggregator,
             MDIViewModel mdi,
-            SettingsViewModel settingsCreator,
+            SettingsViewModel settingsViewModel,
             Func<DocumentViewModel> documentCreator,
             Func<AboutViewModel> aboutCreator,
             Func<OpenFromWebViewModel> openFromWebCreator)
@@ -45,22 +44,14 @@ namespace MarkPad.Shell
             this.dialogService = dialogService;
             this.windowManager = windowManager;
             this.settingsService = settingsService;
-            this.MDI = mdi;
+            MDI = mdi;
             this.documentCreator = documentCreator;
             this.aboutCreator = aboutCreator;
             this.openFromWebCreator = openFromWebCreator;
 
-            Settings = settingsCreator;
-            InitialiseDefaultSettings();
-            ActivateItem(mdi);
-        }
+            Settings = settingsViewModel;
 
-        private void InitialiseDefaultSettings()
-        {
-            var settings = settingsService.GetSettings<MarkpadSettings>();
-            settings.FontFamily = Constants.DEFAULT_EDITOR_FONT_FAMILY;
-            settings.FontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
-            settingsService.SaveSettings(settings);
+            ActivateItem(mdi);
         }
 
         public override string DisplayName
@@ -73,14 +64,9 @@ namespace MarkPad.Shell
         public MDIViewModel MDI { get; private set; }
         public SettingsViewModel Settings { get; private set; }
 
-        public override void CanClose(Action<bool> callback)
-        {
-            base.CanClose(callback);
-        }
-
         public void Exit()
         {
-            this.TryClose();
+            TryClose();
         }
 
         public void NewDocument()
@@ -155,6 +141,7 @@ namespace MarkPad.Shell
         public void ShowSettings()
         {
             CurrentState = "ShowSettings";
+            Settings.Initialize();
         }
 
         public void ShowAbout()
