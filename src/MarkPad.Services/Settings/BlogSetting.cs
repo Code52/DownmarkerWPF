@@ -1,21 +1,27 @@
-using System;
 using System.ComponentModel;
+using System.Runtime.Serialization;
 
 namespace MarkPad.Services.Settings
 {
-    [Serializable]
+    [DataContract]
     public class BlogSetting : INotifyPropertyChanged, IEditableObject
     {
+        [DataMember]
         public string BlogName { get; set; }
 
+        [DataMember]
         public string WebAPI { get; set; }
 
+        [DataMember]
         public BlogInfo BlogInfo { get; set; }
 
+        [DataMember]
         public string Username { get; set; }
 
+        [DataMember]
         public string Password { get; set; }
 
+        [DataMember]
         public string Language { get; set; }
 
         public bool IsWebAPICompleted
