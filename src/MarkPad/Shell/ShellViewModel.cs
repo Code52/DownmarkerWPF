@@ -9,7 +9,6 @@ using MarkPad.Document;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.MDI;
-using MarkPad.Metaweblog;
 using MarkPad.OpenFromWeb;
 using MarkPad.PublishDetails;
 using MarkPad.Services.Implementation;
@@ -37,7 +36,7 @@ namespace MarkPad.Shell
             ISettingsProvider settingsService,
             IEventAggregator eventAggregator,
             MDIViewModel mdi,
-            SettingsViewModel settingsCreator,
+            SettingsViewModel settingsViewModel,
             UpdaterViewModel updaterViewModel,
             Func<DocumentViewModel> documentCreator,
             Func<AboutViewModel> aboutCreator,
@@ -53,17 +52,9 @@ namespace MarkPad.Shell
             this.aboutCreator = aboutCreator;
             this.openFromWebCreator = openFromWebCreator;
 
-            Settings = settingsCreator;
-            InitialiseDefaultSettings();
-            ActivateItem(mdi);
-        }
+            Settings = settingsViewModel;
 
-        private void InitialiseDefaultSettings()
-        {
-            var settings = settingsService.GetSettings<MarkpadSettings>();
-            settings.FontFamily = Constants.DEFAULT_EDITOR_FONT_FAMILY;
-            settings.FontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
-            settingsService.SaveSettings(settings);
+            ActivateItem(mdi);
         }
 
         public override string DisplayName
@@ -76,11 +67,6 @@ namespace MarkPad.Shell
         public MDIViewModel MDI { get; private set; }
         public SettingsViewModel Settings { get; private set; }
         public UpdaterViewModel Updater { get; set; }
-
-        public override void CanClose(Action<bool> callback)
-        {
-            base.CanClose(callback);
-        }
 
         public void Exit()
         {
@@ -168,6 +154,7 @@ namespace MarkPad.Shell
         public void ShowSettings()
         {
             CurrentState = "ShowSettings";
+            Settings.Initialize();
         }
 
         public void ShowAbout()
