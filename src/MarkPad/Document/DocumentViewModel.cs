@@ -88,9 +88,10 @@ namespace MarkPad.Document
         public void OpenFromWeb(Post post)
         {
             Post = post;
-            title = post.permalink;
-            Document.Text = post.description;
-            Original = post.description;
+
+            title = post.permalink ?? string.Empty; // TODO: no title is displayed now
+            Document.Text = post.description ?? string.Empty;
+            Original = post.description ?? string.Empty;
 
             Update();
             EvaluateContext();
