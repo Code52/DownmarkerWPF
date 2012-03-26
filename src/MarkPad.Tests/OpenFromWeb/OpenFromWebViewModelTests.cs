@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using MarkPad.OpenFromWeb;
@@ -44,6 +45,8 @@ namespace MarkPad.Tests.OpenFromWeb
             subject.Cancel();
 
             conductor.Received().CloseItem(subject);
+
+            // TODO: get result from dialog
         }
 
         [Fact]
@@ -76,6 +79,21 @@ namespace MarkPad.Tests.OpenFromWeb
 
             Assert.Empty(subject.Posts);
             Assert.False(subject.CanContinue);
+        }
+
+        [Fact]
+        public void Fetch_ThrowingException_RaisesDialog()
+        {
+            subject.InitializeBlogs(new List<BlogSetting> {new BlogSetting()});
+
+            metaWeblogService
+                .GetRecentPostsAsync(Arg.Any<BlogSetting>(), Arg.Any<int>())
+                .Returns(Task<Post[]>.Factory.StartNew(() => { throw new Exception(); } ));
+
+            subject.Fetch()
+                .Wait();
+
+            dialogService.Received().ShowError("Markpad", Arg.Any<string>(), Arg.Any<string>());
         }
 
         [Fact]
