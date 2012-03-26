@@ -9,9 +9,9 @@ using CookComputing.XmlRpc;
 using ICSharpCode.AvalonEdit.Document;
 using MarkPad.Framework;
 using MarkPad.HyperlinkEditor;
-using MarkPad.Metaweblog;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
+using MarkPad.Services.Metaweblog;
 using MarkPad.Services.Settings;
 using Ookii.Dialogs.Wpf;
 

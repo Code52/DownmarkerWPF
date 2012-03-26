@@ -106,9 +106,7 @@
     </Compile>
     <Compile Include="Metaweblog\MediaObject.cs" />
     <Compile Include="Metaweblog\MediaObjectInfo.cs" />
-    <Compile Include="Metaweblog\MetaWeblog.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Metaweblog\MetaWeblog.cs" />
     <Compile Include="Metaweblog\Post.cs" />
     <Compile Include="Metaweblog\Source.cs" />
     <Compile Include="Metaweblog\UserInfo.cs" />
@@ -142,6 +140,9 @@
     </None>
     <None Include="Metaweblog\Generated\MetaWeblogAPI.json" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

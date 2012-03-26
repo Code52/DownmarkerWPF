@@ -1,6 +1,6 @@
 using System;
 
-namespace MarkPad.Metaweblog
+namespace MarkPad.Services.Metaweblog
 {
     [Serializable]
     public struct CategoryInfo
