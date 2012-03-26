@@ -11,6 +11,7 @@ namespace MarkPad.Services
         {
             builder.RegisterType<SiteContextGenerator>().As<ISiteContextGenerator>();
             builder.RegisterType<DialogService>().As<IDialogService>();
+            builder.RegisterType<MetaWeblogService>().As<IMetaWeblogService>();
             builder.RegisterType<SettingsProvider>().As<ISettingsProvider>().SingleInstance();
             builder.RegisterType<SpellingService>().As<ISpellingService>().SingleInstance().OnActivating(args =>
             {
