@@ -25,6 +25,7 @@ namespace MarkPad.Document
         private readonly ISettingsProvider settings;
         private readonly IWindowManager windowManager;
         private readonly ISiteContextGenerator siteContextGenerator;
+        private readonly Func<string, IMetaWeblogService> getMetaWeblog;
 
         private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
         private readonly DispatcherTimer timer;
@@ -33,12 +34,13 @@ namespace MarkPad.Document
         private string filename;
         private ISiteContext siteContext;
 
-        public DocumentViewModel(IDialogService dialogService, ISettingsProvider settings, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator)
+        public DocumentViewModel(IDialogService dialogService, ISettingsProvider settings, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator, Func<string, IMetaWeblogService> getMetaWeblog )
         {
             this.dialogService = dialogService;
             this.settings = settings;
             this.windowManager = windowManager;
             this.siteContextGenerator = siteContextGenerator;
+            this.getMetaWeblog = getMetaWeblog;
 
             title = "New Document";
             Original = "";
@@ -253,7 +255,7 @@ namespace MarkPad.Document
         {
             if (categories == null) categories = new string[0];
 
-            var proxy = new MetaWeblog(blog.WebAPI);
+            var proxy = getMetaWeblog(blog.WebAPI);
 
             var newpost = new Post();
             try

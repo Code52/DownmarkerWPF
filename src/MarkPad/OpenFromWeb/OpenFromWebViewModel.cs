@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -12,10 +13,12 @@ namespace MarkPad.OpenFromWeb
     public class OpenFromWebViewModel : Screen
     {
         private readonly IDialogService dialogService;
+        private readonly Func<string, IMetaWeblogService> getMetaWeblog;
 
-        public OpenFromWebViewModel(IDialogService dialogService)
+        public OpenFromWebViewModel(IDialogService dialogService, Func<string, IMetaWeblogService> getMetaWeblog)
         {
             this.dialogService = dialogService;
+            this.getMetaWeblog = getMetaWeblog;
         }
 
         public void InitializeBlogs(List<BlogSetting> blogs)
@@ -48,7 +51,7 @@ namespace MarkPad.OpenFromWeb
         {
             Posts = new ObservableCollection<Entry>();
 
-            var proxy = new MetaWeblog(this.SelectedBlog.WebAPI);
+            var proxy = getMetaWeblog(this.SelectedBlog.WebAPI);
 
             proxy
                 .GetRecentPostsAsync(SelectedBlog.BlogInfo.blogid, SelectedBlog.Username, SelectedBlog.Password, 100)
