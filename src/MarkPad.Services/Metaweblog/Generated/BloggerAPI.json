@@ -1,4 +1,4 @@
-﻿blogger.deletePost, bool, string key, string postid, string username, string password, bool publish
+blogger.deletePost, bool, string key, string postid, string username, string password, bool publish
 
 blogger.getUsersBlogs, BlogInfo[], string key, string username, string password
 
