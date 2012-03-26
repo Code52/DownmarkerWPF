@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using MarkPad.Framework;
@@ -24,13 +25,13 @@ namespace MarkPad.OpenFromWeb
         public void InitializeBlogs(List<BlogSetting> blogs)
         {
             Blogs = blogs;
-            SelectedBlog = blogs[0];
+            SelectedBlog = blogs.FirstOrDefault();
         }
 
         public List<BlogSetting> Blogs { get; private set; }
 
         public BlogSetting SelectedBlog { get; set; }
-        
+
         public Post SelectedPost { get; set; }
 
         public Entry CurrentPost
@@ -46,6 +47,8 @@ namespace MarkPad.OpenFromWeb
         }
 
         public ObservableCollection<Entry> Posts { get; private set; }
+
+        public bool CanFetch { get { return SelectedBlog != null; } }
 
         public void Fetch()
         {
