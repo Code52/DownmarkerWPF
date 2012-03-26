@@ -55,14 +55,28 @@ namespace MarkPad.OpenFromWeb
 
         public bool CanFetch { get { return SelectedBlog != null; } }
 
-        public void Fetch()
+        public bool CanContinue
+        {
+            get { return !string.IsNullOrWhiteSpace(CurrentPost.Key); }
+        }
+
+        public void Continue()
+        {
+            TryClose(true);
+        }
+
+        public void Cancel()
+        {
+            TryClose(false);
+        }
+
+        public Task Fetch()
         {
             Posts = new ObservableCollection<Entry>();
 
             var proxy = getMetaWeblog(SelectedBlog.WebAPI);
 
-            proxy
-                .GetRecentPostsAsync(SelectedBlog, 100)
+            return proxy.GetRecentPostsAsync(SelectedBlog, 100)
                 .ContinueWith(UpdateBlogPosts, taskScheduler.Current)
                 .ContinueWith(HandleFetchError);
         }
@@ -75,6 +89,10 @@ namespace MarkPad.OpenFromWeb
             {
                 Posts.Add(new Entry { Key = p.title, Value = p });
             }
+
+            var topPost = Posts.FirstOrDefault();
+            if (topPost != null)
+                CurrentPost = topPost;
         }
 
         private void HandleFetchError(Task t)
