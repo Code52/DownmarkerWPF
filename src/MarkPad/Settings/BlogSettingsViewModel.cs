@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Caliburn.Micro;
 using MarkPad.Framework;
-using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;
 
@@ -21,10 +20,12 @@ namespace MarkPad.Settings
         private const string RsdNamespace = "http://archipelago.phrasewise.com/rsd";
         
         private readonly IDialogService dialogService;
+        private readonly Func<string, IMetaWeblogService> getMetaWeblog;
 
-        public BlogSettingsViewModel(IDialogService dialogService)
+        public BlogSettingsViewModel(IDialogService dialogService, Func<string, IMetaWeblogService> getMetaWeblog)
         {
             this.dialogService = dialogService;
+            this.getMetaWeblog = getMetaWeblog;
 
             BlogLanguages = new List<string> { "HTML", "Markdown" };
         }
@@ -102,12 +103,12 @@ namespace MarkPad.Settings
         {
             SelectedAPIBlog = null;
 
-            var proxy = new MetaWeblog(CurrentBlog.WebAPI);
+            var proxy = getMetaWeblog(CurrentBlog.WebAPI);
 
             APIBlogs = new ObservableCollection<FetchedBlogInfo>();
 
             proxy
-                .GetUsersBlogsAsync("MarkPad", CurrentBlog.Username, CurrentBlog.Password)
+                .GetUsersBlogsAsync(CurrentBlog)
                 .ContinueWith(UpdateBlogList, TaskScheduler.FromCurrentSynchronizationContext())
                 .ContinueWith(HandleFetchError);
         }

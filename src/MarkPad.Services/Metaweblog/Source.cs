@@ -1,12 +1,11 @@
 using CookComputing.XmlRpc;
 
-namespace MarkPad.Metaweblog
+namespace MarkPad.Services.Metaweblog
 {
     [XmlRpcMissingMapping(MappingAction.Ignore)]
-    public struct MediaObject
+    public struct Source
     {
         public string name;
-        public string type;
-        public byte[] bits;
+        public string url;
     }
 }

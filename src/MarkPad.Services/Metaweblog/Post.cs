@@ -1,7 +1,7 @@
 using System;
 using CookComputing.XmlRpc;
 
-namespace MarkPad.Metaweblog
+namespace MarkPad.Services.Metaweblog
 {
     [Serializable]
     [XmlRpcMissingMapping(MappingAction.Ignore)]
