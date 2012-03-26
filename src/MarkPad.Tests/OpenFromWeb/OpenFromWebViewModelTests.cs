@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MarkPad.OpenFromWeb;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;
@@ -9,14 +10,17 @@ namespace MarkPad.Tests.OpenFromWeb
 {
     public class OpenFromWebViewModelTests
     {
-        OpenFromWebViewModel subject;
+        readonly OpenFromWebViewModel subject;
         
         readonly IMetaWeblogService metaWeblogService = Substitute.For<IMetaWeblogService>();
         readonly IDialogService dialogService = Substitute.For<IDialogService>();
+        readonly ITaskSchedulerFactory taskScheduler = Substitute.For<ITaskSchedulerFactory>();
 
         public OpenFromWebViewModelTests()
         {
-            subject = new OpenFromWebViewModel(dialogService, s => metaWeblogService);
+            taskScheduler.Current.Returns(TaskScheduler.Default);
+
+            subject = new OpenFromWebViewModel(dialogService, s => metaWeblogService, taskScheduler);
         }
 
         [Fact]

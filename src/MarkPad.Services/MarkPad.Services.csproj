@@ -97,6 +97,8 @@
     <Compile Include="Interfaces\ISiteContextGenerator.cs" />
     <Compile Include="Interfaces\ISpellingService.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />
+    <Compile Include="Interfaces\ITaskSchedulerFactory.cs" />
+    <Compile Include="Interfaces\TaskSchedulerFactory.cs" />
     <Compile Include="Metaweblog\Category.cs" />
     <Compile Include="Metaweblog\CategoryInfo.cs" />
     <Compile Include="Metaweblog\Enclosure.cs" />

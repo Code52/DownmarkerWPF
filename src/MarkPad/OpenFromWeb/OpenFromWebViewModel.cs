@@ -15,11 +15,16 @@ namespace MarkPad.OpenFromWeb
     {
         private readonly IDialogService dialogService;
         private readonly Func<string, IMetaWeblogService> getMetaWeblog;
+        private readonly ITaskSchedulerFactory taskScheduler;
 
-        public OpenFromWebViewModel(IDialogService dialogService, Func<string, IMetaWeblogService> getMetaWeblog)
+        public OpenFromWebViewModel(
+            IDialogService dialogService, 
+            Func<string, IMetaWeblogService> getMetaWeblog,
+            ITaskSchedulerFactory taskScheduler )
         {
             this.dialogService = dialogService;
             this.getMetaWeblog = getMetaWeblog;
+            this.taskScheduler = taskScheduler;
         }
 
         public void InitializeBlogs(List<BlogSetting> blogs)
@@ -58,7 +63,7 @@ namespace MarkPad.OpenFromWeb
 
             proxy
                 .GetRecentPostsAsync(SelectedBlog, 100)
-                .ContinueWith(UpdateBlogPosts, TaskScheduler.FromCurrentSynchronizationContext())
+                .ContinueWith(UpdateBlogPosts, taskScheduler.Current)
                 .ContinueWith(HandleFetchError);
         }
 
