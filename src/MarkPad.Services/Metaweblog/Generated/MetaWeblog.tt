@@ -1,4 +1,4 @@
-﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ template debug="false" hostspecific="true" language="C#" #>
 <#@ output extension=".generated.cs" #>
 <#@ assembly name="System.Core.dll" #>
 <#@ import namespace="System.IO" #>
@@ -41,8 +41,9 @@
 using System;
 using System.Threading.Tasks;
 using CookComputing.XmlRpc;
+using MarkPad.Services.Settings;
 
-namespace MarkPad.Metaweblog
+namespace MarkPad.Services.Metaweblog
 {
     partial class MetaWeblog : XmlRpcClientProtocol
     {

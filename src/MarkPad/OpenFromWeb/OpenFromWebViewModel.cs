@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using MarkPad.Framework;
-using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
+using MarkPad.Services.Metaweblog;
 using MarkPad.Services.Settings;
 
 namespace MarkPad.OpenFromWeb
@@ -12,10 +13,12 @@ namespace MarkPad.OpenFromWeb
     public class OpenFromWebViewModel : Screen
     {
         private readonly IDialogService dialogService;
+        private readonly Func<string, IMetaWeblogService> getMetaWeblog;
 
-        public OpenFromWebViewModel(IDialogService dialogService)
+        public OpenFromWebViewModel(IDialogService dialogService, Func<string, IMetaWeblogService> getMetaWeblog)
         {
             this.dialogService = dialogService;
+            this.getMetaWeblog = getMetaWeblog;
         }
 
         public void InitializeBlogs(List<BlogSetting> blogs)
@@ -48,10 +51,10 @@ namespace MarkPad.OpenFromWeb
         {
             Posts = new ObservableCollection<Entry>();
 
-            var proxy = new MetaWeblog(this.SelectedBlog.WebAPI);
+            var proxy = getMetaWeblog(SelectedBlog.WebAPI);
 
             proxy
-                .GetRecentPostsAsync(SelectedBlog.BlogInfo.blogid, SelectedBlog.Username, SelectedBlog.Password, 100)
+                .GetRecentPostsAsync(SelectedBlog, 100)
                 .ContinueWith(UpdateBlogPosts, TaskScheduler.FromCurrentSynchronizationContext())
                 .ContinueWith(HandleFetchError);
         }

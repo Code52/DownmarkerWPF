@@ -1,4 +1,4 @@
-﻿metaWeblog.newPost, string, string blogid, string username, string password, Post post, bool publish
+metaWeblog.newPost, string, string blogid, string username, string password, Post post, bool publish
 
 metaWeblog.editPost, bool, string postid, string username, string password, Post post, bool publish
 

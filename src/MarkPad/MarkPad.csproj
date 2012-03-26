@@ -216,15 +216,6 @@
     </Compile>
     <Compile Include="HyperlinkEditor\HyperlinkEditorViewModel.cs" />
     <Compile Include="OpenFromWeb\Entry.cs" />
-    <Compile Include="Metaweblog\Generated\MetaWeblog.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MetaWeblog.tt</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Metaweblog\MetaWeblog.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Settings\BlogSettingsView.xaml.cs">
       <DependentUpon>BlogSettingsView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -287,14 +278,6 @@
     </Compile>
     <Compile Include="MDI\MDIViewModel.cs" />
     <Compile Include="Shell\JumpListIntegration.cs" />
-    <Compile Include="Metaweblog\Category.cs" />
-    <Compile Include="Metaweblog\CategoryInfo.cs" />
-    <Compile Include="Metaweblog\Enclosure.cs" />
-    <Compile Include="Metaweblog\MediaObject.cs" />
-    <Compile Include="Metaweblog\MediaObjectInfo.cs" />
-    <Compile Include="Metaweblog\Post.cs" />
-    <Compile Include="Metaweblog\Source.cs" />
-    <Compile Include="Metaweblog\UserInfo.cs" />
     <Compile Include="OpenFromWeb\OpenFromWebView.xaml.cs">
       <DependentUpon>OpenFromWebView.xaml</DependentUpon>
     </Compile>
@@ -348,12 +331,6 @@
       <SubType>Designer</SubType>
     </None>
     <EmbeddedResource Include="Help.md" />
-    <None Include="Metaweblog\Generated\BloggerAPI.json" />
-    <None Include="Metaweblog\Generated\MetaWeblog.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>MetaWeblog.generated.cs</LastGenOutput>
-    </None>
-    <None Include="Metaweblog\Generated\MetaWeblogAPI.json" />
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
     <EmbeddedResource Include="Syntax\Markdown.xshd" />
