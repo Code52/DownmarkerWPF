@@ -6,10 +6,10 @@ namespace MarkPad.Services.Interfaces
 {
     public interface IMetaWeblogService
     {
-        string NewPost(string blogid, string username, string password, Post newpost, bool b);
-        Post GetPost(string postid, string username, string password);
-        void EditPost(string postid, string username, string password, Post newpost, bool b);
-        Task<Post[]> GetRecentPostsAsync(string blogid, string username, string password, int i);
-        Task<BlogInfo[]> GetUsersBlogsAsync(string markpad, string username, string password);
+        string NewPost(BlogSetting settings, Post newpost, bool b);
+        Post GetPost(string postid, BlogSetting settings);
+        void EditPost(string postid, BlogSetting settings, Post newpost, bool b);
+        Task<Post[]> GetRecentPostsAsync(BlogSetting selectedBlog, int count);
+        Task<BlogInfo[]> GetUsersBlogsAsync(BlogSetting setting);
     }
 }

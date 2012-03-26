@@ -51,10 +51,10 @@ namespace MarkPad.OpenFromWeb
         {
             Posts = new ObservableCollection<Entry>();
 
-            var proxy = getMetaWeblog(this.SelectedBlog.WebAPI);
+            var proxy = getMetaWeblog(SelectedBlog.WebAPI);
 
             proxy
-                .GetRecentPostsAsync(SelectedBlog.BlogInfo.blogid, SelectedBlog.Username, SelectedBlog.Password, 100)
+                .GetRecentPostsAsync(SelectedBlog, 100)
                 .ContinueWith(UpdateBlogPosts, TaskScheduler.FromCurrentSynchronizationContext())
                 .ContinueWith(HandleFetchError);
         }

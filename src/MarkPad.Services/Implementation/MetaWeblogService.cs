@@ -14,29 +14,29 @@ namespace MarkPad.Services.Implementation
             proxy = new MetaWeblog(url);
         }
 
-        public string NewPost(string blogid, string username, string password, Post newpost, bool b)
+        public string NewPost(BlogSetting settings, Post newpost, bool b)
         {
-            return proxy.NewPost(blogid, username, password, newpost, b);
+            return proxy.NewPost(settings.BlogInfo.blogid, settings.Username, settings.Password, newpost, b);
         }
 
-        public Post GetPost(string postid, string username, string password)
+        public Post GetPost(string postid, BlogSetting settings)
         {
-            return proxy.GetPost(postid, username, password);
+            return proxy.GetPost(postid, settings.Username, settings.Password);
         }
 
-        public void EditPost(string postid, string username, string password, Post newpost, bool b)
+        public void EditPost(string postid, BlogSetting settings, Post newpost, bool b)
         {
-            proxy.EditPost(postid, username, password, newpost, b);
+            proxy.EditPost(postid, settings.Username, settings.Password, newpost, b);
         }
 
-        public Task<Post[]> GetRecentPostsAsync(string blogid, string username, string password, int i)
+        public Task<Post[]> GetRecentPostsAsync(BlogSetting settings, int i)
         {
-            return proxy.GetRecentPostsAsync(blogid, username, password, i);
+            return proxy.GetRecentPostsAsync(settings.BlogInfo.blogid, settings.Username, settings.Password, i);
         }
 
-        public Task<BlogInfo[]> GetUsersBlogsAsync(string markpad, string username, string password)
+        public Task<BlogInfo[]> GetUsersBlogsAsync(BlogSetting settings)
         {
-            return proxy.GetUsersBlogsAsync(markpad, username, password);
+            return proxy.GetUsersBlogsAsync("MarkPad", settings.Username, settings.Password);
         }
     }
 }

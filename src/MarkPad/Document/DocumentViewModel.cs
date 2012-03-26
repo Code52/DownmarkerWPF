@@ -276,17 +276,17 @@ namespace MarkPad.Document
                                    description = blog.Language == "HTML" ? renderBody : Document.Text,
                                    categories = categories
                                };
-                    newpost.postid = proxy.NewPost(blog.BlogInfo.blogid, blog.Username, blog.Password, newpost, true);
+                    newpost.postid = proxy.NewPost(blog, newpost, true);
                 }
                 else
                 {
-                    newpost = proxy.GetPost(postid, blog.Username, blog.Password);
+                    newpost = proxy.GetPost(postid, blog);
                     newpost.title = postTitle;
                     newpost.description = blog.Language == "HTML" ? renderBody : Document.Text;
                     newpost.categories = categories;
                     newpost.format = blog.Language;
 
-                    proxy.EditPost(postid, blog.Username, blog.Password, newpost, true);
+                    proxy.EditPost(postid, blog, newpost, true);
                 }
             }
             catch (WebException ex)

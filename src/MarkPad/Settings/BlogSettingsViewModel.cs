@@ -11,7 +11,6 @@ using System.Xml.Linq;
 using Caliburn.Micro;
 using MarkPad.Framework;
 using MarkPad.Services.Interfaces;
-using MarkPad.Services.Metaweblog;
 using MarkPad.Services.Settings;
 
 namespace MarkPad.Settings
@@ -109,7 +108,7 @@ namespace MarkPad.Settings
             APIBlogs = new ObservableCollection<FetchedBlogInfo>();
 
             proxy
-                .GetUsersBlogsAsync("MarkPad", CurrentBlog.Username, CurrentBlog.Password)
+                .GetUsersBlogsAsync(CurrentBlog)
                 .ContinueWith(UpdateBlogList, TaskScheduler.FromCurrentSynchronizationContext())
                 .ContinueWith(HandleFetchError);
         }
