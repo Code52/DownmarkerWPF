@@ -187,6 +187,12 @@ namespace MarkPad.Document
             get { return filename; }
         }
 
+        public string Title
+        {
+            get { return title; }
+            set { title = value; }
+        }
+
         public override void CanClose(Action<bool> callback)
         {
             var view = GetView() as DocumentView;

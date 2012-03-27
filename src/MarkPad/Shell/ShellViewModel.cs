@@ -230,6 +230,7 @@ namespace MarkPad.Shell
             var creator = documentCreator();
             creator.Original = GetHelpText(); // set the Original so it isn't marked as requiring a save unless we change it
             creator.Document.Text = creator.Original;
+            creator.Title = "Markdown Help";
             MDI.Open(creator);
             creator.Update(); // ensure that the markdown is rendered
         }
