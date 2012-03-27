@@ -12,6 +12,7 @@ using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;
 using Microsoft.Win32;
+using MarkPad.Services.MarkPadExtensions;
 
 namespace MarkPad.Settings
 {
@@ -27,6 +28,7 @@ namespace MarkPad.Settings
         public SpellingLanguages SelectedLanguage { get; set; }
         public FontSizes SelectedFontSize { get; set; }
         public FontFamily SelectedFontFamily { get; set; }
+		public bool EnableSpellCheck { get; set; }
 
         private const string MarkpadKeyName = "markpad.md";
 
@@ -77,6 +79,8 @@ namespace MarkPad.Settings
                 SelectedFontFamily = FontHelpers.TryGetFontFamilyFromStack(Constants.DEFAULT_EDITOR_FONT_FAMILY);
                 SelectedFontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
             }
+
+			EnableSpellCheck = settings.SpellCheckEnabled;
         }
 
         private BlogSetting currentBlog;
@@ -188,9 +192,11 @@ namespace MarkPad.Settings
             settings.Language = SelectedLanguage;
             settings.FontSize = SelectedFontSize;
             settings.FontFamily = SelectedFontFamily.Source;
+			settings.SpellCheckEnabled = EnableSpellCheck;
 
             settingsService.SaveSettings(settings);
 
+			UpdateMarkPadExtensions();
             IoC.Get<IEventAggregator>().Publish(new SettingsChangedEvent());
         }
 
@@ -199,6 +205,16 @@ namespace MarkPad.Settings
             eventAggregator.Publish(new SettingsCloseEvent());
             Accept();
         }
+
+		void UpdateMarkPadExtensions()
+		{
+			var extensions = new List<IMarkPadExtension>();
+			if (EnableSpellCheck) {
+				var spellCheck = IoC.Get<MarkPad.MarkPadExtensions.SpellCheckExtension>();
+				extensions.Add(spellCheck);
+			}
+			MarkPadExtensionsProvider.Extensions = extensions;
+		}
 
         private void UpdateExtensionRegistryKeys()
         {

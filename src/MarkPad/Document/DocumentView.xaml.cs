@@ -24,7 +24,8 @@ using MarkPad.Services.Interfaces;
 using MarkPad.XAML;
 using System.Windows.Media;
 using MarkPad.Services.Settings;
-using MarkPad.Services.Extensions;
+using MarkPad.Services.MarkPadExtensions;
+using MarkPad.MarkPadExtensions;
 
 namespace MarkPad.Document
 {
@@ -60,7 +61,7 @@ namespace MarkPad.Document
 
 		private void ApplyExtensions()
 		{
-			var extensions = ExtensionsProvider.Extensions.OfType<IDocumentViewExtension>();
+			var extensions = MarkPadExtensionsProvider.Extensions.OfType<IDocumentViewExtension>();
 			//var extensions = new IDocumentViewExtension[] { IoC.Get<SpellCheckExtension>() };
 			var extensionsToAdd = extensions.Except(this.extensions).ToList();
 			var extensionsToRemove = this.extensions.Except(extensions).ToList();

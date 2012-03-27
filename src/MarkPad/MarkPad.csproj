@@ -201,10 +201,9 @@
     <Compile Include="Document\MarkPadHyperlink.cs" />
     <Compile Include="Extensions\DataImage.cs" />
     <Compile Include="Extensions\DataObjectExtensions.cs" />
-    <Compile Include="Extensions\ExtensionsAutofacModule.cs" />
-    <Compile Include="Extensions\IDocumentViewExtension.cs" />
-    <Compile Include="Extensions\IMarkPadExtension.cs" />
-    <Compile Include="Extensions\SpellCheckExtension.cs" />
+    <Compile Include="MarkPadExtensions\MarkPadExtensionsAutofacModule.cs" />
+    <Compile Include="MarkPadExtensions\IDocumentViewExtension.cs" />
+    <Compile Include="MarkPadExtensions\SpellCheckExtension.cs" />
     <Compile Include="Framework\Events\SettingsChangedEvent.cs" />
     <Compile Include="Framework\FocusExtension.cs" />
     <Compile Include="Framework\FontHelpers.cs" />

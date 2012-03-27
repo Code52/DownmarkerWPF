@@ -101,6 +101,10 @@
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
                         </Grid>
+						<StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,20,20,0" Width="250">
+							<TextBlock TextWrapping="Wrap" FontSize="26.667" FontWeight="Light" Text="spell check"/>
+							<CheckBox Margin="0,5,0,0" x:Name="EnableSpellCheck" IsChecked="{Binding EnableSpellCheck}" Content="enabled"/>
+						</StackPanel>
                     </ItemsControl>
                 </ScrollViewer>
             </TabItem>

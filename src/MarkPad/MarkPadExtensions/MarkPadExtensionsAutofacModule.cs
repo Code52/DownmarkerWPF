@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using Autofac;
 
-namespace MarkPad.Extensions
+namespace MarkPad.MarkPadExtensions
 {
-	public class ExtensionsAutofacModule : Module
+	public class MarkPadExtensionsAutofacModule : Module
 	{
 		protected override void Load(ContainerBuilder builder)
 		{
