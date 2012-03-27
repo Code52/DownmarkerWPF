@@ -13,5 +13,5 @@
   <UseBuildConfiguration>Testing</UseBuildConfiguration>
   <ProxyProcessPath></ProxyProcessPath>
   <UseCPUArchitecture>AutoDetect</UseCPUArchitecture>
-  <AdditionalFilesToInclude>..\..\tools\NotifyPropertyWeaverMsBuildTask.dll</AdditionalFilesToInclude>
+  <AdditionalFilesToInclude>..\..\tools\NotifyPropertyWeaverMSBuildTask.dll</AdditionalFilesToInclude>
 </ProjectConfiguration>
