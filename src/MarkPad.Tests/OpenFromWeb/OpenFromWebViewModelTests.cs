@@ -36,17 +36,17 @@ namespace MarkPad.Tests.OpenFromWeb
         }
 
         [Fact]
-        public void Cancel_Always_ReturnsFalse()
+        public void Cancel_Always_ClosesViewModel()
         {
             var conductor = Substitute.For<IConductor>();
-
             subject.Parent = conductor;
 
             subject.Cancel();
 
+            // this is slightly different to how the implementation is
+            // but without access to the Views collections 
+            // we cannot emulate the dialog result
             conductor.Received().CloseItem(subject);
-
-            // TODO: get result from dialog
         }
 
         [Fact]
@@ -133,7 +133,7 @@ namespace MarkPad.Tests.OpenFromWeb
         }
 
         [Fact]
-        public void Continue_WhenPostSelected_ReturnsTrue()
+        public void Continue_WhenPostSelected_ClosesViewModel()
         {
             var conductor = Substitute.For<IConductor>();
             subject.Parent = conductor;
@@ -151,9 +151,10 @@ namespace MarkPad.Tests.OpenFromWeb
 
             subject.Continue();
 
+            // this is different to how the class is used
+            // but without access to the Views collections 
+            // we cannot emulate the dialog result behaviour perfectly
             conductor.Received().CloseItem(subject);
-
-            // TODO: get result from dialog
         }
     }
 }
