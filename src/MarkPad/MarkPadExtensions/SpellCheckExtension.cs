@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Document;
 
-namespace MarkPad.Extensions
+namespace MarkPad.MarkPadExtensions
 {
 	public class SpellCheckExtension : IDocumentViewExtension
 	{

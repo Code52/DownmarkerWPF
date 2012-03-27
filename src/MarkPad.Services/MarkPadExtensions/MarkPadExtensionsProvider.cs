@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MarkPad.Services.Extensions
+namespace MarkPad.Services.MarkPadExtensions
 {
-	public static class ExtensionsProvider
+	public static class MarkPadExtensionsProvider
 	{
 		static IEnumerable<IMarkPadExtension> _extensions = new IMarkPadExtension[0];
 		public static IEnumerable<IMarkPadExtension> Extensions
