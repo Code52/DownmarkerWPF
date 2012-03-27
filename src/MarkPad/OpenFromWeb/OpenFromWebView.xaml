@@ -58,8 +58,8 @@
             </ListBox.ItemTemplate>
         </ListBox>
         <StackPanel Grid.Row="2" Height="25" Orientation="Horizontal" Margin="0,10,0,0">
-            <Button x:Name="Continue" Click="ContinueClick" Content="Continue" Width="100"/>
-            <Button x:Name="Cancel" Click="CancelClick" Content="Cancel" IsCancel="True" Width="100" Margin="20,0,0,0"/>
+            <Button x:Name="Continue" Content="Continue" Width="100"/>
+            <Button x:Name="Cancel" Content="Cancel" IsCancel="True" Width="100" Margin="20,0,0,0"/>
         </StackPanel>
     </Grid>
 </Window>
