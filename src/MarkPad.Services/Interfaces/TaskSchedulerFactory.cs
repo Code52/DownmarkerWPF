@@ -6,7 +6,12 @@ namespace MarkPad.Services.Interfaces
     {
         public TaskScheduler Current
         {
-            get { return TaskScheduler.FromCurrentSynchronizationContext(); }
+            get { return TaskScheduler.Current; }
+        }
+
+        public TaskScheduler FromCurrentSynchronisationContext()
+        {
+            return TaskScheduler.FromCurrentSynchronizationContext();
         }
     }
 }
