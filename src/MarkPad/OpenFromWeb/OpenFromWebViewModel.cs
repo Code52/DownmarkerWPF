@@ -77,7 +77,7 @@ namespace MarkPad.OpenFromWeb
             var proxy = getMetaWeblog(SelectedBlog.WebAPI);
 
             return proxy.GetRecentPostsAsync(SelectedBlog, 100)
-                .ContinueWith(UpdateBlogPosts, taskScheduler.Current)
+                .ContinueWith(UpdateBlogPosts, taskScheduler.FromCurrentSynchronisationContext())
                 .ContinueWith(HandleFetchError);
         }
 

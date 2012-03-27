@@ -21,7 +21,7 @@ namespace MarkPad.Tests.OpenFromWeb
 
         public OpenFromWebViewModelTests()
         {
-            taskScheduler.Current.Returns(TaskScheduler.Default);
+            taskScheduler.FromCurrentSynchronisationContext().Returns(TaskScheduler.Default);
 
             subject = new OpenFromWebViewModel(dialogService, s => metaWeblogService, taskScheduler);
         }
