@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows;
+using System.Reflection;
 using MarkPad.Framework.Events;
 using Microsoft.Shell;
 
 namespace MarkPad
 {
-    public partial class App : Application, ISingleInstanceApp
+    public partial class App : ISingleInstanceApp
     {
         private const string Unique = "There can be only one MARKPAD!!! (We ignore crappy sequels here)";
 
