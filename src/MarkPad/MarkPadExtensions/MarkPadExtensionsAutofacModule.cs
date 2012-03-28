@@ -10,7 +10,9 @@ namespace MarkPad.MarkPadExtensions
 	{
 		protected override void Load(ContainerBuilder builder)
 		{
-			builder.RegisterType<SpellCheckExtension>().As<SpellCheckExtension>();
+			builder
+				.RegisterType<MarkPad.MarkPadExtensions.SpellCheck.SpellCheckExtension>()
+				.As<MarkPad.MarkPadExtensions.SpellCheck.SpellCheckExtension>();
 		}
 	}
 }
