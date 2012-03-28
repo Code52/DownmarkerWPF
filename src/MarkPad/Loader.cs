@@ -18,6 +18,10 @@ namespace MarkPad
         [STAThread]
         public static void Main()
         {
+            var directoryName = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            if (directoryName != null && Directory.GetCurrentDirectory() != directoryName)
+                Directory.SetCurrentDirectory(directoryName);
+
             AppDomain.CurrentDomain.AssemblyResolve += FindAssembly;
 
             PreloadUnmanagedLibraries();
