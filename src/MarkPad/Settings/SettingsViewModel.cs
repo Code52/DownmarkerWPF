@@ -196,7 +196,6 @@ namespace MarkPad.Settings
 
             settingsService.SaveSettings(settings);
 
-			UpdateMarkPadExtensions();
             IoC.Get<IEventAggregator>().Publish(new SettingsChangedEvent());
         }
 
@@ -205,16 +204,6 @@ namespace MarkPad.Settings
             eventAggregator.Publish(new SettingsCloseEvent());
             Accept();
         }
-
-		void UpdateMarkPadExtensions()
-		{
-			var extensions = new List<IMarkPadExtension>();
-			if (EnableSpellCheck) {
-				var spellCheck = IoC.Get<MarkPad.MarkPadExtensions.SpellCheck.SpellCheckExtension>();
-				extensions.Add(spellCheck);
-			}
-			MarkPadExtensionsProvider.Extensions = extensions;
-		}
 
         private void UpdateExtensionRegistryKeys()
         {

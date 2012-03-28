@@ -17,10 +17,11 @@ using MarkPad.Services.Settings;
 using MarkPad.Settings;
 using Ookii.Dialogs.Wpf;
 using MarkPad.Updater;
+using MarkPad.Services.MarkPadExtensions;
 
 namespace MarkPad.Shell
 {
-    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>
+    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>, IHandle<SettingsChangedEvent>
     {
         private readonly IEventAggregator eventAggregator;
         private readonly IDialogService dialogService;
@@ -29,6 +30,7 @@ namespace MarkPad.Shell
         private readonly Func<DocumentViewModel> documentCreator;
         private readonly Func<AboutViewModel> aboutCreator;
         private readonly Func<OpenFromWebViewModel> openFromWebCreator;
+		private readonly Func<MarkPad.MarkPadExtensions.SpellCheck.SpellCheckExtension> spellCheckExtensionCreator;
 
         public ShellViewModel(
             IDialogService dialogService,
@@ -40,7 +42,8 @@ namespace MarkPad.Shell
             UpdaterViewModel updaterViewModel,
             Func<DocumentViewModel> documentCreator,
             Func<AboutViewModel> aboutCreator,
-            Func<OpenFromWebViewModel> openFromWebCreator)
+            Func<OpenFromWebViewModel> openFromWebCreator,
+			Func<MarkPad.MarkPadExtensions.SpellCheck.SpellCheckExtension> spellCheckExtensionCreator)
         {
             this.eventAggregator = eventAggregator;
             this.dialogService = dialogService;
@@ -51,8 +54,10 @@ namespace MarkPad.Shell
             this.documentCreator = documentCreator;
             this.aboutCreator = aboutCreator;
             this.openFromWebCreator = openFromWebCreator;
+			this.spellCheckExtensionCreator = spellCheckExtensionCreator;
 
             Settings = settingsViewModel;
+			UpdateMarkPadExtensions();
 
             ActivateItem(mdi);
         }
@@ -300,5 +305,24 @@ namespace MarkPad.Shell
         {
             CurrentState = "HideSettings";
         }
-    }
+
+		public void Handle(SettingsChangedEvent message)
+		{
+			UpdateMarkPadExtensions();
+		}
+
+
+		void UpdateMarkPadExtensions()
+		{
+			var settings = settingsService.GetSettings<MarkpadSettings>();
+			var extensions = new List<IMarkPadExtension>();
+			if (settings.SpellCheckEnabled)
+			{
+				var spellCheck = spellCheckExtensionCreator();
+				extensions.Add(spellCheck);
+			}
+			MarkPadExtensionsProvider.Extensions = extensions;
+		}
+
+	}
 }
