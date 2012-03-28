@@ -210,7 +210,7 @@ namespace MarkPad.Settings
 		{
 			var extensions = new List<IMarkPadExtension>();
 			if (EnableSpellCheck) {
-				var spellCheck = IoC.Get<MarkPad.MarkPadExtensions.SpellCheckExtension>();
+				var spellCheck = IoC.Get<MarkPad.MarkPadExtensions.SpellCheck.SpellCheckExtension>();
 				extensions.Add(spellCheck);
 			}
 			MarkPadExtensionsProvider.Extensions = extensions;

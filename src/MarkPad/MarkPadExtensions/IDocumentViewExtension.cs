@@ -10,6 +10,6 @@ namespace MarkPad.MarkPadExtensions
 	public interface IDocumentViewExtension : IMarkPadExtension
 	{
 		void ConnectToDocumentView(DocumentView view);
-		void DisconnectFromDocumentView();
+		void DisconnectFromDocumentView(DocumentView view);
 	}
 }

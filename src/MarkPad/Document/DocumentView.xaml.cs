@@ -62,7 +62,6 @@ namespace MarkPad.Document
 		private void ApplyExtensions()
 		{
 			var extensions = MarkPadExtensionsProvider.Extensions.OfType<IDocumentViewExtension>();
-			//var extensions = new IDocumentViewExtension[] { IoC.Get<SpellCheckExtension>() };
 			var extensionsToAdd = extensions.Except(this.extensions).ToList();
 			var extensionsToRemove = this.extensions.Except(extensions).ToList();
 
@@ -74,7 +73,7 @@ namespace MarkPad.Document
 
 			foreach (var extension in extensionsToRemove)
 			{
-				extension.DisconnectFromDocumentView();
+				extension.DisconnectFromDocumentView(this);
 				this.extensions.Remove(extension);
 			}
 		}
