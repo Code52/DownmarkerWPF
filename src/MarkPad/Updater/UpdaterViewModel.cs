@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using Caliburn.Micro;
 using wyDay.Controls;
 
@@ -22,7 +24,7 @@ namespace MarkPad.Updater
             au = new AutomaticUpdaterBackend
             {
                 GUID = "code52-markpad",
-                UpdateType = UpdateType.CheckAndDownload,
+                UpdateType = UpdateType.CheckAndDownload
             };
 
             au.ProgressChanged += AuProgressChanged;
