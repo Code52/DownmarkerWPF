@@ -45,20 +45,19 @@ namespace MarkPad.Shell
 			if (e.RightButton == MouseButtonState.Pressed) return;
 			if (e.LeftButton != MouseButtonState.Pressed) return;
 
-			// Calculating correct left coordinate for multi-screen system.
+			// Calculate correct left coordinate for multi-screen system
 			var mouseX = PointToScreen(Mouse.GetPosition(this)).X;
 			var width = RestoreBounds.Width;
 			var left = mouseX - width / 2;
+			if (left < 0) left = 0;
 
-			// Aligning window's position to fit the screen.
+			// Align left edge to fit the screen
 			var virtualScreenWidth = SystemParameters.VirtualScreenWidth;
-			left = left < 0 ? 0 : left;
-			left = left + width > virtualScreenWidth ? virtualScreenWidth - width : left;
+			if (left + width > virtualScreenWidth) left = virtualScreenWidth - width;
 
 			Top = 0;
 			Left = left;
 
-			// Restore window to normal state.
 			WindowState = WindowState.Normal;
 
 			DragMove();
