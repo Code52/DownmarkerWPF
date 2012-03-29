@@ -267,9 +267,10 @@ namespace MarkPad.Shell
             var blogs = settings.GetBlogs();
             if (blogs == null || blogs.Count == 0)
             {
-                dialogService.ShowError("Error Publishing Post", "No blogs available to publish to.", "");
-                return;
-            }
+				if (!ConfigureNewBlog("Publish document")) return;
+				blogs = settings.GetBlogs();
+				if (blogs == null || blogs.Count == 0) return;
+			}
 
             var doc = MDI.ActiveItem as DocumentViewModel;
             if (doc != null)
@@ -287,16 +288,12 @@ namespace MarkPad.Shell
         {
             var settings = settingsService.GetSettings<MarkpadSettings>();
             var blogs = settings.GetBlogs();
-            if (blogs == null || blogs.Count == 0)
-            {
-                var setupBlog = dialogService.ShowConfirmation("No blogs setup", "Do you want to setup a blog?", "",
-                    new ButtonExtras(ButtonType.Yes, "Yes", "Setup a blog"),
-                    new ButtonExtras(ButtonType.No, "No", "Don't setup a blog now"));
-
-                if (setupBlog)
-                    ShowSettings();
-					return;                    
-            }
+			if (blogs == null || blogs.Count == 0)
+			{
+				if (!ConfigureNewBlog("Open from web")) return;
+				blogs = settings.GetBlogs();
+				if (blogs == null || blogs.Count == 0) return;
+			}
 
             var openFromWeb = openFromWebCreator();
             openFromWeb.InitializeBlogs(blogs);
@@ -311,6 +308,23 @@ namespace MarkPad.Shell
             doc.OpenFromWeb(post);
             MDI.Open(doc);
         }
+
+		bool ConfigureNewBlog(string featureName)
+		{
+			var extra = string.Format(
+				"The '{0}' feature requires a blog to be configured. A window will be displayed which will allow you to configure a blog.",
+				featureName);
+			var setupBlog = dialogService.ShowConfirmation(
+				"No blogs are configured",
+				"Do you want to configure a blog?",
+				extra,
+				new ButtonExtras(ButtonType.Yes, "Yes", "Configure a blog"),
+				new ButtonExtras(ButtonType.No, "No", "Don't configure a blog"));
+
+			if (!setupBlog) return false;
+			if (!this.Settings.AddBlog()) return false;
+			return true;
+		}
 
         public void Handle(SettingsCloseEvent message)
         {
