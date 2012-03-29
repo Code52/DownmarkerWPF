@@ -293,9 +293,8 @@ namespace MarkPad.Shell
                     new ButtonExtras(ButtonType.Yes, "Yes", "Setup a blog"),
                     new ButtonExtras(ButtonType.No, "No", "Don't setup a blog now"));
 
-                if (setupBlog)
-                    ShowSettings();
-					return;                    
+				if (!setupBlog) return;
+				if (!this.Settings.AddBlog()) return;
             }
 
             var openFromWeb = openFromWebCreator();
