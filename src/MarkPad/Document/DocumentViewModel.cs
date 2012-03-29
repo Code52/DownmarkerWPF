@@ -109,6 +109,21 @@ namespace MarkPad.Document
             NotifyOfPropertyChange(() => DisplayName);
         }
 
+        public bool SaveAs()
+        {
+            var path = dialogService.GetFileSavePath("Choose a location to save the document.", "*.md", Constants.ExtensionFilter + "|All Files (*.*)|*.*");
+
+            if (string.IsNullOrEmpty(path))
+                return false;
+
+            filename = path;
+            title = new FileInfo(filename).Name;
+            NotifyOfPropertyChange(() => DisplayName);
+            EvaluateContext();
+
+            return Save();
+        }
+
         public bool Save()
         {
             if (!HasChanges)
