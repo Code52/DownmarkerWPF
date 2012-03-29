@@ -127,6 +127,15 @@ namespace MarkPad.Shell
             }
         }
 
+        public void SaveAsDocument()
+        {
+            var doc = MDI.ActiveItem as DocumentViewModel;
+            if (doc != null)
+            {
+                doc.SaveAs();
+            }
+        }
+
         public void SaveAllDocuments()
         {
             foreach (DocumentViewModel doc in MDI.Items)
