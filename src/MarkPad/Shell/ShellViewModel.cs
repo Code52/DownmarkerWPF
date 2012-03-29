@@ -289,9 +289,12 @@ namespace MarkPad.Shell
             var blogs = settings.GetBlogs();
             if (blogs == null || blogs.Count == 0)
             {
-                var setupBlog = dialogService.ShowConfirmation("No blogs setup", "Do you want to setup a blog?", "",
-                    new ButtonExtras(ButtonType.Yes, "Yes", "Setup a blog"),
-                    new ButtonExtras(ButtonType.No, "No", "Don't setup a blog now"));
+                var setupBlog = dialogService.ShowConfirmation(
+					"No blogs are configured", 
+					"Do you want to configure a blog?", 
+					"The 'Open from web' feature requires a blog to be configured. A window will be displayed which will allow you to configure a blog.",
+                    new ButtonExtras(ButtonType.Yes, "Yes", "Configure a blog"),
+                    new ButtonExtras(ButtonType.No, "No", "Don't configure a blog"));
 
 				if (!setupBlog) return;
 				if (!this.Settings.AddBlog()) return;
