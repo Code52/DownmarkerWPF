@@ -330,7 +330,8 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <EmbeddedResource Include="Help.md" />
+    <EmbeddedResource Include="MarkdownHelp.md" />
+    <EmbeddedResource Include="MarkPadHelp.md" />
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
     <EmbeddedResource Include="Syntax\Markdown.xshd" />
