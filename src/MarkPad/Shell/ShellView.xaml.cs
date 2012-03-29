@@ -11,36 +11,57 @@ namespace MarkPad.Shell
             InitializeComponent();
         }
 
+		private bool ignoreNextMouseMove = false;
+
         private void DragMoveWindow(object sender, MouseButtonEventArgs e)
         {
-            if (e.RightButton != MouseButtonState.Pressed && e.MiddleButton != MouseButtonState.Pressed && e.LeftButton == MouseButtonState.Pressed)
-            {
-                if (WindowState == WindowState.Maximized)
-                {
-                    // Calcualting correct left coordinate for multi-screen system.
-                    var mouseX = PointToScreen(Mouse.GetPosition(this)).X;
-                    var width = RestoreBounds.Width;
-                    var left = mouseX - width / 2;
+			if (e.MiddleButton == MouseButtonState.Pressed) return;
+			if (e.RightButton == MouseButtonState.Pressed) return;
+			if (e.LeftButton != MouseButtonState.Pressed) return;
 
-                    // Aligning window's position to fit the screen.
-                    var virtualScreenWidth = SystemParameters.VirtualScreenWidth;
-                    left = left < 0 ? 0 : left;
-                    left = left + width > virtualScreenWidth ? virtualScreenWidth - width : left;
+			if (WindowState == System.Windows.WindowState.Maximized && e.ClickCount != 2) return;
 
-                    Top = 0;
-                    Left = left;
+			if (e.ClickCount == 2)
+			{
+				WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+				ignoreNextMouseMove = true;
+				return;
+			}
 
-                    // Restore window to normal state.
-                    WindowState = WindowState.Normal;
-                }
-
-                DragMove();
-            }
-            if (e.ClickCount != 2)
-                return;
-
-            WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+            DragMove();
         }
+
+		private void MouseMoveWindow(object sender, MouseEventArgs e)
+		{
+			if (ignoreNextMouseMove)
+			{
+				ignoreNextMouseMove = false;
+				return;
+			}
+
+			if (WindowState != WindowState.Maximized) return;
+
+			if (e.MiddleButton == MouseButtonState.Pressed) return;
+			if (e.RightButton == MouseButtonState.Pressed) return;
+			if (e.LeftButton != MouseButtonState.Pressed) return;
+
+			// Calculate correct left coordinate for multi-screen system
+			var mouseX = PointToScreen(Mouse.GetPosition(this)).X;
+			var width = RestoreBounds.Width;
+			var left = mouseX - width / 2;
+			if (left < 0) left = 0;
+
+			// Align left edge to fit the screen
+			var virtualScreenWidth = SystemParameters.VirtualScreenWidth;
+			if (left + width > virtualScreenWidth) left = virtualScreenWidth - width;
+
+			Top = 0;
+			Left = left;
+
+			WindowState = WindowState.Normal;
+
+			DragMove();
+		}
 
         private void ButtonMinimiseOnClick(object sender, RoutedEventArgs e)
         {
