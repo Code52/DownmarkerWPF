@@ -4,11 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
-        xmlns:cal="http://www.caliburnproject.org" xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="MarkPad.Settings.BlogSettingsView" MouseLeftButtonDown="DragMoveWindow"
+        xmlns:cal="http://www.caliburnproject.org" 
+        x:Class="MarkPad.Settings.BlogSettingsView" 
+        MouseLeftButtonDown="DragMoveWindow"
         Icon="../markpad.ico"
         ShowInTaskbar="False"
         SnapsToDevicePixels="True"
-        WindowStartupLocation="CenterOwner" mc:Ignorable="d" Width="300" Height="510" ResizeMode="NoResize">
+        WindowStartupLocation="CenterOwner" 
+        mc:Ignorable="d" 
+        Width="300" 
+        Height="510" 
+        ResizeMode="NoResize">
     <i:Interaction.Behaviors>
         <Behaviours:BorderlessWindowBehavior ResizeWithGrip="False" />
     </i:Interaction.Behaviors>
@@ -88,8 +94,6 @@
                                 IsEnabled="{Binding CurrentBlog.IsWebAPICompleted}"/>
 					</StackPanel>
 				</Grid>
-					<StackPanel Orientation="Horizontal">
-                </StackPanel>
             </StackPanel>
 
             <StackPanel Grid.Row="2" HorizontalAlignment="Right" Height="25" Margin="10,20,0,10" Orientation="Horizontal">
