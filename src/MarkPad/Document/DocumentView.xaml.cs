@@ -23,6 +23,9 @@ using MarkPad.Framework.Events;
 using MarkPad.Services.Interfaces;
 using MarkPad.XAML;
 using System.Windows.Media;
+using MarkPad.Services.Settings;
+using MarkPad.Services.MarkPadExtensions;
+using MarkPad.MarkPadExtensions;
 
 namespace MarkPad.Document
 {
@@ -31,12 +34,8 @@ namespace MarkPad.Document
         private const int NumSpaces = 4;
         private const string Spaces = "    ";
 
-        private readonly Regex WordSeparatorRegex = new Regex("-[^\\w]+|^'[^\\w]+|[^\\w]+'[^\\w]+|[^\\w]+-[^\\w]+|[^\\w]+'$|[^\\w]+-$|^-$|^'$|[^\\w'-]", RegexOptions.Compiled);
-        private readonly Regex UriFinderRegex = new Regex("(http|ftp|https|mailto):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?", RegexOptions.Compiled);
-
         private ScrollViewer documentScrollViewer;
-        private readonly SpellCheckBackgroundRenderer spellCheckRenderer;
-        private readonly ISpellingService hunspell;
+		private IList<IDocumentViewExtension> extensions = new List<IDocumentViewExtension>();
 
         public DocumentView()
         {
@@ -51,30 +50,38 @@ namespace MarkPad.Document
 
             Editor.PreviewMouseLeftButtonUp += HandleMouseUp;
 
-            hunspell = IoC.Get<ISpellingService>();
-
-            spellCheckRenderer = new SpellCheckBackgroundRenderer();
-
-            Editor.TextArea.TextView.BackgroundRenderers.Add(spellCheckRenderer);
-            Editor.TextArea.TextView.VisualLinesChanged += TextView_VisualLinesChanged;
+			ApplyExtensions();
 
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleBold, (x, y) => ToggleBold(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleItalic, (x, y) => ToggleItalic(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCode, (x, y) => ToggleCode(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCodeBlock, (x, y) => ToggleCodeBlock(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
-
         }
+
+		private void ApplyExtensions()
+		{
+			var extensions = MarkPadExtensionsProvider.Extensions.OfType<IDocumentViewExtension>();
+			var extensionsToAdd = extensions.Except(this.extensions).ToList();
+			var extensionsToRemove = this.extensions.Except(extensions).ToList();
+
+			foreach (var extension in extensionsToAdd)
+			{
+				extension.ConnectToDocumentView(this);
+				this.extensions.Add(extension);
+			}
+
+			foreach (var extension in extensionsToRemove)
+			{
+				extension.DisconnectFromDocumentView(this);
+				this.extensions.Remove(extension);
+			}
+		}
 
 
         void WebControl_LinkClicked(object sender, OpenExternalLinkEventArgs e)
         {
             Process.Start(e.Url);
-        }
-
-        void TextView_VisualLinesChanged(object sender, EventArgs e)
-        {
-            DoSpellCheck();
         }
 
         void DocumentViewSizeChanged(object sender, SizeChangedEventArgs e)
@@ -170,45 +177,6 @@ namespace MarkPad.Document
             wb.Zoom = GetZoomLevel();
         }
 
-        private void DoSpellCheck()
-        {
-            if (this.Editor.TextArea.TextView.VisualLinesValid)
-            {
-                this.spellCheckRenderer.ErrorSegments.Clear();
-
-                IEnumerable<VisualLine> visualLines = Editor.TextArea.TextView.VisualLines.AsParallel();
-
-                foreach (VisualLine currentLine in visualLines)
-                {
-                    int startIndex = 0;
-
-                    string originalText = Editor.Document.GetText(currentLine.FirstDocumentLine.Offset, currentLine.LastDocumentLine.EndOffset - currentLine.FirstDocumentLine.Offset);
-                    originalText = Regex.Replace(originalText, "[\\u2018\\u2019\\u201A\\u201B\\u2032\\u2035]", "'");
-
-                    var textWithoutURLs = UriFinderRegex.Replace(originalText, "");
-
-                    var query = WordSeparatorRegex.Split(textWithoutURLs)
-                        .Where(s => !string.IsNullOrEmpty(s));
-
-                    foreach (var word in query)
-                    {
-                        string trimmedWord = word.Trim('\'', '_', '-');
-
-                        int num = currentLine.FirstDocumentLine.Offset + originalText.IndexOf(trimmedWord, startIndex);
-
-                        if (!hunspell.Spell(trimmedWord))
-                        {
-                            TextSegment textSegment = new TextSegment();
-                            textSegment.StartOffset = num;
-                            textSegment.Length = word.Length;
-                            this.spellCheckRenderer.ErrorSegments.Add(textSegment);
-                        }
-
-                        startIndex = originalText.IndexOf(word, startIndex) + word.Length;
-                    }
-                }
-            }
-        }
 
         internal void ToggleBold()
         {
@@ -333,12 +301,13 @@ namespace MarkPad.Document
 
         void IHandle<SettingsChangedEvent>.Handle(SettingsChangedEvent message)
         {
-            DoSpellCheck();
             Editor.TextArea.TextView.Redraw();
 
             Editor.FontSize = GetFontSize();
 			Editor.FontFamily = GetFontFamily();
             wb.Zoom = GetZoomLevel();
+
+			ApplyExtensions();
         }
 
         private void EditorPreviewKeyDown(object sender, KeyEventArgs e)

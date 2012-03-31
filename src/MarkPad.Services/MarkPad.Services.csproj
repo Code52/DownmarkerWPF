@@ -85,6 +85,7 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="MarkPadExtensions\IMarkPadExtension.cs" />
     <Compile Include="Implementation\ButtonExtras.cs" />
     <Compile Include="Implementation\FontSizes.cs" />
     <Compile Include="Implementation\MetaWeblogService.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="Implementation\JekyllSiteContext.cs" />
     <Compile Include="Settings\BlogInfo.cs" />
     <Compile Include="Settings\BlogSetting.cs" />
+    <Compile Include="MarkPadExtensions\MarkPadExtensionsProvider.cs" />
     <Compile Include="Settings\MarkPadSettings.cs" />
     <Compile Include="Settings\SettingsProvider.cs" />
   </ItemGroup>

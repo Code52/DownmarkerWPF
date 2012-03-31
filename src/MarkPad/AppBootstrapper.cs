@@ -39,6 +39,7 @@ namespace MarkPad
         {
             builder.RegisterModule<ServicesModule>();
             builder.RegisterType<JumpListIntegration>().SingleInstance();
+			builder.RegisterModule<MarkPad.MarkPadExtensions.MarkPadExtensionsAutofacModule>();
         }
 
         protected override void PrepareApplication()
