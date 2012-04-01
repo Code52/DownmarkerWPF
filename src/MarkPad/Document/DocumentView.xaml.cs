@@ -23,6 +23,7 @@ using MarkPad.Framework.Events;
 using MarkPad.Services.Interfaces;
 using MarkPad.XAML;
 using System.Windows.Media;
+using MarkPad.Services.Settings;
 
 namespace MarkPad.Document
 {
@@ -37,9 +38,12 @@ namespace MarkPad.Document
         private ScrollViewer documentScrollViewer;
         private readonly SpellCheckBackgroundRenderer spellCheckRenderer;
         private readonly ISpellingService hunspell;
+		private readonly ISettingsProvider settingsProvider;
 
-        public DocumentView()
+		public DocumentView(ISettingsProvider settingsProvider)
         {
+			this.settingsProvider = settingsProvider;
+
             InitializeComponent();
             Loaded += DocumentViewLoaded;
             wb.Loaded += WbLoaded;
@@ -305,25 +309,28 @@ namespace MarkPad.Document
 
         private void SelectionChanged(object sender, EventArgs e)
         {
-            if (Editor.TextArea.Selection.IsEmpty)
-            {
-                floatingToolBar.Hide();
-            }
-        }
+			if (Editor.TextArea.Selection.IsEmpty)
+			{
+				floatingToolBar.Hide();
+			}
+		}
 
         private void HandleMouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (Editor.TextArea.Selection.IsEmpty)
-            {
-                floatingToolBar.Hide();
-            }
-            else
-            {
-                floatingToolBar.Show();
-            }
-        }
+			var settings = settingsProvider.GetSettings<MarkpadSettings>();
+			if (!settings.FloatingToolBarEnabled) return;
 
-        private void CanEditDocument(object sender, CanExecuteRoutedEventArgs e)
+			if (Editor.TextArea.Selection.IsEmpty)
+			{
+				floatingToolBar.Hide();
+			}
+			else
+			{
+				floatingToolBar.Show();
+			}
+		}
+
+		private void CanEditDocument(object sender, CanExecuteRoutedEventArgs e)
         {
             if (Editor != null && Editor.TextArea != null && Editor.TextArea.Selection != null)
             {
