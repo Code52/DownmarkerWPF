@@ -107,6 +107,8 @@ namespace MarkPad.Shell
 
         public void OpenDocument(IEnumerable<string> filenames)
         {
+			if (filenames == null) return;
+
             foreach (var fn in filenames)
             {
                 DocumentViewModel openedDoc = GetOpenedDocument(fn);
