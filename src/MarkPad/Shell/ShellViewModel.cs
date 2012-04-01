@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Caliburn.Micro;
-using MarkPad.About;
 using MarkPad.Document;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
@@ -27,7 +26,6 @@ namespace MarkPad.Shell
         private readonly IWindowManager windowManager;
         private readonly ISettingsProvider settingsService;
         private readonly Func<DocumentViewModel> documentCreator;
-        private readonly Func<AboutViewModel> aboutCreator;
         private readonly Func<OpenFromWebViewModel> openFromWebCreator;
 
         public ShellViewModel(
@@ -39,7 +37,6 @@ namespace MarkPad.Shell
             SettingsViewModel settingsViewModel,
             UpdaterViewModel updaterViewModel,
             Func<DocumentViewModel> documentCreator,
-            Func<AboutViewModel> aboutCreator,
             Func<OpenFromWebViewModel> openFromWebCreator)
         {
             this.eventAggregator = eventAggregator;
@@ -49,7 +46,6 @@ namespace MarkPad.Shell
             MDI = mdi;
             Updater = updaterViewModel;
             this.documentCreator = documentCreator;
-            this.aboutCreator = aboutCreator;
             this.openFromWebCreator = openFromWebCreator;
 
             Settings = settingsViewModel;
@@ -164,11 +160,6 @@ namespace MarkPad.Shell
         {
             CurrentState = "ShowSettings";
             Settings.Initialize();
-        }
-
-        public void ShowAbout()
-        {
-            windowManager.ShowDialog(aboutCreator());
         }
 
         public void ToggleWebView()

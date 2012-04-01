@@ -194,10 +194,6 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="About\AboutView.xaml.cs">
-      <DependentUpon>AboutView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="About\AboutViewModel.cs" />
     <Compile Include="Document\MarkPadHyperlink.cs" />
     <Compile Include="Extensions\DataImage.cs" />
     <Compile Include="Extensions\DataObjectExtensions.cs" />
@@ -249,10 +245,6 @@
     </Compile>
     <Compile Include="Updater\UpdaterViewModel.cs" />
     <Compile Include="Updater\UpdateState.cs" />
-    <Page Include="About\AboutView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
