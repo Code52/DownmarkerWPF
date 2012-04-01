@@ -27,6 +27,7 @@ namespace MarkPad.Settings
         public SpellingLanguages SelectedLanguage { get; set; }
         public FontSizes SelectedFontSize { get; set; }
         public FontFamily SelectedFontFamily { get; set; }
+		public bool EnableFloatingToolBar { get; set; }
 
         private const string MarkpadKeyName = "markpad.md";
 
@@ -77,6 +78,8 @@ namespace MarkPad.Settings
                 SelectedFontFamily = FontHelpers.TryGetFontFamilyFromStack(Constants.DEFAULT_EDITOR_FONT_FAMILY);
                 SelectedFontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
             }
+
+			EnableFloatingToolBar = settings.FloatingToolBarEnabled;
         }
 
         private BlogSetting currentBlog;
@@ -188,6 +191,7 @@ namespace MarkPad.Settings
             settings.Language = SelectedLanguage;
             settings.FontSize = SelectedFontSize;
             settings.FontFamily = SelectedFontFamily.Source;
+			settings.FloatingToolBarEnabled = EnableFloatingToolBar;
 
             settingsService.SaveSettings(settings);
 
