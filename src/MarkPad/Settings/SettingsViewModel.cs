@@ -59,7 +59,7 @@ namespace MarkPad.Settings
                     .ToArray();
             }
             
-            var settings = settingsService.GetSettings<MarkpadSettings>();
+            var settings = settingsService.GetSettings<MarkPadSettings>();
             var blogs = settings.GetBlogs();
 
             Blogs = new ObservableCollection<BlogSetting>(blogs);
@@ -186,7 +186,7 @@ namespace MarkPad.Settings
             var spellingService = IoC.Get<ISpellingService>();
             spellingService.SetLanguage(SelectedLanguage);
 
-            var settings = settingsService.GetSettings<MarkpadSettings>();
+            var settings = settingsService.GetSettings<MarkPadSettings>();
 
             settings.SaveBlogs(Blogs.ToList());
             settings.Language = SelectedLanguage;

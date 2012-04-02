@@ -8,7 +8,7 @@ using MarkPad.Services.Interfaces;
 
 namespace MarkPad.Services.Settings
 {
-    public class MarkpadSettings
+    public class MarkPadSettings
     {
         [DefaultValue(SpellingLanguages.Australian)]
         public SpellingLanguages Language { get; set; }
