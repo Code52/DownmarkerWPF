@@ -22,6 +22,8 @@ using MarkPad.XAML;
 using System.Windows.Media;
 using MarkPad.Services.MarkPadExtensions;
 using MarkPad.MarkPadExtensions;
+using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Rendering;
 
 namespace MarkPad.Document
 {
@@ -48,6 +50,7 @@ namespace MarkPad.Document
             Editor.TextArea.SelectionChanged += SelectionChanged;
             Editor.PreviewMouseLeftButtonUp += HandleMouseUp;
 			Editor.MouseMove += HandleEditorMouseMove;
+			Editor.PreviewMouseLeftButtonDown += HandleEditorPreviewMouseLeftButtonDown;
 
 			settings = this.settingsProvider.GetSettings<MarkPadSettings>();
 
@@ -278,27 +281,51 @@ namespace MarkPad.Document
         {
 			if (!settings.FloatingToolBarEnabled)
 				return;
-				
-            if (Editor.TextArea.Selection.IsEmpty)
-                floatingToolBar.Hide();
-            else
-                floatingToolBar.Show();
-        }
+
+			if (Editor.TextArea.Selection.IsEmpty)
+				floatingToolBar.Hide();
+			else
+				ShowFloatingToolBar();
+		}
 
 		void HandleEditorMouseMove(object sender, MouseEventArgs e)
 		{
+			// Bail out if tool bar is disabled, if there is no selection, or if the toolbar is already open
 			if (!settings.FloatingToolBarEnabled) return;
 			if (string.IsNullOrEmpty(Editor.SelectedText)) return;
 			if (floatingToolBar.IsOpen) return;
+			if (e.LeftButton == MouseButtonState.Pressed) return;
 			
+			// Bail out if the mouse isn't over the editor
 			var editorPosition = Editor.GetPositionFromPoint(e.GetPosition(Editor));
 			if (!editorPosition.HasValue) return;
-
+			
+			// Bail out if the mouse isn't over a selection
 			var offset = Editor.Document.GetOffset(editorPosition.Value.Line, editorPosition.Value.Column);
 			if (offset < Editor.SelectionStart) return;
 			if (offset > Editor.SelectionStart + Editor.SelectionLength) return;
 
-			floatingToolBar.Show();
+			ShowFloatingToolBar();
+		}
+
+		void HandleEditorPreviewMouseLeftButtonDown(object sender, MouseEventArgs e)
+		{
+			if (!floatingToolBar.IsOpen) return;
+			floatingToolBar.Hide();
+		}
+
+		private void ShowFloatingToolBar()
+		{
+			// Find the screen position of the start of the selection
+			var selectionStartLocation = Editor.Document.GetLocation(Editor.SelectionStart);
+			var selectionStartPosition = new TextViewPosition(selectionStartLocation);
+			var selectionStartPoint = Editor.TextArea.TextView.GetVisualPosition(selectionStartPosition, VisualYPosition.LineTop);
+
+			var popupPoint = new Point(
+				selectionStartPoint.X + 30,
+				selectionStartPoint.Y - 35);
+
+			floatingToolBar.Show(Editor, popupPoint);
 		}
 
         private void CanEditDocument(object sender, CanExecuteRoutedEventArgs e)

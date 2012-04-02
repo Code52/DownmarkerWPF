@@ -77,6 +77,20 @@ namespace MarkPad.XAML.Controls
             UpdateOpacity();
         }
 
+		public void Show(UIElement target, Point point)
+		{
+			Hide();
+
+			Placement = PlacementMode.Relative;
+			PlacementTarget = target;
+			HorizontalOffset = point.X;
+			VerticalOffset = point.Y;
+			
+			UpdateOpacity();
+			IsOpen = true;
+			UpdateOpacity();
+		}
+
         private void MouseMoved(object sender, MouseEventArgs e)
         {
             UpdateOpacity();
