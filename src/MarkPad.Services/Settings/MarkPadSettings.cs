@@ -42,6 +42,9 @@ namespace MarkPad.Services.Settings
         public string BlogsJson { get; set; }
 
 		[DefaultValue(true)]
+		public bool FloatingToolBarEnabled { get; set; }
+
+		[DefaultValue(true)]
 		public bool SpellCheckEnabled { get; set; }
     }
 }

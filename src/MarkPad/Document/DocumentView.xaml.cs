@@ -12,18 +12,14 @@ using System.Windows.Input;
 using System.Xml;
 using Awesomium.Core;
 using Caliburn.Micro;
-using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
-using ICSharpCode.AvalonEdit.Rendering;
 using MarkPad.Extensions;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
-using MarkPad.Services.Interfaces;
+using MarkPad.Services.Settings;
 using MarkPad.XAML;
 using System.Windows.Media;
-using MarkPad.Services.Settings;
 using MarkPad.Services.MarkPadExtensions;
 using MarkPad.MarkPadExtensions;
 
@@ -33,21 +29,19 @@ namespace MarkPad.Document
     {
         private const int NumSpaces = 4;
         private const string Spaces = "    ";
-
         private ScrollViewer documentScrollViewer;
 		private IList<IDocumentViewExtension> extensions = new List<IDocumentViewExtension>();
+		private readonly ISettingsProvider settingsProvider;
 
-        public DocumentView()
+		public DocumentView(ISettingsProvider settingsProvider)
         {
+			this.settingsProvider = settingsProvider;
             InitializeComponent();
             Loaded += DocumentViewLoaded;
             wb.Loaded += WbLoaded;
             wb.OpenExternalLink += WebControl_LinkClicked;
-
-            SizeChanged += new SizeChangedEventHandler(DocumentViewSizeChanged);
-
+            SizeChanged += DocumentViewSizeChanged;
             Editor.TextArea.SelectionChanged += SelectionChanged;
-
             Editor.PreviewMouseLeftButtonUp += HandleMouseUp;
 
 			ApplyExtensions();
@@ -87,14 +81,7 @@ namespace MarkPad.Document
         void DocumentViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
             // Hide web browser when the window is too small for it to make much sense
-            if (e.NewSize.Width <= 350)
-            {
-                webBrowserColumn.MaxWidth = 0;
-            }
-            else
-            {
-                webBrowserColumn.MaxWidth = double.MaxValue;
-            }
+            webBrowserColumn.MaxWidth = e.NewSize.Width <= 350 ? 0 : double.MaxValue;
         }
 
         /// <summary>
@@ -274,21 +261,20 @@ namespace MarkPad.Document
         private void SelectionChanged(object sender, EventArgs e)
         {
             if (Editor.TextArea.Selection.IsEmpty)
-            {
                 floatingToolBar.Hide();
-            }
         }
 
         private void HandleMouseUp(object sender, MouseButtonEventArgs e)
         {
+			var settings = settingsProvider.GetSettings<MarkpadSettings>();
+			
+			if (!settings.FloatingToolBarEnabled)
+				return;
+				
             if (Editor.TextArea.Selection.IsEmpty)
-            {
                 floatingToolBar.Hide();
-            }
             else
-            {
                 floatingToolBar.Show();
-            }
         }
 
         private void CanEditDocument(object sender, CanExecuteRoutedEventArgs e)

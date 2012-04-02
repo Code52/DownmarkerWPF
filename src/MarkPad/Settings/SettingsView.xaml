@@ -110,7 +110,7 @@
             </TabItem>
             <TabItem Header="display">
                 <StackPanel Margin="15,0,0,0">
-                    <TextBlock TextWrapping="Wrap" FontSize="26.667" Foreground="White" FontWeight="Light" Text="display settings"/>
+                    <TextBlock TextWrapping="Wrap" FontSize="26.667" Foreground="White" FontWeight="Light" Text="font"/>
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -161,7 +161,11 @@
                             </i:Interaction.Triggers>
                         </Button>
                     </Grid>
-                </StackPanel>
+					<TextBlock TextWrapping="Wrap" FontSize="26.667" Foreground="White" FontWeight="Light" Text="features"/>
+					<StackPanel>
+						<CheckBox Margin="0,5,0,0" x:Name="EnableFloatingToolBar" IsChecked="{Binding EnableFloatingToolBar}" Content="enable floating toolbar"/>
+					</StackPanel>
+				</StackPanel>
             </TabItem>
             <TabItem Header="extensions">
 
