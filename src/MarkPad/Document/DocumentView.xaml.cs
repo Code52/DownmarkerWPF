@@ -51,6 +51,7 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCode, (x, y) => ToggleCode(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCodeBlock, (x, y) => ToggleCodeBlock(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
+			Editor.MouseMove += new MouseEventHandler((s, e) => e.Handled = true);
         }
 
 		private void ApplyExtensions()
