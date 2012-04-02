@@ -12,7 +12,6 @@ using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;
 using Microsoft.Win32;
-using MarkPad.Services.MarkPadExtensions;
 
 namespace MarkPad.Settings
 {

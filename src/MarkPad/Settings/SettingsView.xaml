@@ -5,7 +5,8 @@
              xmlns:Custom="http://schemas.markpad.net/winfx/xaml/shared" 
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:Settings="clr-namespace:MarkPad.Settings" 
+             xmlns:Settings="clr-namespace:MarkPad.Settings"
+             xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              x:Class="MarkPad.Settings.SettingsView"
              d:DataContext="{d:DesignInstance Settings:SettingsViewModel}"
              mc:Ignorable="d">
@@ -91,7 +92,7 @@
                                 </StackPanel>
                             </StackPanel>
                         </Grid>
-                        <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,20,20,0" Width="190">
+                        <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,20,20,0" Width="250">
                             <TextBlock TextWrapping="Wrap" FontSize="26.667" FontWeight="Light" Text="language"/>
                             <ComboBox x:Name="Languages" ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}"  VerticalAlignment="Top" Margin="0,35,0,0">
                                 <ComboBox.ItemTemplate>
@@ -100,11 +101,13 @@
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
+                            <Controls:ToggleSwitch Margin="-10,75,0,0" IsChecked="{Binding EnableSpellCheck, Mode=TwoWay}" Content="spell check" />
                         </Grid>
+                        
 						<StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,20,20,0" Width="250">
-							<TextBlock TextWrapping="Wrap" FontSize="26.667" FontWeight="Light" Text="spell check"/>
-							<CheckBox Margin="0,5,0,0" x:Name="EnableSpellCheck" IsChecked="{Binding EnableSpellCheck}" Content="enabled"/>
-						</StackPanel>
+                            <TextBlock TextWrapping="Wrap" FontSize="26.667" FontWeight="Light" Text="features"/>
+                            <Controls:ToggleSwitch Margin="-10,5,0,0" IsChecked="{Binding EnableFloatingToolBar, Mode=TwoWay}" Content="floating toolbar"/>
+                        </StackPanel>
                     </ItemsControl>
                 </ScrollViewer>
             </TabItem>
@@ -161,10 +164,6 @@
                             </i:Interaction.Triggers>
                         </Button>
                     </Grid>
-					<TextBlock TextWrapping="Wrap" FontSize="26.667" Foreground="White" FontWeight="Light" Text="features"/>
-					<StackPanel>
-						<CheckBox Margin="0,5,0,0" x:Name="EnableFloatingToolBar" IsChecked="{Binding EnableFloatingToolBar}" Content="enable floating toolbar"/>
-					</StackPanel>
 				</StackPanel>
             </TabItem>
             <TabItem Header="extensions">
