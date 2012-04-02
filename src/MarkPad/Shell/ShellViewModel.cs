@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Caliburn.Micro;
-using MarkPad.About;
 using MarkPad.Document;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
@@ -28,7 +27,6 @@ namespace MarkPad.Shell
         private readonly IWindowManager windowManager;
         private readonly ISettingsProvider settingsService;
         private readonly Func<DocumentViewModel> documentCreator;
-        private readonly Func<AboutViewModel> aboutCreator;
         private readonly Func<OpenFromWebViewModel> openFromWebCreator;
 		private readonly Func<MarkPad.MarkPadExtensions.SpellCheck.SpellCheckExtension> spellCheckExtensionCreator;
 
@@ -41,7 +39,6 @@ namespace MarkPad.Shell
             SettingsViewModel settingsViewModel,
             UpdaterViewModel updaterViewModel,
             Func<DocumentViewModel> documentCreator,
-            Func<AboutViewModel> aboutCreator,
             Func<OpenFromWebViewModel> openFromWebCreator,
 			Func<MarkPad.MarkPadExtensions.SpellCheck.SpellCheckExtension> spellCheckExtensionCreator)
         {
@@ -52,7 +49,6 @@ namespace MarkPad.Shell
             MDI = mdi;
             Updater = updaterViewModel;
             this.documentCreator = documentCreator;
-            this.aboutCreator = aboutCreator;
             this.openFromWebCreator = openFromWebCreator;
 			this.spellCheckExtensionCreator = spellCheckExtensionCreator;
 
@@ -170,12 +166,6 @@ namespace MarkPad.Shell
             CurrentState = "ShowSettings";
             Settings.Initialize();
         }
-
-        public void ShowAbout()
-        {
-            windowManager.ShowDialog(aboutCreator());
-        }
-
         public void ToggleWebView()
         {
             var doc = MDI.ActiveItem as DocumentViewModel;
@@ -272,9 +262,11 @@ namespace MarkPad.Shell
             var blogs = settings.GetBlogs();
             if (blogs == null || blogs.Count == 0)
             {
-				if (!ConfigureNewBlog("Publish document")) return;
+				if (!ConfigureNewBlog("Publish document")) 
+					return;
 				blogs = settings.GetBlogs();
-				if (blogs == null || blogs.Count == 0) return;
+				if (blogs == null || blogs.Count == 0) 
+					return;
 			}
 
             var doc = MDI.ActiveItem as DocumentViewModel;
@@ -295,9 +287,11 @@ namespace MarkPad.Shell
             var blogs = settings.GetBlogs();
 			if (blogs == null || blogs.Count == 0)
 			{
-				if (!ConfigureNewBlog("Open from web")) return;
+				if (!ConfigureNewBlog("Open from web")) 
+					return;
 				blogs = settings.GetBlogs();
-				if (blogs == null || blogs.Count == 0) return;
+				if (blogs == null || blogs.Count == 0) 
+					return;
 			}
 
             var openFromWeb = openFromWebCreator();
@@ -326,8 +320,10 @@ namespace MarkPad.Shell
 				new ButtonExtras(ButtonType.Yes, "Yes", "Configure a blog"),
 				new ButtonExtras(ButtonType.No, "No", "Don't configure a blog"));
 
-			if (!setupBlog) return false;
-			if (!this.Settings.AddBlog()) return false;
+			if (!setupBlog) 
+				return false;
+			if (!this.Settings.AddBlog()) 
+				return false;
 			return true;
 		}
 
