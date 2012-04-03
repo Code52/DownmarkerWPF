@@ -52,7 +52,26 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCodeBlock, (x, y) => ToggleCodeBlock(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
 			Editor.MouseMove += new MouseEventHandler((s, e) => e.Handled = true);
+
+			ZoomSlider.ValueChanged += new RoutedPropertyChangedEventHandler<double>((sender, e) => ApplyZoom());
         }
+
+		private void ApplyZoom()
+		{
+			Editor.TextArea.TextView.Redraw();
+
+			var zoom = ZoomSlider.Value;
+			
+			var fontSize = (double)GetFontSize() * zoom;
+
+			Editor.FontSize = fontSize;
+			wb.Zoom = GetZoomLevel(fontSize);
+		}
+
+		private void ApplyFont()
+		{
+			Editor.FontFamily = GetFontFamily();
+		}
 
 		private void ApplyExtensions()
 		{
@@ -104,21 +123,21 @@ namespace MarkPad.Document
         /// Turn the font size into a zoom level for the browser.
         /// </summary>
         /// <returns></returns>
-        private int GetZoomLevel()
+        private int GetZoomLevel(double fontSize)
         {
             // The default font size 12 corresponds to 100 (which maps to 0 here); for an increment of 1, we add 50/6 to the number.
             // For 18 we end up with 150, which looks really fine. TODO: Feel free to try to further outline this, but this is a good start.
-            var zoom = 100 + ((DocumentViewModel)DataContext).GetFontSize() * 40 / 6;
+            var zoom = 100.0 + (fontSize - (double)Constants.FONT_SIZE_ENUM_ADJUSTMENT) * 40.0 / 6.0;
 
             // Limit the zoom by the limits of Awesomium.NET.
             if (zoom < 50) zoom = 50;
             if (zoom > 500) zoom = 500;
-            return zoom;
+            return (int)zoom;
         }
 
         private void WbProcentualZoom()
         {
-            wb.Zoom = GetZoomLevel();
+			ApplyZoom();
             wb.ExecuteJavascript("window.scrollTo(0," + documentScrollViewer.VerticalOffset / (documentScrollViewer.ExtentHeight - documentScrollViewer.ViewportHeight) + " * (document.body.scrollHeight - document.body.clientHeight));");
         }
 
@@ -143,8 +162,6 @@ namespace MarkPad.Document
                 var x = ((DocumentViewModel)DataContext);
                 x.Document.TextChanged += (i, j) =>
                     {
-                        Editor.FontSize = GetFontSize();
-						Editor.FontFamily = GetFontFamily();
                         wb.LoadCompleted += (k, l) => WbProcentualZoom();
                     };
             }
@@ -156,13 +173,7 @@ namespace MarkPad.Document
                 .FirstOrDefault(b => b.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.IndentSelection)
                 .ExecuteSafely(b => editCommandBindings.Remove(b));
 
-            // Set font size and focus on the editor.
-            Editor.FontSize = GetFontSize();
-			Editor.FontFamily = GetFontFamily();
             Editor.Focus();
-
-            // Set zoom level of the preview.
-            wb.Zoom = GetZoomLevel();
         }
 
 
@@ -288,12 +299,8 @@ namespace MarkPad.Document
 
         void IHandle<SettingsChangedEvent>.Handle(SettingsChangedEvent message)
         {
-            Editor.TextArea.TextView.Redraw();
-
-            Editor.FontSize = GetFontSize();
-			Editor.FontFamily = GetFontFamily();
-            wb.Zoom = GetZoomLevel();
-
+			ApplyFont();
+			ApplyZoom();
 			ApplyExtensions();
         }
 

@@ -12,7 +12,7 @@
     xmlns:Document="clr-namespace:MarkPad.Document"
     x:Class="MarkPad.Document.DocumentView"
     mc:Ignorable="d" 
-    d:DesignHeight="300" d:DesignWidth="300"
+    d:DesignHeight="300" d:DesignWidth="400"
 >
     <UserControl.InputBindings>
         <KeyBinding Command="Document:FormattingCommands.ToggleBold" Key="B" Modifiers="Control" />
@@ -544,6 +544,15 @@
                 <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.25" Direction="270" />
             </avalonedit:TextEditor.Effect>
         </avalonedit:TextEditor>
+		<Slider x:Name="ZoomSlider"
+				Maximum="2"
+				Minimum="0.5"
+				Value="1"
+				VerticalAlignment="Bottom"
+				HorizontalAlignment="Right"
+				Width="100"
+				Margin="0,0,40,20"
+				Grid.Column="0" />
 
 
         <awe:WebControl x:Name="wb" UseLayoutRounding="True" Margin="10,0,10,10" Grid.Column="1" HorizontalAlignment="Stretch" 
