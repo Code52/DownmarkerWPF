@@ -29,6 +29,8 @@ namespace MarkPad.Document
     {
         private const int NumSpaces = 4;
         private const string Spaces = "    ";
+		private const double ZOOM_IN_OUT_DELTA = 0.1;
+
         private ScrollViewer documentScrollViewer;
 		private IList<IDocumentViewExtension> extensions = new List<IDocumentViewExtension>();
 		private readonly ISettingsProvider settingsProvider;
@@ -43,6 +45,7 @@ namespace MarkPad.Document
             SizeChanged += DocumentViewSizeChanged;
             Editor.TextArea.SelectionChanged += SelectionChanged;
             Editor.PreviewMouseLeftButtonUp += HandleMouseUp;
+			Editor.MouseWheel += HandleEditorMouseWheel;
 
 			ApplyExtensions();
 
@@ -50,9 +53,11 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleItalic, (x, y) => ToggleItalic(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCode, (x, y) => ToggleCode(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCodeBlock, (x, y) => ToggleCodeBlock(), CanEditDocument));
-            CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
+			CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
+			CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomIn, (x, y) => ZoomIn()));
+			CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomOut, (x, y) => ZoomOut()));
 			Editor.MouseMove += new MouseEventHandler((s, e) => e.Handled = true);
-
+			
 			ZoomSlider.ValueChanged += new RoutedPropertyChangedEventHandler<double>((sender, e) => ApplyZoom());
         }
 
@@ -66,6 +71,24 @@ namespace MarkPad.Document
 
 			Editor.FontSize = fontSize;
 			wb.Zoom = GetZoomLevel(fontSize);
+		}
+
+		private void ZoomIn()
+		{
+			AdjustZoom(ZOOM_IN_OUT_DELTA);
+		}
+		private void ZoomOut()
+		{
+			AdjustZoom(-ZOOM_IN_OUT_DELTA);
+		}
+		private void AdjustZoom(double delta)
+		{
+			var newZoom = ZoomSlider.Value + delta;
+
+			if (newZoom < ZoomSlider.Minimum) newZoom = ZoomSlider.Minimum;
+			if (newZoom > ZoomSlider.Maximum) newZoom = ZoomSlider.Maximum;
+
+			ZoomSlider.Value = newZoom;
 		}
 
 		private void ApplyFont()
@@ -288,6 +311,12 @@ namespace MarkPad.Document
             else
                 floatingToolBar.Show();
         }
+
+		void HandleEditorMouseWheel(object sender, MouseWheelEventArgs e)
+		{
+			if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl)) return;
+			ZoomSlider.Value += (double)e.Delta * 0.1;
+		}
 
         private void CanEditDocument(object sender, CanExecuteRoutedEventArgs e)
         {

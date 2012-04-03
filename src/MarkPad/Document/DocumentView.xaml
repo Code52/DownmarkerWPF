@@ -17,7 +17,11 @@
     <UserControl.InputBindings>
         <KeyBinding Command="Document:FormattingCommands.ToggleBold" Key="B" Modifiers="Control" />
         <KeyBinding Command="Document:FormattingCommands.ToggleItalic" Key="I" Modifiers="Control" />
-    </UserControl.InputBindings>
+		<KeyBinding Command="Document:DisplayCommands.ZoomIn" Key="OemPlus" Modifiers="Control"/>
+		<KeyBinding Command="Document:DisplayCommands.ZoomIn" Key="Add" Modifiers="Control"/>
+		<KeyBinding Command="Document:DisplayCommands.ZoomOut" Key="OemMinus" Modifiers="Control"/>
+		<KeyBinding Command="Document:DisplayCommands.ZoomOut" Key="Subtract" Modifiers="Control"/>
+	</UserControl.InputBindings>
     <UserControl.Resources>
         <ControlTemplate x:Key="HorizontalScrollBar"
                      TargetType="{x:Type ScrollBar}">
