@@ -97,6 +97,18 @@ namespace MarkPad.Document
 			ZoomSlider.Value = 1;
 		}
 
+		protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
+		{
+			base.OnPreviewMouseWheel(e);
+			
+			if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl)) return;
+
+			e.Handled = true;
+
+			if (e.Delta > 0) ZoomIn();
+			else ZoomOut();
+		}
+
 		private void ApplyFont()
 		{
 			Editor.FontFamily = GetFontFamily();

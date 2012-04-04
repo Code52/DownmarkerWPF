@@ -10,6 +10,8 @@ By [code52](http://code52.org/)
 - `[Ctrl+-]` - Zoom out
 - `[Ctrl+0]` - Reset zoom
 
+Holding `Ctrl` and scrolling with the mouse wheel also zooms in and out.
+
 
 
 ## Contributors
