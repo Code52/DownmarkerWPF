@@ -92,6 +92,9 @@ namespace MarkPad.Document
 
         void WebControl_LinkClicked(object sender, OpenExternalLinkEventArgs e)
         {
+			// Throw away empty urls.
+			// Awesomium seems to have a bug with file URIs, eg "file:///c:/test.txt" 
+			// is valid and works in FireFox and Chrome, but gets to here as an empty string.
 			if (string.IsNullOrWhiteSpace(e.Url)) return;
 
             Process.Start(e.Url);
