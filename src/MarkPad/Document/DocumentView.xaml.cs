@@ -92,6 +92,8 @@ namespace MarkPad.Document
 
         void WebControl_LinkClicked(object sender, OpenExternalLinkEventArgs e)
         {
+			if (string.IsNullOrWhiteSpace(e.Url)) return;
+
             Process.Start(e.Url);
         }
 
