@@ -21,6 +21,7 @@
 		<KeyBinding Command="Document:DisplayCommands.ZoomIn" Key="Add" Modifiers="Control"/>
 		<KeyBinding Command="Document:DisplayCommands.ZoomOut" Key="OemMinus" Modifiers="Control"/>
 		<KeyBinding Command="Document:DisplayCommands.ZoomOut" Key="Subtract" Modifiers="Control"/>
+		<KeyBinding Command="Document:DisplayCommands.ZoomReset" Key="D0" Modifiers="Control"/>
 	</UserControl.InputBindings>
     <UserControl.Resources>
         <ControlTemplate x:Key="HorizontalScrollBar"

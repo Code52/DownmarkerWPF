@@ -6,15 +6,17 @@ By [code52](http://code52.org/)
 ## Hotkeys
 
 - `[F10]` - "Distraction free" mode, toggles the preview window on/off
-- `[Ctrl +]` (or `[Ctrl =]`) - zoom in
-- `[Ctrl -]` - zoom out
+- `[Ctrl++]` (or `[Ctrl =]`) - Zoom in
+- `[Ctrl+-]` - Zoom out
+- `[Ctrl+0]` - Reset zoom
+
 
 
 ## Contributors
 
 If you want to contribute, get started at [MarkPad's GitHub page](https://github.com/Code52/DownmarkerWPF).
 
-<!--<div id="contributors"><em>Loading...</em></div>-->
+<div id="contributors"><em>Loading...</em></div>
 
 
 ## Components

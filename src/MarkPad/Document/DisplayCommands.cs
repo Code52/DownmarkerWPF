@@ -10,5 +10,6 @@ namespace MarkPad.Document
 	{
 		public static ICommand ZoomIn = new RoutedCommand();
 		public static ICommand ZoomOut = new RoutedCommand();
+		public static ICommand ZoomReset = new RoutedCommand();
 	}
 }

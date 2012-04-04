@@ -56,6 +56,8 @@ namespace MarkPad.Document
 			CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
 			CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomIn, (x, y) => ZoomIn()));
 			CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomOut, (x, y) => ZoomOut()));
+			CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomReset, (x, y) => ZoomReset()));
+
 			Editor.MouseMove += new MouseEventHandler((s, e) => e.Handled = true);
 			
 			ZoomSlider.ValueChanged += new RoutedPropertyChangedEventHandler<double>((sender, e) => ApplyZoom());
@@ -89,6 +91,10 @@ namespace MarkPad.Document
 			if (newZoom > ZoomSlider.Maximum) newZoom = ZoomSlider.Maximum;
 
 			ZoomSlider.Value = newZoom;
+		}
+		private void ZoomReset()
+		{
+			ZoomSlider.Value = 1;
 		}
 
 		private void ApplyFont()
