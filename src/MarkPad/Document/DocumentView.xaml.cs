@@ -22,6 +22,7 @@ using MarkPad.XAML;
 using System.Windows.Media;
 using MarkPad.Services.MarkPadExtensions;
 using MarkPad.MarkPadExtensions;
+using System.Threading.Tasks;
 
 namespace MarkPad.Document
 {
@@ -52,6 +53,21 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCodeBlock, (x, y) => ToggleCodeBlock(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
 			Editor.MouseMove += new MouseEventHandler((s, e) => e.Handled = true);
+
+			// This event happens if the users refreshes wb, which shows a non-helpful 'generic error', 
+			// so send an empty response, then in 100 ms rewrite the preview. This is hacky, but Awesomium
+			// doesn't allow disabling or hijacking refresh.
+			wb.ResourceRequest += new ResourceRequestEventHandler((o, e) =>
+			{
+				Task.Factory
+					.StartNew(() => System.Threading.Thread.Sleep(100))
+					.ContinueWith(t => this.Dispatcher.Invoke(new System.Action(() =>
+					{
+						var viewModel = DataContext as DocumentViewModel;
+						wb.LoadHTML(viewModel.Render);
+					})));
+				return new ResourceResponse(new byte[] { (byte)' ' }, "text/plain");
+			});
         }
 
 		private void ApplyExtensions()
@@ -76,6 +92,11 @@ namespace MarkPad.Document
 
         void WebControl_LinkClicked(object sender, OpenExternalLinkEventArgs e)
         {
+			// Throw away empty urls.
+			// Awesomium seems to have a bug with file URIs, eg "file:///c:/test.txt" 
+			// is valid and works in FireFox and Chrome, but gets to here as an empty string.
+			if (string.IsNullOrWhiteSpace(e.Url)) return;
+
             Process.Start(e.Url);
         }
 
