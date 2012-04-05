@@ -43,7 +43,7 @@ namespace MarkPad.Shell
             if (currentFiles.Contains(openedFile))
             {
                 // find file in list
-                var settings = settingsService.GetSettings<MarkpadSettings>();
+                var settings = settingsService.GetSettings<MarkPadSettings>();
                 var files = settings.RecentFiles;
                 var index = files.IndexOf(openedFile);
                 if (index >= 0) files.RemoveAt(index);
@@ -59,7 +59,7 @@ namespace MarkPad.Shell
             else
             {
                 // update settings
-                var settings = settingsService.GetSettings<MarkpadSettings>();
+                var settings = settingsService.GetSettings<MarkPadSettings>();
                 var files = settings.RecentFiles;
                 if (files == null) files = new List<string>();
 
@@ -91,7 +91,7 @@ namespace MarkPad.Shell
 
             jumpList = GetJumpList();
 
-            var x = new Thread(new ParameterizedThreadStart(delegate { PopulateJumpList(settingsService.GetSettings<MarkpadSettings>().RecentFiles); }));
+            var x = new Thread(new ParameterizedThreadStart(delegate { PopulateJumpList(settingsService.GetSettings<MarkPadSettings>().RecentFiles); }));
             x.SetApartmentState(ApartmentState.STA);
             x.Start();
         }

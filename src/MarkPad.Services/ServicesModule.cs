@@ -17,7 +17,7 @@ namespace MarkPad.Services
             builder.RegisterType<SpellingService>().As<ISpellingService>().SingleInstance().OnActivating(args =>
             {
                 var settingsService = args.Context.Resolve<ISettingsProvider>();
-                var settings = settingsService.GetSettings<MarkpadSettings>();
+                var settings = settingsService.GetSettings<MarkPadSettings>();
                 args.Instance.SetLanguage(settings.Language);    
             });
         }
