@@ -106,8 +106,8 @@
     <Compile Include="Metaweblog\Generated\MetaWeblog.generated.cs">
       <DependentUpon>MetaWeblog.tt</DependentUpon>
       <AutoGen>True</AutoGen>
-      <SubType>Component</SubType>
       <DesignTime>True</DesignTime>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Metaweblog\MediaObject.cs" />
     <Compile Include="Metaweblog\MediaObjectInfo.cs" />

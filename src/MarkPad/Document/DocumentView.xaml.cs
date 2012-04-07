@@ -59,6 +59,8 @@ namespace MarkPad.Document
 			// doesn't allow disabling or hijacking refresh.
 			wb.ResourceRequest += new ResourceRequestEventHandler((o, e) =>
 			{
+				if (e.Request.Url != "local://base_request.html/") return null;
+
 				Task.Factory
 					.StartNew(() => System.Threading.Thread.Sleep(100))
 					.ContinueWith(t => this.Dispatcher.Invoke(new System.Action(() =>
