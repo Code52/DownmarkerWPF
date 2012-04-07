@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Xml;
 using Awesomium.Core;
 using Caliburn.Micro;
@@ -17,11 +18,10 @@ using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using MarkPad.Extensions;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
+using MarkPad.MarkPadExtensions;
+using MarkPad.Services.MarkPadExtensions;
 using MarkPad.Services.Settings;
 using MarkPad.XAML;
-using System.Windows.Media;
-using MarkPad.Services.MarkPadExtensions;
-using MarkPad.MarkPadExtensions;
 
 namespace MarkPad.Document
 {
@@ -29,10 +29,10 @@ namespace MarkPad.Document
     {
         private const int NumSpaces = 4;
         private const string Spaces = "    ";
-		private const double ZOOM_IN_OUT_DELTA = 0.1;
+		private const double ZoomDelta = 0.1;
 
         private ScrollViewer documentScrollViewer;
-		private IList<IDocumentViewExtension> extensions = new List<IDocumentViewExtension>();
+		private readonly IList<IDocumentViewExtension> extensions = new List<IDocumentViewExtension>();
 		private readonly ISettingsProvider settingsProvider;
 
 		public DocumentView(ISettingsProvider settingsProvider)
@@ -58,9 +58,9 @@ namespace MarkPad.Document
 			CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomOut, (x, y) => ZoomOut()));
 			CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomReset, (x, y) => ZoomReset()));
 
-			Editor.MouseMove += new MouseEventHandler((s, e) => e.Handled = true);
+			Editor.MouseMove += (s, e) => e.Handled = true;
 			
-			ZoomSlider.ValueChanged += new RoutedPropertyChangedEventHandler<double>((sender, e) => ApplyZoom());
+			ZoomSlider.ValueChanged += (sender, e) => ApplyZoom();
         }
 
 		private void ApplyZoom()
@@ -69,7 +69,7 @@ namespace MarkPad.Document
 
 			var zoom = ZoomSlider.Value;
 			
-			var fontSize = (double)GetFontSize() * zoom;
+			var fontSize = GetFontSize() * zoom;
 
 			Editor.FontSize = fontSize;
 			wb.Zoom = GetZoomLevel(fontSize);
@@ -77,12 +77,14 @@ namespace MarkPad.Document
 
 		private void ZoomIn()
 		{
-			AdjustZoom(ZOOM_IN_OUT_DELTA);
+			AdjustZoom(ZoomDelta);
 		}
+
 		private void ZoomOut()
 		{
-			AdjustZoom(-ZOOM_IN_OUT_DELTA);
+			AdjustZoom(-ZoomDelta);
 		}
+
 		private void AdjustZoom(double delta)
 		{
 			var newZoom = ZoomSlider.Value + delta;
@@ -92,6 +94,7 @@ namespace MarkPad.Document
 
 			ZoomSlider.Value = newZoom;
 		}
+
 		private void ZoomReset()
 		{
 			ZoomSlider.Value = 1;
@@ -116,23 +119,22 @@ namespace MarkPad.Document
 
 		private void ApplyExtensions()
 		{
-			var extensions = MarkPadExtensionsProvider.Extensions.OfType<IDocumentViewExtension>();
-			var extensionsToAdd = extensions.Except(this.extensions).ToList();
-			var extensionsToRemove = this.extensions.Except(extensions).ToList();
+			var allExtensions = MarkPadExtensionsProvider.Extensions.OfType<IDocumentViewExtension>().ToList();
+			var extensionsToAdd = allExtensions.Except(extensions).ToList();
+			var extensionsToRemove = extensions.Except(allExtensions).ToList();
 
 			foreach (var extension in extensionsToAdd)
 			{
 				extension.ConnectToDocumentView(this);
-				this.extensions.Add(extension);
+				extensions.Add(extension);
 			}
 
 			foreach (var extension in extensionsToRemove)
 			{
 				extension.DisconnectFromDocumentView(this);
-				this.extensions.Remove(extension);
+				extensions.Remove(extension);
 			}
 		}
-
 
         void WebControl_LinkClicked(object sender, OpenExternalLinkEventArgs e)
         {
@@ -168,7 +170,7 @@ namespace MarkPad.Document
         {
             // The default font size 12 corresponds to 100 (which maps to 0 here); for an increment of 1, we add 50/6 to the number.
             // For 18 we end up with 150, which looks really fine. TODO: Feel free to try to further outline this, but this is a good start.
-            var zoom = 100.0 + (fontSize - (double)Constants.FONT_SIZE_ENUM_ADJUSTMENT) * 40.0 / 6.0;
+            var zoom = 100.0 + (fontSize - Constants.FONT_SIZE_ENUM_ADJUSTMENT) * 40.0 / 6.0;
 
             // Limit the zoom by the limits of Awesomium.NET.
             if (zoom < 50) zoom = 50;
@@ -216,7 +218,6 @@ namespace MarkPad.Document
 
             Editor.Focus();
         }
-
 
         internal void ToggleBold()
         {
@@ -333,7 +334,7 @@ namespace MarkPad.Document
 		void HandleEditorMouseWheel(object sender, MouseWheelEventArgs e)
 		{
 			if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl)) return;
-			ZoomSlider.Value += (double)e.Delta * 0.1;
+			ZoomSlider.Value += e.Delta * 0.1;
 		}
 
         private void CanEditDocument(object sender, CanExecuteRoutedEventArgs e)
