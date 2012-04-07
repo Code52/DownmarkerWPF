@@ -260,7 +260,7 @@ namespace MarkPad.Shell
 
         public void PublishDocument()
         {
-            var settings = settingsService.GetSettings<MarkpadSettings>();
+            var settings = settingsService.GetSettings<MarkPadSettings>();
             var blogs = settings.GetBlogs();
             if (blogs == null || blogs.Count == 0)
             {
@@ -285,7 +285,7 @@ namespace MarkPad.Shell
 
         public void OpenFromWeb()
         {
-            var settings = settingsService.GetSettings<MarkpadSettings>();
+            var settings = settingsService.GetSettings<MarkPadSettings>();
             var blogs = settings.GetBlogs();
 			if (blogs == null || blogs.Count == 0)
 			{
@@ -342,7 +342,7 @@ namespace MarkPad.Shell
 
 		void UpdateMarkPadExtensions()
 		{
-			var settings = settingsService.GetSettings<MarkpadSettings>();
+			var settings = settingsService.GetSettings<MarkPadSettings>();
 			var extensions = new List<IMarkPadExtension>();
 			if (settings.SpellCheckEnabled)
 			{

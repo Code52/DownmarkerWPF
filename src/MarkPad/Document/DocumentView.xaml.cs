@@ -22,6 +22,8 @@ using MarkPad.MarkPadExtensions;
 using MarkPad.Services.MarkPadExtensions;
 using MarkPad.Services.Settings;
 using MarkPad.XAML;
+using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Rendering;
 
 namespace MarkPad.Document
 {
@@ -35,17 +37,25 @@ namespace MarkPad.Document
 		private readonly IList<IDocumentViewExtension> extensions = new List<IDocumentViewExtension>();
 		private readonly ISettingsProvider settingsProvider;
 
+		MarkPadSettings settings;
+
 		public DocumentView(ISettingsProvider settingsProvider)
         {
 			this.settingsProvider = settingsProvider;
+
             InitializeComponent();
-            Loaded += DocumentViewLoaded;
+            
+			Loaded += DocumentViewLoaded;
             wb.Loaded += WbLoaded;
             wb.OpenExternalLink += WebControl_LinkClicked;
             SizeChanged += DocumentViewSizeChanged;
             Editor.TextArea.SelectionChanged += SelectionChanged;
             Editor.PreviewMouseLeftButtonUp += HandleMouseUp;
 			Editor.MouseWheel += HandleEditorMouseWheel;
+			Editor.MouseMove += HandleEditorMouseMove;
+			Editor.PreviewMouseLeftButtonDown += HandleEditorPreviewMouseLeftButtonDown;
+
+			settings = this.settingsProvider.GetSettings<MarkPadSettings>();
 
 			ApplyExtensions();
 
@@ -153,20 +163,22 @@ namespace MarkPad.Document
         /// <returns>Font size.</returns>
         private int GetFontSize()
         {
-            return Constants.FONT_SIZE_ENUM_ADJUSTMENT + ((DocumentViewModel)DataContext).GetFontSize();
+            return Constants.FONT_SIZE_ENUM_ADJUSTMENT + (int)settings.FontSize;
         }
 
 		private FontFamily GetFontFamily()
 		{
-			var documentViewModel = (DocumentViewModel)DataContext;
-			return documentViewModel.GetFontFamily();
+			var configuredSource = settings.FontFamily;
+			var fontFamily = FontHelpers.TryGetFontFamilyFromStack(configuredSource, "Segoe UI", "Arial");
+			if (fontFamily == null) throw new Exception("Cannot find configured font family or fallback fonts");
+			return fontFamily;
 		}
 
         /// <summary>
         /// Turn the font size into a zoom level for the browser.
         /// </summary>
         /// <returns></returns>
-        private int GetZoomLevel(double fontSize)
+        private static int GetZoomLevel(double fontSize)
         {
             // The default font size 12 corresponds to 100 (which maps to 0 here); for an increment of 1, we add 50/6 to the number.
             // For 18 we end up with 150, which looks really fine. TODO: Feel free to try to further outline this, but this is a good start.
@@ -213,7 +225,7 @@ namespace MarkPad.Document
             var editCommandBindings = Editor.TextArea.DefaultInputHandler.Editing.CommandBindings;
 
             editCommandBindings
-                .FirstOrDefault(b => b.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.IndentSelection)
+                .FirstOrDefault(b => b.Command == AvalonEditCommands.IndentSelection)
                 .ExecuteSafely(b => editCommandBindings.Remove(b));
 
             Editor.Focus();
@@ -320,16 +332,54 @@ namespace MarkPad.Document
 
         private void HandleMouseUp(object sender, MouseButtonEventArgs e)
         {
-			var settings = settingsProvider.GetSettings<MarkpadSettings>();
-			
 			if (!settings.FloatingToolBarEnabled)
 				return;
-				
-            if (Editor.TextArea.Selection.IsEmpty)
-                floatingToolBar.Hide();
-            else
-                floatingToolBar.Show();
-        }
+
+			if (Editor.TextArea.Selection.IsEmpty)
+				floatingToolBar.Hide();
+			else
+				ShowFloatingToolBar();
+		}
+
+		void HandleEditorMouseMove(object sender, MouseEventArgs e)
+		{
+			// Bail out if tool bar is disabled, if there is no selection, or if the toolbar is already open
+			if (!settings.FloatingToolBarEnabled) return;
+			if (string.IsNullOrEmpty(Editor.SelectedText)) return;
+			if (floatingToolBar.IsOpen) return;
+			if (e.LeftButton == MouseButtonState.Pressed) return;
+			
+			// Bail out if the mouse isn't over the editor
+			var editorPosition = Editor.GetPositionFromPoint(e.GetPosition(Editor));
+			if (!editorPosition.HasValue) return;
+			
+			// Bail out if the mouse isn't over a selection
+			var offset = Editor.Document.GetOffset(editorPosition.Value.Line, editorPosition.Value.Column);
+			if (offset < Editor.SelectionStart) return;
+			if (offset > Editor.SelectionStart + Editor.SelectionLength) return;
+
+			ShowFloatingToolBar();
+		}
+
+		void HandleEditorPreviewMouseLeftButtonDown(object sender, MouseEventArgs e)
+		{
+			if (!floatingToolBar.IsOpen) return;
+			floatingToolBar.Hide();
+		}
+
+		private void ShowFloatingToolBar()
+		{
+			// Find the screen position of the start of the selection
+			var selectionStartLocation = Editor.Document.GetLocation(Editor.SelectionStart);
+			var selectionStartPosition = new TextViewPosition(selectionStartLocation);
+			var selectionStartPoint = Editor.TextArea.TextView.GetVisualPosition(selectionStartPosition, VisualYPosition.LineTop);
+
+			var popupPoint = new Point(
+				selectionStartPoint.X + 30,
+				selectionStartPoint.Y - 35);
+
+			floatingToolBar.Show(Editor, popupPoint);
+		}
 
 		void HandleEditorMouseWheel(object sender, MouseWheelEventArgs e)
 		{
@@ -347,6 +397,8 @@ namespace MarkPad.Document
 
         void IHandle<SettingsChangedEvent>.Handle(SettingsChangedEvent message)
         {
+			settings = settingsProvider.GetSettings<MarkPadSettings>();
+
 			ApplyFont();
 			ApplyZoom();
 			ApplyExtensions();
@@ -377,5 +429,5 @@ namespace MarkPad.Document
                     }
                 });
         }
-    }
+	}
 }

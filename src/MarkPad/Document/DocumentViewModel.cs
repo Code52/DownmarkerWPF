@@ -343,17 +343,5 @@ namespace MarkPad.Document
             }
             return null;
         }
-
-        public int GetFontSize()
-        {
-            return (int)settings.GetSettings<MarkpadSettings>().FontSize;
-        }
-        public FontFamily GetFontFamily()
-        {
-            var configuredSource = settings.GetSettings<MarkpadSettings>().FontFamily;
-            var fontFamily = FontHelpers.TryGetFontFamilyFromStack(configuredSource, "Segoe UI", "Arial");
-            if (fontFamily == null) throw new Exception("Cannot find configured font family or fallback fonts");
-            return fontFamily;
-        }
     }
 }
