@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Awesomium.Core;
 using MarkdownDeep;
+using System.Text;
 
 namespace MarkPad.Document
 {
@@ -49,6 +50,8 @@ namespace MarkPad.Document
             var head = "";
             var scripts = "";
 
+			scripts += GetLinkScript();
+
             if (TryGetHeaderValue(header, "theme", out themeName))
             {
                 var path = Path.Combine(WebCore.BaseDirectory, themeName);
@@ -67,6 +70,21 @@ namespace MarkPad.Document
 
             return document;
         }
+
+		static string GetLinkScript()
+		{
+			return @"
+<script type='text/javascript'>
+	window.onload = function(){
+		var links = document.getElementsByTagName('a');
+		for (var i = 0; i < links.length; i++) {
+			var l = links[i];
+			if (l.getAttribute('href')) l.target = '_blank';
+		}
+	};
+</script>
+			";
+		}
 
         private static bool TryGetHeaderValue(string header, string key, out string value)
         {

@@ -33,6 +33,7 @@ namespace MarkPad.Document
         private const int NumSpaces = 4;
         private const string Spaces = "    ";
 		private const double ZoomDelta = 0.1;
+		private const string LOCAL_REQUEST_URL_BASE = "local://base_request.html/";
 
         private ScrollViewer documentScrollViewer;
 		private readonly IList<IDocumentViewExtension> extensions = new List<IDocumentViewExtension>();
@@ -49,6 +50,7 @@ namespace MarkPad.Document
 			Loaded += DocumentViewLoaded;
             wb.Loaded += WbLoaded;
             wb.OpenExternalLink += WebControl_LinkClicked;
+			wb.ResourceRequest += WebControl_ResourceRequest;
             SizeChanged += DocumentViewSizeChanged;
             Editor.TextArea.SelectionChanged += SelectionChanged;
             Editor.PreviewMouseLeftButtonUp += HandleMouseUp;
@@ -71,19 +73,6 @@ namespace MarkPad.Document
 
 			Editor.MouseMove += (s, e) => e.Handled = true;
 			ZoomSlider.ValueChanged += (sender, e) => ApplyZoom();
-			// This event happens if the users refreshes wb, which shows a non-helpful 'generic error', 
-			// so send an empty response, then in 100 ms rewrite the preview. This is hacky, but Awesomium
-			// doesn't allow disabling or hijacking refresh.
-			wb.ResourceRequest += (o, e) =>
-			                          {
-			                              if (e.Request.Url.StartsWith("local://base_request.html/"))
-                                              return null;
-
-			                              Task.Factory
-			                                  .StartNew(() => System.Threading.Thread.Sleep(100))
-			                                  .ContinueWith(t => Dispatcher.Invoke(new System.Action(() => (DataContext as DocumentViewModel).ExecuteSafely( vm => wb.LoadHTML(vm.Render)))));
-			                              return new ResourceResponse(new[] { (byte)' ' }, "text/plain");
-			                          };
         }
 
 		private void ApplyZoom()
@@ -159,15 +148,66 @@ namespace MarkPad.Document
 			}
 		}
 
-        void WebControl_LinkClicked(object sender, OpenExternalLinkEventArgs e)
-        {
-			// Throw away empty urls.
-			// Awesomium seems to have a bug with file URIs, eg "file:///c:/test.txt" 
-			// is valid and works in FireFox and Chrome, but gets to here as an empty string.
-			if (string.IsNullOrWhiteSpace(e.Url)) return;
+		void WebControl_LinkClicked(object sender, OpenExternalLinkEventArgs e)
+		{
+			// Although all links have "target='_blank'" added (see ParsedDocument.ToHtml()), they go through this first
+			// unless the url is local (a bug in Awesomium) in which case this event isn't triggered, and the "target='_blank'"
+			// takes over to avoid crashing the preview. Local resource requests where the resource doesn't exist are thrown
+			// away. See WebControl_ResourceRequest().
 
-            Process.Start(e.Url);
-        }
+			string filename = e.Url;
+			if (e.Url.StartsWith(LOCAL_REQUEST_URL_BASE))
+			{
+				filename = GetResourceFilename(e.Url.Replace(LOCAL_REQUEST_URL_BASE, "")) ?? "";
+				if (!File.Exists(filename)) return;
+			}
+
+			if (string.IsNullOrWhiteSpace(filename)) return;
+
+			Process.Start(filename);
+		}
+
+		ResourceResponse WebControl_ResourceRequest(object o, ResourceRequestEventArgs e)
+		{
+			// This tries to get a local resource. If there is no local resource null is returned by GetLocalResource, which
+			// triggers the default handler, which should respect the "target='_blank'" attribute added
+			// in ParsedDocument.ToHtml(), thus avoiding a bug in Awesomium where trying to navigate to a
+			// local resource fails when showing an in-memory file (https://github.com/Code52/DownmarkerWPF/pull/208)
+
+			// What works:
+			//	- resource requests for remote resources (like <link href="http://somecdn.../jquery.js"/>)
+			//	- resource requests for local resources that exist relative to filename of the file (like <img src="images/logo.png"/>)
+			//	- clicking links for remote resources (like [Google](http://www.google.com))
+			//	- clicking links for local resources which don't exist (eg [test](test)) does nothing (WebControl_LinkClicked checks for existence)
+			// What fails:
+			//	- clicking links for local resources where the resource exists (like [test](images/logo.png))
+			//		- This _sometimes_ opens the resource in the preview pane, and sometimes opens the resource 
+			//		using Process.Start (WebControl_LinkClicked gets triggered). The behaviour seems stochastic.
+			//	- alt text for images where the image resource is not found
+
+			if (e.Request.Url.StartsWith(LOCAL_REQUEST_URL_BASE)) return GetLocalResource(e.Request.Url.Replace(LOCAL_REQUEST_URL_BASE, ""));
+
+			// If the request wasn't local, return null to let the usual handler load the url from the network			
+			return null;
+		}
+		ResourceResponse GetLocalResource(string url)
+		{
+			if (string.IsNullOrWhiteSpace(url)) return null;
+
+			var resourceFilename = GetResourceFilename(url);
+			if (!File.Exists(resourceFilename)) return null;
+
+			return new ResourceResponse(resourceFilename);
+		}
+		public string GetResourceFilename(string url)
+		{
+			var vm = DataContext as DocumentViewModel;
+			if (vm == null) return null;
+			if (string.IsNullOrEmpty(vm.FileName)) return null;
+
+			var resourceFilename = Path.Combine(Path.GetDirectoryName(vm.FileName), url);
+			return resourceFilename;
+		}
 
         void DocumentViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
