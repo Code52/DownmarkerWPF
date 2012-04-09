@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,8 +14,10 @@ using System.Windows.Media;
 using System.Xml;
 using Awesomium.Core;
 using Caliburn.Micro;
+using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using ICSharpCode.AvalonEdit.Rendering;
 using MarkPad.Extensions;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
@@ -22,8 +25,6 @@ using MarkPad.MarkPadExtensions;
 using MarkPad.Services.MarkPadExtensions;
 using MarkPad.Services.Settings;
 using MarkPad.XAML;
-using ICSharpCode.AvalonEdit;
-using ICSharpCode.AvalonEdit.Rendering;
 
 namespace MarkPad.Document
 {
@@ -69,8 +70,20 @@ namespace MarkPad.Document
 			CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomReset, (x, y) => ZoomReset()));
 
 			Editor.MouseMove += (s, e) => e.Handled = true;
-			
 			ZoomSlider.ValueChanged += (sender, e) => ApplyZoom();
+			// This event happens if the users refreshes wb, which shows a non-helpful 'generic error', 
+			// so send an empty response, then in 100 ms rewrite the preview. This is hacky, but Awesomium
+			// doesn't allow disabling or hijacking refresh.
+			wb.ResourceRequest += (o, e) =>
+			                          {
+			                              if (e.Request.Url.StartsWith("local://base_request.html/"))
+                                              return null;
+
+			                              Task.Factory
+			                                  .StartNew(() => System.Threading.Thread.Sleep(100))
+			                                  .ContinueWith(t => Dispatcher.Invoke(new System.Action(() => (DataContext as DocumentViewModel).ExecuteSafely( vm => wb.LoadHTML(vm.Render)))));
+			                              return new ResourceResponse(new[] { (byte)' ' }, "text/plain");
+			                          };
         }
 
 		private void ApplyZoom()
@@ -148,6 +161,11 @@ namespace MarkPad.Document
 
         void WebControl_LinkClicked(object sender, OpenExternalLinkEventArgs e)
         {
+			// Throw away empty urls.
+			// Awesomium seems to have a bug with file URIs, eg "file:///c:/test.txt" 
+			// is valid and works in FireFox and Chrome, but gets to here as an empty string.
+			if (string.IsNullOrWhiteSpace(e.Url)) return;
+
             Process.Start(e.Url);
         }
 
