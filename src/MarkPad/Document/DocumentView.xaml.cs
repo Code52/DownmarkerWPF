@@ -33,6 +33,7 @@ namespace MarkPad.Document
         private const int NumSpaces = 4;
         private const string Spaces = "    ";
 		private const double ZoomDelta = 0.1;
+		private const string LOCAL_REQUEST_URL_BASE = "local://base_request.html/";
 
         private ScrollViewer documentScrollViewer;
 		private readonly IList<IDocumentViewExtension> extensions = new List<IDocumentViewExtension>();
@@ -49,6 +50,7 @@ namespace MarkPad.Document
 			Loaded += DocumentViewLoaded;
             wb.Loaded += WbLoaded;
             wb.OpenExternalLink += WebControl_LinkClicked;
+			wb.ResourceRequest += WebControl_ResourceRequest;
             SizeChanged += DocumentViewSizeChanged;
             Editor.TextArea.SelectionChanged += SelectionChanged;
             Editor.PreviewMouseLeftButtonUp += HandleMouseUp;
@@ -71,19 +73,6 @@ namespace MarkPad.Document
 
 			Editor.MouseMove += (s, e) => e.Handled = true;
 			ZoomSlider.ValueChanged += (sender, e) => ApplyZoom();
-			// This event happens if the users refreshes wb, which shows a non-helpful 'generic error', 
-			// so send an empty response, then in 100 ms rewrite the preview. This is hacky, but Awesomium
-			// doesn't allow disabling or hijacking refresh.
-			wb.ResourceRequest += (o, e) =>
-			                          {
-			                              if (e.Request.Url.StartsWith("local://base_request.html/"))
-                                              return null;
-
-			                              Task.Factory
-			                                  .StartNew(() => System.Threading.Thread.Sleep(100))
-			                                  .ContinueWith(t => Dispatcher.Invoke(new System.Action(() => (DataContext as DocumentViewModel).ExecuteSafely( vm => wb.LoadHTML(vm.Render)))));
-			                              return new ResourceResponse(new[] { (byte)' ' }, "text/plain");
-			                          };
         }
 
 		private void ApplyZoom()
@@ -168,6 +157,34 @@ namespace MarkPad.Document
 
             Process.Start(e.Url);
         }
+
+		ResourceResponse WebControl_ResourceRequest(object o, ResourceRequestEventArgs e)
+		{
+			// This event happens if the users refreshes wb, which shows a non-helpful 'generic error', 
+			// so send an empty response, then in 100 ms rewrite the preview. This is hacky, but Awesomium
+			// doesn't allow disabling or hijacking refresh.
+
+			//if (e.Request.Url != LOCAL_REQUEST_URL_BASE && !e.Request.Url.StartsWith(LOCAL_REQUEST_URL_BASE)) return null;
+			if (e.Request.Url.StartsWith(LOCAL_REQUEST_URL_BASE)) return GetLocalResource(e.Request.Url.Replace(LOCAL_REQUEST_URL_BASE, ""));
+
+			Task.Factory
+				.StartNew(() => System.Threading.Thread.Sleep(100))
+				.ContinueWith(t => Dispatcher.Invoke(new System.Action(() => (DataContext as DocumentViewModel).ExecuteSafely(vm => wb.LoadHTML(vm.Render)))));
+			return new ResourceResponse(new[] { (byte)' ' }, "text/plain");
+		}
+		ResourceResponse GetLocalResource(string url)
+		{
+			if (string.IsNullOrWhiteSpace(url)) return null;
+
+			var vm = DataContext as DocumentViewModel;
+			if (vm == null) return null;
+			if (string.IsNullOrEmpty(vm.FileName)) return null;
+
+			var resourceFilename = Path.Combine(Path.GetDirectoryName(vm.FileName), url);
+			if (!File.Exists(resourceFilename)) return null;
+
+			return new ResourceResponse(resourceFilename);
+		}
 
         void DocumentViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
