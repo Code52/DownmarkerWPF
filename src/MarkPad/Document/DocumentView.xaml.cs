@@ -148,19 +148,24 @@ namespace MarkPad.Document
 			}
 		}
 
-        void WebControl_LinkClicked(object sender, OpenExternalLinkEventArgs e)
-        {
+		void WebControl_LinkClicked(object sender, OpenExternalLinkEventArgs e)
+		{
 			// Although all links have "target='_blank'" added (see ParsedDocument.ToHtml()), they go through this first
 			// unless the url is local (a bug in Awesomium) in which case this event isn't triggered, and the "target='_blank'"
-			// takes over to avoid crashing the preview. See WebControl_ResourceRequest().
+			// takes over to avoid crashing the preview. Local resource requests where the resource doesn't exist are thrown
+			// away. See WebControl_ResourceRequest().
 
-			// Throw away empty urls.
-			// Awesomium seems to have a bug with file URIs, eg "file:///c:/test.txt" 
-			// is valid and works in FireFox and Chrome, but gets to here as an empty string.
-			if (string.IsNullOrWhiteSpace(e.Url)) return;
+			string filename = e.Url;
+			if (e.Url.StartsWith(LOCAL_REQUEST_URL_BASE))
+			{
+				filename = GetResourceFilename(e.Url.Replace(LOCAL_REQUEST_URL_BASE, "")) ?? "";
+				if (!File.Exists(filename)) return;
+			}
 
-            Process.Start(e.Url);
-        }
+			if (string.IsNullOrWhiteSpace(filename)) return;
+
+			Process.Start(filename);
+		}
 
 		ResourceResponse WebControl_ResourceRequest(object o, ResourceRequestEventArgs e)
 		{
@@ -172,9 +177,12 @@ namespace MarkPad.Document
 			// What works:
 			//	- resource requests for remote resources (like <link href="http://somecdn.../jquery.js"/>)
 			//	- resource requests for local resources that exist relative to filename of the file (like <img src="images/logo.png"/>)
-			//	- clicking links for remote resources (like ![Google](http://www.google.com))
+			//	- clicking links for remote resources (like [Google](http://www.google.com))
+			//	- clicking links for local resources which don't exist (eg [test](test)) does nothing (WebControl_LinkClicked checks for existence)
 			// What fails:
-			//	- clicking links for local resources (like [test](images/logo.png) or [test](test)) opens the link in IE with the full "local://base..." url
+			//	- clicking links for local resources where the resource exists (like [test](images/logo.png))
+			//		- This _sometimes_ opens the resource in the preview pane, and sometimes opens the resource 
+			//		using Process.Start (WebControl_LinkClicked gets triggered). The behaviour seems stochastic.
 			//	- alt text for images where the image resource is not found
 
 			if (e.Request.Url.StartsWith(LOCAL_REQUEST_URL_BASE)) return GetLocalResource(e.Request.Url.Replace(LOCAL_REQUEST_URL_BASE, ""));
@@ -186,14 +194,19 @@ namespace MarkPad.Document
 		{
 			if (string.IsNullOrWhiteSpace(url)) return null;
 
+			var resourceFilename = GetResourceFilename(url);
+			if (!File.Exists(resourceFilename)) return null;
+
+			return new ResourceResponse(resourceFilename);
+		}
+		public string GetResourceFilename(string url)
+		{
 			var vm = DataContext as DocumentViewModel;
 			if (vm == null) return null;
 			if (string.IsNullOrEmpty(vm.FileName)) return null;
 
 			var resourceFilename = Path.Combine(Path.GetDirectoryName(vm.FileName), url);
-			if (!File.Exists(resourceFilename)) return null;
-
-			return new ResourceResponse(resourceFilename);
+			return resourceFilename;
 		}
 
         void DocumentViewSizeChanged(object sender, SizeChangedEventArgs e)
