@@ -150,6 +150,10 @@ namespace MarkPad.Document
 
         void WebControl_LinkClicked(object sender, OpenExternalLinkEventArgs e)
         {
+			// Although all links have "target='_blank'" added (see ParsedDocument.ToHtml()), they go through this first
+			// unless the url is local (a bug in Awesomium) in which case this event isn't triggered, and the "target='_blank'"
+			// takes over to avoid crashing the preview. See WebControl_ResourceRequest().
+
 			// Throw away empty urls.
 			// Awesomium seems to have a bug with file URIs, eg "file:///c:/test.txt" 
 			// is valid and works in FireFox and Chrome, but gets to here as an empty string.
@@ -160,17 +164,23 @@ namespace MarkPad.Document
 
 		ResourceResponse WebControl_ResourceRequest(object o, ResourceRequestEventArgs e)
 		{
-			// This event happens if the users refreshes wb, which shows a non-helpful 'generic error', 
-			// so send an empty response, then in 100 ms rewrite the preview. This is hacky, but Awesomium
-			// doesn't allow disabling or hijacking refresh.
+			// This tries to get a local resource. If there is no local resource null is returned by GetLocalResource, which
+			// triggers the default handler, which should respect the "target='_blank'" attribute added
+			// in ParsedDocument.ToHtml(), thus avoiding a bug in Awesomium where trying to navigate to a
+			// local resource fails when showing an in-memory file (https://github.com/Code52/DownmarkerWPF/pull/208)
 
-			//if (e.Request.Url != LOCAL_REQUEST_URL_BASE && !e.Request.Url.StartsWith(LOCAL_REQUEST_URL_BASE)) return null;
+			// What works:
+			//	- resource requests for remote resources (like <link href="http://somecdn.../jquery.js"/>)
+			//	- resource requests for local resources that exist relative to filename of the file (like <img src="images/logo.png"/>)
+			//	- clicking links for remote resources (like ![Google](http://www.google.com))
+			// What fails:
+			//	- clicking links for local resources (like [test](images/logo.png) or [test](test)) opens the link in IE with the full "local://base..." url
+			//	- alt text for images where the image resource is not found
+
 			if (e.Request.Url.StartsWith(LOCAL_REQUEST_URL_BASE)) return GetLocalResource(e.Request.Url.Replace(LOCAL_REQUEST_URL_BASE, ""));
 
-			Task.Factory
-				.StartNew(() => System.Threading.Thread.Sleep(100))
-				.ContinueWith(t => Dispatcher.Invoke(new System.Action(() => (DataContext as DocumentViewModel).ExecuteSafely(vm => wb.LoadHTML(vm.Render)))));
-			return new ResourceResponse(new[] { (byte)' ' }, "text/plain");
+			// If the request wasn't local, return null to let the usual handler load the url from the network			
+			return null;
 		}
 		ResourceResponse GetLocalResource(string url)
 		{
