@@ -13,21 +13,23 @@ namespace MarkPad.Services.Implementation
             if (directoryName == null) return null;
 
             var directory = new DirectoryInfo(directoryName);
-            if (IsJekyllSite(filename, directory))
+            var jekyllSiteBaseDirectory = GetJekyllSiteBaseDirectory(directory);
+            if (jekyllSiteBaseDirectory != null)
             {
-                var baseDirectory = GetBaseDirectory(directory);
-                return new JekyllSiteContext(baseDirectory, filename);
+                return new JekyllSiteContext(jekyllSiteBaseDirectory, filename);
             }
 
             return null;
         }
 
-        private string GetBaseDirectory(DirectoryInfo startDirectory)
+        private string GetJekyllSiteBaseDirectory(DirectoryInfo startDirectory)
         {
+            if (startDirectory == null)
+                return null;
             if (ContainsJekyllConfigFile(startDirectory))
                 return startDirectory.FullName;
 
-            return GetBaseDirectory(startDirectory.Parent);
+            return GetJekyllSiteBaseDirectory(startDirectory.Parent);
         }
 
         private static bool IsJekyllSite(string filename, DirectoryInfo directory)
