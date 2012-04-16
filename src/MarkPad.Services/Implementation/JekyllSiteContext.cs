@@ -26,7 +26,13 @@ namespace MarkPad.Services.Implementation
             if (!Directory.Exists(absoluteImagePath))
                 Directory.CreateDirectory(absoluteImagePath);
 
-            var filename = Path.GetFileNameWithoutExtension(filenameWithPath);
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filenameWithPath);
+            if (fileNameWithoutExtension == null)
+                return null;
+
+            var filename = fileNameWithoutExtension
+                .Replace(" ", string.Empty)
+                .Replace(".", string.Empty);
             var count = 1;
             var imageFilename = filename + ".png";
 
