@@ -386,6 +386,8 @@ namespace MarkPad.Document
         {
             if (Editor.TextArea.Selection.IsEmpty)
                 floatingToolBar.Hide();
+            else
+                ShowFloatingToolBar();
         }
 
         private void HandleMouseUp(object sender, MouseButtonEventArgs e)
