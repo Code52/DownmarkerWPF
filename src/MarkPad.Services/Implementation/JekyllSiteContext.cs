@@ -4,19 +4,24 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Caliburn.Micro;
+using MarkPad.Services.Events;
 using MarkPad.Services.Interfaces;
 
 namespace MarkPad.Services.Implementation
 {
-    public class JekyllSiteContext : ISiteContext
+    public class JekyllSiteContext : PropertyChangedBase, ISiteContext
     {
         private readonly string basePath;
         private readonly string filenameWithPath;
+        private ISiteItem[] items;
+        private readonly IEventAggregator eventAggregator;
 
-        public JekyllSiteContext(string basePath, string filename)
+        public JekyllSiteContext(IEventAggregator eventAggregator, string basePath, string filename)
         {
             this.basePath = basePath;
             filenameWithPath = filename;
+            this.eventAggregator = eventAggregator;
         }
 
         public string SaveImage(Bitmap image)
@@ -76,6 +81,18 @@ namespace MarkPad.Services.Implementation
             }
 
             return htmlDocument;
+        }
+
+        public ISiteItem[] Items
+        {
+            get { return items ?? (items = new FileSystemSiteItem(basePath).Children); }
+        }
+
+        public void OpenItem(ISiteItem selectedItem)
+        {
+            var fileItem = selectedItem as FileSystemSiteItem;
+            if (fileItem == null || !File.Exists(fileItem.Path)) return;
+            eventAggregator.Publish(new FileOpenEvent(fileItem.Path));
         }
     }
 }

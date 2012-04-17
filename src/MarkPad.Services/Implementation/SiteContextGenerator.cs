@@ -1,12 +1,20 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using Caliburn.Micro;
 using MarkPad.Services.Interfaces;
 
 namespace MarkPad.Services.Implementation
 {
     public class SiteContextGenerator : ISiteContextGenerator
     {
+        private readonly IEventAggregator eventAggregator;
+
+        public SiteContextGenerator(IEventAggregator eventAggregator)
+        {
+            this.eventAggregator = eventAggregator;
+        }
+
         public ISiteContext GetContext(string filename)
         {
             var directoryName = Path.GetDirectoryName(filename);
@@ -16,7 +24,7 @@ namespace MarkPad.Services.Implementation
             var jekyllSiteBaseDirectory = GetJekyllSiteBaseDirectory(directory);
             if (jekyllSiteBaseDirectory != null)
             {
-                return new JekyllSiteContext(jekyllSiteBaseDirectory, filename);
+                return new JekyllSiteContext(eventAggregator, jekyllSiteBaseDirectory, filename);
             }
 
             return null;

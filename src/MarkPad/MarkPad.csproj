@@ -269,7 +269,6 @@
     </Compile>
     <Compile Include="Document\DocumentViewModel.cs" />
     <Compile Include="Document\ParsedDocument.cs" />
-    <Compile Include="Framework\Events\FileOpenEvent.cs" />
     <Compile Include="MDI\MDIView.xaml.cs">
       <DependentUpon>MDIView.xaml</DependentUpon>
     </Compile>

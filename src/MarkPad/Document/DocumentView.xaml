@@ -517,11 +517,13 @@
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition x:Name="webBrowserColumn" Width="{Binding DistractionFree, Converter={shared:BoolToGridLengthConverter Invert=True}}" />
         </Grid.ColumnDefinitions>
 
-        <controls:FloatingToolBar x:Name="floatingToolBar" PlacementTarget="{Binding ElementName=Editor}" CommandTarget="{Binding ElementName=root}" VerticalOffset="-60" HorizontalOffset="-30">
+        <controls:FloatingToolBar x:Name="floatingToolBar" PlacementTarget="{Binding ElementName=Editor}" CommandTarget="{Binding ElementName=root}" VerticalOffset="-60" HorizontalOffset="-30"
+                                  Grid.Column="1">
             <Border Background="#f0f0f0" Padding="3,2,3,2" BorderThickness="1" CornerRadius="1" BorderBrush="#999999">
                 <StackPanel Orientation="Horizontal">
                     <Button Width="22"  Command="Document:FormattingCommands.ToggleBold" ToolTip="Bold">B</Button>
@@ -533,13 +535,44 @@
             </Border>
         </controls:FloatingToolBar>
 
+        <Grid>
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SiteContext}"
+                                     Value="{x:Null}">
+                            <Setter Property="Visibility"
+                                    Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock Text="Site" />
+            <Expander ExpandDirection="Right" Grid.Row="1" IsExpanded="True">
+                <TreeView ItemsSource="{Binding SiteContext.Items}"
+                          MouseDoubleClick="TreeViewMouseDoubleClick1"
+                          x:Name="siteFiles">
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                            <TextBlock Text="{Binding Name}" />
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </Expander>
+        </Grid>
+        
+
         <avalonedit:TextEditor
             x:Name="Editor"
             WordWrap="True"
             ShowLineNumbers="True"
             Document="{Binding Document}"
             cal:Message.Attach="[Event TextChanged]=[Action Update]"
-            Grid.Column="0"
+            Grid.Column="1"
             Margin="10,0,10,10" 
             TextOptions.TextFormattingMode="Display"
             VerticalAlignment="Stretch"
@@ -557,10 +590,10 @@
 				HorizontalAlignment="Right"
 				Width="100"
 				Margin="0,0,40,20"
-				Grid.Column="0" />
+				Grid.Column="1" />
 
 
-        <awe:WebControl x:Name="wb" UseLayoutRounding="True" Margin="10,0,10,10" Grid.Column="1" HorizontalAlignment="Stretch" 
+        <awe:WebControl x:Name="wb" UseLayoutRounding="True" Margin="10,0,10,10" Grid.Column="2" HorizontalAlignment="Stretch" 
                         shared:WebBrowserUtility.BindableContent="{Binding Render}">
             <awe:WebControl.Effect>
                 <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.25" Direction="270" />

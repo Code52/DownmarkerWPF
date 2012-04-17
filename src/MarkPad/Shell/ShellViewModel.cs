@@ -10,6 +10,7 @@ using MarkPad.Framework.Events;
 using MarkPad.MDI;
 using MarkPad.OpenFromWeb;
 using MarkPad.PublishDetails;
+using MarkPad.Services.Events;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;

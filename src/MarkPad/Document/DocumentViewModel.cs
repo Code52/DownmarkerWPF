@@ -32,15 +32,15 @@ namespace MarkPad.Document
 
         private string title;
         private string filename;
-        private ISiteContext siteContext;
 
-        public DocumentViewModel(IDialogService dialogService, ISettingsProvider settings, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator, Func<string, IMetaWeblogService> getMetaWeblog )
+        public DocumentViewModel(IDialogService dialogService, ISettingsProvider settings, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator, Func<string, IMetaWeblogService> getMetaWeblog, IEventAggregator eventAggregator)
         {
             this.dialogService = dialogService;
             this.settings = settings;
             this.windowManager = windowManager;
             this.siteContextGenerator = siteContextGenerator;
             this.getMetaWeblog = getMetaWeblog;
+            EventAggregator = eventAggregator;
 
             title = "New Document";
             Original = "";
@@ -65,9 +65,9 @@ namespace MarkPad.Document
                 }
 
                 var result = s.Result;
-                if (siteContext != null)
+                if (SiteContext != null)
                 {
-                    result = siteContext.ConvertToAbsolutePaths(result);
+                    result = SiteContext.ConvertToAbsolutePaths(result);
                 }
 
                 Render = result;
@@ -178,7 +178,7 @@ namespace MarkPad.Document
 
         private void EvaluateContext()
         {
-            siteContext = siteContextGenerator.GetContext(filename);
+            SiteContext = siteContextGenerator.GetContext(filename);
         }
 
         public TextDocument Document { get; set; }
@@ -267,10 +267,9 @@ namespace MarkPad.Document
 
         public bool DistractionFree { get; set; }
 
-        public ISiteContext SiteContext
-        {
-            get { return siteContext; }
-        }
+        public ISiteContext SiteContext { get; private set; }
+
+        public IEventAggregator EventAggregator { get; private set; }
 
         public void Publish(string postid, string postTitle, string[] categories, BlogSetting blog)
         {

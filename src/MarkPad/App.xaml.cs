@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using MarkPad.Framework.Events;
+using MarkPad.Services.Events;
 using Microsoft.Shell;
 
 namespace MarkPad

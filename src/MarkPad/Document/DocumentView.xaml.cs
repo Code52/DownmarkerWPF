@@ -22,6 +22,7 @@ using MarkPad.Extensions;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.MarkPadExtensions;
+using MarkPad.Services.Interfaces;
 using MarkPad.Services.MarkPadExtensions;
 using MarkPad.Services.Settings;
 using MarkPad.XAML;
@@ -488,6 +489,17 @@ namespace MarkPad.Document
                         e.Handled = true;
                     }
                 });
+        }
+
+        private void TreeViewMouseDoubleClick1(object sender, MouseButtonEventArgs e)
+        {
+             var selectedItem = siteFiles.SelectedItem as ISiteItem;
+
+            if (selectedItem !=null)
+            {
+                (DataContext as DocumentViewModel)
+                    .ExecuteSafely(d => d.SiteContext.OpenItem(selectedItem));
+            }
         }
 	}
 }
