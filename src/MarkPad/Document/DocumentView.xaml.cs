@@ -479,7 +479,9 @@ namespace MarkPad.Document
                         {
                             var relativePath = siteContext.SaveImage(dataImage.Bitmap);
 
-                            sb.AppendLine(string.Format("![{0}]({1})", Path.GetFileNameWithoutExtension(relativePath), relativePath));
+                            sb.AppendLine(string.Format("![{0}](/{1})",
+                                Path.GetFileNameWithoutExtension(relativePath), 
+                                relativePath.TrimStart('/').Replace('\\', '/')));
                         }
 
                         textArea.Selection.ReplaceSelectionWithText(textArea, sb.ToString().Trim());
