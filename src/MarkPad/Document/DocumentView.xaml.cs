@@ -270,11 +270,11 @@ namespace MarkPad.Document
 
             documentScrollViewer = Editor.FindVisualChild<ScrollViewer>();
 
+            var viewModel = ((DocumentViewModel)DataContext);
             if (documentScrollViewer != null)
             {
                 documentScrollViewer.ScrollChanged += (i, j) => WbProcentualZoom();
-                var x = ((DocumentViewModel)DataContext);
-                x.Document.TextChanged += (i, j) =>
+                viewModel.Document.TextChanged += (i, j) =>
                     {
                         wb.LoadCompleted += (k, l) => WbProcentualZoom();
                     };
@@ -501,5 +501,5 @@ namespace MarkPad.Document
                     .ExecuteSafely(d => d.SiteContext.OpenItem(selectedItem));
             }
         }
-	}
+    }
 }

@@ -196,6 +196,7 @@
   <ItemGroup>
     <Compile Include="Document\DisplayCommands.cs" />
     <Compile Include="Document\MarkPadHyperlink.cs" />
+    <Compile Include="InPathMultiConverter.cs" />
     <Compile Include="Extensions\DataImage.cs" />
     <Compile Include="Extensions\DataObjectExtensions.cs" />
     <Compile Include="MarkPadExtensions\MarkPadExtensionsAutofacModule.cs" />

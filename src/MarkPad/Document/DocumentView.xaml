@@ -9,7 +9,7 @@
     xmlns:cal="http://www.caliburnproject.org"
     xmlns:awe="clr-namespace:Awesomium.Windows.Controls;assembly=Awesomium.Windows.Controls" 
     xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
-    xmlns:Document="clr-namespace:MarkPad.Document"
+    xmlns:Document="clr-namespace:MarkPad.Document" xmlns:MarkPad="clr-namespace:MarkPad"
     x:Class="MarkPad.Document.DocumentView"
     mc:Ignorable="d" 
     d:DesignHeight="300" d:DesignWidth="400"
@@ -555,7 +555,27 @@
             <Expander ExpandDirection="Right" Grid.Row="1" IsExpanded="True">
                 <TreeView ItemsSource="{Binding SiteContext.Items}"
                           MouseDoubleClick="TreeViewMouseDoubleClick1"
+                          SelectedValuePath="Path"
                           x:Name="siteFiles">
+                    <TreeView.Resources>
+                        <MarkPad:InPathMultiConverter x:Key="InPathMultiConverter" />
+                        <Style TargetType="TreeViewItem">
+                            <Style.Triggers>
+                                <DataTrigger Value="True">
+                                    <DataTrigger.Binding>
+                                        <MultiBinding Converter="{StaticResource InPathMultiConverter}">
+                                            <Binding ElementName="siteFiles" Path="DataContext.FileName" />
+                                            <Binding Path="Path" />
+                                        </MultiBinding>
+                                    </DataTrigger.Binding>
+                                    <Setter Property="IsSelected"
+                                            Value="True" />
+                                    <Setter Property="IsExpanded"
+                                            Value="True" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TreeView.Resources>
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                             <TextBlock Text="{Binding Name}" />
