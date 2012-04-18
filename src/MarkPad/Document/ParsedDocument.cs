@@ -98,7 +98,7 @@ namespace MarkPad.Document
 
         private static void SplitHeaderAndContents(string source, out string header, out string contents)
         {
-            var match = Regex.Match(source, @"^---\S*\r\n(.*?)\r\n---\r\n(.*)$", 
+            var match = Regex.Match(source, @"^--- *\r?\n+(.*?)\r?\n+--- *\r?\n+(.*)$", 
                 RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (match.Success)
             {
