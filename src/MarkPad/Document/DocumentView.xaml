@@ -4,25 +4,20 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:System="clr-namespace:System;assembly=mscorlib"
-    xmlns:shared="http://schemas.markpad.net/winfx/xaml/shared" 
-    xmlns:controls="http://schemas.markpad.net/winfx/xaml/controls" 
-    xmlns:cal="http://www.caliburnproject.org"
-    xmlns:awe="clr-namespace:Awesomium.Windows.Controls;assembly=Awesomium.Windows.Controls" 
-    xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
+    xmlns:shared="http://schemas.markpad.net/winfx/xaml/shared"
+    xmlns:awe="clr-namespace:Awesomium.Windows.Controls;assembly=Awesomium.Windows.Controls"
     xmlns:Document="clr-namespace:MarkPad.Document"
     x:Class="MarkPad.Document.DocumentView"
     mc:Ignorable="d" 
     d:DesignHeight="300" d:DesignWidth="400"
 >
     <UserControl.InputBindings>
-        <KeyBinding Command="Document:FormattingCommands.ToggleBold" Key="B" Modifiers="Control" />
-        <KeyBinding Command="Document:FormattingCommands.ToggleItalic" Key="I" Modifiers="Control" />
-		<KeyBinding Command="Document:DisplayCommands.ZoomIn" Key="OemPlus" Modifiers="Control"/>
-		<KeyBinding Command="Document:DisplayCommands.ZoomIn" Key="Add" Modifiers="Control"/>
-		<KeyBinding Command="Document:DisplayCommands.ZoomOut" Key="OemMinus" Modifiers="Control"/>
-		<KeyBinding Command="Document:DisplayCommands.ZoomOut" Key="Subtract" Modifiers="Control"/>
-		<KeyBinding Command="Document:DisplayCommands.ZoomReset" Key="D0" Modifiers="Control"/>
-	</UserControl.InputBindings>
+        <KeyBinding Command="Document:DisplayCommands.ZoomIn" Key="OemPlus" Modifiers="Control"/>
+        <KeyBinding Command="Document:DisplayCommands.ZoomIn" Key="Add" Modifiers="Control"/>
+        <KeyBinding Command="Document:DisplayCommands.ZoomOut" Key="OemMinus" Modifiers="Control"/>
+        <KeyBinding Command="Document:DisplayCommands.ZoomOut" Key="Subtract" Modifiers="Control"/>
+        <KeyBinding Command="Document:DisplayCommands.ZoomReset" Key="D0" Modifiers="Control"/>
+    </UserControl.InputBindings>
     <UserControl.Resources>
         <ControlTemplate x:Key="HorizontalScrollBar"
                      TargetType="{x:Type ScrollBar}">
@@ -474,46 +469,7 @@
         </Style>
 
 
-        <Style TargetType="{x:Type avalonedit:TextArea}">
-            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            <Setter Property="SelectionBrush">
-                <Setter.Value>
-                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" Opacity="0.7"/>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="SelectionBorder">
-                <Setter.Value>
-                    <Pen Brush="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Thickness="1"/>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="SelectionForeground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type avalonedit:TextArea}">
-                        <DockPanel Focusable="False">
-                            <ItemsControl DockPanel.Dock="Left"
-                                      Focusable="False"
-                                      Margin="0,0,5,0"
-                                          FontSize="10"
-                                          FontFamily="Segoe UI"
-                                      Padding="10,0,0,0"
-                                      Background="#adDEDEDE"
-                                      ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LeftMargins}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal" />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                            </ItemsControl>
-                            <ContentPresenter
-                            Panel.ZIndex="-1"
-                            Focusable="False"
-                            Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TextView}"/>
-                        </DockPanel>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -521,44 +477,17 @@
             <ColumnDefinition x:Name="webBrowserColumn" Width="{Binding DistractionFree, Converter={shared:BoolToGridLengthConverter Invert=True}}" />
         </Grid.ColumnDefinitions>
 
-        <controls:FloatingToolBar x:Name="floatingToolBar" PlacementTarget="{Binding ElementName=Editor}" CommandTarget="{Binding ElementName=root}" VerticalOffset="-60" HorizontalOffset="-30">
-            <Border Background="#f0f0f0" Padding="3,2,3,2" BorderThickness="1" CornerRadius="1" BorderBrush="#999999">
-                <StackPanel Orientation="Horizontal">
-                    <Button Width="22"  Command="Document:FormattingCommands.ToggleBold" ToolTip="Bold">B</Button>
-                    <Button Width="22" Command="Document:FormattingCommands.ToggleItalic" ToolTip="Italic">I</Button>
-                    <Button Width="44" Command="Document:FormattingCommands.ToggleCode" ToolTip="Code" Margin="5,0,0,0">Code</Button>
-                    <Button Width="78" Command="Document:FormattingCommands.ToggleCodeBlock" ToolTip="Code block">Code block</Button>
-                    <Button Width="42" Command="Document:FormattingCommands.SetHyperlink" ToolTip="Hyperlink">www</Button>
-                </StackPanel>
-            </Border>
-        </controls:FloatingToolBar>
+        <Document:MarkdownEditor x:Name="markdownEditor" />
 
-        <avalonedit:TextEditor
-            x:Name="Editor"
-            WordWrap="True"
-            ShowLineNumbers="True"
-            Document="{Binding Document}"
-            cal:Message.Attach="[Event TextChanged]=[Action Update]"
-            Grid.Column="0"
-            Margin="10,0,10,10" 
-            TextOptions.TextFormattingMode="Display"
-            VerticalAlignment="Stretch"
-            HorizontalAlignment="Stretch" Padding="0,0,10,0"
-            PreviewKeyDown="EditorPreviewKeyDown">
-            <avalonedit:TextEditor.Effect>
-                <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.25" Direction="270" />
-            </avalonedit:TextEditor.Effect>
-        </avalonedit:TextEditor>
-		<Slider x:Name="ZoomSlider"
-				Maximum="2"
-				Minimum="0.5"
-				Value="1"
-				VerticalAlignment="Bottom"
-				HorizontalAlignment="Right"
-				Width="100"
-				Margin="0,0,40,20"
-				Grid.Column="0" />
-
+        <Slider x:Name="ZoomSlider"
+                Maximum="2"
+                Minimum="0.5"
+                Value="1"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Width="100"
+                Margin="0,0,40,20"
+                Grid.Column="0" />
 
         <awe:WebControl x:Name="wb" UseLayoutRounding="True" Margin="10,0,10,10" Grid.Column="1" HorizontalAlignment="Stretch" 
                         shared:WebBrowserUtility.BindableContent="{Binding Render}">
