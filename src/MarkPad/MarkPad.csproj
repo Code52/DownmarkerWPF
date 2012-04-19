@@ -195,6 +195,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Document\DisplayCommands.cs" />
+    <Compile Include="Document\MarkdownEditor.xaml.cs">
+      <DependentUpon>MarkdownEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Document\MarkPadHyperlink.cs" />
     <Compile Include="Extensions\DataImage.cs" />
     <Compile Include="Extensions\DataObjectExtensions.cs" />
@@ -284,6 +287,10 @@
     </Compile>
     <Compile Include="PublishDetails\PublishDetailsViewModel.cs" />
     <Compile Include="Shell\ShellViewModel.cs" />
+    <Page Include="Document\MarkdownEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ExceptionDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
