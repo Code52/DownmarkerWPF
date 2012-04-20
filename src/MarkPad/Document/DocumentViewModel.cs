@@ -295,7 +295,8 @@ namespace MarkPad.Document
                                    title = postTitle,
                                    dateCreated = DateTime.Now,
                                    description = blog.Language == "HTML" ? renderBody : Document.Text,
-                                   categories = categories
+                                   categories = categories,
+                                   format = blog.Language
                                };
                     newpost.postid = proxy.NewPost(blog, newpost, true);
                 }
