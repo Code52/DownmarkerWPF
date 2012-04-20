@@ -326,8 +326,11 @@ namespace MarkPad.Shell
 
 			if (!setupBlog) 
 				return false;
-			if (!this.Settings.AddBlog()) 
+			if (!Settings.AddBlog()) 
 				return false;
+
+            Settings.Accept();
+
 			return true;
 		}
 
