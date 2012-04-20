@@ -53,7 +53,9 @@ namespace MarkPad.Shell
 			this.spellCheckExtensionCreator = spellCheckExtensionCreator;
 
             Settings = settingsViewModel;
-			UpdateMarkPadExtensions();
+            Settings.Initialize();
+
+            UpdateMarkPadExtensions();
 
             ActivateItem(mdi);
         }
@@ -166,8 +168,8 @@ namespace MarkPad.Shell
         public void ShowSettings()
         {
             CurrentState = "ShowSettings";
-            Settings.Initialize();
         }
+
         public void ToggleWebView()
         {
             var doc = MDI.ActiveItem as DocumentViewModel;
