@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using MarkPad.Services.Interfaces;
 using MarkPad.Document;
@@ -10,83 +9,84 @@ using ICSharpCode.AvalonEdit.Document;
 
 namespace MarkPad.MarkPadExtensions.SpellCheck
 {
-	public class SpellCheckProvider
-	{
-		private readonly Regex WordSeparatorRegex = new Regex("-[^\\w]+|^'[^\\w]+|[^\\w]+'[^\\w]+|[^\\w]+-[^\\w]+|[^\\w]+'$|[^\\w]+-$|^-$|^'$|[^\\w'-]", RegexOptions.Compiled);
-		private readonly Regex UriFinderRegex = new Regex("(http|ftp|https|mailto):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?", RegexOptions.Compiled);
+    public class SpellCheckProvider
+    {
+        readonly Regex wordSeparatorRegex = new Regex("-[^\\w]+|^'[^\\w]+|[^\\w]+'[^\\w]+|[^\\w]+-[^\\w]+|[^\\w]+'$|[^\\w]+-$|^-$|^'$|[^\\w'-]", RegexOptions.Compiled);
+        readonly Regex uriFinderRegex = new Regex("(http|ftp|https|mailto):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?", RegexOptions.Compiled);
 
-		readonly ISpellingService _spellingService;
-		readonly SpellCheckBackgroundRenderer _spellCheckRenderer;
+        readonly ISpellingService spellingService;
+        readonly SpellCheckBackgroundRenderer spellCheckRenderer;
 
-		public DocumentView View { get; private set; }
+        public DocumentView View { get; private set; }
 
-		public SpellCheckProvider(ISpellingService spellingService, DocumentView view)
-		{
-			_spellingService = spellingService;
-			_spellCheckRenderer = new SpellCheckBackgroundRenderer();
-			this.View = view;
+        public SpellCheckProvider(ISpellingService spellingService, DocumentView view)
+        {
+            this.spellingService = spellingService;
+            spellCheckRenderer = new SpellCheckBackgroundRenderer();
 
-			this.View.Editor.TextArea.TextView.BackgroundRenderers.Add(_spellCheckRenderer);
-			this.View.Editor.TextArea.TextView.VisualLinesChanged += TextView_VisualLinesChanged;
-		}
+            View = view;
 
-		public void Disconnect()
-		{
-			ClearSpellCheckErrors();
-			this.View.Editor.TextArea.TextView.BackgroundRenderers.Remove(_spellCheckRenderer);
-			this.View.Editor.TextArea.TextView.VisualLinesChanged -= TextView_VisualLinesChanged;
-		}
+            View.Editor.TextArea.TextView.BackgroundRenderers.Add(spellCheckRenderer);
+            View.Editor.TextArea.TextView.VisualLinesChanged += TextViewVisualLinesChanged;
+        }
 
-		void TextView_VisualLinesChanged(object sender, EventArgs e)
-		{
-			DoSpellCheck();
-		}
+        public void Disconnect()
+        {
+            ClearSpellCheckErrors();
+            View.Editor.TextArea.TextView.BackgroundRenderers.Remove(spellCheckRenderer);
+            View.Editor.TextArea.TextView.VisualLinesChanged -= TextViewVisualLinesChanged;
+        }
 
-		private void DoSpellCheck()
-		{
-			if (!this.View.Editor.TextArea.TextView.VisualLinesValid) return;
+        void TextViewVisualLinesChanged(object sender, EventArgs e)
+        {
+            DoSpellCheck();
+        }
 
-			_spellCheckRenderer.ErrorSegments.Clear();
+        private void DoSpellCheck()
+        {
+            if (!View.Editor.TextArea.TextView.VisualLinesValid) return;
 
-			IEnumerable<VisualLine> visualLines = this.View.Editor.TextArea.TextView.VisualLines.AsParallel();
+            spellCheckRenderer.ErrorSegments.Clear();
 
-			foreach (VisualLine currentLine in visualLines)
-			{
-				int startIndex = 0;
+            IEnumerable<VisualLine> visualLines = View.Editor.TextArea.TextView.VisualLines.AsParallel();
 
-				string originalText = this.View.Editor.Document.GetText(currentLine.FirstDocumentLine.Offset, currentLine.LastDocumentLine.EndOffset - currentLine.FirstDocumentLine.Offset);
-				originalText = Regex.Replace(originalText, "[\\u2018\\u2019\\u201A\\u201B\\u2032\\u2035]", "'");
+            foreach (VisualLine currentLine in visualLines)
+            {
+                int startIndex = 0;
 
-				var textWithoutURLs = UriFinderRegex.Replace(originalText, "");
+                string originalText = View.Editor.Document.GetText(currentLine.FirstDocumentLine.Offset, currentLine.LastDocumentLine.EndOffset - currentLine.FirstDocumentLine.Offset);
+                originalText = Regex.Replace(originalText, "[\\u2018\\u2019\\u201A\\u201B\\u2032\\u2035]", "'");
 
-				var query = WordSeparatorRegex.Split(textWithoutURLs)
-					.Where(s => !string.IsNullOrEmpty(s));
+                var textWithoutURLs = uriFinderRegex.Replace(originalText, "");
 
-				foreach (var word in query)
-				{
-					string trimmedWord = word.Trim('\'', '_', '-');
+                var query = wordSeparatorRegex.Split(textWithoutURLs)
+                    .Where(s => !string.IsNullOrEmpty(s));
 
-					int num = currentLine.FirstDocumentLine.Offset + originalText.IndexOf(trimmedWord, startIndex);
+                foreach (var word in query)
+                {
+                    string trimmedWord = word.Trim('\'', '_', '-');
 
-					if (!_spellingService.Spell(trimmedWord))
-					{
-						var textSegment = new TextSegment
-						{
-							StartOffset = num,
-							Length = word.Length
-						};
-						_spellCheckRenderer.ErrorSegments.Add(textSegment);
-					}
+                    int num = currentLine.FirstDocumentLine.Offset + originalText.IndexOf(trimmedWord, startIndex);
 
-					startIndex = originalText.IndexOf(word, startIndex) + word.Length;
-				}
-			}
-		}
+                    if (!spellingService.Spell(trimmedWord))
+                    {
+                        var textSegment = new TextSegment
+                        {
+                            StartOffset = num,
+                            Length = word.Length
+                        };
+                        spellCheckRenderer.ErrorSegments.Add(textSegment);
+                    }
 
-		private void ClearSpellCheckErrors()
-		{
-			_spellCheckRenderer.ErrorSegments.Clear();
-		}
-	}
+                    startIndex = originalText.IndexOf(word, startIndex) + word.Length;
+                }
+            }
+        }
+
+        private void ClearSpellCheckErrors()
+        {
+            spellCheckRenderer.ErrorSegments.Clear();
+        }
+    }
 
 }
