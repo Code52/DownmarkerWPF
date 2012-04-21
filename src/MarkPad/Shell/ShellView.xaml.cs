@@ -1,6 +1,5 @@
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
 
 namespace MarkPad.Shell
 {
@@ -11,7 +10,7 @@ namespace MarkPad.Shell
             InitializeComponent();
         }
 
-        private bool ignoreNextMouseMove = false;
+        private bool ignoreNextMouseMove;
 
         private void DragMoveWindow(object sender, MouseButtonEventArgs e)
         {
