@@ -313,7 +313,7 @@
                 </VisualState>
             </VisualStateGroup>
     	</VisualStateManager.VisualStateGroups>
-        <Grid>
+        <Grid x:Name="header">
     		<Grid.RowDefinitions>
     			<RowDefinition Height="Auto" MinHeight="58" />
     			<RowDefinition />
