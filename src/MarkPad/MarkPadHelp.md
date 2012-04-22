@@ -1,6 +1,6 @@
 # [MarkPad](http://code52.org/DownmarkerWPF/)
 
-By [code52](http://code52.org/)
+By [code52](http://code52.org/) - Version 0.9
 
 
 ## Hotkeys
