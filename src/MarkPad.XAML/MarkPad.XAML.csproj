@@ -90,6 +90,12 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Analects\XAMLConverters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Analects\XAMLConverters\DebugConverter.cs" />
+    <Compile Include="Analects\XAMLConverters\MarkupConverter.cs" />
+    <Compile Include="Analects\XAMLConverters\NullToVisibilityConverter.cs" />
+    <Compile Include="Analects\XAMLConverters\ToLowerConverter.cs" />
+    <Compile Include="Analects\XAMLConverters\ToUpperConverter.cs" />
     <Compile Include="Controls\FloatingToolBar.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\BoolToGridLengthConverter.cs" />
