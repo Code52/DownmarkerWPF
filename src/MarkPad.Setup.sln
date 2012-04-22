@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "MarkPad.Setup", "src\MarkPad.Setup\MarkPad.Setup.wixproj", "{26A121EB-BD0D-48E7-A70F-0FC99E941786}"
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "MarkPad.Setup", "MarkPad.Setup\MarkPad.Setup.wixproj", "{26A121EB-BD0D-48E7-A70F-0FC99E941786}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.XAML", "src\MarkPad.XAML\MarkPad.XAML.csproj", "{F5C76E3F-AC91-477D-86DE-778850F3E14B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.XAML", "MarkPad.XAML\MarkPad.XAML.csproj", "{F5C76E3F-AC91-477D-86DE-778850F3E14B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.Services", "src\MarkPad.Services\MarkPad.Services.csproj", "{8088D80C-14AF-4618-B12A-F47C2771EBDD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.Services", "MarkPad.Services\MarkPad.Services.csproj", "{8088D80C-14AF-4618-B12A-F47C2771EBDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad", "src\MarkPad\MarkPad.csproj", "{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad", "MarkPad\MarkPad.csproj", "{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
