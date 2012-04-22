@@ -74,8 +74,8 @@ Global
 		{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}.Testing|Any CPU.ActiveCfg = Release|Any CPU
-		{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}.Testing|Any CPU.Build.0 = Release|Any CPU
+		{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}.Testing|Any CPU.ActiveCfg = Testing|Any CPU
+		{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}.Testing|Any CPU.Build.0 = Testing|Any CPU
 		{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}.Testing|Mixed Platforms.ActiveCfg = Testing|Any CPU
 		{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}.Testing|Mixed Platforms.Build.0 = Testing|Any CPU
 	EndGlobalSection

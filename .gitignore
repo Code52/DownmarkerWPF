@@ -97,3 +97,9 @@ UpgradeLog*.XML
 
 # NuGet temporary packages folder
 packages
+
+# any logs
+*.log
+
+# our output folder for build artifacts
+artifacts
