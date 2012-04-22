@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad", "src\MarkPad\MarkPad.csproj", "{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad", "MarkPad\MarkPad.csproj", "{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{6F8AB8C3-0DD5-4067-AF67-60086386308B}"
 	ProjectSection(SolutionItems) = preProject
@@ -9,16 +9,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{6F8AB8
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.XAML", "src\MarkPad.XAML\MarkPad.XAML.csproj", "{F5C76E3F-AC91-477D-86DE-778850F3E14B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.XAML", "MarkPad.XAML\MarkPad.XAML.csproj", "{F5C76E3F-AC91-477D-86DE-778850F3E14B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{F95A6BBE-B8AE-4CCA-A0ED-949C14833B85}"
 	ProjectSection(SolutionItems) = preProject
-		tools\EmbedAssemblies.targets = tools\EmbedAssemblies.targets
+		..\tools\EmbedAssemblies.targets = ..\tools\EmbedAssemblies.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.Services", "src\MarkPad.Services\MarkPad.Services.csproj", "{8088D80C-14AF-4618-B12A-F47C2771EBDD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.Services", "MarkPad.Services\MarkPad.Services.csproj", "{8088D80C-14AF-4618-B12A-F47C2771EBDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.Tests", "src\MarkPad.Tests\MarkPad.Tests.csproj", "{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.Tests", "MarkPad.Tests\MarkPad.Tests.csproj", "{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,8 +74,8 @@ Global
 		{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}.Testing|Any CPU.ActiveCfg = Release|Any CPU
-		{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}.Testing|Any CPU.Build.0 = Release|Any CPU
+		{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}.Testing|Any CPU.ActiveCfg = Testing|Any CPU
+		{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}.Testing|Any CPU.Build.0 = Testing|Any CPU
 		{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}.Testing|Mixed Platforms.ActiveCfg = Testing|Any CPU
 		{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}.Testing|Mixed Platforms.Build.0 = Testing|Any CPU
 	EndGlobalSection
