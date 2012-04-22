@@ -1,7 +1,9 @@
 @ECHO OFF
 
-SET build="%~dp0\build.bat"
+SET build="%~dp0\build.cmd"
 SET copy="copy"
+
+CALL rmdir "%~dp0artifacts\" /s /q
 
 :: Pass the configuration parameter and all other parameters
 CALL %build% Release "Mixed Platforms"

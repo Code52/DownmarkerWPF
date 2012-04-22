@@ -1,6 +1,6 @@
 @ECHO OFF
 
-SET build="%~dp0\build.bat"
+SET build="%~dp0\build.cmd"
 SET xunit="%~dp0\tools\xunit\xunit.console.clr4.exe"
 
 CALL %build% Testing "Any CPU"
