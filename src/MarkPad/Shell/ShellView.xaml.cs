@@ -1,6 +1,5 @@
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
 
 namespace MarkPad.Shell
 {
@@ -11,57 +10,58 @@ namespace MarkPad.Shell
             InitializeComponent();
         }
 
-		private bool ignoreNextMouseMove = false;
+        private bool ignoreNextMouseMove;
 
         private void DragMoveWindow(object sender, MouseButtonEventArgs e)
         {
-			if (e.MiddleButton == MouseButtonState.Pressed) return;
-			if (e.RightButton == MouseButtonState.Pressed) return;
-			if (e.LeftButton != MouseButtonState.Pressed) return;
+            if (e.MiddleButton == MouseButtonState.Pressed) return;
+            if (e.RightButton == MouseButtonState.Pressed) return;
+            if (e.LeftButton != MouseButtonState.Pressed) return;
 
-			if (WindowState == System.Windows.WindowState.Maximized && e.ClickCount != 2) return;
+            if (WindowState == WindowState.Maximized && e.ClickCount != 2) return;
 
-			if (e.ClickCount == 2)
-			{
-				WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
-				ignoreNextMouseMove = true;
-				return;
-			}
+            if (e.ClickCount == 2)
+            {
+                WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+                ignoreNextMouseMove = true;
+                return;
+            }
 
             DragMove();
         }
 
-		private void MouseMoveWindow(object sender, MouseEventArgs e)
-		{
-			if (ignoreNextMouseMove)
-			{
-				ignoreNextMouseMove = false;
-				return;
-			}
+        private void MouseMoveWindow(object sender, MouseEventArgs e)
+        {
+            if (ignoreNextMouseMove)
+            {
+                ignoreNextMouseMove = false;
+                return;
+            }
 
-			if (WindowState != WindowState.Maximized) return;
+            if (WindowState != WindowState.Maximized) return;
 
-			if (e.MiddleButton == MouseButtonState.Pressed) return;
-			if (e.RightButton == MouseButtonState.Pressed) return;
-			if (e.LeftButton != MouseButtonState.Pressed) return;
+            if (e.MiddleButton == MouseButtonState.Pressed) return;
+            if (e.RightButton == MouseButtonState.Pressed) return;
+            if (e.LeftButton != MouseButtonState.Pressed) return;
+            if (!header.IsMouseOver) return;
 
-			// Calculate correct left coordinate for multi-screen system
-			var mouseX = PointToScreen(Mouse.GetPosition(this)).X;
-			var width = RestoreBounds.Width;
-			var left = mouseX - width / 2;
-			if (left < 0) left = 0;
+            // Calculate correct left coordinate for multi-screen system
+            var mouseX = PointToScreen(Mouse.GetPosition(this)).X;
+            var width = RestoreBounds.Width;
+            var left = mouseX - width / 2;
+            if (left < 0) left = 0;
 
-			// Align left edge to fit the screen
-			var virtualScreenWidth = SystemParameters.VirtualScreenWidth;
-			if (left + width > virtualScreenWidth) left = virtualScreenWidth - width;
+            // Align left edge to fit the screen
+            var virtualScreenWidth = SystemParameters.VirtualScreenWidth;
+            if (left + width > virtualScreenWidth) left = virtualScreenWidth - width;
 
-			Top = 0;
-			Left = left;
+            Top = 0;
+            Left = left;
 
-			WindowState = WindowState.Normal;
+            WindowState = WindowState.Normal;
 
-			DragMove();
-		}
+            DragMove();
+        }
 
         private void ButtonMinimiseOnClick(object sender, RoutedEventArgs e)
         {

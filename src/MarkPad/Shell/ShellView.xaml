@@ -71,30 +71,6 @@
 
         <s:InputBindingTrigger>
             <s:InputBindingTrigger.InputBinding>
-                <KeyBinding Modifiers="Ctrl" Key="B" />
-            </s:InputBindingTrigger.InputBinding>
-            <cm:ActionMessage MethodName="ToggleBold" />
-        </s:InputBindingTrigger>
-        <s:InputBindingTrigger>
-            <s:InputBindingTrigger.InputBinding>
-                <KeyBinding Modifiers="Ctrl" Key="I" />
-            </s:InputBindingTrigger.InputBinding>
-            <cm:ActionMessage MethodName="ToggleItalic" />
-        </s:InputBindingTrigger>
-        <s:InputBindingTrigger>
-            <s:InputBindingTrigger.InputBinding>
-                <KeyBinding Modifiers="Ctrl" Key="J" />
-            </s:InputBindingTrigger.InputBinding>
-            <cm:ActionMessage MethodName="ToggleCode" />
-        </s:InputBindingTrigger>
-        <s:InputBindingTrigger>
-            <s:InputBindingTrigger.InputBinding>
-                <KeyBinding Modifiers="Ctrl" Key="K" />
-            </s:InputBindingTrigger.InputBinding>
-            <cm:ActionMessage MethodName="SetHyperlink" />
-        </s:InputBindingTrigger>
-        <s:InputBindingTrigger>
-            <s:InputBindingTrigger.InputBinding>
                 <KeyBinding Key="F10" />
             </s:InputBindingTrigger.InputBinding>
             <cm:ActionMessage MethodName="ToggleWebView" />
@@ -313,7 +289,7 @@
                 </VisualState>
             </VisualStateGroup>
     	</VisualStateManager.VisualStateGroups>
-        <Grid>
+        <Grid x:Name="header">
     		<Grid.RowDefinitions>
     			<RowDefinition Height="Auto" MinHeight="58" />
     			<RowDefinition />

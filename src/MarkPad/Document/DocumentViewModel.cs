@@ -2,12 +2,10 @@ using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using System.Windows.Media;
 using System.Windows.Threading;
 using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using ICSharpCode.AvalonEdit.Document;
-using MarkPad.Framework;
 using MarkPad.HyperlinkEditor;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
@@ -22,7 +20,6 @@ namespace MarkPad.Document
         private static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
 
         private readonly IDialogService dialogService;
-        private readonly ISettingsProvider settings;
         private readonly IWindowManager windowManager;
         private readonly ISiteContextGenerator siteContextGenerator;
         private readonly Func<string, IMetaWeblogService> getMetaWeblog;
@@ -33,14 +30,12 @@ namespace MarkPad.Document
         private string title;
         private string filename;
 
-        public DocumentViewModel(IDialogService dialogService, ISettingsProvider settings, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator, Func<string, IMetaWeblogService> getMetaWeblog, IEventAggregator eventAggregator)
+        public DocumentViewModel(IDialogService dialogService, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator, Func<string, IMetaWeblogService> getMetaWeblog)
         {
             this.dialogService = dialogService;
-            this.settings = settings;
             this.windowManager = windowManager;
             this.siteContextGenerator = siteContextGenerator;
             this.getMetaWeblog = getMetaWeblog;
-            EventAggregator = eventAggregator;
 
             title = "New Document";
             Original = "";
@@ -269,8 +264,6 @@ namespace MarkPad.Document
 
         public ISiteContext SiteContext { get; private set; }
 
-        public IEventAggregator EventAggregator { get; private set; }
-
         public void Publish(string postid, string postTitle, string[] categories, BlogSetting blog)
         {
             if (categories == null) categories = new string[0];
@@ -294,7 +287,8 @@ namespace MarkPad.Document
                                    title = postTitle,
                                    dateCreated = DateTime.Now,
                                    description = blog.Language == "HTML" ? renderBody : Document.Text,
-                                   categories = categories
+                                   categories = categories,
+                                   format = blog.Language
                                };
                     newpost.postid = proxy.NewPost(blog, newpost, true);
                 }
