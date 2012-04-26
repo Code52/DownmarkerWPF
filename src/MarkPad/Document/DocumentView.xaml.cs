@@ -80,8 +80,10 @@ namespace MarkPad.Document
 
                 //Strip Javascript, then remove HTML
                 info = Regex.Replace(info, @"(?s)<script.*?(/>|</script>)", string.Empty);
-                info = Regex.Replace(info, @"</?\w+((\s+\w+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>", string.Empty);               
-                MessageBox.Show(info);
+                info = Regex.Replace(info, @"</?\w+((\s+\w+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>", string.Empty);
+                MatchCollection collection = Regex.Matches(info, @"[\S]+");
+                
+                MessageBox.Show(collection.Count.ToString());
             }
 	        //MatchCollection collection = Regex.Matches(words, @"[\S]+");
             //MessageBox.Show(collection.Count.ToString());	           
