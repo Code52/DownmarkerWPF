@@ -69,10 +69,20 @@ namespace MarkPad.Document
         //Jared's Change
         void WordCount_KeyDown(object sender, KeyEventArgs e)
         {
-            string words = "";
-	        MatchCollection collection = Regex.Matches(words, @"[\S]+");
-            MessageBox.Show(collection.Count.ToString());
-	           
+            var vm = DataContext as DocumentViewModel;
+
+           // MessageBox.Show(e.Key.ToString());
+            if (e.Key.Equals(Key.F12))
+            {
+                //string info = vm.Document.Text.ToString();
+                string info = vm.Render.ToString();
+                MessageBox.Show(info);
+                //info = Regex.Replace(info, "<.*?>", string.Empty);
+                info = Regex.Replace(info, @"</?\w+((\s+\w+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>", string.Empty);
+                MessageBox.Show(info);
+            }
+	        //MatchCollection collection = Regex.Matches(words, @"[\S]+");
+            //MessageBox.Show(collection.Count.ToString());	           
         }
 
         private void ApplyZoom()
