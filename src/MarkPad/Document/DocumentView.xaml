@@ -477,55 +477,91 @@
             <ColumnDefinition x:Name="webBrowserColumn" Width="{Binding DistractionFree, Converter={shared:BoolToGridLengthConverter Invert=True}}" />
         </Grid.ColumnDefinitions>
 
-        <Grid>
-            <Grid.Style>
-                <Style TargetType="Grid">
+        <TreeView ItemsSource="{Binding SiteContext.Items}"
+                    MouseDoubleClick="SiteFilesMouseDoubleClick"
+                    SelectedValuePath="Path"
+                    x:Name="siteFiles"
+                  Margin="10,0,10,10"
+                  Background="Transparent"
+                  BorderThickness="0">
+            <TreeView.Style>
+                <Style TargetType="TreeView">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding SiteContext}"
-                                     Value="{x:Null}">
+                                    Value="{x:Null}">
                             <Setter Property="Visibility"
-                                    Value="Collapsed" />
+                                Value="Collapsed" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </Grid.Style>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <TextBlock Text="Site" />
-            <Expander ExpandDirection="Right" Grid.Row="1" IsExpanded="True">
-                <TreeView ItemsSource="{Binding SiteContext.Items}"
-                          MouseDoubleClick="SiteFilesMouseDoubleClick"
-                          SelectedValuePath="Path"
-                          x:Name="siteFiles">
-                    <TreeView.Resources>
-                        <MarkPad:InPathMultiConverter x:Key="InPathMultiConverter" />
-                        <Style TargetType="TreeViewItem">
-                            <Style.Triggers>
-                                <DataTrigger Value="True">
-                                    <DataTrigger.Binding>
-                                        <MultiBinding Converter="{StaticResource InPathMultiConverter}">
-                                            <Binding ElementName="siteFiles" Path="DataContext.FileName" />
-                                            <Binding Path="Path" />
-                                        </MultiBinding>
-                                    </DataTrigger.Binding>
-                                    <Setter Property="IsSelected"
-                                            Value="True" />
-                                    <Setter Property="IsExpanded"
-                                            Value="True" />
-                                </DataTrigger>
-                            </Style.Triggers>
+            </TreeView.Style>
+
+                
+            <TreeView.Resources>
+                <MarkPad:InPathMultiConverter x:Key="InPathMultiConverter" />
+                <Style TargetType="TreeViewItem">
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" Opacity="0.7"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="BorderBrush">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True"/>
+                                <Condition Property="IsSelectionActive" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="BorderBrush" Value="#D9D9D9"/>
+                        </MultiTrigger>
+                        <DataTrigger Value="True">
+                            <DataTrigger.Binding>
+                                <MultiBinding Converter="{StaticResource InPathMultiConverter}" Mode="OneTime">
+                                    <Binding ElementName="siteFiles" Path="DataContext.FileName" />
+                                    <Binding Path="Path" />
+                                </MultiBinding>
+                            </DataTrigger.Binding>
+                            <Setter Property="IsSelected"
+                                    Value="True" />
+                            <Setter Property="IsExpanded"
+                                    Value="True" />
+                            <Setter Property="Foreground">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="{DynamicResource AccentDarkColor}" />
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                    <Style.Resources>
+                        <LinearGradientBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" EndPoint="0,1" StartPoint="0,0">
+                            <GradientStop Color="#FFDCEBFC" Offset="0"/>
+                            <GradientStop Color="#FFC1DBFC" Offset="1"/>
+                        </LinearGradientBrush>
+                        <LinearGradientBrush x:Key="{x:Static SystemColors.ControlBrushKey}" EndPoint="0,1" StartPoint="0,0">
+                            <GradientStop Color="#FFF8F8F8" Offset="0"/>
+                            <GradientStop Color="#FFE5E5E5" Offset="1"/>
+                        </LinearGradientBrush>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="Black" />
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="2"/>
                         </Style>
-                    </TreeView.Resources>
-                    <TreeView.ItemTemplate>
-                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                            <TextBlock Text="{Binding Name}" />
-                        </HierarchicalDataTemplate>
-                    </TreeView.ItemTemplate>
-                </TreeView>
-            </Expander>
-        </Grid>
+                    </Style.Resources>
+                </Style>
+            </TreeView.Resources>
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                    <TextBlock Text="{Binding Name}" />
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
         
         <Document:MarkdownEditor x:Name="markdownEditor"
                                  Grid.Column="1" />
