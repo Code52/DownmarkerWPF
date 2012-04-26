@@ -489,6 +489,14 @@
                 Margin="0,0,40,20"
                 Grid.Column="0" />
 
+        <Label Name="WordCount"                
+               VerticalAlignment="Bottom"
+               Margin="40,40,10,15"
+               Grid.Column="0"
+               HorizontalAlignment="Left">
+            FUCK
+        </Label>
+
         <awe:WebControl x:Name="wb" UseLayoutRounding="True" Margin="10,0,10,10" Grid.Column="1" HorizontalAlignment="Stretch" 
                         shared:WebBrowserUtility.BindableContent="{Binding Render}">
             <awe:WebControl.Effect>
