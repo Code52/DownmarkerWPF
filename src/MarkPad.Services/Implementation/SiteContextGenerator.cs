@@ -40,13 +40,6 @@ namespace MarkPad.Services.Implementation
             return GetJekyllSiteBaseDirectory(startDirectory.Parent);
         }
 
-        private static bool IsJekyllSite(string filename, DirectoryInfo directory)
-        {
-            return 
-                filename.IndexOf("_posts", StringComparison.InvariantCultureIgnoreCase) != -1 ||
-                ContainsJekyllConfigFile(directory);
-        }
-
         private static bool ContainsJekyllConfigFile(DirectoryInfo directory)
         {
             return directory.EnumerateFiles().Any(f => string.Equals(f.Name, "_config.yml", StringComparison.InvariantCultureIgnoreCase));
