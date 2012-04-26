@@ -1,8 +1,5 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using MarkPad.Framework.Events;
 using MarkPad.Services.Events;
 using Microsoft.Shell;
 
@@ -26,8 +23,7 @@ namespace MarkPad
             if (args.Length == 2)
             {
                 var filePath = args[1];
-                if (File.Exists(filePath) && Constants.DefaultExtensions.Contains(Path.GetExtension(filePath).ToLower()))
-                    bootstrapper.GetEventAggregator().Publish(new FileOpenEvent(filePath));
+                bootstrapper.GetEventAggregator().Publish(new FileOpenEvent(filePath));
             }
         }
 

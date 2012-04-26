@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -114,12 +115,7 @@ namespace MarkPad.Shell
 
             foreach (var fn in filenames)
             {
-                DocumentViewModel openedDoc = GetOpenedDocument(fn);
-
-                if (openedDoc != null)
-                    MDI.ActivateItem(openedDoc);
-                else
-                    eventAggregator.Publish(new FileOpenEvent(fn));
+                eventAggregator.Publish(new FileOpenEvent(fn));
             }
         }
 
@@ -160,9 +156,33 @@ namespace MarkPad.Shell
 
         public void Handle(FileOpenEvent message)
         {
-            var doc = documentCreator();
-            doc.Open(message.Path);
-            MDI.Open(doc);
+            DocumentViewModel openedDoc = GetOpenedDocument(message.Path);
+
+            if (openedDoc != null)
+                MDI.ActivateItem(openedDoc);
+            else
+            {
+                if (File.Exists(message.Path))
+                {
+                    if (Constants.DefaultExtensions.Contains(Path.GetExtension(message.Path).ToLower()))
+                    {
+                        var doc = documentCreator();
+                        doc.Open(message.Path);
+                        MDI.Open(doc);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            Process.Start(message.Path);
+                        }
+                        catch (Exception ex)
+                        {
+                            dialogService.ShowError("Failed to open file", "Cannot open {0}", ex.Message);
+                        }
+                    }
+                }
+            }
         }
 
         public void ShowSettings()
@@ -282,27 +302,27 @@ namespace MarkPad.Shell
             MDI.Open(doc);
         }
 
-		bool ConfigureNewBlog(string featureName)
-		{
-			var extra = string.Format(
-				"The '{0}' feature requires a blog to be configured. A window will be displayed which will allow you to configure a blog.",
-				featureName);
-			var setupBlog = dialogService.ShowConfirmation(
-				"No blogs are configured",
-				"Do you want to configure a blog?",
-				extra,
-				new ButtonExtras(ButtonType.Yes, "Yes", "Configure a blog"),
-				new ButtonExtras(ButtonType.No, "No", "Don't configure a blog"));
+        bool ConfigureNewBlog(string featureName)
+        {
+            var extra = string.Format(
+                "The '{0}' feature requires a blog to be configured. A window will be displayed which will allow you to configure a blog.",
+                featureName);
+            var setupBlog = dialogService.ShowConfirmation(
+                "No blogs are configured",
+                "Do you want to configure a blog?",
+                extra,
+                new ButtonExtras(ButtonType.Yes, "Yes", "Configure a blog"),
+                new ButtonExtras(ButtonType.No, "No", "Don't configure a blog"));
 
-			if (!setupBlog) 
-				return false;
-			if (!Settings.AddBlog()) 
-				return false;
+            if (!setupBlog)
+                return false;
+            if (!Settings.AddBlog())
+                return false;
 
             Settings.Accept();
 
-			return true;
-		}
+            return true;
+        }
 
         public void Handle(SettingsCloseEvent message)
         {
