@@ -7,6 +7,7 @@ using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using ICSharpCode.AvalonEdit.Document;
 using MarkPad.HyperlinkEditor;
+using MarkPad.Services;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Metaweblog;

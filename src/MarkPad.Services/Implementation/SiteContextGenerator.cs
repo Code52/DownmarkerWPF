@@ -9,10 +9,12 @@ namespace MarkPad.Services.Implementation
     public class SiteContextGenerator : ISiteContextGenerator
     {
         private readonly IEventAggregator eventAggregator;
+        private readonly IDialogService dialogService;
 
-        public SiteContextGenerator(IEventAggregator eventAggregator)
+        public SiteContextGenerator(IEventAggregator eventAggregator, IDialogService dialogService)
         {
             this.eventAggregator = eventAggregator;
+            this.dialogService = dialogService;
         }
 
         public ISiteContext GetContext(string filename)
@@ -24,7 +26,7 @@ namespace MarkPad.Services.Implementation
             var jekyllSiteBaseDirectory = GetJekyllSiteBaseDirectory(directory);
             if (jekyllSiteBaseDirectory != null)
             {
-                return new JekyllSiteContext(eventAggregator, jekyllSiteBaseDirectory, filename);
+                return new JekyllSiteContext(eventAggregator, dialogService, jekyllSiteBaseDirectory, filename);
             }
 
             return null;

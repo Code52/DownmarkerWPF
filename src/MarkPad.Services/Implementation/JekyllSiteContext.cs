@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -16,11 +17,13 @@ namespace MarkPad.Services.Implementation
         private readonly string filenameWithPath;
         private ISiteItem[] items;
         private readonly IEventAggregator eventAggregator;
+        private readonly IDialogService dialogService;
 
-        public JekyllSiteContext(IEventAggregator eventAggregator, string basePath, string filename)
+        public JekyllSiteContext(IEventAggregator eventAggregator, IDialogService dialogService, string basePath, string filename)
         {
             this.basePath = basePath;
             filenameWithPath = filename;
+            this.dialogService = dialogService;
             this.eventAggregator = eventAggregator;
         }
 
@@ -54,7 +57,7 @@ namespace MarkPad.Services.Implementation
             var enumerable = imageFilename.Replace(basePath, string.Empty).TrimStart('\\', '/') //Get rid of starting /
                 .Where(c => c == '/' || c == '\\') // select each / or \
                 .Select(c => "..") // turn each into a ..
-                .Concat(new[] {"img", imageFilename}); // concat with the image filename
+                .Concat(new[] { "img", imageFilename }); // concat with the image filename
             var relativePath = string.Join("\\", enumerable); //now we join with path separator giving relative path
 
             return relativePath;
@@ -92,7 +95,22 @@ namespace MarkPad.Services.Implementation
         {
             var fileItem = selectedItem as FileSystemSiteItem;
             if (fileItem == null || !File.Exists(fileItem.Path)) return;
-            eventAggregator.Publish(new FileOpenEvent(fileItem.Path));
+
+            if (Constants.DefaultExtensions.Contains(Path.GetExtension(fileItem.Path).ToLower()))
+            {
+                eventAggregator.Publish(new FileOpenEvent(fileItem.Path));
+            }
+            else
+            {
+                try
+                {
+                    Process.Start(fileItem.Path);
+                }
+                catch (Exception ex)
+                {
+                    dialogService.ShowError("Failed to open file", "Cannot open {0}", ex.Message);
+                }
+            }
         }
     }
 }

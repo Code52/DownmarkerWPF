@@ -10,6 +10,7 @@ using MarkPad.Framework.Events;
 using MarkPad.MDI;
 using MarkPad.OpenFromWeb;
 using MarkPad.PublishDetails;
+using MarkPad.Services;
 using MarkPad.Services.Events;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
@@ -164,23 +165,9 @@ namespace MarkPad.Shell
             {
                 if (File.Exists(message.Path))
                 {
-                    if (Constants.DefaultExtensions.Contains(Path.GetExtension(message.Path).ToLower()))
-                    {
                         var doc = documentCreator();
                         doc.Open(message.Path);
                         MDI.Open(doc);
-                    }
-                    else
-                    {
-                        try
-                        {
-                            Process.Start(message.Path);
-                        }
-                        catch (Exception ex)
-                        {
-                            dialogService.ShowError("Failed to open file", "Cannot open {0}", ex.Message);
-                        }
-                    }
                 }
             }
         }

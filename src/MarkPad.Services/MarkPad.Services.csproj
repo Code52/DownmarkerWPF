@@ -94,6 +94,7 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Constants.cs" />
     <Compile Include="Events\FileOpenEvent.cs" />
     <Compile Include="Interfaces\FileSystemSiteItem.cs" />
     <Compile Include="Interfaces\ISiteItem.cs" />

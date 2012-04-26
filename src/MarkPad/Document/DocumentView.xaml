@@ -495,8 +495,6 @@
                     </Style.Triggers>
                 </Style>
             </TreeView.Style>
-
-                
             <TreeView.Resources>
                 <MarkPad:InPathMultiConverter x:Key="InPathMultiConverter" />
                 <Style TargetType="TreeViewItem">

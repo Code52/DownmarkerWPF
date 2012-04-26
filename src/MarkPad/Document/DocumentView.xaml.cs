@@ -13,6 +13,7 @@ using ICSharpCode.AvalonEdit;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.MarkPadExtensions;
+using MarkPad.Services;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.MarkPadExtensions;
 using MarkPad.Services.Settings;
