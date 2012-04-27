@@ -44,8 +44,6 @@ namespace MarkPad.Document
             SizeChanged += DocumentViewSizeChanged;
             ZoomSlider.ValueChanged += (sender, e) => ApplyZoom();
             markdownEditor.Editor.MouseWheel += HandleEditorMouseWheel;
-
-            //Jared's Change
             markdownEditor.Editor.KeyDown += WordCount_KeyDown;
 
             Handle(new SettingsChangedEvent());
@@ -66,27 +64,19 @@ namespace MarkPad.Document
             ZoomSlider.Value += e.Delta * 0.1;
         }
 
-        //Jared's Change
         void WordCount_KeyDown(object sender, KeyEventArgs e)
         {
             var vm = DataContext as DocumentViewModel;
 
-           // MessageBox.Show(e.Key.ToString());
-            if (e.Key.Equals(Key.F12))
+            if (vm.Render != null)
             {
-                //string info = vm.Document.Text.ToString();
                 string info = vm.Render.ToString();
-                MessageBox.Show(info);
-
-                //Strip Javascript, then remove HTML
                 info = Regex.Replace(info, @"(?s)<script.*?(/>|</script>)", string.Empty);
                 info = Regex.Replace(info, @"</?\w+((\s+\w+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>", string.Empty);
                 MatchCollection collection = Regex.Matches(info, @"[\S]+");
-                
-                MessageBox.Show(collection.Count.ToString());
-            }
-	        //MatchCollection collection = Regex.Matches(words, @"[\S]+");
-            //MessageBox.Show(collection.Count.ToString());	           
+                string wordcount = "words: " + collection.Count.ToString();
+                WordCount.Content = wordcount;
+            }      
         }
 
         private void ApplyZoom()
