@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -43,6 +44,7 @@ namespace MarkPad.Document
             SizeChanged += DocumentViewSizeChanged;
             ZoomSlider.ValueChanged += (sender, e) => ApplyZoom();
             markdownEditor.Editor.MouseWheel += HandleEditorMouseWheel;
+            markdownEditor.Editor.KeyDown += WordCount_KeyDown;
 
             Handle(new SettingsChangedEvent());
 
@@ -60,6 +62,21 @@ namespace MarkPad.Document
         {
             if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl)) return;
             ZoomSlider.Value += e.Delta * 0.1;
+        }
+
+        void WordCount_KeyDown(object sender, KeyEventArgs e)
+        {
+            var vm = DataContext as DocumentViewModel;
+
+            if (vm.Render != null)
+            {
+                string info = vm.Render.ToString();
+                info = Regex.Replace(info, @"(?s)<script.*?(/>|</script>)", string.Empty);
+                info = Regex.Replace(info, @"</?\w+((\s+\w+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>", string.Empty);
+                MatchCollection collection = Regex.Matches(info, @"[\S]+");
+                string wordcount = "words: " + collection.Count.ToString();
+                WordCount.Content = wordcount;
+            }      
         }
 
         private void ApplyZoom()
