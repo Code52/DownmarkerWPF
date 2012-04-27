@@ -68,15 +68,22 @@ namespace MarkPad.Document
         {
             var vm = DataContext as DocumentViewModel;
 
-            if (vm.Render != null)
+            var count = 0;
+
+            if (!string.IsNullOrEmpty(vm.Render))
             {
-                string info = vm.Render.ToString();
-                info = Regex.Replace(info, @"(?s)<script.*?(/>|</script>)", string.Empty);
-                info = Regex.Replace(info, @"</?\w+((\s+\w+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>", string.Empty);
-                MatchCollection collection = Regex.Matches(info, @"[\S]+");
-                string wordcount = "words: " + collection.Count.ToString();
-                WordCount.Content = wordcount;
-            }      
+                count = GetWordCount(vm.Render);
+            }
+
+            WordCount.Content = "words: " + count;
+        }
+
+        private static int GetWordCount(string text)
+        {
+            var input = text;
+            input = Regex.Replace(input, @"(?s)<script.*?(/>|</script>)", string.Empty);
+            input = Regex.Replace(input, @"</?\w+((\s+\w+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>", string.Empty);
+            return Regex.Matches(input, @"[\S]+").Count;
         }
 
         private void ApplyZoom()
