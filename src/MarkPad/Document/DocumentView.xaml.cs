@@ -44,7 +44,6 @@ namespace MarkPad.Document
             SizeChanged += DocumentViewSizeChanged;
             ZoomSlider.ValueChanged += (sender, e) => ApplyZoom();
             markdownEditor.Editor.MouseWheel += HandleEditorMouseWheel;
-            //Jared's Change
             markdownEditor.Editor.KeyDown += WordCount_KeyDown;
 
             Handle(new SettingsChangedEvent());
@@ -65,7 +64,6 @@ namespace MarkPad.Document
             ZoomSlider.Value += e.Delta * 0.1;
         }
 
-        //Jared's Change
         void WordCount_KeyDown(object sender, KeyEventArgs e)
         {
             var vm = DataContext as DocumentViewModel;
