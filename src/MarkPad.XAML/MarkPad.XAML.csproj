@@ -109,7 +109,6 @@
     <Compile Include="AttachedProperties\StateHelper.cs" />
     <Compile Include="Triggers\InputBindingTrigger.cs" />
     <Compile Include="VisualExtensions.cs" />
-    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>
