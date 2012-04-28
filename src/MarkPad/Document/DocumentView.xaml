@@ -577,7 +577,7 @@
         <Label Name="WordCount"
                VerticalAlignment="Bottom"
                Margin="40,40,10,15"
-               Grid.Column="0"
+               Grid.Column="1"
                HorizontalAlignment="Left">          
         </Label>
 
