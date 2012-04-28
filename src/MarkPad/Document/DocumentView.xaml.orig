@@ -574,15 +574,19 @@
                 Margin="0,0,40,20"
                 Grid.Column="1" />
 
-        <Label Name="WordCount"
+<<<<<<< HEAD
+        <awe:WebControl x:Name="wb" UseLayoutRounding="True" Margin="10,0,10,10" Grid.Column="2" HorizontalAlignment="Stretch" 
+=======
+        <Label Name="WordCount"                
                VerticalAlignment="Bottom"
                Margin="40,40,10,15"
                Grid.Column="0"
                HorizontalAlignment="Left">          
         </Label>
 
-       <awe:WebControl x:Name="wb" UseLayoutRounding="True" Margin="10,0,10,10" Grid.Column="2" HorizontalAlignment="Stretch" 
-                       shared:WebBrowserUtility.BindableContent="{Binding Render}">
+        <awe:WebControl x:Name="wb" UseLayoutRounding="True" Margin="10,0,10,10" Grid.Column="1" HorizontalAlignment="Stretch" 
+>>>>>>> 4d4aab185bac1b3dc22b553a643841d65aa75050
+                        shared:WebBrowserUtility.BindableContent="{Binding Render}">
             <awe:WebControl.Effect>
                 <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.25" Direction="270" />
             </awe:WebControl.Effect>
