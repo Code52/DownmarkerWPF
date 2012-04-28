@@ -1,12 +1,22 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using Caliburn.Micro;
 using MarkPad.Services.Interfaces;
 
 namespace MarkPad.Services.Implementation
 {
     public class SiteContextGenerator : ISiteContextGenerator
     {
+        private readonly IEventAggregator eventAggregator;
+        private readonly IDialogService dialogService;
+
+        public SiteContextGenerator(IEventAggregator eventAggregator, IDialogService dialogService)
+        {
+            this.eventAggregator = eventAggregator;
+            this.dialogService = dialogService;
+        }
+
         public ISiteContext GetContext(string filename)
         {
             var directoryName = Path.GetDirectoryName(filename);
@@ -16,7 +26,7 @@ namespace MarkPad.Services.Implementation
             var jekyllSiteBaseDirectory = GetJekyllSiteBaseDirectory(directory);
             if (jekyllSiteBaseDirectory != null)
             {
-                return new JekyllSiteContext(jekyllSiteBaseDirectory, filename);
+                return new JekyllSiteContext(eventAggregator, dialogService, jekyllSiteBaseDirectory, filename);
             }
 
             return null;
@@ -30,13 +40,6 @@ namespace MarkPad.Services.Implementation
                 return startDirectory.FullName;
 
             return GetJekyllSiteBaseDirectory(startDirectory.Parent);
-        }
-
-        private static bool IsJekyllSite(string filename, DirectoryInfo directory)
-        {
-            return 
-                filename.IndexOf("_posts", StringComparison.InvariantCultureIgnoreCase) != -1 ||
-                ContainsJekyllConfigFile(directory);
         }
 
         private static bool ContainsJekyllConfigFile(DirectoryInfo directory)
