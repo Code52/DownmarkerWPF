@@ -7,6 +7,7 @@ using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using ICSharpCode.AvalonEdit.Document;
 using MarkPad.HyperlinkEditor;
+using MarkPad.Services;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Metaweblog;
@@ -29,9 +30,8 @@ namespace MarkPad.Document
 
         private string title;
         private string filename;
-        private ISiteContext siteContext;
 
-        public DocumentViewModel(IDialogService dialogService, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator, Func<string, IMetaWeblogService> getMetaWeblog )
+        public DocumentViewModel(IDialogService dialogService, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator, Func<string, IMetaWeblogService> getMetaWeblog)
         {
             this.dialogService = dialogService;
             this.windowManager = windowManager;
@@ -61,9 +61,9 @@ namespace MarkPad.Document
                 }
 
                 var result = s.Result;
-                if (siteContext != null)
+                if (SiteContext != null)
                 {
-                    result = siteContext.ConvertToAbsolutePaths(result);
+                    result = SiteContext.ConvertToAbsolutePaths(result);
                 }
 
                 Render = result;
@@ -174,7 +174,7 @@ namespace MarkPad.Document
 
         private void EvaluateContext()
         {
-            siteContext = siteContextGenerator.GetContext(filename);
+            SiteContext = siteContextGenerator.GetContext(filename);
         }
 
         public TextDocument Document { get; set; }
@@ -263,10 +263,7 @@ namespace MarkPad.Document
 
         public bool DistractionFree { get; set; }
 
-        public ISiteContext SiteContext
-        {
-            get { return siteContext; }
-        }
+        public ISiteContext SiteContext { get; private set; }
 
         public void Publish(string postid, string postTitle, string[] categories, BlogSetting blog)
         {

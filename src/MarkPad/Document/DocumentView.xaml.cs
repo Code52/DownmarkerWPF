@@ -14,6 +14,8 @@ using ICSharpCode.AvalonEdit;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.MarkPadExtensions;
+using MarkPad.Services;
+using MarkPad.Services.Interfaces;
 using MarkPad.Services.MarkPadExtensions;
 using MarkPad.Services.Settings;
 using MarkPad.XAML;
@@ -274,11 +276,11 @@ namespace MarkPad.Document
         {
             documentScrollViewer = markdownEditor.FindVisualChild<ScrollViewer>();
 
+            var viewModel = ((DocumentViewModel)DataContext);
             if (documentScrollViewer != null)
             {
                 documentScrollViewer.ScrollChanged += (i, j) => WbProcentualZoom();
-                var x = ((DocumentViewModel)DataContext);
-                x.Document.TextChanged += (i, j) =>
+                viewModel.Document.TextChanged += (i, j) =>
                 {
                     wb.LoadCompleted += (k, l) => WbProcentualZoom();
                 };
@@ -293,6 +295,17 @@ namespace MarkPad.Document
             ApplyFont();
             ApplyZoom();
             ApplyExtensions();
+        }
+
+        private void SiteFilesMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+             var selectedItem = siteFiles.SelectedItem as ISiteItem;
+
+            if (selectedItem !=null)
+            {
+                (DataContext as DocumentViewModel)
+                    .ExecuteSafely(d => d.SiteContext.OpenItem(selectedItem));
+            }
         }
     }
 }
