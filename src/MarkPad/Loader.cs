@@ -10,6 +10,7 @@ namespace MarkPad
     internal class Loader
     {
         const string LibsFolder = "Libs";
+        private const string UpdatesFolder = "Updater";
 
         static readonly Dictionary<string, Assembly> Libraries = new Dictionary<string, Assembly>();
         static readonly Dictionary<string, Assembly> ReflectionOnlyLibraries = new Dictionary<string, Assembly>();
@@ -17,6 +18,10 @@ namespace MarkPad
         [STAThread]
         public static void Main()
         {
+            var directoryName = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            if (directoryName != null && Directory.GetCurrentDirectory() != directoryName)
+                Directory.SetCurrentDirectory(directoryName);
+
             AppDomain.CurrentDomain.AssemblyResolve += FindAssembly;
 
             PreloadUnmanagedLibraries();
@@ -82,6 +87,35 @@ namespace MarkPad
                     // so to help it along we set the internal pointer correctly.
 
                     LoadHunspellLibrary(pointer);
+                }
+            }
+
+            var thisFolder = Directory.GetCurrentDirectory();
+            var updates = Assembly.GetExecutingAssembly().GetManifestResourceNames()
+                .Where(s => s.StartsWith(String.Format("{0}.{1}", assemblyName.Name, UpdatesFolder)))
+                .ToArray();
+
+            foreach (var u in updates)
+            {
+                string dllPath = Path.Combine(thisFolder, String.Join(".", u.Split('.').Skip(2)));
+
+                if (!File.Exists(dllPath))
+                {
+                    using (Stream stm = Assembly.GetExecutingAssembly().GetManifestResourceStream(u))
+                    {
+                        // Copy the assembly to the temporary file
+                        try
+                        {
+                            using (Stream outFile = File.Create(dllPath))
+                            {
+                                stm.CopyTo(outFile);
+                            }
+                        }
+                        catch
+                        {
+
+                        }
+                    }
                 }
             }
         }

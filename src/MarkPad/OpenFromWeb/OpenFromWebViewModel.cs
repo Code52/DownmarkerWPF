@@ -1,60 +1,83 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using MarkPad.Framework;
-using MarkPad.Metaweblog;
 using MarkPad.Services.Interfaces;
-using MarkPad.Settings;
+using MarkPad.Services.Metaweblog;
+using MarkPad.Services.Settings;
 
 namespace MarkPad.OpenFromWeb
 {
     public class OpenFromWebViewModel : Screen
     {
-        private readonly ISettingsService settings;
         private readonly IDialogService dialogService;
+        private readonly Func<string, IMetaWeblogService> getMetaWeblog;
+        private readonly ITaskSchedulerFactory taskScheduler;
 
-        public OpenFromWebViewModel(ISettingsService settings, IDialogService dialogService)
+        public OpenFromWebViewModel(
+            IDialogService dialogService, 
+            Func<string, IMetaWeblogService> getMetaWeblog,
+            ITaskSchedulerFactory taskScheduler )
         {
-            this.settings = settings;
             this.dialogService = dialogService;
+            this.getMetaWeblog = getMetaWeblog;
+            this.taskScheduler = taskScheduler;
         }
 
         public void InitializeBlogs(List<BlogSetting> blogs)
         {
             Blogs = blogs;
-            SelectedBlog = blogs[0];
+            SelectedBlog = blogs.FirstOrDefault();
         }
 
         public List<BlogSetting> Blogs { get; private set; }
 
         public BlogSetting SelectedBlog { get; set; }
 
+        public Post SelectedPost { get; set; }
+
         public Entry CurrentPost
         {
             get
             {
-                var post = settings.Get<Post>("CurrentPost");
-
-                return new Entry { Key = post.title, Value = post };
+                return new Entry { Key = SelectedPost.title, Value = SelectedPost };
             }
             set
             {
-                settings.Set("CurrentPost", value.Value);
+                SelectedPost = value.Value;
             }
         }
 
         public ObservableCollection<Entry> Posts { get; private set; }
 
-        public void Fetch()
+        public bool CanFetch { get { return SelectedBlog != null; } }
+
+        public bool CanContinue
+        {
+            get { return !string.IsNullOrWhiteSpace(CurrentPost.Key); }
+        }
+
+        public void Continue()
+        {
+            TryClose(true);
+        }
+
+        public void Cancel()
+        {
+            TryClose(false);
+        }
+
+        public Task Fetch()
         {
             Posts = new ObservableCollection<Entry>();
 
-            var proxy = new MetaWeblog(this.SelectedBlog.WebAPI);
+            var proxy = getMetaWeblog(SelectedBlog.WebAPI);
 
-            proxy
-                .GetRecentPostsAsync(SelectedBlog.BlogInfo.blogid, SelectedBlog.Username, SelectedBlog.Password, 100)
-                .ContinueWith(UpdateBlogPosts, TaskScheduler.FromCurrentSynchronizationContext())
+            return proxy.GetRecentPostsAsync(SelectedBlog, 100)
+                .ContinueWith(UpdateBlogPosts, taskScheduler.FromCurrentSynchronisationContext())
                 .ContinueWith(HandleFetchError);
         }
 
@@ -66,6 +89,10 @@ namespace MarkPad.OpenFromWeb
             {
                 Posts.Add(new Entry { Key = p.title, Value = p });
             }
+
+            var topPost = Posts.FirstOrDefault();
+            if (topPost != null)
+                CurrentPost = topPost;
         }
 
         private void HandleFetchError(Task t)

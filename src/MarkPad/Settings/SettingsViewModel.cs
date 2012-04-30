@@ -8,8 +8,10 @@ using System.Windows.Media;
 using Caliburn.Micro;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
+using MarkPad.Services;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
+using MarkPad.Services.Settings;
 using Microsoft.Win32;
 
 namespace MarkPad.Settings
@@ -26,18 +28,18 @@ namespace MarkPad.Settings
         public SpellingLanguages SelectedLanguage { get; set; }
         public FontSizes SelectedFontSize { get; set; }
         public FontFamily SelectedFontFamily { get; set; }
+		public bool EnableFloatingToolBar { get; set; }
+		public bool EnableSpellCheck { get; set; }
 
-        private const string BlogsSettingsKey = "Blogs";
-        private const string DictionariesSettingsKey = "Dictionaries";
         private const string MarkpadKeyName = "markpad.md";
 
-        private readonly ISettingsService settingsService;
+        private readonly ISettingsProvider settingsService;
         private readonly IWindowManager windowManager;
         private readonly IEventAggregator eventAggregator;
         private readonly Func<BlogSettingsViewModel> blogSettingsCreator;
-        
+
         public SettingsViewModel(
-            ISettingsService settingsService,
+            ISettingsProvider settingsService,
             IWindowManager windowManager,
             IEventAggregator eventAggregator,
             Func<BlogSettingsViewModel> blogSettingsCreator)
@@ -46,16 +48,20 @@ namespace MarkPad.Settings
             this.windowManager = windowManager;
             this.eventAggregator = eventAggregator;
             this.blogSettingsCreator = blogSettingsCreator;
-            
-            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes"))
+        }
+
+        public void Initialize()
+        {
+            using (var key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes"))
             {
                 Extensions = Constants.DefaultExtensions
                     .Select(s => new ExtensionViewModel(s,
                         key.GetSubKeyNames().Contains(s) && !string.IsNullOrEmpty(key.OpenSubKey(s).GetValue("").ToString())))
                     .ToArray();
             }
-
-            var blogs = settingsService.Get<List<BlogSetting>>(BlogsSettingsKey) ?? new List<BlogSetting>();
+            
+            var settings = settingsService.GetSettings<MarkPadSettings>();
+            var blogs = settings.GetBlogs();
 
             Blogs = new ObservableCollection<BlogSetting>(blogs);
 
@@ -63,17 +69,19 @@ namespace MarkPad.Settings
             FontSizes = Enum.GetValues(typeof(FontSizes)).OfType<FontSizes>().ToArray();
             FontFamilies = Fonts.SystemFontFamilies.OrderBy(f => f.Source);
 
-            SelectedLanguage = settingsService.Get<SpellingLanguages>(DictionariesSettingsKey);
-            
-            var fontFamily = settingsService.Get<string>(FontFamilySettingsKey);
+            SelectedLanguage = settings.Language;
+
+            var fontFamily = settings.FontFamily;
             SelectedFontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == fontFamily);
-            SelectedFontSize = settingsService.Get<FontSizes>(FontSizeSettingsKey);
+            SelectedFontSize = settings.FontSize;
 
             if (SelectedFontFamily == null)
             {
                 SelectedFontFamily = FontHelpers.TryGetFontFamilyFromStack(Constants.DEFAULT_EDITOR_FONT_FAMILY);
                 SelectedFontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
             }
+			EnableFloatingToolBar = settings.FloatingToolBarEnabled;
+			EnableSpellCheck = settings.SpellCheckEnabled;
         }
 
         private BlogSetting currentBlog;
@@ -179,11 +187,16 @@ namespace MarkPad.Settings
             var spellingService = IoC.Get<ISpellingService>();
             spellingService.SetLanguage(SelectedLanguage);
 
-            settingsService.Set(BlogsSettingsKey, Blogs.ToList());
-            settingsService.Set(DictionariesSettingsKey, SelectedLanguage);
-            settingsService.Set(FontSizeSettingsKey, SelectedFontSize);
-            settingsService.Set(FontFamilySettingsKey, SelectedFontFamily.Source);
-            settingsService.Save();
+            var settings = settingsService.GetSettings<MarkPadSettings>();
+
+            settings.SaveBlogs(Blogs.ToList());
+            settings.Language = SelectedLanguage;
+            settings.FontSize = SelectedFontSize;
+            settings.FontFamily = SelectedFontFamily.Source;
+			settings.FloatingToolBarEnabled = EnableFloatingToolBar;
+			settings.SpellCheckEnabled = EnableSpellCheck;
+			
+            settingsService.SaveSettings(settings);
 
             IoC.Get<IEventAggregator>().Publish(new SettingsChangedEvent());
         }

@@ -1,13 +1,11 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Windows;
-using MarkPad.Framework.Events;
+using MarkPad.Services.Events;
 using Microsoft.Shell;
 
 namespace MarkPad
 {
-    public partial class App : Application, ISingleInstanceApp
+    public partial class App : ISingleInstanceApp
     {
         private const string Unique = "There can be only one MARKPAD!!! (We ignore crappy sequels here)";
 
@@ -25,8 +23,7 @@ namespace MarkPad
             if (args.Length == 2)
             {
                 var filePath = args[1];
-                if (File.Exists(filePath) && Constants.DefaultExtensions.Contains(Path.GetExtension(filePath).ToLower()))
-                    bootstrapper.GetEventAggregator().Publish(new FileOpenEvent(filePath));
+                bootstrapper.GetEventAggregator().Publish(new FileOpenEvent(filePath));
             }
         }
 

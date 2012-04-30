@@ -12,7 +12,7 @@
     <AssemblyName>MarkPad.Services</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\DownmarkerWPF\</SolutionDir>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -34,25 +34,55 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Testing|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Testing\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Debug\MarkPad.Services.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac">
-      <HintPath>..\..\packages\Autofac.2.5.2.830\lib\NET40\Autofac.dll</HintPath>
+    <Reference Include="Autofac, Version=2.6.1.841, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Autofac.2.6.1.841\lib\NET40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Autofac.Configuration">
-      <HintPath>..\..\packages\Autofac.2.5.2.830\lib\NET40\Autofac.Configuration.dll</HintPath>
+    <Reference Include="Autofac.Configuration, Version=2.6.1.841, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Autofac.2.6.1.841\lib\NET40\Autofac.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Caliburn.Micro">
+      <HintPath>..\packages\Caliburn.Micro.1.3.1\lib\net40\Caliburn.Micro.dll</HintPath>
+    </Reference>
+    <Reference Include="CookComputing.XmlRpcV2, Version=2.5.0.0, Culture=neutral, PublicKeyToken=a7d6e17aa302004d, processorArchitecture=MSIL">
+      <HintPath>..\packages\xmlrpcnet.2.5.0\lib\net20\CookComputing.XmlRpcV2.dll</HintPath>
     </Reference>
     <Reference Include="NHunspell">
       <HintPath>..\..\lib\Hunspell.0.9.6.0\lib\net20\NHunspell.dll</HintPath>
     </Reference>
     <Reference Include="Ookii.Dialogs.Wpf">
-      <HintPath>..\..\packages\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
+      <HintPath>..\packages\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caliburn.Micro.1.3.1\lib\net40\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
@@ -64,21 +94,51 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Constants.cs" />
+    <Compile Include="Events\FileOpenEvent.cs" />
+    <Compile Include="Interfaces\FileSystemSiteItem.cs" />
+    <Compile Include="Interfaces\ISiteItem.cs" />
+    <Compile Include="MarkPadExtensions\IMarkPadExtension.cs" />
     <Compile Include="Implementation\ButtonExtras.cs" />
     <Compile Include="Implementation\FontSizes.cs" />
+    <Compile Include="Implementation\MetaWeblogService.cs" />
     <Compile Include="Implementation\SiteContextGenerator.cs" />
     <Compile Include="Implementation\SpellingService.cs" />
     <Compile Include="Implementation\DialogMessageService.cs" />
     <Compile Include="Implementation\DialogService.cs" />
-    <Compile Include="Implementation\SettingsService.cs" />
+    <Compile Include="Implementation\TaskSchedulerFactory.cs" />
+    <Compile Include="Interfaces\IMetaWeblogService.cs" />
     <Compile Include="Interfaces\ISiteContext.cs" />
     <Compile Include="Interfaces\ISiteContextGenerator.cs" />
     <Compile Include="Interfaces\ISpellingService.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />
-    <Compile Include="Interfaces\ISettingsService.cs" />
+    <Compile Include="Interfaces\ITaskSchedulerFactory.cs" />
+    <Compile Include="Metaweblog\Category.cs" />
+    <Compile Include="Metaweblog\CategoryInfo.cs" />
+    <Compile Include="Metaweblog\Enclosure.cs" />
+    <Compile Include="Metaweblog\Generated\MetaWeblog.generated.cs">
+      <DependentUpon>MetaWeblog.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Metaweblog\MediaObject.cs" />
+    <Compile Include="Metaweblog\MediaObjectInfo.cs" />
+    <Compile Include="Metaweblog\MetaWeblog.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Metaweblog\Post.cs" />
+    <Compile Include="Metaweblog\Source.cs" />
+    <Compile Include="Metaweblog\UserInfo.cs" />
     <Compile Include="ServicesModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Implementation\JekyllSiteContext.cs" />
+    <Compile Include="Settings\BlogInfo.cs" />
+    <Compile Include="Settings\BlogSetting.cs" />
+    <Compile Include="MarkPadExtensions\MarkPadExtensionsProvider.cs" />
+    <Compile Include="Settings\IsolatedStorageSettingsStore.cs" />
+    <Compile Include="Settings\MarkPadSettings.cs" />
+    <Compile Include="Settings\SettingsProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MarkPad.XAML\MarkPad.XAML.csproj">
@@ -95,8 +155,21 @@
     <EmbeddedResource Include="Implementation\Dictionaries\en_US.dic" />
     <EmbeddedResource Include="Implementation\Dictionaries\es_ES.aff" />
     <EmbeddedResource Include="Implementation\Dictionaries\es_ES.dic" />
+    <None Include="Metaweblog\Generated\BloggerAPI.json" />
+    <None Include="Metaweblog\Generated\MetaWeblog.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MetaWeblog.generated.cs</LastGenOutput>
+    </None>
+    <None Include="Metaweblog\Generated\MetaWeblogAPI.json" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <UsingTask TaskName="NotifyPropertyWeaverMsBuildTask.WeavingTask" AssemblyFile="$(SolutionDir)..\Tools\NotifyPropertyWeaverMsBuildTask.dll" />
+  <Target Name="AfterCompile">
+    <NotifyPropertyWeaverMsBuildTask.WeavingTask />
+  </Target>
 </Project>

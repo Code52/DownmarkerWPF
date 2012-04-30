@@ -4,19 +4,18 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:System="clr-namespace:System;assembly=mscorlib"
-    xmlns:shared="http://schemas.markpad.net/winfx/xaml/shared" 
-    xmlns:controls="http://schemas.markpad.net/winfx/xaml/controls" 
-    xmlns:cal="http://www.caliburnproject.org"
-    xmlns:awe="clr-namespace:Awesomium.Windows.Controls;assembly=Awesomium.Windows.Controls" 
-    xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
-    xmlns:Document="clr-namespace:MarkPad.Document"
+    xmlns:shared="http://schemas.markpad.net/winfx/xaml/shared"
+    xmlns:awe="clr-namespace:Awesomium.Windows.Controls;assembly=Awesomium.Windows.Controls"
+    xmlns:Document="clr-namespace:MarkPad.Document" xmlns:MarkPad="clr-namespace:MarkPad"
     x:Class="MarkPad.Document.DocumentView"
     mc:Ignorable="d" 
-    d:DesignHeight="300" d:DesignWidth="300"
->
+    d:DesignHeight="300" d:DesignWidth="400">
     <UserControl.InputBindings>
-        <KeyBinding Command="Document:FormattingCommands.ToggleBold" Key="B" Modifiers="Control" />
-        <KeyBinding Command="Document:FormattingCommands.ToggleItalic" Key="I" Modifiers="Control" />
+        <KeyBinding Command="Document:DisplayCommands.ZoomIn" Key="OemPlus" Modifiers="Control"/>
+        <KeyBinding Command="Document:DisplayCommands.ZoomIn" Key="Add" Modifiers="Control"/>
+        <KeyBinding Command="Document:DisplayCommands.ZoomOut" Key="OemMinus" Modifiers="Control"/>
+        <KeyBinding Command="Document:DisplayCommands.ZoomOut" Key="Subtract" Modifiers="Control"/>
+        <KeyBinding Command="Document:DisplayCommands.ZoomReset" Key="D0" Modifiers="Control"/>
     </UserControl.InputBindings>
     <UserControl.Resources>
         <ControlTemplate x:Key="HorizontalScrollBar"
@@ -469,85 +468,121 @@
         </Style>
 
 
-        <Style TargetType="{x:Type avalonedit:TextArea}">
-            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            <Setter Property="SelectionBrush">
-                <Setter.Value>
-                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" Opacity="0.7"/>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="SelectionBorder">
-                <Setter.Value>
-                    <Pen Brush="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Thickness="1"/>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="SelectionForeground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type avalonedit:TextArea}">
-                        <DockPanel Focusable="False">
-                            <ItemsControl DockPanel.Dock="Left"
-                                      Focusable="False"
-                                      Margin="0,0,5,0"
-                                          FontSize="10"
-                                          FontFamily="Segoe UI"
-                                      Padding="10,0,0,0"
-                                      Background="#adDEDEDE"
-                                      ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LeftMargins}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal" />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                            </ItemsControl>
-                            <ContentPresenter
-                            Panel.ZIndex="-1"
-                            Focusable="False"
-                            Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TextView}"/>
-                        </DockPanel>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition x:Name="webBrowserColumn" Width="{Binding DistractionFree, Converter={shared:BoolToGridLengthConverter Invert=True}}" />
         </Grid.ColumnDefinitions>
 
-        <controls:FloatingToolBar x:Name="floatingToolBar" PlacementTarget="{Binding ElementName=Editor}" CommandTarget="{Binding ElementName=root}" VerticalOffset="-60" HorizontalOffset="-30">
-            <Border Background="#f0f0f0" Padding="3,2,3,2" BorderThickness="1" CornerRadius="1" BorderBrush="#999999">
-                <StackPanel Orientation="Horizontal">
-                    <Button Width="22"  Command="Document:FormattingCommands.ToggleBold" ToolTip="Bold">B</Button>
-                    <Button Width="22" Command="Document:FormattingCommands.ToggleItalic" ToolTip="Italic">I</Button>
-                    <Button Width="44" Command="Document:FormattingCommands.ToggleCode" ToolTip="Code" Margin="5,0,0,0">Code</Button>
-                    <Button Width="78" Command="Document:FormattingCommands.ToggleCodeBlock" ToolTip="Code block">Code block</Button>
-                    <Button Width="42" Command="Document:FormattingCommands.SetHyperlink" ToolTip="Hyperlink">www</Button>
-                </StackPanel>
-            </Border>
-        </controls:FloatingToolBar>
+        <TreeView ItemsSource="{Binding SiteContext.Items}"
+                    MouseDoubleClick="SiteFilesMouseDoubleClick"
+                    SelectedValuePath="Path"
+                    x:Name="siteFiles"
+                  Margin="10,0,10,10"
+                  Background="Transparent"
+                  BorderThickness="0">
+            <TreeView.Style>
+                <Style TargetType="TreeView">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SiteContext}"
+                                    Value="{x:Null}">
+                            <Setter Property="Visibility"
+                                Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TreeView.Style>
+            <TreeView.Resources>
+                <MarkPad:InPathMultiConverter x:Key="InPathMultiConverter" />
+                <Style TargetType="TreeViewItem">
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" Opacity="0.7"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="BorderBrush">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True"/>
+                                <Condition Property="IsSelectionActive" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="BorderBrush" Value="#D9D9D9"/>
+                        </MultiTrigger>
+                        <DataTrigger Value="True">
+                            <DataTrigger.Binding>
+                                <MultiBinding Converter="{StaticResource InPathMultiConverter}" Mode="OneTime">
+                                    <Binding ElementName="siteFiles" Path="DataContext.FileName" />
+                                    <Binding Path="Path" />
+                                </MultiBinding>
+                            </DataTrigger.Binding>
+                            <Setter Property="IsSelected"
+                                    Value="True" />
+                            <Setter Property="IsExpanded"
+                                    Value="True" />
+                            <Setter Property="Foreground">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="{DynamicResource AccentDarkColor}" />
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                    <Style.Resources>
+                        <LinearGradientBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" EndPoint="0,1" StartPoint="0,0">
+                            <GradientStop Color="#FFDCEBFC" Offset="0"/>
+                            <GradientStop Color="#FFC1DBFC" Offset="1"/>
+                        </LinearGradientBrush>
+                        <LinearGradientBrush x:Key="{x:Static SystemColors.ControlBrushKey}" EndPoint="0,1" StartPoint="0,0">
+                            <GradientStop Color="#FFF8F8F8" Offset="0"/>
+                            <GradientStop Color="#FFE5E5E5" Offset="1"/>
+                        </LinearGradientBrush>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+                        <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="Black" />
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="2"/>
+                        </Style>
+                    </Style.Resources>
+                </Style>
+            </TreeView.Resources>
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                    <TextBlock Text="{Binding Name}" />
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+        
+        <Document:MarkdownEditor x:Name="markdownEditor"
+                                 Grid.Column="1" />
 
-        <avalonedit:TextEditor
-            x:Name="Editor"
-            WordWrap="True"
-            ShowLineNumbers="True"
-            Document="{Binding Document}"
-            cal:Message.Attach="[Event TextChanged]=[Action Update]"
-            Grid.Column="0"
-            Margin="10,0,10,-5" 
-            TextOptions.TextFormattingMode="Display"
-            VerticalAlignment="Stretch"
-            HorizontalAlignment="Stretch" Padding="0,0,10,0"
-            PreviewKeyDown="EditorPreviewKeyDown">
-            <avalonedit:TextEditor.Effect>
-                <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.25" Direction="270" />
-            </avalonedit:TextEditor.Effect>
-        </avalonedit:TextEditor>
+        <Slider x:Name="ZoomSlider"
+                Maximum="2"
+                Minimum="0.5"
+                Value="1"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Width="100"
+                Margin="0,0,40,20"
+                Grid.Column="1" />
 
+        <Label Name="WordCount"
+               VerticalAlignment="Bottom"
+               Margin="40,40,10,15"
+               Grid.Column="1"
+               HorizontalAlignment="Left">          
+        </Label>
 
-        <awe:WebControl x:Name="wb" UseLayoutRounding="True" Margin="10,0,10,-5" Grid.Column="1" HorizontalAlignment="Stretch" 
-                        shared:WebBrowserUtility.BindableContent="{Binding Render}">
+       <awe:WebControl x:Name="wb" UseLayoutRounding="True" Margin="10,0,10,10" Grid.Column="2" HorizontalAlignment="Stretch" 
+                       shared:WebBrowserUtility.BindableContent="{Binding Render}">
             <awe:WebControl.Effect>
                 <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.25" Direction="270" />
             </awe:WebControl.Effect>

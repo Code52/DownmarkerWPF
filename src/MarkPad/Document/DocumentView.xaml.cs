@@ -3,91 +3,229 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Xml;
+using System.Windows.Media;
 using Awesomium.Core;
 using Caliburn.Micro;
-using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.Editing;
-using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Highlighting.Xshd;
-using ICSharpCode.AvalonEdit.Rendering;
-using MarkPad.Extensions;
+using ICSharpCode.AvalonEdit;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
+using MarkPad.MarkPadExtensions;
+using MarkPad.Services;
 using MarkPad.Services.Interfaces;
+using MarkPad.Services.MarkPadExtensions;
+using MarkPad.Services.Settings;
 using MarkPad.XAML;
-using System.Windows.Media;
 
 namespace MarkPad.Document
 {
     public partial class DocumentView : IHandle<SettingsChangedEvent>
     {
-        private const int NumSpaces = 4;
-        private const string Spaces = "    ";
-
-        private readonly Regex WordSeparatorRegex = new Regex("-[^\\w]+|^'[^\\w]+|[^\\w]+'[^\\w]+|[^\\w]+-[^\\w]+|[^\\w]+'$|[^\\w]+-$|^-$|^'$|[^\\w'-]", RegexOptions.Compiled);
-        private readonly Regex UriFinderRegex = new Regex("(http|ftp|https|mailto):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?", RegexOptions.Compiled);
+        private const double ZoomDelta = 0.1;
+        private const string LocalRequestUrlBase = "local://base_request.html/";
 
         private ScrollViewer documentScrollViewer;
-        private readonly SpellCheckBackgroundRenderer spellCheckRenderer;
-        private readonly ISpellingService hunspell;
+        private readonly IList<IDocumentViewExtension> extensions = new List<IDocumentViewExtension>();
+        private readonly ISettingsProvider settingsProvider;
 
-        public DocumentView()
+        MarkPadSettings settings;
+
+        public DocumentView(ISettingsProvider settingsProvider)
         {
+            this.settingsProvider = settingsProvider;
+
             InitializeComponent();
+
             Loaded += DocumentViewLoaded;
             wb.Loaded += WbLoaded;
-            wb.OpenExternalLink += WebControl_LinkClicked;
+            wb.OpenExternalLink += WebControlLinkClicked;
+            wb.ResourceRequest += WebControlResourceRequest;
+            SizeChanged += DocumentViewSizeChanged;
+            ZoomSlider.ValueChanged += (sender, e) => ApplyZoom();
+            markdownEditor.Editor.MouseWheel += HandleEditorMouseWheel;
+            markdownEditor.Editor.KeyDown += WordCount_KeyDown;
 
-            SizeChanged += new SizeChangedEventHandler(DocumentViewSizeChanged);
+            Handle(new SettingsChangedEvent());
 
-            Editor.TextArea.SelectionChanged += SelectionChanged;
-
-            Editor.PreviewMouseLeftButtonUp += HandleMouseUp;
-
-            hunspell = IoC.Get<ISpellingService>();
-
-            spellCheckRenderer = new SpellCheckBackgroundRenderer();
-
-            Editor.TextArea.TextView.BackgroundRenderers.Add(spellCheckRenderer);
-            Editor.TextArea.TextView.VisualLinesChanged += TextView_VisualLinesChanged;
-
-            CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleBold, (x, y) => ToggleBold(), CanEditDocument));
-            CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleItalic, (x, y) => ToggleItalic(), CanEditDocument));
-            CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCode, (x, y) => ToggleCode(), CanEditDocument));
-            CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCodeBlock, (x, y) => ToggleCodeBlock(), CanEditDocument));
-            CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
-
+            CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomIn, (x, y) => ZoomIn()));
+            CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomOut, (x, y) => ZoomOut()));
+            CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomReset, (x, y) => ZoomReset()));
         }
 
-
-        void WebControl_LinkClicked(object sender, OpenExternalLinkEventArgs e)
+        public TextEditor Editor
         {
-            Process.Start(e.Url);
+            get { return markdownEditor.Editor; }
         }
 
-        void TextView_VisualLinesChanged(object sender, EventArgs e)
+        void HandleEditorMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            DoSpellCheck();
+            if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl)) return;
+            ZoomSlider.Value += e.Delta * 0.1;
+        }
+
+        void WordCount_KeyDown(object sender, KeyEventArgs e)
+        {
+            var vm = DataContext as DocumentViewModel;
+
+            var count = 0;
+
+            if (!string.IsNullOrEmpty(vm.Render))
+            {
+                count = GetWordCount(vm.Render);
+            }
+
+            WordCount.Content = "words: " + count;
+        }
+
+        private static int GetWordCount(string text)
+        {
+            var input = text;
+            input = Regex.Replace(input, @"(?s)<script.*?(/>|</script>)", string.Empty);
+            input = Regex.Replace(input, @"</?\w+((\s+\w+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>", string.Empty);
+            return Regex.Matches(input, @"[\S]+").Count;
+        }
+
+        private void ApplyZoom()
+        {
+            markdownEditor.Editor.TextArea.TextView.Redraw();
+
+            var zoom = ZoomSlider.Value;
+
+            var fontSize = GetFontSize() * zoom;
+
+            markdownEditor.Editor.FontSize = fontSize;
+            wb.Zoom = GetZoomLevel(fontSize);
+        }
+
+        private void ZoomIn()
+        {
+            AdjustZoom(ZoomDelta);
+        }
+
+        private void ZoomOut()
+        {
+            AdjustZoom(-ZoomDelta);
+        }
+
+        private void AdjustZoom(double delta)
+        {
+            var newZoom = ZoomSlider.Value + delta;
+
+            if (newZoom < ZoomSlider.Minimum) newZoom = ZoomSlider.Minimum;
+            if (newZoom > ZoomSlider.Maximum) newZoom = ZoomSlider.Maximum;
+
+            ZoomSlider.Value = newZoom;
+        }
+
+        private void ZoomReset()
+        {
+            ZoomSlider.Value = 1;
+        }
+
+        protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
+        {
+            base.OnPreviewMouseWheel(e);
+
+            if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl)) return;
+
+            e.Handled = true;
+
+            if (e.Delta > 0) ZoomIn();
+            else ZoomOut();
+        }
+
+        private void ApplyFont()
+        {
+            markdownEditor.Editor.FontFamily = GetFontFamily();
+        }
+
+        private void ApplyExtensions()
+        {
+            var allExtensions = MarkPadExtensionsProvider.Extensions.OfType<IDocumentViewExtension>().ToList();
+            var extensionsToAdd = allExtensions.Except(extensions).ToList();
+            var extensionsToRemove = extensions.Except(allExtensions).ToList();
+
+            foreach (var extension in extensionsToAdd)
+            {
+                extension.ConnectToDocumentView(this);
+                extensions.Add(extension);
+            }
+
+            foreach (var extension in extensionsToRemove)
+            {
+                extension.DisconnectFromDocumentView(this);
+                extensions.Remove(extension);
+            }
+        }
+
+        void WebControlLinkClicked(object sender, OpenExternalLinkEventArgs e)
+        {
+            // Although all links have "target='_blank'" added (see ParsedDocument.ToHtml()), they go through this first
+            // unless the url is local (a bug in Awesomium) in which case this event isn't triggered, and the "target='_blank'"
+            // takes over to avoid crashing the preview. Local resource requests where the resource doesn't exist are thrown
+            // away. See WebControl_ResourceRequest().
+
+            string filename = e.Url;
+            if (e.Url.StartsWith(LocalRequestUrlBase))
+            {
+                filename = GetResourceFilename(e.Url.Replace(LocalRequestUrlBase, "")) ?? "";
+                if (!File.Exists(filename)) return;
+            }
+
+            if (string.IsNullOrWhiteSpace(filename)) return;
+
+            Process.Start(filename);
+        }
+
+        ResourceResponse WebControlResourceRequest(object o, ResourceRequestEventArgs e)
+        {
+            // This tries to get a local resource. If there is no local resource null is returned by GetLocalResource, which
+            // triggers the default handler, which should respect the "target='_blank'" attribute added
+            // in ParsedDocument.ToHtml(), thus avoiding a bug in Awesomium where trying to navigate to a
+            // local resource fails when showing an in-memory file (https://github.com/Code52/DownmarkerWPF/pull/208)
+
+            // What works:
+            //	- resource requests for remote resources (like <link href="http://somecdn.../jquery.js"/>)
+            //	- resource requests for local resources that exist relative to filename of the file (like <img src="images/logo.png"/>)
+            //	- clicking links for remote resources (like [Google](http://www.google.com))
+            //	- clicking links for local resources which don't exist (eg [test](test)) does nothing (WebControl_LinkClicked checks for existence)
+            // What fails:
+            //	- clicking links for local resources where the resource exists (like [test](images/logo.png))
+            //		- This _sometimes_ opens the resource in the preview pane, and sometimes opens the resource 
+            //		using Process.Start (WebControl_LinkClicked gets triggered). The behaviour seems stochastic.
+            //	- alt text for images where the image resource is not found
+
+            if (e.Request.Url.StartsWith(LocalRequestUrlBase)) return GetLocalResource(e.Request.Url.Replace(LocalRequestUrlBase, ""));
+
+            // If the request wasn't local, return null to let the usual handler load the url from the network			
+            return null;
+        }
+        ResourceResponse GetLocalResource(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url)) return null;
+
+            var resourceFilename = GetResourceFilename(url);
+            if (!File.Exists(resourceFilename)) return null;
+
+            return new ResourceResponse(resourceFilename);
+        }
+        public string GetResourceFilename(string url)
+        {
+            var vm = DataContext as DocumentViewModel;
+            if (vm == null) return null;
+            if (string.IsNullOrEmpty(vm.FileName)) return null;
+
+            var resourceFilename = Path.Combine(Path.GetDirectoryName(vm.FileName), url);
+            return resourceFilename;
         }
 
         void DocumentViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
             // Hide web browser when the window is too small for it to make much sense
-            if (e.NewSize.Width <= 350)
-            {
-                webBrowserColumn.MaxWidth = 0;
-            }
-            else
-            {
-                webBrowserColumn.MaxWidth = double.MaxValue;
-            }
+            webBrowserColumn.MaxWidth = e.NewSize.Width <= 350 ? 0 : double.MaxValue;
         }
 
         /// <summary>
@@ -96,34 +234,36 @@ namespace MarkPad.Document
         /// <returns>Font size.</returns>
         private int GetFontSize()
         {
-            return Constants.FONT_SIZE_ENUM_ADJUSTMENT + ((DocumentViewModel)DataContext).GetFontSize();
+            return Constants.FONT_SIZE_ENUM_ADJUSTMENT + (int)settings.FontSize;
         }
 
-		private FontFamily GetFontFamily()
-		{
-			var documentViewModel = (DocumentViewModel)DataContext;
-			return documentViewModel.GetFontFamily();
-		}
+        private FontFamily GetFontFamily()
+        {
+            var configuredSource = settings.FontFamily;
+            var fontFamily = FontHelpers.TryGetFontFamilyFromStack(configuredSource, "Segoe UI", "Arial");
+            if (fontFamily == null) throw new Exception("Cannot find configured font family or fallback fonts");
+            return fontFamily;
+        }
 
         /// <summary>
         /// Turn the font size into a zoom level for the browser.
         /// </summary>
         /// <returns></returns>
-        private int GetZoomLevel()
+        private static int GetZoomLevel(double fontSize)
         {
             // The default font size 12 corresponds to 100 (which maps to 0 here); for an increment of 1, we add 50/6 to the number.
             // For 18 we end up with 150, which looks really fine. TODO: Feel free to try to further outline this, but this is a good start.
-            var zoom = 100 + ((DocumentViewModel)DataContext).GetFontSize() * 40 / 6;
+            var zoom = 100.0 + (fontSize - Constants.FONT_SIZE_ENUM_ADJUSTMENT) * 40.0 / 6.0;
 
             // Limit the zoom by the limits of Awesomium.NET.
             if (zoom < 50) zoom = 50;
             if (zoom > 500) zoom = 500;
-            return zoom;
+            return (int)zoom;
         }
 
         private void WbProcentualZoom()
         {
-            wb.Zoom = GetZoomLevel();
+            ApplyZoom();
             wb.ExecuteJavascript("window.scrollTo(0," + documentScrollViewer.VerticalOffset / (documentScrollViewer.ExtentHeight - documentScrollViewer.ViewportHeight) + " * (document.body.scrollHeight - document.body.clientHeight));");
         }
 
@@ -134,237 +274,38 @@ namespace MarkPad.Document
 
         private void DocumentViewLoaded(object sender, RoutedEventArgs e)
         {
-            using (var stream = Assembly.GetEntryAssembly().GetManifestResourceStream("MarkPad.Syntax.Markdown.xshd"))
-            using (var reader = new XmlTextReader(stream))
-            {
-                Editor.SyntaxHighlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
-            }
+            documentScrollViewer = markdownEditor.FindVisualChild<ScrollViewer>();
 
-            documentScrollViewer = Editor.FindVisualChild<ScrollViewer>();
-
+            var viewModel = ((DocumentViewModel)DataContext);
             if (documentScrollViewer != null)
             {
                 documentScrollViewer.ScrollChanged += (i, j) => WbProcentualZoom();
-                var x = ((DocumentViewModel)DataContext);
-                x.Document.TextChanged += (i, j) =>
-                    {
-                        Editor.FontSize = GetFontSize();
-						Editor.FontFamily = GetFontFamily();
-                        wb.LoadCompleted += (k, l) => WbProcentualZoom();
-                    };
-            }
-
-            // AvalonEdit hijacks Ctrl+I. We need to free that mutha up
-            var editCommandBindings = Editor.TextArea.DefaultInputHandler.Editing.CommandBindings;
-
-            editCommandBindings
-                .FirstOrDefault(b => b.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.IndentSelection)
-                .ExecuteSafely(b => editCommandBindings.Remove(b));
-
-            // Set font size and focus on the editor.
-            Editor.FontSize = GetFontSize();
-			Editor.FontFamily = GetFontFamily();
-            Editor.Focus();
-
-            // Set zoom level of the preview.
-            wb.Zoom = GetZoomLevel();
-        }
-
-        private void DoSpellCheck()
-        {
-            if (this.Editor.TextArea.TextView.VisualLinesValid)
-            {
-                this.spellCheckRenderer.ErrorSegments.Clear();
-
-                IEnumerable<VisualLine> visualLines = Editor.TextArea.TextView.VisualLines.AsParallel();
-
-                foreach (VisualLine currentLine in visualLines)
+                viewModel.Document.TextChanged += (i, j) =>
                 {
-                    int startIndex = 0;
-
-                    string originalText = Editor.Document.GetText(currentLine.FirstDocumentLine.Offset, currentLine.LastDocumentLine.EndOffset - currentLine.FirstDocumentLine.Offset);
-                    originalText = Regex.Replace(originalText, "[\\u2018\\u2019\\u201A\\u201B\\u2032\\u2035]", "'");
-
-                    var textWithoutURLs = UriFinderRegex.Replace(originalText, "");
-
-                    var query = WordSeparatorRegex.Split(textWithoutURLs)
-                        .Where(s => !string.IsNullOrEmpty(s));
-
-                    foreach (var word in query)
-                    {
-                        string trimmedWord = word.Trim('\'', '_', '-');
-
-                        int num = currentLine.FirstDocumentLine.Offset + originalText.IndexOf(trimmedWord, startIndex);
-
-                        if (!hunspell.Spell(trimmedWord))
-                        {
-                            TextSegment textSegment = new TextSegment();
-                            textSegment.StartOffset = num;
-                            textSegment.Length = word.Length;
-                            this.spellCheckRenderer.ErrorSegments.Add(textSegment);
-                        }
-
-                        startIndex = originalText.IndexOf(word, startIndex) + word.Length;
-                    }
-                }
+                    wb.LoadCompleted += (k, l) => WbProcentualZoom();
+                };
             }
         }
 
-        internal void ToggleBold()
+        public void Handle(SettingsChangedEvent message)
         {
-            var selectedText = GetSelectedText();
-            if (string.IsNullOrWhiteSpace(selectedText)) return;
+            settings = settingsProvider.GetSettings<MarkPadSettings>();
+            markdownEditor.FloatingToolbarEnabled = settings.FloatingToolBarEnabled;
 
-            Editor.SelectedText = selectedText.ToggleBold(!selectedText.IsBold());
+            ApplyFont();
+            ApplyZoom();
+            ApplyExtensions();
         }
 
-        internal void ToggleItalic()
+        private void SiteFilesMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var selectedText = GetSelectedText();
-            if (string.IsNullOrWhiteSpace(selectedText)) return;
+             var selectedItem = siteFiles.SelectedItem as ISiteItem;
 
-            Editor.SelectedText = selectedText.ToggleItalic(!selectedText.IsItalic());
-        }
-
-        internal void ToggleCode()
-        {
-            if (Editor.SelectedText.Contains(Environment.NewLine))
-                ToggleCodeBlock();
-            else
+            if (selectedItem !=null)
             {
-                var selectedText = GetSelectedText();
-                if (string.IsNullOrWhiteSpace(selectedText)) return;
-
-                Editor.SelectedText = selectedText.ToggleCode(!selectedText.IsCode());
+                (DataContext as DocumentViewModel)
+                    .ExecuteSafely(d => d.SiteContext.OpenItem(selectedItem));
             }
-        }
-
-        private string GetSelectedText()
-        {
-            var textArea = Editor.TextArea;
-            // What would you do if the selected text is empty? I vote: Nothing.
-            if (textArea.Selection.IsEmpty)
-                return null;
-
-            return textArea.Selection.GetText(textArea.Document);
-        }
-
-        private void ToggleCodeBlock()
-        {
-            var lines = Editor.SelectedText.Split(Environment.NewLine.ToCharArray());
-            if (lines[0].Length > 4)
-            {
-                if (lines[0].Substring(0, 4) == Spaces)
-                {
-                    Editor.SelectedText = Editor.SelectedText.Replace((Environment.NewLine + Spaces), Environment.NewLine);
-
-                    // remember the first line
-                    if (Editor.SelectedText.Length >= NumSpaces)
-                    {
-                        var firstFour = Editor.SelectedText.Substring(0, NumSpaces);
-                        var rest = Editor.SelectedText.Substring(NumSpaces);
-
-                        Editor.SelectedText = firstFour.Replace(Spaces, string.Empty) + rest;
-                    }
-                    return;
-                }
-            }
-
-            Editor.SelectedText = Spaces + Editor.SelectedText.Replace(Environment.NewLine, Environment.NewLine + Spaces);
-        }
-
-        internal void SetHyperlink()
-        {
-            var textArea = Editor.TextArea;
-            if (textArea.Selection.IsEmpty)
-                return;
-
-            var selectedText = textArea.Selection.GetText(textArea.Document);
-
-            //  Check if the selected text already is a link...
-            string text = selectedText, url = string.Empty;
-            var match = Regex.Match(selectedText, @"\[(?<text>(?:[^\\]|\\.)+)\]\((?<url>[^)]+)\)");
-            if (match.Success)
-            {
-                text = match.Groups["text"].Value;
-                url = match.Groups["url"].Value;
-            }
-            var hyperlink = new MarkPadHyperlink(text, url);
-
-            (DataContext as DocumentViewModel)
-                .ExecuteSafely(vm =>
-                                   {
-                                       hyperlink = vm.GetHyperlink(hyperlink);
-                                       if (hyperlink != null)
-                                       {
-                                           textArea.Selection.ReplaceSelectionWithText(textArea,
-                                               string.Format("[{0}]({1})", hyperlink.Text, hyperlink.Url));
-                                       }
-                                   });
-        }
-
-        private void SelectionChanged(object sender, EventArgs e)
-        {
-            if (Editor.TextArea.Selection.IsEmpty)
-            {
-                floatingToolBar.Hide();
-            }
-        }
-
-        private void HandleMouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (Editor.TextArea.Selection.IsEmpty)
-            {
-                floatingToolBar.Hide();
-            }
-            else
-            {
-                floatingToolBar.Show();
-            }
-        }
-
-        private void CanEditDocument(object sender, CanExecuteRoutedEventArgs e)
-        {
-            if (Editor != null && Editor.TextArea != null && Editor.TextArea.Selection != null)
-            {
-                e.CanExecute = !Editor.TextArea.Selection.IsEmpty;
-            }
-        }
-
-        void IHandle<SettingsChangedEvent>.Handle(SettingsChangedEvent message)
-        {
-            DoSpellCheck();
-            Editor.TextArea.TextView.Redraw();
-
-            Editor.FontSize = GetFontSize();
-			Editor.FontFamily = GetFontFamily();
-            wb.Zoom = GetZoomLevel();
-        }
-
-        private void EditorPreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (Keyboard.Modifiers != ModifierKeys.Control || e.Key != Key.V) return;
-            (DataContext as DocumentViewModel)
-                .ExecuteSafely(d =>
-                {
-                    var siteContext = d.SiteContext;
-                    var images = Clipboard.GetDataObject().GetImages();
-                    if (images.Any() && siteContext != null)
-                    {
-                        var sb = new StringBuilder();
-                        var textArea = Editor.TextArea;
-
-                        foreach (var dataImage in images)
-                        {
-                            var relativePath = siteContext.SaveImage(dataImage.Bitmap);
-
-                            sb.AppendLine(string.Format("![{0}]({1})", Path.GetFileNameWithoutExtension(relativePath), relativePath));
-                        }
-
-                        textArea.Selection.ReplaceSelectionWithText(textArea, sb.ToString().Trim());
-                        e.Handled = true;
-                    }
-                });
         }
     }
 }

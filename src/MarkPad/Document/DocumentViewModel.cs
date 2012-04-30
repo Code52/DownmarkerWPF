@@ -2,17 +2,16 @@ using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using System.Windows.Media;
 using System.Windows.Threading;
 using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using ICSharpCode.AvalonEdit.Document;
-using MarkPad.Framework;
 using MarkPad.HyperlinkEditor;
-using MarkPad.Metaweblog;
+using MarkPad.Services;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
-using MarkPad.Settings;
+using MarkPad.Services.Metaweblog;
+using MarkPad.Services.Settings;
 using Ookii.Dialogs.Wpf;
 
 namespace MarkPad.Document
@@ -22,23 +21,22 @@ namespace MarkPad.Document
         private static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
 
         private readonly IDialogService dialogService;
-        private readonly ISettingsService settings;
         private readonly IWindowManager windowManager;
-		private readonly ISiteContextGenerator siteContextGenerator;
+        private readonly ISiteContextGenerator siteContextGenerator;
+        private readonly Func<string, IMetaWeblogService> getMetaWeblog;
 
         private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
         private readonly DispatcherTimer timer;
 
         private string title;
         private string filename;
-        private ISiteContext siteContext;
 
-        public DocumentViewModel(IDialogService dialogService, ISettingsService settings, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator)
+        public DocumentViewModel(IDialogService dialogService, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator, Func<string, IMetaWeblogService> getMetaWeblog)
         {
             this.dialogService = dialogService;
-            this.settings = settings;
             this.windowManager = windowManager;
             this.siteContextGenerator = siteContextGenerator;
+            this.getMetaWeblog = getMetaWeblog;
 
             title = "New Document";
             Original = "";
@@ -63,9 +61,9 @@ namespace MarkPad.Document
                 }
 
                 var result = s.Result;
-                if (siteContext != null)
+                if (SiteContext != null)
                 {
-                    result = siteContext.ConvertToAbsolutePaths(result);
+                    result = SiteContext.ConvertToAbsolutePaths(result);
                 }
 
                 Render = result;
@@ -88,9 +86,10 @@ namespace MarkPad.Document
         public void OpenFromWeb(Post post)
         {
             Post = post;
-            title = post.permalink;
-            Document.Text = post.description;
-            Original = post.description;
+
+            title = post.permalink ?? string.Empty; // TODO: no title is displayed now
+            Document.Text = post.description ?? string.Empty;
+            Original = post.description ?? string.Empty;
 
             Update();
             EvaluateContext();
@@ -104,6 +103,21 @@ namespace MarkPad.Document
             timer.Start();
             NotifyOfPropertyChange(() => HasChanges);
             NotifyOfPropertyChange(() => DisplayName);
+        }
+
+        public bool SaveAs()
+        {
+            var path = dialogService.GetFileSavePath("Choose a location to save the document.", "*.md", Constants.ExtensionFilter + "|All Files (*.*)|*.*");
+
+            if (string.IsNullOrEmpty(path))
+                return false;
+
+            filename = path;
+            title = new FileInfo(filename).Name;
+            NotifyOfPropertyChange(() => DisplayName);
+            EvaluateContext();
+
+            return Save();
         }
 
         public bool Save()
@@ -129,10 +143,10 @@ namespace MarkPad.Document
                 File.WriteAllText(filename, Document.Text);
                 Original = Document.Text;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 var saveResult = dialogService.ShowConfirmation("MarkPad", "Cannot save file",
-                                                String.Format("Do you want to save changes for {0} to a different file?", title), 
+                                                String.Format("Do you want to save changes for {0} to a different file?", title),
                                                 new ButtonExtras(ButtonType.Yes, "Save", "Save the file at a different location."),
                                                 new ButtonExtras(ButtonType.No, "Do not save", "The file will be considered a New Document.  The next save will prompt for a file location."));
 
@@ -154,13 +168,13 @@ namespace MarkPad.Document
                 NotifyOfPropertyChange(() => DisplayName);
                 return saveResult;
             }
-             
+
             return true;
         }
 
         private void EvaluateContext()
         {
-            siteContext = siteContextGenerator.GetContext(filename);
+            SiteContext = siteContextGenerator.GetContext(filename);
         }
 
         public TextDocument Document { get; set; }
@@ -181,7 +195,13 @@ namespace MarkPad.Document
 
         public string FileName
         {
-            get { return filename; } 
+            get { return filename; }
+        }
+
+        public string Title
+        {
+            get { return title; }
+            set { title = value; }
         }
 
         public override void CanClose(Action<bool> callback)
@@ -243,16 +263,13 @@ namespace MarkPad.Document
 
         public bool DistractionFree { get; set; }
 
-        public ISiteContext SiteContext
-        {
-            get { return siteContext; }
-        }
+        public ISiteContext SiteContext { get; private set; }
 
         public void Publish(string postid, string postTitle, string[] categories, BlogSetting blog)
         {
             if (categories == null) categories = new string[0];
 
-            var proxy = new MetaWeblog(blog.WebAPI);
+            var proxy = getMetaWeblog(blog.WebAPI);
 
             var newpost = new Post();
             try
@@ -271,26 +288,20 @@ namespace MarkPad.Document
                                    title = postTitle,
                                    dateCreated = DateTime.Now,
                                    description = blog.Language == "HTML" ? renderBody : Document.Text,
-                                   categories = categories
+                                   categories = categories,
+                                   format = blog.Language
                                };
-                    newpost.postid = proxy.NewPost(blog.BlogInfo.blogid, blog.Username, blog.Password, newpost, true);
-
-                    settings.Set(newpost.permalink, newpost);
-                    settings.Save();
+                    newpost.postid = proxy.NewPost(blog, newpost, true);
                 }
                 else
                 {
-                    newpost = proxy.GetPost(postid, blog.Username, blog.Password);
+                    newpost = proxy.GetPost(postid, blog);
                     newpost.title = postTitle;
                     newpost.description = blog.Language == "HTML" ? renderBody : Document.Text;
                     newpost.categories = categories;
                     newpost.format = blog.Language;
 
-                    proxy.EditPost(postid, blog.Username, blog.Password, newpost, true);
-
-                    //Not sure what this is doing??
-                    settings.Set(newpost.permalink, newpost);
-                    settings.Save();
+                    proxy.EditPost(postid, blog, newpost, true);
                 }
             }
             catch (WebException ex)
@@ -326,17 +337,5 @@ namespace MarkPad.Document
             }
             return null;
         }
-
-        public int GetFontSize()
-        {
-            return (int) settings.Get<FontSizes>(SettingsViewModel.FontSizeSettingsKey);
-        }
-		public FontFamily GetFontFamily()
-		{
-			var configuredSource = settings.Get<string>(SettingsViewModel.FontFamilySettingsKey);
-			var fontFamily = FontHelpers.TryGetFontFamilyFromStack(configuredSource, "Segoe UI", "Arial");
-			if (fontFamily == null) throw new Exception("Cannot find configured font family or fallback fonts");
-			return fontFamily;			
-		}
     }
 }

@@ -6,7 +6,7 @@
     <ProductVersion>3.5</ProductVersion>
     <ProjectGuid>{26a121eb-bd0d-48e7-a70f-0fc99e941786}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>MarkPad.Setup</OutputName>
+    <OutputName>MarkPad</OutputName>
     <OutputType>Package</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
@@ -59,6 +59,6 @@
     <GetAssemblyIdentity AssemblyFiles="..\MarkPad\bin\$(Configuration)\MarkPad.exe">
       <Output TaskParameter="Assemblies" ItemName="AssemblyVersion" />
     </GetAssemblyIdentity>
-	<Move SourceFiles="$(OutputPath)\$(TargetName)$(TargetExt)" DestinationFiles="$(OutputPath)\$(TargetName).v%(AssemblyVersion.Version)$(TargetExt)" />
+    <Move SourceFiles="$(OutputPath)\$(TargetName)$(TargetExt)" DestinationFiles="$(OutputPath)\$(TargetName).v%(AssemblyVersion.Version)$(TargetExt)" />
   </Target>
 </Project>

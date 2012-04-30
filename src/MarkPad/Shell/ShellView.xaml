@@ -14,10 +14,12 @@
     x:Class="MarkPad.Shell.ShellView"
     mc:Ignorable="d" 
     MouseLeftButtonDown="DragMoveWindow"
+	MouseMove="MouseMoveWindow"
     DragOver="WindowDragOver"
     Icon="../markpad.ico"
     SnapsToDevicePixels="True"
     AllowDrop="True"
+    x:Name="window"
     d:DataContext="{d:DesignInstance {x:Type Shell:ShellViewModel}}">
 
     <Window.Resources>
@@ -69,30 +71,6 @@
 
         <s:InputBindingTrigger>
             <s:InputBindingTrigger.InputBinding>
-                <KeyBinding Modifiers="Ctrl" Key="B" />
-            </s:InputBindingTrigger.InputBinding>
-            <cm:ActionMessage MethodName="ToggleBold" />
-        </s:InputBindingTrigger>
-        <s:InputBindingTrigger>
-            <s:InputBindingTrigger.InputBinding>
-                <KeyBinding Modifiers="Ctrl" Key="I" />
-            </s:InputBindingTrigger.InputBinding>
-            <cm:ActionMessage MethodName="ToggleItalic" />
-        </s:InputBindingTrigger>
-        <s:InputBindingTrigger>
-            <s:InputBindingTrigger.InputBinding>
-                <KeyBinding Modifiers="Ctrl" Key="J" />
-            </s:InputBindingTrigger.InputBinding>
-            <cm:ActionMessage MethodName="ToggleCode" />
-        </s:InputBindingTrigger>
-        <s:InputBindingTrigger>
-            <s:InputBindingTrigger.InputBinding>
-                <KeyBinding Modifiers="Ctrl" Key="K" />
-            </s:InputBindingTrigger.InputBinding>
-            <cm:ActionMessage MethodName="SetHyperlink" />
-        </s:InputBindingTrigger>
-        <s:InputBindingTrigger>
-            <s:InputBindingTrigger.InputBinding>
                 <KeyBinding Key="F10" />
             </s:InputBindingTrigger.InputBinding>
             <cm:ActionMessage MethodName="ToggleWebView" />
@@ -102,6 +80,12 @@
                 <KeyBinding Modifiers="Ctrl" Key="O" />
             </s:InputBindingTrigger.InputBinding>
             <cm:ActionMessage MethodName="OpenDocument" />
+        </s:InputBindingTrigger>
+        <s:InputBindingTrigger>
+            <s:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Ctrl" Key="W" />
+            </s:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="CloseDocument" />
         </s:InputBindingTrigger>
     </i:Interaction.Triggers>
 
@@ -305,7 +289,7 @@
                 </VisualState>
             </VisualStateGroup>
     	</VisualStateManager.VisualStateGroups>
-        <Grid>
+        <Grid x:Name="header">
     		<Grid.RowDefinitions>
     			<RowDefinition Height="Auto" MinHeight="58" />
     			<RowDefinition />
@@ -379,6 +363,7 @@
     				</TransformGroup>
     			</WrapPanel.RenderTransform>
     			<Button x:Name="SaveDocument" Content="SAVE" />
+                <Button x:Name="SaveAsDocument" Content="SAVE AS" />
     			<Button x:Name="SaveAllDocuments" Content="SAVE ALL" />
     		</WrapPanel>
             <WrapPanel x:Name="openItems" Visibility="Collapsed"  Opacity="0" Margin="30,0,0,0" VerticalAlignment="Bottom" Height="20" RenderTransformOrigin="0.5,0.5" d:LayoutOverrides="VerticalAlignment, GridBox">
@@ -401,6 +386,7 @@
                 <Button x:Name="OpenFromWeb" Content="OPEN FROM WEB" />
     		</WrapPanel>
     		<StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Orientation="Horizontal">
+                <ContentControl x:Name="Updater" />
                 <Button Content="SETTINGS" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" FontWeight="Bold">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">

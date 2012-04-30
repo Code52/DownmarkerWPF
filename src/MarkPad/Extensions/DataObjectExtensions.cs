@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Point = System.Drawing.Point;
@@ -23,19 +24,6 @@ namespace MarkPad.Extensions
                 images.Add(new DataImage { Bitmap = bitmap, BitmapSource = BitmapToSource(bitmap) });
             }
 
-            else if (e.GetDataPresent("System.String"))
-            {
-                var url = (string)e.GetData("System.String");
-                if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
-                    return images;
-
-                var wc = new WebClient();
-                var originalData = wc.DownloadData(url);
-
-                var stream = new MemoryStream(originalData);
-                var x = new Bitmap(stream);
-                images.Add(new DataImage { Bitmap = x, BitmapSource = BitmapToSource(x) });
-            }
             else if (e.GetDataPresent(DataFormats.Bitmap))
             {
                 var bitmap = (Bitmap)e.GetData(DataFormats.Bitmap);

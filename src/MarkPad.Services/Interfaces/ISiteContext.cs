@@ -1,8 +1,9 @@
-﻿using System.Drawing;
+﻿using System.ComponentModel;
+using System.Drawing;
 
 namespace MarkPad.Services.Interfaces
 {
-    public interface ISiteContext
+    public interface ISiteContext : INotifyPropertyChanged
     {
         /// <summary>
         /// Saves the image to the file system
@@ -12,5 +13,9 @@ namespace MarkPad.Services.Interfaces
         string SaveImage(Bitmap image);
 
         string ConvertToAbsolutePaths(string htmlDocument);
+
+        ISiteItem[] Items { get; }
+
+        void OpenItem(ISiteItem selectedItem);
     }
 }

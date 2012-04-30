@@ -1,23 +1,30 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Media.Imaging;
+using Caliburn.Micro;
+using MarkPad.Services.Events;
 using MarkPad.Services.Interfaces;
 
 namespace MarkPad.Services.Implementation
 {
-    public class JekyllSiteContext : ISiteContext
+    public class JekyllSiteContext : PropertyChangedBase, ISiteContext
     {
         private readonly string basePath;
         private readonly string filenameWithPath;
+        private ISiteItem[] items;
+        private readonly IEventAggregator eventAggregator;
+        private readonly IDialogService dialogService;
 
-        public JekyllSiteContext(string basePath, string filename)
+        public JekyllSiteContext(IEventAggregator eventAggregator, IDialogService dialogService, string basePath, string filename)
         {
             this.basePath = basePath;
             filenameWithPath = filename;
+            this.dialogService = dialogService;
+            this.eventAggregator = eventAggregator;
         }
 
         public string SaveImage(Bitmap image)
@@ -27,7 +34,13 @@ namespace MarkPad.Services.Implementation
             if (!Directory.Exists(absoluteImagePath))
                 Directory.CreateDirectory(absoluteImagePath);
 
-            var filename = Path.GetFileNameWithoutExtension(filenameWithPath);
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filenameWithPath);
+            if (fileNameWithoutExtension == null)
+                return null;
+
+            var filename = fileNameWithoutExtension
+                .Replace(" ", string.Empty)
+                .Replace(".", string.Empty);
             var count = 1;
             var imageFilename = filename + ".png";
 
@@ -44,7 +57,7 @@ namespace MarkPad.Services.Implementation
             var enumerable = imageFilename.Replace(basePath, string.Empty).TrimStart('\\', '/') //Get rid of starting /
                 .Where(c => c == '/' || c == '\\') // select each / or \
                 .Select(c => "..") // turn each into a ..
-                .Concat(new[] {"img", imageFilename}); // concat with the image filename
+                .Concat(new[] { "img", imageFilename }); // concat with the image filename
             var relativePath = string.Join("\\", enumerable); //now we join with path separator giving relative path
 
             return relativePath;
@@ -63,11 +76,41 @@ namespace MarkPad.Services.Implementation
                     continue;
 
 
-                var base64String = Convert.ToBase64String(File.ReadAllBytes(Path.Combine(basePath, url.TrimStart('/'))));
+                var filePath = Path.Combine(basePath, url.TrimStart('/'));
+                if (!File.Exists(filePath))
+                    continue;
+                var base64String = Convert.ToBase64String(File.ReadAllBytes(filePath));
                 htmlDocument = htmlDocument.Replace(replace, string.Format("src=\"data:image/png;base64,{0}\"", base64String));
             }
 
             return htmlDocument;
+        }
+
+        public ISiteItem[] Items
+        {
+            get { return items ?? (items = new FileSystemSiteItem(basePath).Children); }
+        }
+
+        public void OpenItem(ISiteItem selectedItem)
+        {
+            var fileItem = selectedItem as FileSystemSiteItem;
+            if (fileItem == null || !File.Exists(fileItem.Path)) return;
+
+            if (Constants.DefaultExtensions.Contains(Path.GetExtension(fileItem.Path).ToLower()))
+            {
+                eventAggregator.Publish(new FileOpenEvent(fileItem.Path));
+            }
+            else
+            {
+                try
+                {
+                    Process.Start(fileItem.Path);
+                }
+                catch (Exception ex)
+                {
+                    dialogService.ShowError("Failed to open file", "Cannot open {0}", ex.Message);
+                }
+            }
         }
     }
 }
