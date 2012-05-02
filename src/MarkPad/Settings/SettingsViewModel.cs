@@ -13,6 +13,8 @@ using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;
 using Microsoft.Win32;
+using MarkPad.PluginApi;
+using System.ComponentModel.Composition;
 
 namespace MarkPad.Settings
 {
@@ -20,6 +22,15 @@ namespace MarkPad.Settings
     {
         public const string FontSizeSettingsKey = "Font";
         public const string FontFamilySettingsKey = "FontFamily";
+        private const string MarkpadKeyName = "markpad.md";
+
+        private readonly ISettingsProvider settingsService;
+        private readonly IWindowManager windowManager;
+        private readonly IEventAggregator eventAggregator;
+        private readonly Func<BlogSettingsViewModel> blogSettingsCreator;
+		private readonly IPluginManager pluginManager;
+		private readonly Func<IPlugin, PluginViewModel> pluginViewModelCreator;
+
         public IEnumerable<ExtensionViewModel> Extensions { get; set; }
         public IEnumerable<FontSizes> FontSizes { get; set; }
         public IEnumerable<FontFamily> FontFamilies { get; set; }
@@ -30,24 +41,28 @@ namespace MarkPad.Settings
         public FontFamily SelectedFontFamily { get; set; }
 		public bool EnableFloatingToolBar { get; set; }
 		public bool EnableSpellCheck { get; set; }
+		public PluginViewModel SelectedPlugin { get; set; }
+		public IEnumerable<PluginViewModel> Plugins { get; private set; }
 
-        private const string MarkpadKeyName = "markpad.md";
-
-        private readonly ISettingsProvider settingsService;
-        private readonly IWindowManager windowManager;
-        private readonly IEventAggregator eventAggregator;
-        private readonly Func<BlogSettingsViewModel> blogSettingsCreator;
+		[ImportMany]
+		IEnumerable<IPlugin> plugins;
 
         public SettingsViewModel(
             ISettingsProvider settingsService,
             IWindowManager windowManager,
             IEventAggregator eventAggregator,
-            Func<BlogSettingsViewModel> blogSettingsCreator)
+            Func<BlogSettingsViewModel> blogSettingsCreator,
+			IPluginManager pluginManager,
+			Func<IPlugin, PluginViewModel> pluginViewModelCreator)
         {
             this.settingsService = settingsService;
             this.windowManager = windowManager;
             this.eventAggregator = eventAggregator;
             this.blogSettingsCreator = blogSettingsCreator;
+			this.pluginManager = pluginManager;
+			this.pluginViewModelCreator = pluginViewModelCreator;
+
+			this.pluginManager.Container.ComposeParts(this);
         }
 
         public void Initialize()
@@ -82,6 +97,8 @@ namespace MarkPad.Settings
             }
 			EnableFloatingToolBar = settings.FloatingToolBarEnabled;
 			EnableSpellCheck = settings.SpellCheckEnabled;
+
+			Plugins = plugins.Select(plugin => pluginViewModelCreator(plugin));
         }
 
         private BlogSetting currentBlog;

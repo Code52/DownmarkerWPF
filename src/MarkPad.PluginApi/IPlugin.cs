@@ -9,5 +9,9 @@ namespace MarkPad.PluginApi
 	[InheritedExport]
 	public interface IPlugin
 	{
+		string Name { get; }
+		string Version { get; }
+		string Authors { get; }
+		string Description { get; }
 	}
 }

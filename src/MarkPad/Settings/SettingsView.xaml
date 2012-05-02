@@ -166,9 +166,53 @@
                     </Grid>
 				</StackPanel>
             </TabItem>
-            <TabItem Header="extensions">
-
-            </TabItem>
+            <TabItem Header="plugins">
+				<StackPanel Margin="15,0,0,0">
+					<TextBlock TextWrapping="Wrap" FontSize="26.667" Foreground="White" FontWeight="Light" Text="extensions"/>
+					<ListView ItemsSource="{Binding Plugins}" SelectedItem="{Binding SelectedPlugin}" Height="130">
+						<ListBox.ItemsPanel>
+							<ItemsPanelTemplate>
+								<StackPanel/>
+							</ItemsPanelTemplate>
+						</ListBox.ItemsPanel>
+						<ListView.View>
+							<GridView>
+								<GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+								<GridViewColumn Header="Version" DisplayMemberBinding="{Binding Version}"/>
+								<GridViewColumn Header="Authors" DisplayMemberBinding="{Binding Authors}" />
+								<GridViewColumn Header="Description" DisplayMemberBinding="{Binding Description}" />
+								<GridViewColumn Header="Install">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<Button Content="Install" Style="{DynamicResource SquareButtonStyle}"
+													IsEnabled="{Binding CanInstall}"
+													cal:Message.Attach="Install"/>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+								<GridViewColumn Header="Uninstall">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<Button Content="Uninstall" Style="{DynamicResource SquareButtonStyle}"
+													IsEnabled="{Binding CanUninstall}"
+													cal:Message.Attach="Uninstall"/>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+								<GridViewColumn Header="Settings">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<Button Content="Settings" Style="{DynamicResource SquareButtonStyle}"
+												IsEnabled="{Binding CanUpdate}"
+												cal:Message.Attach="Settings"/>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+							</GridView>
+						</ListView.View>
+					</ListView>
+				</StackPanel>
+			</TabItem>
         </TabControl>
     </Grid>
 </UserControl>
