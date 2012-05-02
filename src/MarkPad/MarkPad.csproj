@@ -203,6 +203,7 @@
       <DependentUpon>MarkdownEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Document\MarkPadHyperlink.cs" />
+    <Compile Include="Framework\Events\PluginsChangedEvent.cs" />
     <Compile Include="InPathMultiConverter.cs" />
     <Compile Include="Extensions\DataImage.cs" />
     <Compile Include="Extensions\DataObjectExtensions.cs" />

@@ -43,6 +43,8 @@
   <ItemGroup>
     <Compile Include="ICanCreateNewPage.cs" />
     <Compile Include="IPlugin.cs" />
+    <Compile Include="IPluginSettings.cs" />
+    <Compile Include="IPluginSettingsProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

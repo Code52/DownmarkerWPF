@@ -7,13 +7,9 @@ using System.ComponentModel.Composition;
 namespace MarkPad.PluginApi
 {
 	[InheritedExport]
-	public interface IPlugin
+	public interface IPluginSettingsProvider
 	{
-		string Name { get; }
-		string Version { get; }
-		string Authors { get; }
-		string Description { get; }
-		IPluginSettings Settings { get; }
-		void SaveSettings();
+		T GetSettings<T>() where T : IPluginSettings, new();
+		void SaveSettings<T>(T settings) where T : IPluginSettings, new();
 	}
 }
