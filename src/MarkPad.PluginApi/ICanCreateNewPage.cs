@@ -7,7 +7,9 @@ using System.ComponentModel.Composition;
 namespace MarkPad.PluginApi
 {
 	[InheritedExport]
-	public interface IPlugin
+	public interface ICanCreateNewPage : IPlugin
 	{
+		string CreateNewPageLabel { get; }
+		string CreateNewPage();
 	}
 }

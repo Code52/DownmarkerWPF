@@ -1,15 +1,46 @@
 using System.Windows;
 using System.Windows.Input;
 using MarkPad.Framework;
+using MarkPad.PluginApi;
+using System.Collections.Generic;
+using System.Windows.Controls;
+using MarkPad.Framework;
+using System.Linq;
+using System.ComponentModel.Composition;
 
 namespace MarkPad.Shell
 {
     public partial class ShellView
     {
-        public ShellView()
+		readonly IPluginManager _pluginManager;
+
+		[ImportMany]
+		IEnumerable<ICanCreateNewPage> _canCreateNewPagePlugins;
+
+        public ShellView(IPluginManager pluginManager)
         {
             InitializeComponent();
+
+			_pluginManager = pluginManager;
+			_pluginManager.Container.ComposeParts(this);
+
+			UpdatePlugins();
         }
+
+		void UpdatePlugins()
+		{
+			NewPageHook.Children.Clear();
+			foreach (var plugin in _canCreateNewPagePlugins)
+			{
+				var button = new Button { Content = plugin.CreateNewPageLabel.ToUpper(), Tag = plugin };
+				button.Click += new RoutedEventHandler((o, e) =>
+				{
+					var text = plugin.CreateNewPage();
+					(DataContext as ShellViewModel).ExecuteSafely(vm => vm.NewDocument(text));
+				});
+				NewPageHook.Children.Add(button);
+			}
+		}
 
         private bool ignoreNextMouseMove;
 
