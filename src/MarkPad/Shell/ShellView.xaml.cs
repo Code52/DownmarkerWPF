@@ -7,10 +7,12 @@ using System.Windows.Controls;
 using MarkPad.Framework;
 using System.Linq;
 using System.ComponentModel.Composition;
+using Caliburn.Micro;
+using MarkPad.Framework.Events;
 
 namespace MarkPad.Shell
 {
-    public partial class ShellView
+    public partial class ShellView : IHandle<PluginsChangedEvent>
     {
 		readonly IPluginManager _pluginManager;
 
@@ -30,7 +32,7 @@ namespace MarkPad.Shell
 		void UpdatePlugins()
 		{
 			NewPageHook.Children.Clear();
-			foreach (var plugin in _canCreateNewPagePlugins)
+			foreach (var plugin in _canCreateNewPagePlugins.Where(p => p.Settings.IsEnabled))
 			{
 				var button = new Button { Content = plugin.CreateNewPageLabel.ToUpper(), Tag = plugin };
 				button.Click += new RoutedEventHandler((o, e) =>
@@ -40,6 +42,11 @@ namespace MarkPad.Shell
 				});
 				NewPageHook.Children.Add(button);
 			}
+		}
+
+		public void Handle(PluginsChangedEvent e)
+		{
+			UpdatePlugins();
 		}
 
         private bool ignoreNextMouseMove;

@@ -3,6 +3,7 @@ using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Metaweblog.Rsd;
 using MarkPad.Services.Settings;
+using MarkPad.PluginApi;
 
 namespace MarkPad.Services
 {

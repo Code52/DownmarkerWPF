@@ -166,6 +166,7 @@
     <Compile Include="HtmlPreview.xaml.cs">
       <DependentUpon>HtmlPreview.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Framework\Events\PluginsChangedEvent.cs" />
     <Compile Include="InPathMultiConverter.cs" />
     <Compile Include="Extensions\DataImage.cs" />
     <Compile Include="Extensions\DataObjectExtensions.cs" />
