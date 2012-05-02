@@ -375,6 +375,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MarkPad.Contracts\MarkPad.Contracts.csproj">
+      <Project>{96FA74A6-397A-4BE2-A6BF-AAD39A159DD2}</Project>
+      <Name>MarkPad.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MarkPad.PluginApi\MarkPad.PluginApi.csproj">
+      <Project>{E780D0E3-37A4-43D3-89C1-76053FA63752}</Project>
+      <Name>MarkPad.PluginApi</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MarkPad.Services\MarkPad.Services.csproj">
       <Project>{8088D80C-14AF-4618-B12A-F47C2771EBDD}</Project>
       <Name>MarkPad.Services</Name>
