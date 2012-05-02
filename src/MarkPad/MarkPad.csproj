@@ -237,6 +237,7 @@
     <Compile Include="Settings\FetchedBlogInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Settings\PluginViewModel.cs" />
     <Compile Include="Settings\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
       <SubType>Code</SubType>
