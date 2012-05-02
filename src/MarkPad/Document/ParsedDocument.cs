@@ -7,9 +7,9 @@ using System.Text;
 
 namespace MarkPad.Document
 {
-    static class DocumentParser
+    public static class DocumentParser
     {
-        private static readonly Markdown markdown = new Markdown();
+			private static readonly Markdown markdown = new Markdown();
 
         static DocumentParser() 
         {

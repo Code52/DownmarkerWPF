@@ -1,0 +1,32 @@
+<html>
+<head>
+
+</head>
+<body>
+<h1>This is a header block</h1>
+<p>With a Url  <a href="http://code52.org/DownmarkerWPF/" target="_blank">HyperLink</a> 
+and some <strong>bold</strong> formatting and <em>italics</em></p>
+<h2>And a subheader</h2>
+<ul>
+<li>With a bullet point 1</li>
+<li>And bullet point 2</li>
+</ul>
+<p>Finally there is a</p>
+<pre><code>code { block;} =  here
+</code></pre>
+
+<p>Of course we could do <code>code</code> in the middle of the page</p>
+
+
+<script type='text/javascript'>
+	window.onload = function(){
+		var links = document.getElementsByTagName('a');
+		for (var i = 0; i < links.length; i++) {
+			var l = links[i];
+			if (l.getAttribute('href')) l.target = '_blank';
+		}
+	};
+</script>
+			
+</body>
+</html>
