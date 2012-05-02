@@ -78,18 +78,21 @@ namespace MarkPad.Shell
             TryClose();
         }
 
-        public void NewDocument()
-        {
-            MDI.Open(documentCreator());
-        }
+		public void NewDocument(string text = "")
+		{
+            var creator = documentCreator();
+
+            creator.Document.BeginUpdate();
+			creator.Document.Text = text;
+            creator.Document.EndUpdate();
+            
+			MDI.Open(creator);			
+			creator.Update();
+		}
 
         public void NewJekyllDocument()
         {
-            var creator = documentCreator();
-            creator.Document.BeginUpdate();
-            creator.Document.Text = CreateJekyllHeader();
-            creator.Document.EndUpdate();
-            MDI.Open(creator);
+			NewDocument(CreateJekyllHeader());
         }
 
         private static string CreateJekyllHeader()

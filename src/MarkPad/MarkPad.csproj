@@ -225,6 +225,7 @@
     <Compile Include="HyperlinkEditor\HyperlinkEditorViewModel.cs" />
     <Compile Include="MarkPadExtensions\SpellCheck\SpellCheckProvider.cs" />
     <Compile Include="OpenFromWeb\Entry.cs" />
+    <Compile Include="PluginManager.cs" />
     <Compile Include="Settings\BlogSettingsView.xaml.cs">
       <DependentUpon>BlogSettingsView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -390,6 +391,10 @@
     <ProjectReference Include="..\MarkPad.XAML\MarkPad.XAML.csproj">
       <Project>{F5C76E3F-AC91-477D-86DE-778850F3E14B}</Project>
       <Name>MarkPad.XAML</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Plugins\ExamplePlugin\ExamplePlugin.csproj">
+      <Project>{B780B8AD-169E-4300-A29F-713471EF3056}</Project>
+      <Name>ExamplePlugin</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

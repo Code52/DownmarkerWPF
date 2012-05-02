@@ -13,6 +13,7 @@ namespace MarkPad.MarkPadExtensions
 			builder
 				.RegisterType<MarkPad.MarkPadExtensions.SpellCheck.SpellCheckExtension>()
 				.As<MarkPad.MarkPadExtensions.SpellCheck.SpellCheckExtension>();
+			builder.RegisterType<PluginManager>().As<IPluginManager>();
 		}
 	}
 }
