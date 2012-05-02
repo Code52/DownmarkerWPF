@@ -20,6 +20,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.Services", "MarkPad
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.Tests", "MarkPad.Tests\MarkPad.Tests.csproj", "{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.Contracts", "MarkPad.Contracts\MarkPad.Contracts.csproj", "{96FA74A6-397A-4BE2-A6BF-AAD39A159DD2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{930C63A3-C919-4AA1-9292-DB3C4B81F4DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.PluginApi", "MarkPad.PluginApi\MarkPad.PluginApi.csproj", "{E780D0E3-37A4-43D3-89C1-76053FA63752}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
