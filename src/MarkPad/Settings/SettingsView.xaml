@@ -101,7 +101,6 @@
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
-                            <Controls:ToggleSwitch Margin="-10,75,0,0" IsChecked="{Binding EnableSpellCheck, Mode=TwoWay}" Content="spell check" />
                         </Grid>
                         
 						<StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,20,20,0" Width="250">

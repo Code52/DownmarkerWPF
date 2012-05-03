@@ -30,6 +30,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamplePlugin", "Plugins\Ex
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportToHtmlPlugin", "ExportToHtmlPlugin\ExportToHtmlPlugin.csproj", "{F5EF3169-748F-4C96-A4A1-F33381572619}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpellCheckPlugin", "SpellCheckPlugin\SpellCheckPlugin.csproj", "{2FD996E4-8647-4A21-AE43-3652F66D4685}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -136,6 +138,18 @@ Global
 		{F5EF3169-748F-4C96-A4A1-F33381572619}.Testing|Any CPU.Build.0 = Release|Any CPU
 		{F5EF3169-748F-4C96-A4A1-F33381572619}.Testing|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F5EF3169-748F-4C96-A4A1-F33381572619}.Testing|Mixed Platforms.Build.0 = Release|Any CPU
+		{2FD996E4-8647-4A21-AE43-3652F66D4685}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FD996E4-8647-4A21-AE43-3652F66D4685}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FD996E4-8647-4A21-AE43-3652F66D4685}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2FD996E4-8647-4A21-AE43-3652F66D4685}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2FD996E4-8647-4A21-AE43-3652F66D4685}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FD996E4-8647-4A21-AE43-3652F66D4685}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FD996E4-8647-4A21-AE43-3652F66D4685}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2FD996E4-8647-4A21-AE43-3652F66D4685}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{2FD996E4-8647-4A21-AE43-3652F66D4685}.Testing|Any CPU.ActiveCfg = Release|Any CPU
+		{2FD996E4-8647-4A21-AE43-3652F66D4685}.Testing|Any CPU.Build.0 = Release|Any CPU
+		{2FD996E4-8647-4A21-AE43-3652F66D4685}.Testing|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2FD996E4-8647-4A21-AE43-3652F66D4685}.Testing|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -143,5 +157,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{B780B8AD-169E-4300-A29F-713471EF3056} = {930C63A3-C919-4AA1-9292-DB3C4B81F4DA}
 		{F5EF3169-748F-4C96-A4A1-F33381572619} = {930C63A3-C919-4AA1-9292-DB3C4B81F4DA}
+		{2FD996E4-8647-4A21-AE43-3652F66D4685} = {930C63A3-C919-4AA1-9292-DB3C4B81F4DA}
 	EndGlobalSection
 EndGlobal

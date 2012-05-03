@@ -15,6 +15,7 @@ using MarkPad.Services.Settings;
 using Microsoft.Win32;
 using MarkPad.PluginApi;
 using System.ComponentModel.Composition;
+using MarkPad.Contracts;
 
 namespace MarkPad.Settings
 {
@@ -30,6 +31,7 @@ namespace MarkPad.Settings
         private readonly Func<BlogSettingsViewModel> blogSettingsCreator;
 		private readonly IPluginManager pluginManager;
 		private readonly Func<IPlugin, PluginViewModel> pluginViewModelCreator;
+		private readonly ISpellingService spellingService;
 
         public IEnumerable<ExtensionViewModel> Extensions { get; set; }
         public IEnumerable<FontSizes> FontSizes { get; set; }
@@ -40,7 +42,6 @@ namespace MarkPad.Settings
         public FontSizes SelectedFontSize { get; set; }
         public FontFamily SelectedFontFamily { get; set; }
 		public bool EnableFloatingToolBar { get; set; }
-		public bool EnableSpellCheck { get; set; }
 		public PluginViewModel SelectedPlugin { get; set; }
 		public IEnumerable<PluginViewModel> Plugins { get; private set; }
 
@@ -53,7 +54,8 @@ namespace MarkPad.Settings
             IEventAggregator eventAggregator,
             Func<BlogSettingsViewModel> blogSettingsCreator,
 			IPluginManager pluginManager,
-			Func<IPlugin, PluginViewModel> pluginViewModelCreator)
+			Func<IPlugin, PluginViewModel> pluginViewModelCreator,
+			ISpellingService spellingService)
         {
             this.settingsService = settingsService;
             this.windowManager = windowManager;
@@ -61,6 +63,7 @@ namespace MarkPad.Settings
             this.blogSettingsCreator = blogSettingsCreator;
 			this.pluginManager = pluginManager;
 			this.pluginViewModelCreator = pluginViewModelCreator;
+			this.spellingService = spellingService;
 
 			this.pluginManager.Container.ComposeParts(this);
         }
@@ -84,7 +87,8 @@ namespace MarkPad.Settings
             FontSizes = Enum.GetValues(typeof(FontSizes)).OfType<FontSizes>().ToArray();
             FontFamilies = Fonts.SystemFontFamilies.OrderBy(f => f.Source);
 
-            SelectedLanguage = settings.Language;
+			var spellCheckPluginSettings = settingsService.GetSettings<SpellCheckPlugin.SpellCheckPluginSettings>();
+			SelectedLanguage = spellCheckPluginSettings.Language;
 
             var fontFamily = settings.FontFamily;
             SelectedFontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == fontFamily);
@@ -96,7 +100,6 @@ namespace MarkPad.Settings
                 SelectedFontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
             }
 			EnableFloatingToolBar = settings.FloatingToolBarEnabled;
-			EnableSpellCheck = settings.SpellCheckEnabled;
 
 			Plugins = plugins.Select(plugin => pluginViewModelCreator(plugin));
         }
@@ -201,28 +204,30 @@ namespace MarkPad.Settings
         {
             UpdateExtensionRegistryKeys();
 
-            var spellingService = IoC.Get<ISpellingService>();
             spellingService.SetLanguage(SelectedLanguage);
 
             var settings = settingsService.GetSettings<MarkPadSettings>();
 
             settings.SaveBlogs(Blogs.ToList());
-            settings.Language = SelectedLanguage;
             settings.FontSize = SelectedFontSize;
             settings.FontFamily = SelectedFontFamily.Source;
 			settings.FloatingToolBarEnabled = EnableFloatingToolBar;
-			settings.SpellCheckEnabled = EnableSpellCheck;
 			
             settingsService.SaveSettings(settings);
 
-            IoC.Get<IEventAggregator>().Publish(new SettingsChangedEvent());
+			/// TODO: Move to per-plugin setting screen
+			var spellCheckPluginSettings = settingsService.GetSettings<SpellCheckPlugin.SpellCheckPluginSettings>();
+			spellCheckPluginSettings.Language = SelectedLanguage;
+			settingsService.SaveSettings(spellCheckPluginSettings);
+
+            eventAggregator.Publish(new SettingsChangedEvent());
         }
 
-        public void HideSettings()
-        {
-            eventAggregator.Publish(new SettingsCloseEvent());
-            Accept();
-        }
+		public void HideSettings()
+		{
+			eventAggregator.Publish(new SettingsCloseEvent());
+			Accept();
+		}
 
         private void UpdateExtensionRegistryKeys()
         {

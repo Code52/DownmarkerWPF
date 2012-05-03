@@ -16,28 +16,43 @@ using MarkPad.Framework.Events;
 using MarkPad.MarkPadExtensions;
 using MarkPad.Services;
 using MarkPad.Services.Interfaces;
-using MarkPad.Services.MarkPadExtensions;
 using MarkPad.Services.Settings;
 using MarkPad.XAML;
+using MarkPad.Contracts;
+using System.ComponentModel.Composition;
+using MarkPad.PluginApi;
 
 namespace MarkPad.Document
 {
-    public partial class DocumentView : IHandle<SettingsChangedEvent>
+    public partial class DocumentView : 
+		IDocumentView,
+		IHandle<SettingsChangedEvent>,
+		IHandle<PluginsChangedEvent>
     {
         private const double ZoomDelta = 0.1;
         private const string LocalRequestUrlBase = "local://base_request.html/";
 
         private ScrollViewer documentScrollViewer;
-        private readonly IList<IDocumentViewExtension> extensions = new List<IDocumentViewExtension>();
         private readonly ISettingsProvider settingsProvider;
+		private readonly IPluginManager pluginManager;
 
         MarkPadSettings settings;
+		[ImportMany]
+		IEnumerable<IDocumentViewPlugin> documentViewPlugins;
+		IEnumerable<IDocumentViewPlugin> connectedDocumentViewPlugins = new IDocumentViewPlugin[0];
 
-        public DocumentView(ISettingsProvider settingsProvider)
+        public DocumentView(
+			ISettingsProvider settingsProvider,
+			IPluginManager pluginManager)
         {
-            this.settingsProvider = settingsProvider;
+			this.settingsProvider = settingsProvider;
+			this.pluginManager = pluginManager;
 
+			this.pluginManager.Container.ComposeParts(this);
+			
             InitializeComponent();
+
+			UpdatePlugins();
 
             Loaded += DocumentViewLoaded;
             wb.Loaded += WbLoaded;
@@ -48,12 +63,28 @@ namespace MarkPad.Document
             markdownEditor.Editor.MouseWheel += HandleEditorMouseWheel;
             markdownEditor.Editor.KeyDown += WordCount_KeyDown;
 
-            Handle(new SettingsChangedEvent());
+			Handle(new SettingsChangedEvent());
 
             CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomIn, (x, y) => ZoomIn()));
             CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomOut, (x, y) => ZoomOut()));
             CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomReset, (x, y) => ZoomReset()));
         }
+
+		public void UpdatePlugins()
+		{
+			var enabledPlugins = documentViewPlugins.Where(p => p.Settings.IsEnabled);
+
+			foreach (var plugin in connectedDocumentViewPlugins.Except(enabledPlugins))
+			{
+				plugin.DisconnectFromDocumentView(this);
+			}
+			foreach (var plugin in enabledPlugins.Except(connectedDocumentViewPlugins))
+			{
+				plugin.ConnectToDocumentView(this);
+			}
+
+			connectedDocumentViewPlugins = new List<IDocumentViewPlugin>(enabledPlugins);
+		}
 
         public TextEditor Editor
         {
@@ -140,25 +171,6 @@ namespace MarkPad.Document
         private void ApplyFont()
         {
             markdownEditor.Editor.FontFamily = GetFontFamily();
-        }
-
-        private void ApplyExtensions()
-        {
-            var allExtensions = MarkPadExtensionsProvider.Extensions.OfType<IDocumentViewExtension>().ToList();
-            var extensionsToAdd = allExtensions.Except(extensions).ToList();
-            var extensionsToRemove = extensions.Except(allExtensions).ToList();
-
-            foreach (var extension in extensionsToAdd)
-            {
-                extension.ConnectToDocumentView(this);
-                extensions.Add(extension);
-            }
-
-            foreach (var extension in extensionsToRemove)
-            {
-                extension.DisconnectFromDocumentView(this);
-                extensions.Remove(extension);
-            }
         }
 
         void WebControlLinkClicked(object sender, OpenExternalLinkEventArgs e)
@@ -302,8 +314,12 @@ namespace MarkPad.Document
 
             ApplyFont();
             ApplyZoom();
-            ApplyExtensions();
         }
+
+		public void Handle(PluginsChangedEvent e)
+		{
+			UpdatePlugins();
+		}
 
         private void SiteFilesMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {

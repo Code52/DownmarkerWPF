@@ -98,7 +98,6 @@
     <Compile Include="Events\FileOpenEvent.cs" />
     <Compile Include="Interfaces\FileSystemSiteItem.cs" />
     <Compile Include="Interfaces\ISiteItem.cs" />
-    <Compile Include="MarkPadExtensions\IMarkPadExtension.cs" />
     <Compile Include="Implementation\ButtonExtras.cs" />
     <Compile Include="Implementation\FontSizes.cs" />
     <Compile Include="Implementation\MetaWeblogService.cs" />
@@ -110,7 +109,6 @@
     <Compile Include="Interfaces\IMetaWeblogService.cs" />
     <Compile Include="Interfaces\ISiteContext.cs" />
     <Compile Include="Interfaces\ISiteContextGenerator.cs" />
-    <Compile Include="Interfaces\ISpellingService.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />
     <Compile Include="Interfaces\ITaskSchedulerFactory.cs" />
     <Compile Include="Metaweblog\Category.cs" />
@@ -135,7 +133,6 @@
     <Compile Include="Implementation\JekyllSiteContext.cs" />
     <Compile Include="Settings\BlogInfo.cs" />
     <Compile Include="Settings\BlogSetting.cs" />
-    <Compile Include="MarkPadExtensions\MarkPadExtensionsProvider.cs" />
     <Compile Include="Settings\IsolatedStorageSettingsStore.cs" />
     <Compile Include="Settings\MarkPadSettings.cs" />
     <Compile Include="Settings\PluginSettingsProvider.cs" />
