@@ -378,6 +378,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ExportToHtmlPlugin\ExportToHtmlPlugin.csproj">
+      <Project>{F5EF3169-748F-4C96-A4A1-F33381572619}</Project>
+      <Name>ExportToHtmlPlugin</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MarkPad.Contracts\MarkPad.Contracts.csproj">
       <Project>{96FA74A6-397A-4BE2-A6BF-AAD39A159DD2}</Project>
       <Name>MarkPad.Contracts</Name>

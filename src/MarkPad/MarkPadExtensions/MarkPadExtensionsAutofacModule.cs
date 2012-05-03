@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Autofac;
+using MarkPad.Document;
+using MarkPad.Contracts;
 
 namespace MarkPad.MarkPadExtensions
 {
@@ -14,6 +16,7 @@ namespace MarkPad.MarkPadExtensions
 				.RegisterType<MarkPad.MarkPadExtensions.SpellCheck.SpellCheckExtension>()
 				.As<MarkPad.MarkPadExtensions.SpellCheck.SpellCheckExtension>();
 			builder.RegisterType<PluginManager>().As<IPluginManager>().SingleInstance();
+			builder.RegisterType<DocumentParser>().As<IDocumentParser>();
 		}
 	}
 }

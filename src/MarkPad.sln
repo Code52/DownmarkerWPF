@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.PluginApi", "MarkPa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamplePlugin", "Plugins\ExamplePlugin\ExamplePlugin.csproj", "{B780B8AD-169E-4300-A29F-713471EF3056}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportToHtmlPlugin", "ExportToHtmlPlugin\ExportToHtmlPlugin.csproj", "{F5EF3169-748F-4C96-A4A1-F33381572619}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -122,11 +124,24 @@ Global
 		{B780B8AD-169E-4300-A29F-713471EF3056}.Testing|Any CPU.Build.0 = Release|Any CPU
 		{B780B8AD-169E-4300-A29F-713471EF3056}.Testing|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{B780B8AD-169E-4300-A29F-713471EF3056}.Testing|Mixed Platforms.Build.0 = Release|Any CPU
+		{F5EF3169-748F-4C96-A4A1-F33381572619}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5EF3169-748F-4C96-A4A1-F33381572619}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5EF3169-748F-4C96-A4A1-F33381572619}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F5EF3169-748F-4C96-A4A1-F33381572619}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F5EF3169-748F-4C96-A4A1-F33381572619}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5EF3169-748F-4C96-A4A1-F33381572619}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5EF3169-748F-4C96-A4A1-F33381572619}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F5EF3169-748F-4C96-A4A1-F33381572619}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F5EF3169-748F-4C96-A4A1-F33381572619}.Testing|Any CPU.ActiveCfg = Release|Any CPU
+		{F5EF3169-748F-4C96-A4A1-F33381572619}.Testing|Any CPU.Build.0 = Release|Any CPU
+		{F5EF3169-748F-4C96-A4A1-F33381572619}.Testing|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F5EF3169-748F-4C96-A4A1-F33381572619}.Testing|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B780B8AD-169E-4300-A29F-713471EF3056} = {930C63A3-C919-4AA1-9292-DB3C4B81F4DA}
+		{F5EF3169-748F-4C96-A4A1-F33381572619} = {930C63A3-C919-4AA1-9292-DB3C4B81F4DA}
 	EndGlobalSection
 EndGlobal

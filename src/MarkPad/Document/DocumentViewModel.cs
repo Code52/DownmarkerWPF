@@ -13,10 +13,11 @@ using MarkPad.Services.Interfaces;
 using MarkPad.Services.Metaweblog;
 using MarkPad.Services.Settings;
 using Ookii.Dialogs.Wpf;
+using MarkPad.Contracts;
 
 namespace MarkPad.Document
 {
-    internal class DocumentViewModel : Screen
+    internal class DocumentViewModel : Screen, IDocumentViewModel
     {
         private static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
 
@@ -24,6 +25,7 @@ namespace MarkPad.Document
         private readonly IWindowManager windowManager;
         private readonly ISiteContextGenerator siteContextGenerator;
         private readonly Func<string, IMetaWeblogService> getMetaWeblog;
+		private readonly IDocumentParser documentParser;
 
         private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
         private readonly DispatcherTimer timer;
@@ -31,12 +33,18 @@ namespace MarkPad.Document
         private string title;
         private string filename;
 
-        public DocumentViewModel(IDialogService dialogService, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator, Func<string, IMetaWeblogService> getMetaWeblog)
+        public DocumentViewModel(
+			IDialogService dialogService, 
+			IWindowManager windowManager, 
+			ISiteContextGenerator siteContextGenerator, 
+			Func<string, IMetaWeblogService> getMetaWeblog,
+			IDocumentParser documentParser)
         {
             this.dialogService = dialogService;
             this.windowManager = windowManager;
             this.siteContextGenerator = siteContextGenerator;
             this.getMetaWeblog = getMetaWeblog;
+			this.documentParser = documentParser;
 
             title = "New Document";
             Original = "";
@@ -51,7 +59,7 @@ namespace MarkPad.Document
         {
             timer.Stop();
 
-            Task.Factory.StartNew(text => DocumentParser.Parse(text.ToString()), Document.Text)
+			Task.Factory.StartNew(text => documentParser.Parse(text.ToString()), Document.Text)
             .ContinueWith(s =>
             {
                 if (s.IsFaulted)
@@ -178,6 +186,7 @@ namespace MarkPad.Document
         }
 
         public TextDocument Document { get; set; }
+		public string MarkdownContent { get { return Document.Text; } }
 
         public string Original { get; set; }
 

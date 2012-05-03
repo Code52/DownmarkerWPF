@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ICanCreateNewPage.cs" />
+    <Compile Include="ICanSavePage.cs" />
     <Compile Include="IPlugin.cs" />
     <Compile Include="IPluginSettings.cs" />
     <Compile Include="IPluginSettingsProvider.cs" />
