@@ -1,5 +1,5 @@
 ﻿using ApprovalTests;
-using ApprovalTests.Reporters;
+using ApprovalUtilities.Utilities;
 using MarkPad.Document;
 using Xunit;
 
@@ -9,9 +9,26 @@ namespace MarkPad.Tests
 	public class MarkDownTest
 	{
 		[Fact]
+		public void TestParsingBodyOnly()
+		{
+			var text = MarkDownWithHeader();
+			var output = DocumentParser.GetBodyContents(text);
+			Approvals.VerifyHtml(output);
+		}
+		[Fact]
 		public void TestParsing()
 		{
-			var text = @"# This is a header block
+			var text = MarkDownWithHeader();
+			VerifyParsing(text);
+		}
+
+		private static string MarkDownWithHeader()
+		{
+			var text =
+				@"---
+theme:TestTheme
+---
+# This is a header block
 
 With a Url  [HyperLink](http://code52.org/DownmarkerWPF/) 
 and some **bold** formatting and *italics*
@@ -26,7 +43,18 @@ and some **bold** formatting and *italics*
     code { block;} =  here
     
 Of course we could do `code` in the middle of the page";
-			var output = DocumentParser.Parse(text);
+			return text;
+		}
+
+		[Fact]
+		public void TestParsingWithoutHeader()
+		{
+			VerifyParsing("This Doesn't have a header");
+		}
+
+		private static void VerifyParsing(string text)
+		{
+			var output = DocumentParser.Parse(text, PathUtilities.GetDirectoryForCaller());
 			Approvals.VerifyHtml(output);
 		}
 	}

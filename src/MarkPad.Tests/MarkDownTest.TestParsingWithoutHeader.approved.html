@@ -1,0 +1,20 @@
+<html>
+<head>
+
+</head>
+<body>
+<p>This Doesn't have a header</p>
+
+
+<script type='text/javascript'>
+	window.onload = function(){
+		var links = document.getElementsByTagName('a');
+		for (var i = 0; i < links.length; i++) {
+			var l = links[i];
+			if (l.getAttribute('href')) l.target = '_blank';
+		}
+	};
+</script>
+			
+</body>
+</html>
