@@ -18,6 +18,8 @@ namespace MarkPad.Shell
 
 		[ImportMany]
 		IEnumerable<ICanCreateNewPage> _canCreateNewPagePlugins;
+		[ImportMany]
+		IEnumerable<ICanSavePage> _canSavePagePlugins;
 
         public ShellView(IPluginManager pluginManager)
         {
@@ -31,7 +33,7 @@ namespace MarkPad.Shell
 
 		void UpdatePlugins()
 		{
-			NewPageHook.Children.Clear();
+			CreateNewPageHook.Children.Clear();
 			foreach (var plugin in _canCreateNewPagePlugins.Where(p => p.Settings.IsEnabled))
 			{
 				var button = new Button { Content = plugin.CreateNewPageLabel.ToUpper(), Tag = plugin };
@@ -40,7 +42,20 @@ namespace MarkPad.Shell
 					var text = plugin.CreateNewPage();
 					(DataContext as ShellViewModel).ExecuteSafely(vm => vm.NewDocument(text));
 				});
-				NewPageHook.Children.Add(button);
+				CreateNewPageHook.Children.Add(button);
+			}
+
+			SavePageHook.Children.Clear();
+			foreach (var plugin in _canSavePagePlugins.Where(p => p.Settings.IsEnabled))
+			{
+				var button = new Button { Content = plugin.SavePageLabel.ToUpper(), Tag = plugin };
+				button.Click += new RoutedEventHandler((o, e) =>
+					(DataContext as ShellViewModel).ExecuteSafely(vm =>
+					{
+						if (vm.ActiveDocumentViewModel == null) return;
+						plugin.SavePage(vm.ActiveDocumentViewModel);
+					}));
+				SavePageHook.Children.Add(button);
 			}
 		}
 

@@ -72,6 +72,7 @@ namespace MarkPad.Shell
         public MDIViewModel MDI { get; private set; }
         public SettingsViewModel Settings { get; private set; }
         public UpdaterViewModel Updater { get; set; }
+		public DocumentViewModel ActiveDocumentViewModel { get { return MDI.ActiveItem as DocumentViewModel; } }
 
         public void Exit()
         {
