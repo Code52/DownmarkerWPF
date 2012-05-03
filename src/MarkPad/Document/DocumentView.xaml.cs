@@ -12,19 +12,27 @@ using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.MarkPadExtensions;
 using MarkPad.Services.Interfaces;
-using MarkPad.Services.MarkPadExtensions;
 using MarkPad.Services.Settings;
 using MarkPad.XAML;
+using MarkPad.Contracts;
+using System.ComponentModel.Composition;
+using MarkPad.PluginApi;
 
 namespace MarkPad.Document
 {
-    public partial class DocumentView : IHandle<SettingsChangedEvent>
+    public partial class DocumentView : 
+		IDocumentView,
+		IHandle<SettingsChangedEvent>,
+		IHandle<PluginsChangedEvent>
     {
         private ScrollViewer documentScrollViewer;
-        private readonly IList<IDocumentViewExtension> extensions = new List<IDocumentViewExtension>();
         private readonly ISettingsProvider settingsProvider;
+		private readonly IPluginManager pluginManager;
 
         MarkPadSettings settings;
+		[ImportMany]
+		IEnumerable<IDocumentViewPlugin> documentViewPlugins;
+		IEnumerable<IDocumentViewPlugin> connectedDocumentViewPlugins = new IDocumentViewPlugin[0];
 
         #region public double ScrollPercentage
         public static DependencyProperty ScrollPercentageProperty = DependencyProperty.Register("ScrollPercentage", typeof(double), typeof(DocumentView),
@@ -37,17 +45,24 @@ namespace MarkPad.Document
         }
         #endregion
 
-        public DocumentView(ISettingsProvider settingsProvider)
+        public DocumentView(
+			ISettingsProvider settingsProvider,
+			IPluginManager pluginManager)
         {
-            this.settingsProvider = settingsProvider;
+			this.settingsProvider = settingsProvider;
+			this.pluginManager = pluginManager;
 
+			this.pluginManager.Container.ComposeParts(this);
+			
             InitializeComponent();
+
+			UpdatePlugins();
 
             Loaded += DocumentViewLoaded;
             SizeChanged += DocumentViewSizeChanged;
             markdownEditor.Editor.MouseWheel += HandleEditorMouseWheel;
 
-            Handle(new SettingsChangedEvent());
+			Handle(new SettingsChangedEvent());
 
             CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomIn, (x, y) => ViewModel.ExecuteSafely(vm=>vm.ZoomIn())));
             CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomOut, (x, y) => ViewModel.ExecuteSafely(vm=>vm.ZoomOut())));
@@ -58,6 +73,22 @@ namespace MarkPad.Document
         {
             get { return DataContext as DocumentViewModel; }
         }
+
+		public void UpdatePlugins()
+		{
+			var enabledPlugins = documentViewPlugins.Where(p => p.Settings.IsEnabled);
+
+			foreach (var plugin in connectedDocumentViewPlugins.Except(enabledPlugins))
+			{
+				plugin.DisconnectFromDocumentView(this);
+			}
+			foreach (var plugin in enabledPlugins.Except(connectedDocumentViewPlugins))
+			{
+				plugin.ConnectToDocumentView(this);
+			}
+
+			connectedDocumentViewPlugins = new List<IDocumentViewPlugin>(enabledPlugins);
+		}
 
         public TextEditor Editor
         {
@@ -89,23 +120,73 @@ namespace MarkPad.Document
             markdownEditor.Editor.FontFamily = GetFontFamily();
         }
 
-        private void ApplyExtensions()
+        void WebControlLinkClicked(object sender, OpenExternalLinkEventArgs e)
         {
-            var allExtensions = MarkPadExtensionsProvider.Extensions.OfType<IDocumentViewExtension>().ToList();
-            var extensionsToAdd = allExtensions.Except(extensions).ToList();
-            var extensionsToRemove = extensions.Except(allExtensions).ToList();
+            // Although all links have "target='_blank'" added (see ParsedDocument.ToHtml()), they go through this first
+            // unless the url is local (a bug in Awesomium) in which case this event isn't triggered, and the "target='_blank'"
+            // takes over to avoid crashing the preview. Local resource requests where the resource doesn't exist are thrown
+            // away. See WebControl_ResourceRequest().
 
-            foreach (var extension in extensionsToAdd)
+            string filename = e.Url;
+            if (e.Url.StartsWith(LocalRequestUrlBase))
             {
-                extension.ConnectToDocumentView(this);
-                extensions.Add(extension);
+                filename = GetResourceFilename(e.Url.Replace(LocalRequestUrlBase, "")) ?? "";
+                if (!File.Exists(filename)) return;
             }
 
-            foreach (var extension in extensionsToRemove)
-            {
-                extension.DisconnectFromDocumentView(this);
-                extensions.Remove(extension);
-            }
+            if (string.IsNullOrWhiteSpace(filename)) return;
+
+            Process.Start(filename);
+        }
+
+        ResourceResponse WebControlResourceRequest(object o, ResourceRequestEventArgs e)
+        {
+            // This tries to get a local resource. If there is no local resource null is returned by GetLocalResource, which
+            // triggers the default handler, which should respect the "target='_blank'" attribute added
+            // in ParsedDocument.ToHtml(), thus avoiding a bug in Awesomium where trying to navigate to a
+            // local resource fails when showing an in-memory file (https://github.com/Code52/DownmarkerWPF/pull/208)
+
+            // What works:
+            //	- resource requests for remote resources (like <link href="http://somecdn.../jquery.js"/>)
+            //	- resource requests for local resources that exist relative to filename of the file (like <img src="images/logo.png"/>)
+            //	- clicking links for remote resources (like [Google](http://www.google.com))
+            //	- clicking links for local resources which don't exist (eg [test](test)) does nothing (WebControl_LinkClicked checks for existence)
+            // What fails:
+            //	- clicking links for local resources where the resource exists (like [test](images/logo.png))
+            //		- This _sometimes_ opens the resource in the preview pane, and sometimes opens the resource 
+            //		using Process.Start (WebControl_LinkClicked gets triggered). The behaviour seems stochastic.
+            //	- alt text for images where the image resource is not found
+
+            if (e.Request.Url.StartsWith(LocalRequestUrlBase)) return GetLocalResource(e.Request.Url.Replace(LocalRequestUrlBase, ""));
+
+            // If the request wasn't local, return null to let the usual handler load the url from the network			
+            return null;
+        }
+        ResourceResponse GetLocalResource(string url)
+        {
+			if (string.IsNullOrWhiteSpace(url))
+			{
+				string result = null;
+				var encoding = new System.Text.UTF8Encoding();
+
+				(DataContext as DocumentViewModel).ExecuteSafely(vm => result = vm.Render);
+
+				return new ResourceResponse(encoding.GetBytes(result), "text/html");
+			}
+
+            var resourceFilename = GetResourceFilename(url);
+            if (!File.Exists(resourceFilename)) return null;
+
+            return new ResourceResponse(resourceFilename);
+        }
+        public string GetResourceFilename(string url)
+        {
+            var vm = DataContext as DocumentViewModel;
+            if (vm == null) return null;
+            if (string.IsNullOrEmpty(vm.FileName)) return null;
+
+            var resourceFilename = Path.Combine(Path.GetDirectoryName(vm.FileName), url);
+            return resourceFilename;
         }
 
         void DocumentViewSizeChanged(object sender, SizeChangedEventArgs e)
@@ -147,7 +228,13 @@ namespace MarkPad.Document
             markdownEditor.Editor.TextArea.TextView.Redraw();
             ViewModel.ExecuteSafely(vm => vm.RefreshFont());
             ApplyExtensions();
+            ApplyZoom();
         }
+
+		public void Handle(PluginsChangedEvent e)
+		{
+			UpdatePlugins();
+		}
 
         private void SiteFilesMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {

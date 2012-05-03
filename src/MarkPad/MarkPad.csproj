@@ -171,8 +171,6 @@
     <Compile Include="Extensions\DataImage.cs" />
     <Compile Include="Extensions\DataObjectExtensions.cs" />
     <Compile Include="MarkPadExtensions\MarkPadExtensionsAutofacModule.cs" />
-    <Compile Include="MarkPadExtensions\IDocumentViewExtension.cs" />
-    <Compile Include="MarkPadExtensions\SpellCheck\SpellCheckExtension.cs" />
     <Compile Include="Framework\Events\SettingsChangedEvent.cs" />
     <Compile Include="Framework\FocusExtension.cs" />
     <Compile Include="Framework\FontHelpers.cs" />
@@ -368,6 +366,10 @@
     <ProjectReference Include="..\Plugins\ExamplePlugin\ExamplePlugin.csproj">
       <Project>{B780B8AD-169E-4300-A29F-713471EF3056}</Project>
       <Name>ExamplePlugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SpellCheckPlugin\SpellCheckPlugin.csproj">
+      <Project>{2FD996E4-8647-4A21-AE43-3652F66D4685}</Project>
+      <Name>SpellCheckPlugin</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

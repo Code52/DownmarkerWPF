@@ -23,10 +23,10 @@ namespace MarkPad.Shell
 
         public ShellView(IPluginManager pluginManager)
         {
-            InitializeComponent();
-
 			_pluginManager = pluginManager;
 			_pluginManager.Container.ComposeParts(this);
+
+            InitializeComponent();
 
 			UpdatePlugins();
         }

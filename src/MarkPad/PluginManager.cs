@@ -11,7 +11,6 @@ namespace MarkPad
 	public interface IPluginManager
 	{
 		CompositionContainer Container { get; }
-		IEnumerable<IPlugin> Plugins { get; }
 	}
 
 	public class PluginManager : IPluginManager
@@ -31,6 +30,7 @@ namespace MarkPad
 
 			catalog.Catalogs.Add(new AssemblyCatalog(typeof(ExamplePlugin.ExamplePlugin).Assembly));
 			catalog.Catalogs.Add(new AssemblyCatalog(typeof(ExportToHtmlPlugin.ExportToHtmlPlugin).Assembly));
+			catalog.Catalogs.Add(new AssemblyCatalog(typeof(SpellCheckPlugin.SpellCheckPlugin).Assembly));
 
 			Container = new CompositionContainer(catalog);
 			Container.ComposeParts(this);
