@@ -101,7 +101,9 @@ namespace MarkPad.Settings
             }
 			EnableFloatingToolBar = settings.FloatingToolBarEnabled;
 
-			Plugins = plugins.Select(plugin => pluginViewModelCreator(plugin));
+			Plugins = plugins
+				.Where(plugin => !plugin.IsHidden)
+				.Select(plugin => pluginViewModelCreator(plugin));
         }
 
         private BlogSetting currentBlog;

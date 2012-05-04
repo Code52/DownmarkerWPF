@@ -26,7 +26,7 @@ namespace MarkPad.Settings
 		public string Version { get { return _plugin.Version; } }
 		public string Authors { get { return _plugin.Authors; } }
 		public string Description { get { return _plugin.Description; } }
-		public bool CanOpenSettings { get { return _plugin.CanOpenSettings; } }
+		public bool IsConfigurable { get { return _plugin.IsConfigurable; } }
 
 		public bool CanInstall { get { return !_plugin.Settings.IsEnabled; } }
 		public void Install()
@@ -50,7 +50,7 @@ namespace MarkPad.Settings
 			_eventAggregator.Publish(new PluginsChangedEvent());
 		}
 
-		public void OpenSettings()
+		public void OpenPluginConfiguration()
 		{
 		}
 	}
