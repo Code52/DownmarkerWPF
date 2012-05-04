@@ -22,6 +22,7 @@ namespace SpellCheckPlugin
 		SpellCheckPluginSettings _settings;
 		public IPluginSettings Settings { get { return _settings; } }
 		IList<ISpellCheckProvider> _providers = new List<ISpellCheckProvider>();
+		public bool CanOpenSettings { get { return true; } }
 
 		[ImportingConstructor]
 		public SpellCheckPlugin(

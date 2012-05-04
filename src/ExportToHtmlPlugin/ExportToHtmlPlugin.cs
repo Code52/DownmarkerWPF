@@ -32,6 +32,7 @@ namespace ExportToHtmlPlugin
 		ExportToHtmlPluginSettings _settings;
 		public IPluginSettings Settings { get { return _settings; } }
 		public void SaveSettings() { _settingsProvider.SaveSettings(_settings); }
+		public bool CanOpenSettings { get { return false; } }
 
 		[ImportingConstructor]
 		public ExportToHtmlPlugin(

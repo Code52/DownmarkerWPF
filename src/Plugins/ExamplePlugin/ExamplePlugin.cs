@@ -19,6 +19,7 @@ namespace ExamplePlugin
 		public string Authors { get { return "Code52"; } }
 		public string Description { get { return "An example plugin for MarkPad"; } }
 		public IPluginSettings Settings { get { return _settings; } }
+		public bool CanOpenSettings { get { return false; } }
 
 		public string CreateNewPageLabel { get { return "New example plugin page"; } }
 
