@@ -5,6 +5,7 @@ using System.Text;
 using MarkPad.PluginApi;
 using System.ComponentModel.Composition;
 using MarkPad.Contracts;
+using System.ComponentModel;
 
 namespace ExamplePlugin
 {
@@ -42,5 +43,9 @@ namespace ExamplePlugin
 		}
 	}
 
-	public class ExampleSettings : PluginSettings { }
+	public class ExampleSettings : IPluginSettings
+	{
+		[DefaultValue(false)]
+		public bool IsEnabled { get; set; }
+	}
 }

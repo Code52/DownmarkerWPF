@@ -22,7 +22,7 @@ namespace SpellCheckPlugin
 		SpellCheckPluginSettings _settings;
 		public IPluginSettings Settings { get { return _settings; } }
 		IList<ISpellCheckProvider> _providers = new List<ISpellCheckProvider>();
-		public bool CanOpenSettings { get { return true; } }
+		public bool CanOpenSettings { get { return false; } }
 
 		[ImportingConstructor]
 		public SpellCheckPlugin(
@@ -63,7 +63,7 @@ namespace SpellCheckPlugin
 
 	public class SpellCheckPluginSettings : PluginSettings
 	{
-        [DefaultValue(SpellingLanguages.Australian)]
+		[DefaultValue(SpellingLanguages.Australian)]
         public SpellingLanguages Language { get; set; }
 	}
 }
