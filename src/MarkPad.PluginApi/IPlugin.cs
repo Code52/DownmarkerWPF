@@ -15,5 +15,6 @@ namespace MarkPad.PluginApi
 		string Description { get; }
 		IPluginSettings Settings { get; }
 		void SaveSettings();
+		bool CanOpenSettings { get; }
 	}
 }

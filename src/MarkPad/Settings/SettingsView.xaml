@@ -202,8 +202,8 @@
 									<GridViewColumn.CellTemplate>
 										<DataTemplate>
 											<Button Content="Settings" Style="{DynamicResource SquareButtonStyle}"
-												IsEnabled="{Binding CanUpdate}"
-												cal:Message.Attach="Settings"/>
+												IsEnabled="{Binding CanOpenSettings}"
+												cal:Message.Attach="OpenSettings"/>
 										</DataTemplate>
 									</GridViewColumn.CellTemplate>
 								</GridViewColumn>
