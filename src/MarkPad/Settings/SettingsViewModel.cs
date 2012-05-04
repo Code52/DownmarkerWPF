@@ -87,7 +87,7 @@ namespace MarkPad.Settings
             FontSizes = Enum.GetValues(typeof(FontSizes)).OfType<FontSizes>().ToArray();
             FontFamilies = Fonts.SystemFontFamilies.OrderBy(f => f.Source);
 
-			var spellCheckPluginSettings = settingsService.GetSettings<SpellCheckPlugin.SpellCheckPluginSettings>();
+			var spellCheckPluginSettings = plugins.OfType<SpellCheckPlugin.SpellCheckPlugin>().First().Settings as SpellCheckPlugin.SpellCheckPluginSettings;
 			SelectedLanguage = spellCheckPluginSettings.Language;
 
             var fontFamily = settings.FontFamily;
@@ -216,7 +216,7 @@ namespace MarkPad.Settings
             settingsService.SaveSettings(settings);
 
 			/// TODO: Move to per-plugin setting screen
-			var spellCheckPluginSettings = settingsService.GetSettings<SpellCheckPlugin.SpellCheckPluginSettings>();
+			var spellCheckPluginSettings = plugins.OfType<SpellCheckPlugin.SpellCheckPlugin>().First().Settings as SpellCheckPlugin.SpellCheckPluginSettings;
 			spellCheckPluginSettings.Language = SelectedLanguage;
 			settingsService.SaveSettings(spellCheckPluginSettings);
 
