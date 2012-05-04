@@ -7,6 +7,7 @@ using MarkPad.Contracts;
 using System.ComponentModel.Composition;
 using Analects.DialogService;
 using System.IO;
+using System.ComponentModel;
 
 namespace ExportToHtmlPlugin
 {
@@ -62,7 +63,9 @@ namespace ExportToHtmlPlugin
 
 	}
 
-	public class ExportToHtmlPluginSettings : PluginSettings
+	public class ExportToHtmlPluginSettings : IPluginSettings
 	{
+		[DefaultValue(false)]
+		public bool IsEnabled { get; set; }
 	}
 }
