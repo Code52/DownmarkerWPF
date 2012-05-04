@@ -205,7 +205,15 @@ namespace MarkPad.Document
         }
         ResourceResponse GetLocalResource(string url)
         {
-            if (string.IsNullOrWhiteSpace(url)) return null;
+			if (string.IsNullOrWhiteSpace(url))
+			{
+				string result = null;
+				var encoding = new System.Text.UTF8Encoding();
+
+				(DataContext as DocumentViewModel).ExecuteSafely(vm => result = vm.Render);
+
+				return new ResourceResponse(encoding.GetBytes(result), "text/html");
+			}
 
             var resourceFilename = GetResourceFilename(url);
             if (!File.Exists(resourceFilename)) return null;
