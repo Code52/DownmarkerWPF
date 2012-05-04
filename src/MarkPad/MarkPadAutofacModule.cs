@@ -8,9 +8,9 @@ using MarkPad.Contracts;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Settings;
 
-namespace MarkPad.MarkPadExtensions
+namespace MarkPad
 {
-	public class MarkPadExtensionsAutofacModule : Module
+	public class MarkPadAutofacModule : Module
 	{
 		protected override void Load(ContainerBuilder builder)
 		{

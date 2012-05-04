@@ -170,7 +170,7 @@
     <Compile Include="InPathMultiConverter.cs" />
     <Compile Include="Extensions\DataImage.cs" />
     <Compile Include="Extensions\DataObjectExtensions.cs" />
-    <Compile Include="MarkPadExtensions\MarkPadExtensionsAutofacModule.cs" />
+    <Compile Include="MarkPadAutofacModule.cs" />
     <Compile Include="Framework\Events\SettingsChangedEvent.cs" />
     <Compile Include="Framework\FocusExtension.cs" />
     <Compile Include="Framework\FontHelpers.cs" />
