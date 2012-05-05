@@ -40,13 +40,31 @@ namespace MarkPad.Document
                                                    CanEditDocument));
         }
 
+        #region public bool FloatingToolbarEnabled
         public static readonly DependencyProperty FloatingToolbarEnabledProperty =
             DependencyProperty.Register("FloatingToolbarEnabled", typeof (bool), typeof (MarkdownEditor), new PropertyMetadata(default(bool)));
 
         public bool FloatingToolbarEnabled
         {
-            get { return (bool) GetValue(FloatingToolbarEnabledProperty); }
+            get { return (bool)GetValue(FloatingToolbarEnabledProperty); }
             set { SetValue(FloatingToolbarEnabledProperty, value); }
+        }
+        #endregion
+
+        #region public double EditorFontSize
+        public static DependencyProperty EditorFontSizeProperty = DependencyProperty.Register("EditorFontSize", typeof (double), typeof (MarkdownEditor), 
+            new PropertyMetadata(default(double), EditorFontSizeChanged));
+
+        public double EditorFontSize
+        {
+            get { return (double) GetValue(EditorFontSizeProperty); }
+            set { SetValue(EditorFontSizeProperty, value); }
+        }
+        #endregion
+
+        private static void EditorFontSizeChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
+        {
+            ((MarkdownEditor) dependencyObject).Editor.FontSize = (double)dependencyPropertyChangedEventArgs.NewValue;
         }
 
         private void EditorLoaded(object sender, RoutedEventArgs e)

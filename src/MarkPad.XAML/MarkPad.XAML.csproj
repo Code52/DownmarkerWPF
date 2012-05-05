@@ -98,7 +98,6 @@
     <Compile Include="Converters\EnumDisplayer.cs" />
     <Compile Include="Converters\DebugConverter.cs" />
     <Compile Include="Converters\MarkupConverter.cs" />
-    <Compile Include="AttachedProperties\WebBrowserUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
