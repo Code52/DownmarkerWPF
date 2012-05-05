@@ -59,7 +59,8 @@
         </TreeView>
         
         <Document:MarkdownEditor x:Name="markdownEditor"
-                                 Grid.Column="1" />
+                                 Grid.Column="1"
+                                 Document="{Binding Document}"/>
 
         <Slider x:Name="ZoomSlider"
                 Maximum="2"
@@ -71,11 +72,15 @@
                 Margin="0,0,40,20"
                 Grid.Column="1" />
 
-        <Label Name="WordCount"
-               VerticalAlignment="Bottom"
+        <Label VerticalAlignment="Bottom"
                Margin="40,40,10,15"
                Grid.Column="1"
-               HorizontalAlignment="Left">          
+               HorizontalAlignment="Left"
+               IsHitTestVisible="False">
+            <TextBlock>
+                <TextBlock Text="wordcount: " />
+                <TextBlock Text="{Binding WordCount}"/>
+            </TextBlock>
         </Label>
 
        <awe:WebControl x:Name="wb" UseLayoutRounding="True" Margin="10,0,10,10" Grid.Column="2" HorizontalAlignment="Stretch" 

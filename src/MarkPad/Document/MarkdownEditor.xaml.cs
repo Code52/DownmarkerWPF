@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Xml;
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
@@ -38,6 +39,15 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCodeBlock, (x, y) => ToggleCodeBlock(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(),
                                                    CanEditDocument));
+        }
+
+        public static readonly DependencyProperty DocumentProperty =
+            DependencyProperty.Register("Document", typeof(TextDocument), typeof(MarkdownEditor), new PropertyMetadata(default(TextDocument)));
+
+        public TextDocument Document
+        {
+            get { return (TextDocument)GetValue(DocumentProperty); }
+            set { SetValue(DocumentProperty, value); }
         }
 
         public static readonly DependencyProperty FloatingToolbarEnabledProperty =

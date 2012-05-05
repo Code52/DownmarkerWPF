@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using Caliburn.Micro;
@@ -31,6 +32,8 @@ namespace MarkPad.Document
         private string title;
         private string filename;
 
+        readonly Regex wordCountRegex = new Regex(@"[\S]+", RegexOptions.Compiled);
+
         public DocumentViewModel(IDialogService dialogService, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator, Func<string, IMetaWeblogService> getMetaWeblog)
         {
             this.dialogService = dialogService;
@@ -45,6 +48,11 @@ namespace MarkPad.Document
             timer = new DispatcherTimer();
             timer.Tick += TimerTick;
             timer.Interval = delay;
+        }
+
+        private void UpdateWordCount()
+        {
+            WordCount = wordCountRegex.Matches(Document.Text).Count;
         }
 
         private void TimerTick(object sender, EventArgs e)
@@ -67,6 +75,7 @@ namespace MarkPad.Document
                 }
 
                 Render = result;
+                UpdateWordCount();
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
@@ -264,6 +273,8 @@ namespace MarkPad.Document
         public bool DistractionFree { get; set; }
 
         public ISiteContext SiteContext { get; private set; }
+
+        public int WordCount { get; private set; }
 
         public void Publish(string postid, string postTitle, string[] categories, BlogSetting blog)
         {
