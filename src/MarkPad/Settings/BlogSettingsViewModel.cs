@@ -168,13 +168,26 @@ namespace MarkPad.Settings
                 {
                     using(var responseStream = webResponse.GetResponseStream())
                     {
-                        var apiElement = XDocument.Load(responseStream)
-                            .Element(XName.Get("rsd", RsdNamespace))
-                            .Element(XName.Get("service", RsdNamespace))
-                            .Element(XName.Get("apis", RsdNamespace))
-                            .Elements(XName.Get("api", RsdNamespace))
-                            .SingleOrDefault(e => e.Attribute("name").Value.ToLower() == "metaweblog");
+                        var document = XDocument.Load(responseStream);
+                        IEnumerable<XElement> apiElements;
+                        if (document.Root.Attributes().Any(x => x.IsNamespaceDeclaration && x.Value == RsdNamespace))
+                        {
+                            apiElements = document
+                                .Element(XName.Get("rsd", RsdNamespace))
+                                .Element(XName.Get("service", RsdNamespace))
+                                .Element(XName.Get("apis", RsdNamespace))
+                                .Elements(XName.Get("api", RsdNamespace));
+                        }
+                        else
+                        {
+                            apiElements = document
+                                .Element(XName.Get("rsd"))
+                                .Element(XName.Get("service"))
+                                .Element(XName.Get("apis"))
+                                .Elements(XName.Get("api"));
+                        }
 
+                        var apiElement = apiElements.SingleOrDefault(e => e.Attribute("name").Value.ToLower() == "metaweblog");
                         if(apiElement != null)
                         {
                             Execute.OnUIThread(() => CurrentBlog.WebAPI = apiElement.Attribute("apiLink").Value);
@@ -216,7 +229,7 @@ namespace MarkPad.Settings
                             }
                             else
                             {
-                                var rsdLocation = Regex.Match(@group.Value, "href=\"(?<link>.*?)\"");
+                                var rsdLocation = Regex.Match(@group.Value, "href=(?:\"|')(?<link>.*?)(?:\"|')");
                                 if(!rsdLocation.Groups["link"].Success)
                                 {
                                     taskCompletionSource.SetResult(false);
