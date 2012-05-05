@@ -317,15 +317,15 @@
     					</i:EventTrigger>
     				</i:Interaction.Triggers>
     			</Button>
-				<Button x:Name="ShowSave" Content="save" >
+                <Button x:Name="ShowSave" Content="save" IsEnabled="{Binding Mode=OneWay, Path=MDI.IsDocumentActive}">
     				<i:Interaction.Triggers>
     					<i:EventTrigger EventName="Click">
     						<ei:GoToStateAction StateName="SaveState"/>
     					</i:EventTrigger>
     				</i:Interaction.Triggers>
     			</Button>
-    			<Button x:Name="PrintDocument" Content="print" />
-    			<Button x:Name="PublishDocument" Content="publish" />
+                <Button x:Name="PrintDocument" Content="print" IsEnabled="{Binding Mode=OneWay, Path=MDI.IsDocumentActive}" />
+                <Button x:Name="PublishDocument" Content="publish" IsEnabled="{Binding Mode=OneWay, Path=MDI.IsDocumentActive}" />
     		</WrapPanel>
     		<WrapPanel x:Name="newItems" Margin="30,0,0,0" Opacity="0.995" VerticalAlignment="Bottom" Height="20" RenderTransformOrigin="0.5,0.5" d:LayoutOverrides="VerticalAlignment, GridBox">
     			<WrapPanel.Resources>
