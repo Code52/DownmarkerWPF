@@ -10,6 +10,7 @@ namespace MarkPad.Services
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<WebRequestFactory>().As<IWebRequestFactory>();
             builder.RegisterType<RsdService>().As<IRsdService>();
             builder.RegisterType<SiteContextGenerator>().As<ISiteContextGenerator>();
             builder.RegisterType<DialogService>().As<IDialogService>();

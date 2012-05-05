@@ -143,6 +143,7 @@
     <Compile Include="Settings\IsolatedStorageSettingsStore.cs" />
     <Compile Include="Settings\MarkPadSettings.cs" />
     <Compile Include="Settings\SettingsProvider.cs" />
+    <Compile Include="WebRequestFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MarkPad.XAML\MarkPad.XAML.csproj">
