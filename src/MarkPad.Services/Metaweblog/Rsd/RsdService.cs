@@ -13,6 +13,12 @@ namespace MarkPad.Services.Metaweblog.Rsd
     public class RsdService : IRsdService
     {
         const string RsdNamespace = "http://archipelago.phrasewise.com/rsd";
+        readonly IWebRequestFactory webRequestFactory;
+
+        public RsdService(IWebRequestFactory webRequestFactory)
+        {
+            this.webRequestFactory = webRequestFactory;
+        }
 
         public Task<DiscoveryResult> DiscoverAddress(string webAPI)
         {
@@ -20,10 +26,10 @@ namespace MarkPad.Services.Metaweblog.Rsd
 
             var baseUri = new Uri(webAPI, UriKind.Absolute);
             var requestUri = new Uri(baseUri, "rsd.xml");
-            var rsdFileRequest = WebRequest.Create(requestUri);
+            var rsdFileRequest = webRequestFactory.Create(requestUri);
 
             // Kick off the async discovery workflow
-            Task.Factory.FromAsync<WebResponse>(rsdFileRequest.BeginGetResponse, rsdFileRequest.EndGetResponse, null)
+            rsdFileRequest.GetResponseAsync()
                 .ContinueWith<DiscoveryResult>(ProcessRsdResponse)
                 .ContinueWith(c =>
                 {
@@ -41,16 +47,16 @@ namespace MarkPad.Services.Metaweblog.Rsd
             return completionSource.Task;
         }
 
-        static Task<DiscoveryResult> DiscoverRsdLink(string webAPI)
+        Task<DiscoveryResult> DiscoverRsdLink(string webAPI)
         {
             var taskCompletionSource = new TaskCompletionSource<DiscoveryResult>();
 
             // Build a request to retrieve the contents of the specified URL directly
-            var directWebAPIRequest = WebRequest.Create(webAPI);
-            var webAPIRequestTask = Task.Factory.FromAsync<WebResponse>(directWebAPIRequest.BeginGetResponse, directWebAPIRequest.EndGetResponse, null);
+            var requestUri = new Uri(webAPI, UriKind.Absolute);
+            var directWebAPIRequest = webRequestFactory.Create(requestUri);
             
             // Add a continuation that will only execute if the request succeeds and proceses the response to look for a <link> to the RSD
-            webAPIRequestTask
+            directWebAPIRequest.GetResponseAsync()
                 .ContinueWith(webAPIRequestAntecedent =>
             {
                 if (webAPIRequestAntecedent.IsFaulted)
@@ -68,12 +74,12 @@ namespace MarkPad.Services.Metaweblog.Rsd
             return taskCompletionSource.Task;
         }
 
-        static void DiscoverRsdOnPage(string webAPI, StreamReader streamReader,
-                                              TaskCompletionSource<DiscoveryResult> taskCompletionSource)
+        void DiscoverRsdOnPage(string webAPI, TextReader streamReader, TaskCompletionSource<DiscoveryResult> taskCompletionSource)
         {
+            const string linkTagRegex = "(?<link>\\<link .*?type=\"application/rsd\\+xml\".*?/\\>)";
+
             var response = streamReader.ReadToEnd();
-            var link = Regex.Match(response, "(?<link>\\<link .*?type=\"application/rsd\\+xml\".*?/\\>)",
-                                   RegexOptions.IgnoreCase);
+            var link = Regex.Match(response, linkTagRegex, RegexOptions.IgnoreCase);
             var rsdLinkMatch = link.Groups["link"];
 
             if (!rsdLinkMatch.Success)
@@ -93,10 +99,8 @@ namespace MarkPad.Services.Metaweblog.Rsd
             if (!rsdUri.IsAbsoluteUri)
                 rsdUri = new Uri(new Uri(webAPI, UriKind.Absolute), rsdUri);
 
-            var rdsWebRequest = WebRequest.Create(rsdUri);
-
-            var rdsWebRequestTask = Task.Factory.FromAsync<WebResponse>(rdsWebRequest.BeginGetResponse,
-                                                                        rdsWebRequest.EndGetResponse, null);
+            var rdsWebRequest = webRequestFactory.Create(rsdUri);
+            var rdsWebRequestTask = rdsWebRequest.GetResponseAsync();
 
             // Add a continuation that will only execute if the request succeeds and continues processing the RSD
             rdsWebRequestTask.ContinueWith(rdsWebRequestAntecedent =>
@@ -121,14 +125,8 @@ namespace MarkPad.Services.Metaweblog.Rsd
 
             try
             {
-                using (var webResponse = (HttpWebResponse)webResponseTask.Result)
+                using (var webResponse = webResponseTask.Result)
                 {
-                    if (webResponse.StatusCode != HttpStatusCode.OK)
-                    {
-                        var failedMessage = string.Format("Unsupported web response: {0}", webResponse.StatusCode);
-                        return DiscoveryResult.Failed(failedMessage);
-                    }
-
                     using (var responseStream = webResponse.GetResponseStream())
                     {
                         var document = XDocument.Load(responseStream);

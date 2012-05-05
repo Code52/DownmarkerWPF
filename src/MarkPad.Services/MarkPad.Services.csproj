@@ -63,6 +63,9 @@
     <Reference Include="CookComputing.XmlRpcV2, Version=2.5.0.0, Culture=neutral, PublicKeyToken=a7d6e17aa302004d, processorArchitecture=MSIL">
       <HintPath>..\packages\xmlrpcnet.2.5.0\lib\net20\CookComputing.XmlRpcV2.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CompilerServices.AsyncTargetingPack.Net4">
+      <HintPath>..\packages\Microsoft.CompilerServices.AsyncTargetingPack.1.0.0\lib\net40\Microsoft.CompilerServices.AsyncTargetingPack.Net4.dll</HintPath>
+    </Reference>
     <Reference Include="NHunspell">
       <HintPath>..\..\lib\Hunspell.0.9.6.0\lib\net20\NHunspell.dll</HintPath>
     </Reference>
@@ -127,6 +130,7 @@
     <Compile Include="Metaweblog\Post.cs" />
     <Compile Include="Metaweblog\Rsd\DiscoveryResult.cs" />
     <Compile Include="Metaweblog\Rsd\IRsdService.cs" />
+    <Compile Include="Metaweblog\Rsd\IWebRequestFactory.cs" />
     <Compile Include="Metaweblog\Rsd\RsdService.cs" />
     <Compile Include="Metaweblog\Source.cs" />
     <Compile Include="Metaweblog\UserInfo.cs" />
