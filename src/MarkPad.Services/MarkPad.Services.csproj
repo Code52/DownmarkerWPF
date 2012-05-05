@@ -125,6 +125,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Metaweblog\Post.cs" />
+    <Compile Include="Metaweblog\Rsd\DiscoveryResult.cs" />
+    <Compile Include="Metaweblog\Rsd\IRsdService.cs" />
+    <Compile Include="Metaweblog\Rsd\RsdService.cs" />
     <Compile Include="Metaweblog\Source.cs" />
     <Compile Include="Metaweblog\UserInfo.cs" />
     <Compile Include="ServicesModule.cs" />

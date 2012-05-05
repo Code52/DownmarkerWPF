@@ -1,6 +1,7 @@
 using Autofac;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
+using MarkPad.Services.Metaweblog.Rsd;
 using MarkPad.Services.Settings;
 
 namespace MarkPad.Services
@@ -9,6 +10,7 @@ namespace MarkPad.Services
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<RsdService>().As<IRsdService>();
             builder.RegisterType<SiteContextGenerator>().As<ISiteContextGenerator>();
             builder.RegisterType<DialogService>().As<IDialogService>();
             builder.RegisterType<MetaWeblogService>().As<IMetaWeblogService>();

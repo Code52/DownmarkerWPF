@@ -19,7 +19,7 @@ namespace MarkPad.Framework
         /// <returns></returns>
         public static TResult Evaluate<T, TResult>(this T obj, Func<T, TResult> func) where T : class
         {
-            return Evaluate<T, TResult>(obj, func, default(TResult));
+            return Evaluate(obj, func, default(TResult));
         }
 
         /// <summary>

@@ -4,8 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
-        xmlns:cal="http://www.caliburnproject.org" 
-        x:Class="MarkPad.Settings.BlogSettingsView" 
+        xmlns:cal="http://www.caliburnproject.org"
+        xmlns:Converters="clr-namespace:MarkPad.XAML.Converters;assembly=MarkPad.XAML"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:Settings="clr-namespace:MarkPad.Settings" x:Class="MarkPad.Settings.BlogSettingsView" 
         MouseLeftButtonDown="DragMoveWindow"
         Icon="../markpad.ico"
         ShowInTaskbar="False"
@@ -14,7 +16,7 @@
         mc:Ignorable="d" 
         Width="300" 
         Height="510" 
-        ResizeMode="NoResize">
+        ResizeMode="NoResize" d:DataContext="{d:DesignInstance Settings:BlogSettingsViewModel}">
     <i:Interaction.Behaviors>
         <Behaviours:BorderlessWindowBehavior ResizeWithGrip="False" />
     </i:Interaction.Behaviors>
@@ -63,7 +65,19 @@
 
                 <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="METAWEBLOG API ADDRESS"  FontWeight="Bold" FontSize="10.667"/>
                 <TextBox x:Name="CurrentBlog_WebAPI" HorizontalAlignment="Stretch" />
+
+                <ProgressBar Visibility="{Binding DiscoveringAddress, Converter={Converters:BoolToVisibilityConverter}}"
+                             IsIndeterminate="{Binding DiscoveringAddress}" />
                 <Button x:Name="DiscoverAddress">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding DiscoveringAddress}">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                     <Button.Template>
                         <ControlTemplate>
                             <TextBlock><Hyperlink>discover</Hyperlink></TextBlock>
