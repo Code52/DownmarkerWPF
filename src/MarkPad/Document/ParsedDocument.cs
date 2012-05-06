@@ -7,9 +7,9 @@ using System.Text;
 
 namespace MarkPad.Document
 {
-    static class DocumentParser
+    public static class DocumentParser
     {
-        private static readonly Markdown markdown = new Markdown();
+			private static readonly Markdown markdown = new Markdown();
 
         static DocumentParser() 
         {
@@ -18,14 +18,19 @@ namespace MarkPad.Document
 
         public static string Parse(string source)
         {
-            string header;
-            string contents;
-            SplitHeaderAndContents(source, out header, out contents);
-
-            return ToHtml(header, contents);
+        	return Parse(source, WebCore.BaseDirectory);
         }
 
-        public static string GetBodyContents(string source)
+    	public static string Parse(string source, string baseDirectory)
+    	{
+    		string header;
+    		string contents;
+    		SplitHeaderAndContents(source, out header, out contents);
+
+    		return ToHtml(header, contents, baseDirectory);
+    	}
+
+    	public static string GetBodyContents(string source)
         {
             string header;
             string contents;
@@ -42,7 +47,7 @@ namespace MarkPad.Document
             }
         }
 
-        private static string ToHtml(string header, string contents)
+        private static string ToHtml(string header, string contents, string baseDirectory)
         {
             var body = MarkdownConvert(contents);
 
@@ -52,19 +57,22 @@ namespace MarkPad.Document
 
 			scripts += GetLinkScript();
 
-            if (TryGetHeaderValue(header, "theme", out themeName))
-            {
-                var path = Path.Combine(WebCore.BaseDirectory, themeName);
-                foreach(var stylesheet in Directory.GetFiles(path, "*.css"))
-                {
-                    head += String.Format("<link rel=\"stylesheet\" type=\"text/css\" href=\"{0}/{1}\" />\r\n", themeName, Path.GetFileName(stylesheet));
-                }
+			if (TryGetHeaderValue(header, "theme", out themeName))
+			{
+				var path = Path.Combine(baseDirectory, themeName);
+				if (Directory.Exists(path))
+				{
+					foreach (var stylesheet in Directory.GetFiles(path, "*.css"))
+					{
+						head += String.Format("<link rel=\"stylesheet\" type=\"text/css\" href=\"{0}/{1}\" />\r\n", themeName, Path.GetFileName(stylesheet));
+					}
 
-                foreach (var stylesheet in Directory.GetFiles(path, "*.js"))
-                {
-                    scripts += String.Format("<script type=\"text/javascript\" src=\"{0}/{1}\"></script>\r\n", themeName, Path.GetFileName(stylesheet));
-                }
-            }
+					foreach (var stylesheet in Directory.GetFiles(path, "*.js"))
+					{
+						scripts += String.Format("<script type=\"text/javascript\" src=\"{0}/{1}\"></script>\r\n", themeName, Path.GetFileName(stylesheet));
+					}
+				}
+			}
 
             var document = String.Format("<html>\r\n<head>\r\n{0}\r\n</head>\r\n<body>\r\n{1}\r\n{2}\r\n</body>\r\n</html>", head, body, scripts);
 
