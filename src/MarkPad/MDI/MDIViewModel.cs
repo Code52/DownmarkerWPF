@@ -8,5 +8,26 @@ namespace MarkPad.MDI
         {
             this.ActivateItem(screen);
         }
+
+        /// <summary>
+        /// Gets value indicating whether any document is opened thus active.
+        /// </summary>
+        public bool IsDocumentActive
+        {
+            get { return ActiveItem != null; }
+        }
+
+        public override void ActivateItem(IScreen item)
+        {
+            base.ActivateItem(item);
+            NotifyOfPropertyChange("IsDocumentActive");
+        }
+
+        public override void DeactivateItem(IScreen item, bool close)
+        {
+            base.DeactivateItem(item, close);
+            NotifyOfPropertyChange("IsDocumentActive");
+        }
+
     }
 }
