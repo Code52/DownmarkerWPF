@@ -297,35 +297,42 @@
     		<TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold" FontSize="10.667" Margin="30,10,0,0" Visibility="Collapsed"><Run Text="MARKPAD"/></TextBlock>
     		<WrapPanel UseLayoutRounding="False" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Margin="30,9,0,0">
     			<WrapPanel.Resources>
-    				<Style TargetType="{x:Type Button}" BasedOn="{StaticResource ChromelessButtonStyle}">
+    				<Style TargetType="{x:Type Button}" BasedOn="{StaticResource ChromelessButtonStyle}" x:Key="defaultButton">
     					<Setter Property="FontSize" Value="20" />
     					<Setter Property="Margin" Value="0,0,20,0" />
     					<Setter Property="FontWeight" Value="Light" />
     				</Style>
-    			</WrapPanel.Resources>
-    			<Button x:Name="ShowNew" Content="new">
+                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource defaultButton}" x:Key="openDocumentsOnly">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding MDI.Items.Count}" Value="0">
+                                <Setter Property="IsEnabled" Value="False" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </WrapPanel.Resources>
+    			<Button x:Name="ShowNew" Content="new" Style="{StaticResource defaultButton}">
     				<i:Interaction.Triggers>
     					<i:EventTrigger EventName="Click">
     						<ei:GoToStateAction StateName="NewState"/>
     					</i:EventTrigger>
     				</i:Interaction.Triggers>
 					</Button>
-    			<Button x:Name="ShowOpen" Content="open" >
+                <Button x:Name="ShowOpen" Content="open" Style="{StaticResource defaultButton}">
     				<i:Interaction.Triggers>
     					<i:EventTrigger EventName="Click">
     						<ei:GoToStateAction StateName="OpenState"/>
     					</i:EventTrigger>
     				</i:Interaction.Triggers>
     			</Button>
-				<Button x:Name="ShowSave" Content="save" >
+                <Button x:Name="ShowSave" Content="save" Style="{StaticResource openDocumentsOnly}">
     				<i:Interaction.Triggers>
     					<i:EventTrigger EventName="Click">
     						<ei:GoToStateAction StateName="SaveState"/>
     					</i:EventTrigger>
     				</i:Interaction.Triggers>
     			</Button>
-    			<Button x:Name="PrintDocument" Content="print" />
-    			<Button x:Name="PublishDocument" Content="publish" />
+                <Button x:Name="PrintDocument" Content="print" Style="{StaticResource openDocumentsOnly}"/>
+                <Button x:Name="PublishDocument" Content="publish" Style="{StaticResource openDocumentsOnly}"/>
     		</WrapPanel>
     		<WrapPanel x:Name="newItems" Margin="30,0,0,0" Opacity="0.995" VerticalAlignment="Bottom" Height="20" RenderTransformOrigin="0.5,0.5" d:LayoutOverrides="VerticalAlignment, GridBox">
     			<WrapPanel.Resources>
