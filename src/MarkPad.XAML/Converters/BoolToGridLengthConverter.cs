@@ -1,11 +1,12 @@
 using System;
 using System.Windows;
+using Analects.XAMLConverters;
 
 namespace MarkPad.XAML.Converters
 {
     public class BoolToGridLengthConverter : MarkupConverter
     {
-        private readonly GridLength ZeroLength = new GridLength(0);
+        private readonly GridLength zeroLength = new GridLength(0);
 
         public BoolToGridLengthConverter()
         {
@@ -18,20 +19,13 @@ namespace MarkPad.XAML.Converters
 
         protected override object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            bool flag = false;
+            var flag = false;
             if (value is bool)
             {
                 flag = (bool)value;
             }
-            else
-            {
-                if (value is bool?)
-                {
-                    bool? flag2 = (bool?)value;
-                    flag = (flag2.HasValue && flag2.Value);
-                }
-            }
-            return (flag ^ Invert) ? Length : ZeroLength;
+
+            return (flag ^ Invert) ? Length : zeroLength;
         }
 
         protected override object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -40,7 +34,7 @@ namespace MarkPad.XAML.Converters
 
             if (value is GridLength)
             {
-                result = ((GridLength)value).Value != 0;
+                result = Math.Abs(((GridLength)value).Value - 0) > 0.1;
             }
 
             return result ^ Invert;
