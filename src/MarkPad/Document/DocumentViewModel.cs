@@ -36,7 +36,9 @@ namespace MarkPad.Document
 
         readonly Regex wordCountRegex = new Regex(@"[\S]+", RegexOptions.Compiled);
 
-        public DocumentViewModel(IDialogService dialogService, IWindowManager windowManager, 
+        public DocumentViewModel(
+            IDialogService dialogService, 
+            IWindowManager windowManager, 
             ISiteContextGenerator siteContextGenerator,
             Func<string, IMetaWeblogService> getMetaWeblog,
             ISettingsProvider settingsProvider)
