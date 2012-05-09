@@ -93,11 +93,9 @@
     <Compile Include="Analects\XAMLConverters\ToLowerConverter.cs" />
     <Compile Include="Analects\XAMLConverters\ToUpperConverter.cs" />
     <Compile Include="Controls\FloatingToolBar.cs" />
-    <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\BoolToGridLengthConverter.cs" />
+    <Compile Include="Converters\EnumDisplayConverter.cs" />
     <Compile Include="Converters\EnumDisplayer.cs" />
-    <Compile Include="Converters\DebugConverter.cs" />
-    <Compile Include="Converters\MarkupConverter.cs" />
     <Compile Include="AttachedProperties\WebBrowserUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
