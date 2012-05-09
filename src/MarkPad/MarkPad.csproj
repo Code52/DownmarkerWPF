@@ -155,6 +155,9 @@
       <DependentUpon>MarkdownEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Document\MarkPadHyperlink.cs" />
+    <Compile Include="HtmlPreview.xaml.cs">
+      <DependentUpon>HtmlPreview.xaml</DependentUpon>
+    </Compile>
     <Compile Include="InPathMultiConverter.cs" />
     <Compile Include="Extensions\DataImage.cs" />
     <Compile Include="Extensions\DataObjectExtensions.cs" />
@@ -257,6 +260,10 @@
     <Page Include="ExceptionDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="HtmlPreview.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="HyperlinkEditor\HyperlinkEditorView.xaml">
       <SubType>Designer</SubType>

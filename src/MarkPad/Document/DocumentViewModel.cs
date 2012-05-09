@@ -20,26 +20,36 @@ namespace MarkPad.Document
     internal class DocumentViewModel : Screen
     {
         private static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
+        private const double ZoomDelta = 0.1;
+        private double zoomLevel = 1;
 
         private readonly IDialogService dialogService;
         private readonly IWindowManager windowManager;
         private readonly ISiteContextGenerator siteContextGenerator;
         private readonly Func<string, IMetaWeblogService> getMetaWeblog;
+        private readonly ISettingsProvider settingsProvider;
 
         private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
         private readonly DispatcherTimer timer;
 
         private string title;
-        private string filename;
 
         readonly Regex wordCountRegex = new Regex(@"[\S]+", RegexOptions.Compiled);
 
-        public DocumentViewModel(IDialogService dialogService, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator, Func<string, IMetaWeblogService> getMetaWeblog)
+        public DocumentViewModel(
+            IDialogService dialogService, 
+            IWindowManager windowManager, 
+            ISiteContextGenerator siteContextGenerator,
+            Func<string, IMetaWeblogService> getMetaWeblog,
+            ISettingsProvider settingsProvider)
         {
             this.dialogService = dialogService;
             this.windowManager = windowManager;
             this.siteContextGenerator = siteContextGenerator;
             this.getMetaWeblog = getMetaWeblog;
+            this.settingsProvider = settingsProvider;
+
+            FontSize = GetFontSize();
 
             title = "New Document";
             Original = "";
@@ -81,7 +91,7 @@ namespace MarkPad.Document
 
         public void Open(string path)
         {
-            filename = path;
+            FileName = path;
             title = new FileInfo(path).Name;
 
             var text = File.ReadAllText(path);
@@ -121,8 +131,8 @@ namespace MarkPad.Document
             if (string.IsNullOrEmpty(path))
                 return false;
 
-            filename = path;
-            title = new FileInfo(filename).Name;
+            FileName = path;
+            title = new FileInfo(FileName).Name;
             NotifyOfPropertyChange(() => DisplayName);
             EvaluateContext();
 
@@ -134,22 +144,22 @@ namespace MarkPad.Document
             if (!HasChanges)
                 return true;
 
-            if (string.IsNullOrEmpty(filename))
+            if (string.IsNullOrEmpty(FileName))
             {
                 var path = dialogService.GetFileSavePath("Choose a location to save the document.", "*.md", Constants.ExtensionFilter + "|All Files (*.*)|*.*");
 
                 if (string.IsNullOrEmpty(path))
                     return false;
 
-                filename = path;
-                title = new FileInfo(filename).Name;
+                FileName = path;
+                title = new FileInfo(FileName).Name;
                 NotifyOfPropertyChange(() => DisplayName);
                 EvaluateContext();
             }
 
             try
             {
-                File.WriteAllText(filename, Document.Text);
+                File.WriteAllText(FileName, Document.Text);
                 Original = Document.Text;
             }
             catch (Exception)
@@ -159,18 +169,18 @@ namespace MarkPad.Document
                                                 new ButtonExtras(ButtonType.Yes, "Save", "Save the file at a different location."),
                                                 new ButtonExtras(ButtonType.No, "Do not save", "The file will be considered a New Document.  The next save will prompt for a file location."));
 
-                string prevFileName = filename;
+                string prevFileName = FileName;
                 string prevTitle = title;
 
                 title = "New Document";
-                filename = "";
+                FileName = "";
                 if (saveResult)
                 {
                     saveResult = Save();
                     if (!saveResult)  //We decide not to save, keep existing title and filename 
                     {
                         title = prevTitle;
-                        filename = prevFileName;
+                        FileName = prevFileName;
                     }
                 }
 
@@ -183,10 +193,10 @@ namespace MarkPad.Document
 
         private void EvaluateContext()
         {
-            SiteContext = siteContextGenerator.GetContext(filename);
+            SiteContext = siteContextGenerator.GetContext(FileName);
         }
 
-        public TextDocument Document { get; set; }
+        public TextDocument Document { get; private set; }
 
         public string Original { get; set; }
 
@@ -202,10 +212,7 @@ namespace MarkPad.Document
             get { return title; }
         }
 
-        public string FileName
-        {
-            get { return filename; }
-        }
+        public string FileName { get; private set; }
 
         public string Title
         {
@@ -226,7 +233,7 @@ namespace MarkPad.Document
 
             var saveResult = dialogService.ShowConfirmationWithCancel("MarkPad", "Save modifications.", "Do you want to save your changes to '" + title + "'?",
                 new ButtonExtras(ButtonType.Yes, "Save",
-                    string.IsNullOrEmpty(filename) ? "The file has not been saved yet" : "The file will be saved to " + Path.GetFullPath(filename)),
+                    string.IsNullOrEmpty(FileName) ? "The file has not been saved yet" : "The file will be saved to " + Path.GetFullPath(FileName)),
                 new ButtonExtras(ButtonType.No, "Don't Save", "Close the document without saving the modifications"),
                 new ButtonExtras(ButtonType.Cancel, "Cancel", "Don't close the document")
             );
@@ -254,10 +261,9 @@ namespace MarkPad.Document
 
         private static void CheckAndCloseView(DocumentView view)
         {
-            if (view != null
-                && view.wb != null)
+            if (view != null)
             {
-                view.wb.Close();
+                view.Cleanup();
             }
         }
 
@@ -266,7 +272,7 @@ namespace MarkPad.Document
             var view = GetView() as DocumentView;
             if (view != null)
             {
-                view.wb.Print();
+                view.Print();
             }
         }
 
@@ -275,6 +281,72 @@ namespace MarkPad.Document
         public ISiteContext SiteContext { get; private set; }
 
         public int WordCount { get; private set; }
+
+        public double FontSize { get; private set; }
+
+        public double ZoomLevel
+        {
+            get { return zoomLevel; }
+            set
+            {
+                zoomLevel = value;
+                FontSize = GetFontSize()*value;
+            }
+        }
+
+        public double MaxZoom
+        {
+            get { return 2; }
+        }
+
+        public double MinZoom
+        {
+            get { return 0.5; }
+        }
+
+        /// <summary>
+        /// Get the font size that was set in the settings.
+        /// </summary>
+        /// <returns>Font size.</returns>
+        private int GetFontSize()
+        {
+            return Constants.FONT_SIZE_ENUM_ADJUSTMENT + (int)settingsProvider.GetSettings<MarkPadSettings>().FontSize;
+        }
+
+        public void ZoomIn()
+        {
+            AdjustZoom(ZoomDelta);
+        }
+
+        public void ZoomOut()
+        {
+            AdjustZoom(-ZoomDelta);
+        }
+
+        private void AdjustZoom(double delta)
+        {
+            var newZoom = ZoomLevel + delta;
+
+            if (newZoom < MinZoom)
+            {
+                //Don't cause a change if we don't have to
+                if (Math.Abs(ZoomLevel - MinZoom) < 0.1) return;
+                newZoom = MinZoom;
+            }
+            if (newZoom > MaxZoom)
+            {
+                //Don't cause a change if we don't have to
+                if (Math.Abs(ZoomLevel - MaxZoom) < 0.1)return;
+                newZoom = MaxZoom;
+            }
+
+            ZoomLevel = newZoom;
+        }
+
+        public void ZoomReset()
+        {
+            ZoomLevel = 1;
+        }
 
         public void Publish(string postid, string postTitle, string[] categories, BlogSetting blog)
         {
@@ -347,6 +419,11 @@ namespace MarkPad.Document
                 return hyperlink;
             }
             return null;
+        }
+
+        public void RefreshFont()
+        {
+            FontSize = GetFontSize()*ZoomLevel;
         }
     }
 }
