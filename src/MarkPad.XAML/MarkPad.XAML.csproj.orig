@@ -96,6 +96,12 @@
     <Compile Include="Converters\BoolToGridLengthConverter.cs" />
     <Compile Include="Converters\EnumDisplayConverter.cs" />
     <Compile Include="Converters\EnumDisplayer.cs" />
+<<<<<<< HEAD
+    <Compile Include="Converters\DebugConverter.cs" />
+    <Compile Include="Converters\MarkupConverter.cs" />
+=======
+    <Compile Include="AttachedProperties\WebBrowserUtility.cs" />
+>>>>>>> 5c0cd0e41cace6fc8323ce582f636ce919e6ac1c
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

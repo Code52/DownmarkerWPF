@@ -70,6 +70,66 @@ namespace MarkPad.Document
             ViewModel.ExecuteSafely(vm => vm.ZoomLevel += e.Delta*0.1);
         }
 
+<<<<<<< HEAD
+        void WordCount_KeyDown(object sender, KeyEventArgs e)
+        {
+            var vm = DataContext as DocumentViewModel;
+
+            var count = 0;
+
+            if (!string.IsNullOrEmpty(vm.Render))
+            {
+                count = GetWordCount(vm.Render);
+            }
+
+            WordCount.Content = "words: " + count;
+        }
+
+        private static int GetWordCount(string text)
+        {
+            var input = text;
+            input = Regex.Replace(input, @"(?s)<script.*?(/>|</script>)", string.Empty);
+            input = Regex.Replace(input, @"</?\w+((\s+\w+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>", string.Empty);
+            return Regex.Matches(input, @"[\S]+").Count;
+=======
+        private void ApplyZoom()
+        {
+            markdownEditor.Editor.TextArea.TextView.Redraw();
+
+            var zoom = ZoomSlider.Value;
+
+            var fontSize = GetFontSize() * zoom;
+
+            markdownEditor.Editor.FontSize = fontSize;
+            wb.Zoom = GetZoomLevel(fontSize);
+        }
+
+        private void ZoomIn()
+        {
+            AdjustZoom(ZoomDelta);
+        }
+
+        private void ZoomOut()
+        {
+            AdjustZoom(-ZoomDelta);
+        }
+
+        private void AdjustZoom(double delta)
+        {
+            var newZoom = ZoomSlider.Value + delta;
+
+            if (newZoom < ZoomSlider.Minimum) newZoom = ZoomSlider.Minimum;
+            if (newZoom > ZoomSlider.Maximum) newZoom = ZoomSlider.Maximum;
+
+            ZoomSlider.Value = newZoom;
+        }
+
+        private void ZoomReset()
+        {
+            ZoomSlider.Value = 1;
+>>>>>>> 5c0cd0e41cace6fc8323ce582f636ce919e6ac1c
+        }
+
         protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
         {
             base.OnPreviewMouseWheel(e);

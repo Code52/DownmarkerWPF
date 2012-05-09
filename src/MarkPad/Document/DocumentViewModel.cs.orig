@@ -34,12 +34,16 @@ namespace MarkPad.Document
 
         private string title;
 
-        readonly Regex wordCountRegex = new Regex(@"[\S]+", RegexOptions.Compiled);
-
+<<<<<<< HEAD
         public DocumentViewModel(IDialogService dialogService, IWindowManager windowManager, 
             ISiteContextGenerator siteContextGenerator,
             Func<string, IMetaWeblogService> getMetaWeblog,
             ISettingsProvider settingsProvider)
+=======
+        readonly Regex wordCountRegex = new Regex(@"[\S]+", RegexOptions.Compiled);
+
+        public DocumentViewModel(IDialogService dialogService, IWindowManager windowManager, ISiteContextGenerator siteContextGenerator, Func<string, IMetaWeblogService> getMetaWeblog)
+>>>>>>> 5c0cd0e41cace6fc8323ce582f636ce919e6ac1c
         {
             this.dialogService = dialogService;
             this.windowManager = windowManager;
@@ -278,8 +282,7 @@ namespace MarkPad.Document
 
         public ISiteContext SiteContext { get; private set; }
 
-        public int WordCount { get; private set; }
-
+<<<<<<< HEAD
         public double FontSize { get; private set; }
 
         public double ZoomLevel
@@ -345,6 +348,9 @@ namespace MarkPad.Document
         {
             ZoomLevel = 1;
         }
+=======
+        public int WordCount { get; private set; }
+>>>>>>> 5c0cd0e41cace6fc8323ce582f636ce919e6ac1c
 
         public void Publish(string postid, string postTitle, string[] categories, BlogSetting blog)
         {

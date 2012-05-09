@@ -41,6 +41,9 @@ namespace MarkPad.Document
                                                    CanEditDocument));
         }
 
+<<<<<<< HEAD
+        #region public bool FloatingToolbarEnabled
+=======
         public static readonly DependencyProperty DocumentProperty =
             DependencyProperty.Register("Document", typeof(TextDocument), typeof(MarkdownEditor), new PropertyMetadata(default(TextDocument)));
 
@@ -50,7 +53,7 @@ namespace MarkPad.Document
             set { SetValue(DocumentProperty, value); }
         }
 
-        #region public bool FloatingToolbarEnabled
+>>>>>>> 5c0cd0e41cace6fc8323ce582f636ce919e6ac1c
         public static readonly DependencyProperty FloatingToolbarEnabledProperty =
             DependencyProperty.Register("FloatingToolbarEnabled", typeof (bool), typeof (MarkdownEditor), new PropertyMetadata(default(bool)));
 

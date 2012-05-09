@@ -67,7 +67,8 @@
         
         <Document:MarkdownEditor x:Name="markdownEditor"
                                  Grid.Column="1"
-                                 EditorFontSize="{Binding FontSize}" />
+                                 EditorFontSize="{Binding FontSize}"
+                                 Document="{Binding Document}"/>
 
         <Slider Maximum="{Binding MaxZoom}"
                 Minimum="{Binding MinZoom}"
@@ -78,11 +79,15 @@
                 Grid.Column="1" 
                 Value="{Binding ZoomLevel}"/>
 
-        <Label Name="WordCount"
-               VerticalAlignment="Bottom"
+        <Label VerticalAlignment="Bottom"
                Margin="40,40,10,15"
                Grid.Column="1"
-               HorizontalAlignment="Left">          
+               HorizontalAlignment="Left"
+               IsHitTestVisible="False">
+            <TextBlock>
+                <TextBlock Text="wordcount: " />
+                <TextBlock Text="{Binding WordCount}"/>
+            </TextBlock>
         </Label>
         
         <MarkPad:HtmlPreview Html="{Binding Render}"

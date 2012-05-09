@@ -8,7 +8,8 @@
              xmlns:controls="clr-namespace:MarkPad.XAML.Controls;assembly=MarkPad.XAML"
              xmlns:Document="clr-namespace:MarkPad.Document" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
-             Loaded="EditorLoaded">
+             Loaded="EditorLoaded"
+             x:Name="editor">
     <UserControl.Resources>
         <Style TargetType="{x:Type avalonedit:TextArea}">
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -74,7 +75,7 @@
             x:Name="Editor"
             WordWrap="True"
             ShowLineNumbers="True"
-            Document="{Binding Document}"
+            Document="{Binding Document, ElementName=editor}"
             cal:Message.Attach="[Event TextChanged]=[Action Update]"
             Grid.Column="0"
             Margin="10,0,10,10" 
