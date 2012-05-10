@@ -343,10 +343,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ExportToHtmlPlugin\ExportToHtmlPlugin.csproj">
-      <Project>{F5EF3169-748F-4C96-A4A1-F33381572619}</Project>
-      <Name>ExportToHtmlPlugin</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MarkPad.Contracts\MarkPad.Contracts.csproj">
       <Project>{96FA74A6-397A-4BE2-A6BF-AAD39A159DD2}</Project>
       <Name>MarkPad.Contracts</Name>
@@ -367,7 +363,11 @@
       <Project>{B780B8AD-169E-4300-A29F-713471EF3056}</Project>
       <Name>ExamplePlugin</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SpellCheckPlugin\SpellCheckPlugin.csproj">
+    <ProjectReference Include="..\Plugins\ExportToHtmlPlugin\ExportToHtmlPlugin.csproj">
+      <Project>{F5EF3169-748F-4C96-A4A1-F33381572619}</Project>
+      <Name>ExportToHtmlPlugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Plugins\SpellCheckPlugin\SpellCheckPlugin.csproj">
       <Project>{2FD996E4-8647-4A21-AE43-3652F66D4685}</Project>
       <Name>SpellCheckPlugin</Name>
     </ProjectReference>
