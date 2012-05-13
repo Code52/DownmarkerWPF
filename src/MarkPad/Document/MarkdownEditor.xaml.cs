@@ -37,8 +37,7 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleItalic, (x, y) => ToggleItalic(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCode, (x, y) => ToggleCode(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCodeBlock, (x, y) => ToggleCodeBlock(), CanEditDocument));
-            CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(),
-                                                   CanEditDocument));
+            CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
         }
 
         public static readonly DependencyProperty DocumentProperty =
@@ -97,6 +96,8 @@ namespace MarkPad.Document
 
         private void SelectionChanged(object sender, EventArgs e)
         {
+            if (!FloatingToolbarEnabled) return;
+
             if (Editor.TextArea.Selection.IsEmpty)
                 floatingToolBar.Hide();
             else

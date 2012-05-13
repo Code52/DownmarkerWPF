@@ -220,6 +220,15 @@ namespace MarkPad.Document
             set { title = value; }
         }
 
+        public bool FloatingToolbarEnabled
+        {
+            get
+            {
+                var settings = settingsProvider.GetSettings<MarkPadSettings>();
+                return settings.FloatingToolBarEnabled;
+            }
+        }
+
         public override void CanClose(Action<bool> callback)
         {
             var view = GetView() as DocumentView;
