@@ -150,7 +150,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Document\AvalonEditPreviewKeyDownHandlers\CopyLeadingWhitespaceOnNewLine.cs" />
+    <Compile Include="Document\AvalonEditPreviewKeyDownHandlers\PasteImagesUsingSiteContext.cs" />
     <Compile Include="Document\DisplayCommands.cs" />
+    <Compile Include="Document\IAvalonEditPreviewKeyDownHandlers.cs" />
     <Compile Include="Document\MarkdownEditor.xaml.cs">
       <DependentUpon>MarkdownEditor.xaml</DependentUpon>
     </Compile>

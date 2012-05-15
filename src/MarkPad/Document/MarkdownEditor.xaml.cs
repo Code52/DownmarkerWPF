@@ -14,6 +14,8 @@ using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
 using MarkPad.Extensions;
 using MarkPad.Framework;
+using System.Collections.Generic;
+using MarkPad.Document.AvalonEditPreviewKeyDownHandlers;
 
 namespace MarkPad.Document
 {
@@ -21,6 +23,8 @@ namespace MarkPad.Document
     {
         const int NumSpaces = 4;
         const string Spaces = "    ";
+
+        IEnumerable<IAvalonEditPreviewKeyDownHandlers> avalonEditPreviewKeyDownHandlers;
 
         public MarkdownEditor()
         {
@@ -39,6 +43,11 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCodeBlock, (x, y) => ToggleCodeBlock(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(),
                                                    CanEditDocument));
+
+            avalonEditPreviewKeyDownHandlers = new IAvalonEditPreviewKeyDownHandlers[]{
+                new CopyLeadingWhitespaceOnNewLine(),
+                new PasteImagesUsingSiteContext()
+            };
         }
 
         public static readonly DependencyProperty DocumentProperty =
@@ -156,37 +165,17 @@ namespace MarkPad.Document
 
         private void EditorPreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (Keyboard.Modifiers != ModifierKeys.Control || e.Key != Key.V) return;
-            (DataContext as DocumentViewModel)
-                .ExecuteSafely(d =>
-                {
-                    var siteContext = d.SiteContext;
-                    var images = Clipboard.GetDataObject().GetImages();
-                    if (images.Any() && siteContext != null)
-                    {
-                        var sb = new StringBuilder();
-                        var textArea = Editor.TextArea;
-
-                        foreach (var dataImage in images)
-                        {
-                            var relativePath = siteContext.SaveImage(dataImage.Bitmap);
-
-                            sb.AppendLine(string.Format("![{0}](/{1})",
-                                Path.GetFileNameWithoutExtension(relativePath),
-                                relativePath.TrimStart('/').Replace('\\', '/')));
-                        }
-
-                        textArea.Selection.ReplaceSelectionWithText(textArea, sb.ToString().Trim());
-                        e.Handled = true;
-                    }
-                });
+            foreach (var handler in avalonEditPreviewKeyDownHandlers)
+            {
+                handler.Handle(DataContext as DocumentViewModel, Editor, e);
+            }
         }
 
         internal void ToggleBold()
         {
             var selectedText = GetSelectedText();
             if (string.IsNullOrWhiteSpace(selectedText)) return;
-
+            
             Editor.SelectedText = selectedText.ToggleBold(!selectedText.IsBold());
         }
 
