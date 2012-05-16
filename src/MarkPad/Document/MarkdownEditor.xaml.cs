@@ -47,7 +47,8 @@ namespace MarkPad.Document
             avalonEditPreviewKeyDownHandlers = new IAvalonEditPreviewKeyDownHandlers[]{
                 new CopyLeadingWhitespaceOnNewLine(),
                 new PasteImagesUsingSiteContext(),
-                new CursorLeftRightWithSelection()
+                new CursorLeftRightWithSelection(),
+                new ControlRightMovesToEndOfCurrentWord()
             };
         }
 

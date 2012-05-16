@@ -150,6 +150,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Document\AvalonEditPreviewKeyDownHandlers\ControlRightMovesToEndOfCurrentWord.cs" />
     <Compile Include="Document\AvalonEditPreviewKeyDownHandlers\CopyLeadingWhitespaceOnNewLine.cs" />
     <Compile Include="Document\AvalonEditPreviewKeyDownHandlers\CursorLeftRightWithSelection.cs" />
     <Compile Include="Document\AvalonEditPreviewKeyDownHandlers\PasteImagesUsingSiteContext.cs" />
