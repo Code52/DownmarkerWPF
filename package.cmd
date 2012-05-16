@@ -6,7 +6,7 @@ SET copy="copy"
 CALL rmdir "%~dp0artifacts\" /s /q
 
 :: Pass the configuration parameter and all other parameters
-CALL %build% Release "Mixed Platforms"
+CALL %build% Release "x86"
 
 :: get build output and copy out to root 
 CALL xcopy "%~dp0src\MarkPad\bin\Release\*" "%~dp0artifacts\" /s /e /Y
