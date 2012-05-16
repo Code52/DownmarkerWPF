@@ -21,7 +21,7 @@ namespace MarkPad.Document.AvalonEditPreviewKeyDownHandlers
             if (lineText.Length == trimmedLineText.Length) return;
             
             var leadingWhitespace = lineText.Substring(0, lineText.Length - trimmedLineText.Length);
-            editor.TextArea.Selection.ReplaceSelectionWithText(editor.TextArea, leadingWhitespace + Environment.NewLine);
+            editor.TextArea.Selection.ReplaceSelectionWithText(leadingWhitespace + Environment.NewLine);
             e.Handled = true;
         }
     }

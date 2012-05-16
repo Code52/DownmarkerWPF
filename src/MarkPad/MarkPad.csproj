@@ -111,7 +111,7 @@
       <HintPath>..\packages\xmlrpcnet.2.5.0\lib\net20\CookComputing.XmlRpcV2.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.AvalonEdit">
-      <HintPath>..\packages\AvalonEdit.4.1.0.8000\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
+      <HintPath>..\packages\AvalonEdit.4.2.0.8783\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
     <Reference Include="MahApps.Metro">
       <HintPath>..\packages\MahApps.Metro.0.7.9.54-ALPHA\lib\net40\MahApps.Metro.dll</HintPath>
@@ -151,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Document\AvalonEditPreviewKeyDownHandlers\CopyLeadingWhitespaceOnNewLine.cs" />
+    <Compile Include="Document\AvalonEditPreviewKeyDownHandlers\CursorLeftRightWithSelection.cs" />
     <Compile Include="Document\AvalonEditPreviewKeyDownHandlers\PasteImagesUsingSiteContext.cs" />
     <Compile Include="Document\DisplayCommands.cs" />
     <Compile Include="Document\IAvalonEditPreviewKeyDownHandlers.cs" />

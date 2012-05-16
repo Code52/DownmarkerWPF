@@ -46,7 +46,8 @@ namespace MarkPad.Document
 
             avalonEditPreviewKeyDownHandlers = new IAvalonEditPreviewKeyDownHandlers[]{
                 new CopyLeadingWhitespaceOnNewLine(),
-                new PasteImagesUsingSiteContext()
+                new PasteImagesUsingSiteContext(),
+                new CursorLeftRightWithSelection()
             };
         }
 
@@ -207,7 +208,7 @@ namespace MarkPad.Document
             if (textArea.Selection.IsEmpty)
                 return null;
 
-            return textArea.Selection.GetText(textArea.Document);
+            return textArea.Selection.GetText();
         }
 
         private void ToggleCodeBlock()
@@ -240,7 +241,7 @@ namespace MarkPad.Document
             if (textArea.Selection.IsEmpty)
                 return;
 
-            var selectedText = textArea.Selection.GetText(textArea.Document);
+            var selectedText = textArea.Selection.GetText();
 
             //  Check if the selected text already is a link...
             string text = selectedText, url = string.Empty;
@@ -258,8 +259,7 @@ namespace MarkPad.Document
                     hyperlink = vm.GetHyperlink(hyperlink);
                     if (hyperlink != null)
                     {
-                        textArea.Selection.ReplaceSelectionWithText(textArea,
-                            string.Format("[{0}]({1})", hyperlink.Text, hyperlink.Url));
+                        textArea.Selection.ReplaceSelectionWithText(string.Format("[{0}]({1})", hyperlink.Text, hyperlink.Url));
                     }
                 });
         }

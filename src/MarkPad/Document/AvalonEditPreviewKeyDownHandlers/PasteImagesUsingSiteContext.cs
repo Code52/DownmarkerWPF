@@ -6,12 +6,13 @@ using System.Windows.Input;
 using System.Windows;
 using MarkPad.Extensions;
 using System.IO;
+using ICSharpCode.AvalonEdit;
 
 namespace MarkPad.Document.AvalonEditPreviewKeyDownHandlers
 {
     public class PasteImagesUsingSiteContext : IAvalonEditPreviewKeyDownHandlers
     {
-        public void Handle(DocumentViewModel viewModel, ICSharpCode.AvalonEdit.TextEditor editor, System.Windows.Input.KeyEventArgs e)
+        public void Handle(DocumentViewModel viewModel, TextEditor editor, KeyEventArgs e)
         {
             if (viewModel == null) return;
             if (Keyboard.Modifiers != ModifierKeys.Control || e.Key != Key.V) return;
@@ -32,7 +33,7 @@ namespace MarkPad.Document.AvalonEditPreviewKeyDownHandlers
                 sb.AppendLine(imageMarkdown);
             }
 
-            editor.TextArea.Selection.ReplaceSelectionWithText(editor.TextArea, sb.ToString().Trim());
+            editor.TextArea.Selection.ReplaceSelectionWithText(sb.ToString().Trim());
             e.Handled = true;
         }
     }
