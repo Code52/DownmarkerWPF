@@ -1,21 +1,21 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml;
+using Caliburn.Micro;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
-using MarkPad.Extensions;
-using MarkPad.Framework;
-using System.Collections.Generic;
 using MarkPad.Document.AvalonEditPreviewKeyDownHandlers;
+using MarkPad.Document.EditorBehaviours;
+using MarkPad.Framework;
+using MarkPad.Framework.Events;
 
 namespace MarkPad.Document
 {
@@ -24,7 +24,8 @@ namespace MarkPad.Document
         const int NumSpaces = 4;
         const string Spaces = "    ";
 
-        IEnumerable<IAvalonEditPreviewKeyDownHandlers> avalonEditPreviewKeyDownHandlers;
+        IEnumerable<IHandle<EditorPreviewKeyDownEvent>> editorPreviewKeyDownHandlers;
+        IEnumerable<IHandle<EditorTextEnteringEvent>> editorTextEnteringHandlers;
 
         public MarkdownEditor()
         {
@@ -36,6 +37,7 @@ namespace MarkPad.Document
             Editor.PreviewMouseLeftButtonDown += HandleEditorPreviewMouseLeftButtonDown;
 
             Editor.MouseMove += (s, e) => e.Handled = true;
+            Editor.TextArea.TextEntering += new TextCompositionEventHandler(TextArea_TextEntering);
 
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleBold, (x, y) => ToggleBold(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleItalic, (x, y) => ToggleItalic(), CanEditDocument));
@@ -44,12 +46,18 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(),
                                                    CanEditDocument));
 
-            avalonEditPreviewKeyDownHandlers = new IAvalonEditPreviewKeyDownHandlers[]{
+            var overtypeMode = new OvertypeMode();
+
+            editorPreviewKeyDownHandlers = new IHandle<EditorPreviewKeyDownEvent>[] {
                 new CopyLeadingWhitespaceOnNewLine(),
                 new PasteImagesUsingSiteContext(),
                 new CursorLeftRightWithSelection(),
                 new ControlRightTweakedForMarkdown(),
-                new HardLineBreak()
+                new HardLineBreak(),
+                overtypeMode
+            };
+            editorTextEnteringHandlers = new IHandle<EditorTextEnteringEvent>[] {
+                overtypeMode
             };
         }
 
@@ -168,9 +176,17 @@ namespace MarkPad.Document
 
         private void EditorPreviewKeyDown(object sender, KeyEventArgs e)
         {
-            foreach (var handler in avalonEditPreviewKeyDownHandlers)
+            foreach (var handler in editorPreviewKeyDownHandlers)
             {
-                handler.Handle(DataContext as DocumentViewModel, Editor, e);
+                handler.Handle(new EditorPreviewKeyDownEvent(DataContext as DocumentViewModel, Editor, e));
+            }
+        }
+
+        void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
+        {
+            foreach (var handler in editorTextEnteringHandlers)
+            {
+                handler.Handle(new EditorTextEnteringEvent(DataContext as DocumentViewModel, Editor, e));
             }
         }
 

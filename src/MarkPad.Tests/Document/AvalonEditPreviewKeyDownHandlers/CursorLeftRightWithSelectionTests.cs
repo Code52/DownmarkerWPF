@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using ICSharpCode.AvalonEdit;
 using MarkPad.Document.AvalonEditPreviewKeyDownHandlers;
+using MarkPad.Framework.Events;
 using Xunit;
 
 namespace MarkPad.Tests.Document.AvalonEditPreviewKeyDownHandlers
@@ -38,7 +39,7 @@ namespace MarkPad.Tests.Document.AvalonEditPreviewKeyDownHandlers
                 CaretOffset = 8
             };
 
-            new CursorLeftRightWithSelection().Handle(null, editor, GetKeyEventArgs(Key.Left));
+            new CursorLeftRightWithSelection().Handle(new EditorPreviewKeyDownEvent(null, editor, GetKeyEventArgs(Key.Left)));
 
             Assert.Equal(3, editor.CaretOffset);
         }
@@ -54,7 +55,7 @@ namespace MarkPad.Tests.Document.AvalonEditPreviewKeyDownHandlers
                 CaretOffset = 8
             };
 
-            new CursorLeftRightWithSelection().Handle(null, editor, GetKeyEventArgs(Key.Right));
+            new CursorLeftRightWithSelection().Handle(new EditorPreviewKeyDownEvent(null, editor, GetKeyEventArgs(Key.Right)));
 
             Assert.Equal(8, editor.CaretOffset);
         }

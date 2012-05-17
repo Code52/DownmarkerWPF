@@ -1,20 +1,22 @@
 ﻿using System.Text.RegularExpressions;
 using System.Windows.Input;
+using Caliburn.Micro;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
+using MarkPad.Framework.Events;
 
 namespace MarkPad.Document.AvalonEditPreviewKeyDownHandlers
 {
-    public class ControlRightTweakedForMarkdown : IAvalonEditPreviewKeyDownHandlers
+    public class ControlRightTweakedForMarkdown : IHandle<EditorPreviewKeyDownEvent>
     {
         readonly Regex _wordRegex = new Regex(@"[\w]", RegexOptions.Compiled);
         readonly Regex _nonWordRegex = new Regex(@"[\W]", RegexOptions.Compiled);
         readonly Regex _nonWhitespaceRegex = new Regex(@"[\S]", RegexOptions.Compiled);
 
-        public void Handle(DocumentViewModel viewModel, TextEditor editor, KeyEventArgs e)
+        public void Handle(EditorPreviewKeyDownEvent e)
         {
             if (Keyboard.Modifiers != ModifierKeys.Control) return;
-            if (e.Key != Key.Right) return;
+            if (e.Args.Key != Key.Right) return;
             
             /* This is a tweaked variation of the behaviour in Sublime Text 2. It likes to find words, but
              * also likes control characters at the start of a line, which is a bit nicer for Markdown.
@@ -32,37 +34,37 @@ namespace MarkPad.Document.AvalonEditPreviewKeyDownHandlers
              *      if the recorded text is null or whitespace, move to the end of the current word
              * */
 
-            var textLeftOfCursor = GetTextLeftOfCursor(editor);
-            if (GetIsCaratAtEndOfLine(editor))
+            var textLeftOfCursor = GetTextLeftOfCursor(e.Editor);
+            if (GetIsCaratAtEndOfLine(e.Editor))
             {
-                editor.CaretOffset = GetCurrentLine(editor).NextLine.Offset;
+                e.Editor.CaretOffset = GetCurrentLine(e.Editor).NextLine.Offset;
             }
-            else if (_wordRegex.IsMatch(GetNextCharacter(editor)))
+            else if (_wordRegex.IsMatch(GetNextCharacter(e.Editor)))
             {
-                MoveToEndOfCurrentWord(editor);
+                MoveToEndOfCurrentWord(e.Editor);
             }
             else if (string.IsNullOrWhiteSpace(textLeftOfCursor))
             {
-                if (_nonWhitespaceRegex.IsMatch(GetNextCharacter(editor)))
+                if (_nonWhitespaceRegex.IsMatch(GetNextCharacter(e.Editor)))
                 {
-                    MoveToBeginningOfNextWord(editor);
+                    MoveToBeginningOfNextWord(e.Editor);
                 }
                 else
                 {
-                    MoveToFirstNonwhitespaceCharacter(editor);
+                    MoveToFirstNonwhitespaceCharacter(e.Editor);
                 }
             }
             else
             {
-                var textBeforeNextWord = GetTextBeforeNextWord(editor);
-                MoveToBeginningOfNextWord(editor);
+                var textBeforeNextWord = GetTextBeforeNextWord(e.Editor);
+                MoveToBeginningOfNextWord(e.Editor);
                 if (string.IsNullOrWhiteSpace(textBeforeNextWord))
                 {
-                    MoveToEndOfCurrentWord(editor);
+                    MoveToEndOfCurrentWord(e.Editor);
                 }
             }
 
-            e.Handled = true;
+            e.Args.Handled = true;
             return;
         }
 
