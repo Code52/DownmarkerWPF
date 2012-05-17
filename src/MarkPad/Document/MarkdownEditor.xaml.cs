@@ -48,7 +48,8 @@ namespace MarkPad.Document
                 new CopyLeadingWhitespaceOnNewLine(),
                 new PasteImagesUsingSiteContext(),
                 new CursorLeftRightWithSelection(),
-                new ControlRightTweakedForMarkdown()
+                new ControlRightTweakedForMarkdown(),
+                new HardLineBreak()
             };
         }
 
