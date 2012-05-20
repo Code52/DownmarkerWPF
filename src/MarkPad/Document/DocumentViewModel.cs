@@ -106,7 +106,7 @@ namespace MarkPad.Document
         {
             Post = post;
 
-            title = post.permalink ?? string.Empty; // TODO: no title is displayed now
+            title = post.title ?? string.Empty;
             Document.Text = post.description ?? string.Empty;
             Original = post.description ?? string.Empty;
 
