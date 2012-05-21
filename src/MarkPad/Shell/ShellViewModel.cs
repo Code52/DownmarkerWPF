@@ -152,7 +152,10 @@ namespace MarkPad.Shell
             if (doc != null)
             {
                 MDI.CloseItem(doc);
+                return;
             }
+
+            TryClose();
         }
 
         public void Handle(FileOpenEvent message)
