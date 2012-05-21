@@ -17,7 +17,7 @@ using Ookii.Dialogs.Wpf;
 
 namespace MarkPad.Document
 {
-    internal class DocumentViewModel : Screen
+    public class DocumentViewModel : Screen
     {
         private static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
         private const double ZoomDelta = 0.1;
