@@ -15,6 +15,7 @@
     mc:Ignorable="d" 
     MouseLeftButtonDown="DragMoveWindow"
 	MouseMove="MouseMoveWindow"
+    MouseDoubleClick="ShellView_MouseDoubleClick"
     DragOver="WindowDragOver"
     Icon="../markpad.ico"
     SnapsToDevicePixels="True"
@@ -96,6 +97,10 @@
         </LinearGradientBrush>
     </Window.Background>
     <Grid Margin="0" s:VisualStateHelper.VisualStateName="{Binding CurrentState}" >
+        <Grid.RowDefinitions>
+    		<RowDefinition Height="Auto" MinHeight="58" />
+    		<RowDefinition />
+        </Grid.RowDefinitions>
         <VisualStateManager.VisualStateGroups>
     		<VisualStateGroup x:Name="VisualStateGroup">
     			<VisualStateGroup.Transitions>
@@ -289,11 +294,7 @@
                 </VisualState>
             </VisualStateGroup>
     	</VisualStateManager.VisualStateGroups>
-        <Grid x:Name="header">
-    		<Grid.RowDefinitions>
-    			<RowDefinition Height="Auto" MinHeight="58" />
-    			<RowDefinition />
-    		</Grid.RowDefinitions>
+        <Grid x:Name="header" Background="Transparent">
     		<TextBlock TextWrapping="Wrap" VerticalAlignment="Top" d:LayoutOverrides="Width" FontWeight="Bold" FontSize="10.667" Margin="30,10,0,0" Visibility="Collapsed"><Run Text="MARKPAD"/></TextBlock>
     		<WrapPanel UseLayoutRounding="False" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Margin="30,9,0,0">
     			<WrapPanel.Resources>
@@ -418,11 +419,12 @@
     				<SolidColorBrush Color="{DynamicResource HighlightDarkColor}" />
     			</Rectangle.Fill>
     		</Rectangle>
-
-    		<ContentControl x:Name="MDI"
-    			Margin="10,0"
-    			Grid.Row="1" />
     	</Grid>
+
+    	<ContentControl x:Name="MDI"
+    		Margin="10,0"
+    		Grid.Row="1" />
+
         <Rectangle x:Name="settingsShadow" Fill="#3F000000" Stroke="Black" StrokeThickness="0" Visibility="Collapsed"/>
         <Settings:SettingsView x:Name="settingsControl" Visibility="Collapsed"  DataContext="{Binding Settings}" Margin="100,0,0,0" RenderTransformOrigin="0.5,0.5"  >
         	<Settings:SettingsView.RenderTransform>

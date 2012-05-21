@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Input;
+using MarkPad.Framework;
 
 namespace MarkPad.Shell
 {
@@ -12,11 +13,14 @@ namespace MarkPad.Shell
 
         private bool ignoreNextMouseMove;
 
+        bool DocumentIsOpen { get { return (DataContext as ShellViewModel).Evaluate(vm => vm.MDI.ActiveItem != null); } }
+
         private void DragMoveWindow(object sender, MouseButtonEventArgs e)
         {
             if (e.MiddleButton == MouseButtonState.Pressed) return;
             if (e.RightButton == MouseButtonState.Pressed) return;
             if (e.LeftButton != MouseButtonState.Pressed) return;
+            if (DocumentIsOpen && !header.IsMouseOver) return;
 
             if (WindowState == WindowState.Maximized && e.ClickCount != 2) return;
 
@@ -63,6 +67,18 @@ namespace MarkPad.Shell
             DragMove();
         }
 
+        private void ToggleMaximized()
+        {
+            WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+        }
+
+        void ShellView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            if (DocumentIsOpen && !header.IsMouseOver) return;
+            ToggleMaximized();
+        }
+
         private void ButtonMinimiseOnClick(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Minimized;
@@ -70,7 +86,7 @@ namespace MarkPad.Shell
 
         private void ButtonMaxRestoreOnClick(object sender, RoutedEventArgs e)
         {
-            WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+            ToggleMaximized();
         }
 
         protected override void OnStateChanged(System.EventArgs e)
