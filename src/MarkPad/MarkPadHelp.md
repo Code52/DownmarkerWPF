@@ -13,6 +13,10 @@ By [code52](http://code52.org/) - Version 0.9.6
 Holding `Ctrl` and scrolling with the mouse wheel also zooms in and out.
 
 
+## Markdown shortcuts
+
+- `[Shift-Enter]` - Hard line break (insert two spaces before end of line)
+
 
 ## Contributors
 

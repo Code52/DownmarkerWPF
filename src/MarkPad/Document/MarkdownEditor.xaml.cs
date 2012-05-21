@@ -1,19 +1,21 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml;
+using Caliburn.Micro;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
-using MarkPad.Extensions;
+using MarkPad.Document.AvalonEditPreviewKeyDownHandlers;
+using MarkPad.Document.EditorBehaviours;
 using MarkPad.Framework;
+using MarkPad.Framework.Events;
 
 namespace MarkPad.Document
 {
@@ -21,6 +23,9 @@ namespace MarkPad.Document
     {
         const int NumSpaces = 4;
         const string Spaces = "    ";
+
+        IEnumerable<IHandle<EditorPreviewKeyDownEvent>> editorPreviewKeyDownHandlers;
+        IEnumerable<IHandle<EditorTextEnteringEvent>> editorTextEnteringHandlers;
 
         public MarkdownEditor()
         {
@@ -32,12 +37,27 @@ namespace MarkPad.Document
             Editor.PreviewMouseLeftButtonDown += HandleEditorPreviewMouseLeftButtonDown;
 
             Editor.MouseMove += (s, e) => e.Handled = true;
+            Editor.TextArea.TextEntering += new TextCompositionEventHandler(TextArea_TextEntering);
 
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleBold, (x, y) => ToggleBold(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleItalic, (x, y) => ToggleItalic(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCode, (x, y) => ToggleCode(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleCodeBlock, (x, y) => ToggleCodeBlock(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
+
+            var overtypeMode = new OvertypeMode();
+
+            editorPreviewKeyDownHandlers = new IHandle<EditorPreviewKeyDownEvent>[] {
+                new CopyLeadingWhitespaceOnNewLine(),
+                new PasteImagesUsingSiteContext(),
+                new CursorLeftRightWithSelection(),
+                new ControlRightTweakedForMarkdown(),
+                new HardLineBreak(),
+                overtypeMode
+            };
+            editorTextEnteringHandlers = new IHandle<EditorTextEnteringEvent>[] {
+                overtypeMode
+            };
         }
 
         public static readonly DependencyProperty DocumentProperty =
@@ -157,37 +177,25 @@ namespace MarkPad.Document
 
         private void EditorPreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (Keyboard.Modifiers != ModifierKeys.Control || e.Key != Key.V) return;
-            (DataContext as DocumentViewModel)
-                .ExecuteSafely(d =>
-                {
-                    var siteContext = d.SiteContext;
-                    var images = Clipboard.GetDataObject().GetImages();
-                    if (images.Any() && siteContext != null)
-                    {
-                        var sb = new StringBuilder();
-                        var textArea = Editor.TextArea;
+            foreach (var handler in editorPreviewKeyDownHandlers)
+            {
+                handler.Handle(new EditorPreviewKeyDownEvent(DataContext as DocumentViewModel, Editor, e));
+            }
+        }
 
-                        foreach (var dataImage in images)
-                        {
-                            var relativePath = siteContext.SaveImage(dataImage.Bitmap);
-
-                            sb.AppendLine(string.Format("![{0}](/{1})",
-                                Path.GetFileNameWithoutExtension(relativePath),
-                                relativePath.TrimStart('/').Replace('\\', '/')));
-                        }
-
-                        textArea.Selection.ReplaceSelectionWithText(textArea, sb.ToString().Trim());
-                        e.Handled = true;
-                    }
-                });
+        void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
+        {
+            foreach (var handler in editorTextEnteringHandlers)
+            {
+                handler.Handle(new EditorTextEnteringEvent(DataContext as DocumentViewModel, Editor, e));
+            }
         }
 
         internal void ToggleBold()
         {
             var selectedText = GetSelectedText();
             if (string.IsNullOrWhiteSpace(selectedText)) return;
-
+            
             Editor.SelectedText = selectedText.ToggleBold(!selectedText.IsBold());
         }
 
@@ -219,7 +227,7 @@ namespace MarkPad.Document
             if (textArea.Selection.IsEmpty)
                 return null;
 
-            return textArea.Selection.GetText(textArea.Document);
+            return textArea.Selection.GetText();
         }
 
         private void ToggleCodeBlock()
@@ -252,7 +260,7 @@ namespace MarkPad.Document
             if (textArea.Selection.IsEmpty)
                 return;
 
-            var selectedText = textArea.Selection.GetText(textArea.Document);
+            var selectedText = textArea.Selection.GetText();
 
             //  Check if the selected text already is a link...
             string text = selectedText, url = string.Empty;
@@ -270,8 +278,7 @@ namespace MarkPad.Document
                     hyperlink = vm.GetHyperlink(hyperlink);
                     if (hyperlink != null)
                     {
-                        textArea.Selection.ReplaceSelectionWithText(textArea,
-                            string.Format("[{0}]({1})", hyperlink.Text, hyperlink.Url));
+                        textArea.Selection.ReplaceSelectionWithText(string.Format("[{0}]({1})", hyperlink.Text, hyperlink.Url));
                     }
                 });
         }
