@@ -50,7 +50,7 @@
                 <Button x:Name="Fetch" Content="Fetch" Margin="5 0 0 0" Width="50" />
             </StackPanel>
         </StackPanel>
-        <ListBox Grid.Row="1" Background="Transparent" x:Name="Posts" SelectedItem="CurrentPost">
+        <ListBox Grid.Row="1" Background="Transparent" x:Name="Posts" SelectedItem="{Binding CurrentPost}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Key}" HorizontalAlignment="Stretch"/>
