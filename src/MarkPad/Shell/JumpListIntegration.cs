@@ -10,7 +10,6 @@ using Caliburn.Micro;
 using MarkPad.Framework.Events;
 using MarkPad.Services;
 using MarkPad.Services.Events;
-using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;
 
 namespace MarkPad.Shell
@@ -55,15 +54,14 @@ namespace MarkPad.Shell
                 // Sometimes the settings and the jumplist can get out of sequence.
                 index = currentFiles.IndexOf(openedFile);
 
-                jumpList.JumpItems.RemoveAt(index);
+                if (index >= 0) jumpList.JumpItems.RemoveAt(index);
                 InsertFileFirst(openedFile);
             }
             else
             {
                 // update settings
                 var settings = settingsService.GetSettings<MarkPadSettings>();
-                var files = settings.RecentFiles;
-                if (files == null) files = new List<string>();
+                var files = settings.RecentFiles ?? new List<string>();
 
                 files.Insert(0, openedFile);
                 if (files.Count > 5) files.RemoveAt(5);
