@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:cal="http://www.caliburnproject.org"
         xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro" MouseLeftButtonDown="DragMoveWindow"
         Title="Fetch Posts" Height="320" Width="360" mc:Ignorable="d" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <i:Interaction.Behaviors>
@@ -50,7 +51,8 @@
                 <Button x:Name="Fetch" Content="Fetch" Margin="5 0 0 0" Width="50" />
             </StackPanel>
         </StackPanel>
-        <ListBox Grid.Row="1" Background="Transparent" x:Name="Posts" SelectedItem="{Binding CurrentPost}">
+        <ListBox Grid.Row="1" Background="Transparent" x:Name="Posts" SelectedItem="{Binding CurrentPost}" 
+                 cal:Message.Attach="[Event MouseDoubleClick] = [Action Continue()]">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Key}" HorizontalAlignment="Stretch"/>
