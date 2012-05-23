@@ -10,7 +10,6 @@ using Caliburn.Micro;
 using MarkPad.Framework.Events;
 using MarkPad.Services;
 using MarkPad.Services.Events;
-using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;
 
 namespace MarkPad.Shell
@@ -37,7 +36,7 @@ namespace MarkPad.Shell
 
         public void OpenFileAsync(string openedFile)
         {
-            if (!IsWin7())
+            if (!IsWin7OrAbove())
                 return;
 
             var currentFiles = jumpList.JumpItems.OfType<JumpTask>().Select(t => t.Arguments).ToList();
@@ -46,27 +45,26 @@ namespace MarkPad.Shell
             {
                 // find file in list
                 var settings = settingsService.GetSettings<MarkPadSettings>();
-                var files = settings.RecentFiles;
-                var index = files.IndexOf(openedFile);
-                if (index >= 0) files.RemoveAt(index);
-                files.Insert(0, openedFile);
+                var index = settings.RecentFiles.IndexOf(openedFile);
+                if (index >= 0)
+                    settings.RecentFiles.RemoveAt(index);
+                settings.RecentFiles.Insert(0, openedFile);
                 settingsService.SaveSettings(settings);
                 
                 // Sometimes the settings and the jumplist can get out of sequence.
                 index = currentFiles.IndexOf(openedFile);
 
-                jumpList.JumpItems.RemoveAt(index);
+                if (index >= 0) jumpList.JumpItems.RemoveAt(index);
                 InsertFileFirst(openedFile);
             }
             else
             {
                 // update settings
                 var settings = settingsService.GetSettings<MarkPadSettings>();
-                var files = settings.RecentFiles;
-                if (files == null) files = new List<string>();
 
-                files.Insert(0, openedFile);
-                if (files.Count > 5) files.RemoveAt(5);
+                settings.RecentFiles.Insert(0, openedFile);
+                if (settings.RecentFiles.Count > 5) 
+                    settings.RecentFiles.RemoveAt(5);
                 settingsService.SaveSettings(settings);
 
                 InsertFileFirst(openedFile);
@@ -75,7 +73,7 @@ namespace MarkPad.Shell
 
         private void InsertFileFirst(string openedFile)
         {
-            if (!IsWin7())
+            if (!IsWin7OrAbove())
                 return;
 
             if (jumpList != null)
@@ -88,7 +86,7 @@ namespace MarkPad.Shell
 
         public void Handle(AppReadyEvent message)
         {
-            if (!IsWin7())
+            if (!IsWin7OrAbove())
                 return;
 
             jumpList = GetJumpList();
@@ -105,7 +103,7 @@ namespace MarkPad.Shell
 
         private void PopulateJumpList(IEnumerable<string> recentFiles)
         {
-            if (!IsWin7())
+            if (!IsWin7OrAbove())
                 return;
 
             if (recentFiles == null) return;
@@ -122,7 +120,7 @@ namespace MarkPad.Shell
 
         private static JumpItem CreateJumpListItem(string file)
         {
-            if (!IsWin7())
+            if (!IsWin7OrAbove())
                 return null;
 
             var path = Assembly.GetEntryAssembly().CodeBase;
@@ -136,7 +134,7 @@ namespace MarkPad.Shell
                            };
         }
 
-        private static bool IsWin7()
+        private static bool IsWin7OrAbove()
         {
             // check for Windows7
             var os = Environment.OSVersion.Version;
@@ -148,7 +146,7 @@ namespace MarkPad.Shell
 
         private static JumpList GetJumpList()
         {
-            if (!IsWin7())
+            if (!IsWin7OrAbove())
                 return null;
 
             var list = JumpList.GetJumpList(Application.Current);
