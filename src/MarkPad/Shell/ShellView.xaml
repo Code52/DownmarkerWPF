@@ -69,6 +69,12 @@
             </s:InputBindingTrigger.InputBinding>
             <cm:ActionMessage MethodName="SaveAllDocuments" />
         </s:InputBindingTrigger>
+        <s:InputBindingTrigger>
+            <s:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Ctrl+Shift" Key="P" />
+            </s:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="PublishDocument" />
+        </s:InputBindingTrigger>
 
         <s:InputBindingTrigger>
             <s:InputBindingTrigger.InputBinding>
@@ -81,6 +87,12 @@
                 <KeyBinding Modifiers="Ctrl" Key="O" />
             </s:InputBindingTrigger.InputBinding>
             <cm:ActionMessage MethodName="OpenDocument" />
+        </s:InputBindingTrigger>
+        <s:InputBindingTrigger>
+            <s:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Ctrl+Shift" Key="O" />
+            </s:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="OpenFromWeb" />
         </s:InputBindingTrigger>
         <s:InputBindingTrigger>
             <s:InputBindingTrigger.InputBinding>

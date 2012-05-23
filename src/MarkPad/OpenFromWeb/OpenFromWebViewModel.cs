@@ -55,6 +55,15 @@ namespace MarkPad.OpenFromWeb
 
         public bool CanFetch { get { return SelectedBlog != null; } }
 
+        protected override void OnActivate()
+        {
+            base.OnActivate();
+            if (CanFetch)
+            {
+                Fetch();
+            }
+        }
+
         public bool CanContinue
         {
             get { return !string.IsNullOrWhiteSpace(CurrentPost.Key); }

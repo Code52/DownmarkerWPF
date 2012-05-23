@@ -2,13 +2,28 @@
 
 By [code52](http://code52.org/) - Version 0.9.6
 
-
-## Hotkeys
+## View Management Hotkeys
 
 - `[F10]` - "Distraction free" mode, toggles the preview window on/off
 - `[Ctrl++]` (or `[Ctrl =]`) - Zoom in
 - `[Ctrl+-]` - Zoom out
 - `[Ctrl+0]` - Reset zoom
+
+## Document Management Hotkeys
+
+- `[Ctrl+N]` - Create a new document
+- `[Ctrl+S]` - Save current document
+- `[Ctrl+Shift+S]` - Save all documents
+- `[Ctrl+O]` - Open a document
+- `[Ctrl+W]` - Close current document
+- `[Ctrl+Shift+O]` - Open a document from the web
+- `[Ctrl+Shift+P]` - Publish current document
+
+## Document Formatting Hotkeys
+- `[Ctrl+B]` - Toggle bold
+- `[Ctrl+I]` - Toggle italic
+- `[Ctrl+J]` - Toggle code
+- `[Ctrl+K]` - Create hyperlink
 
 Holding `Ctrl` and scrolling with the mouse wheel also zooms in and out.
 
