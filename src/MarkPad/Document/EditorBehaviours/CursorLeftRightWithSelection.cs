@@ -2,7 +2,7 @@
 using Caliburn.Micro;
 using MarkPad.Framework.Events;
 
-namespace MarkPad.Document.AvalonEditPreviewKeyDownHandlers
+namespace MarkPad.Document.EditorBehaviours
 {
     public class CursorLeftRightWithSelection : IHandle<EditorPreviewKeyDownEvent>
     {
