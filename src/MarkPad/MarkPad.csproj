@@ -152,6 +152,7 @@
   <ItemGroup>
     <Compile Include="Document\EditorBehaviours\ControlRightTweakedForMarkdown.cs" />
     <Compile Include="Document\EditorBehaviours\AutoContinueLists.cs" />
+    <Compile Include="Document\EditorBehaviours\IndentLists.cs" />
     <Compile Include="Document\EditorBehaviours\CopyLeadingWhitespaceOnNewLine.cs" />
     <Compile Include="Document\EditorBehaviours\CursorLeftRightWithSelection.cs" />
     <Compile Include="Document\EditorBehaviours\HardLineBreak.cs" />

@@ -23,7 +23,7 @@ namespace MarkPad.Document.EditorBehaviours
         // [\s]*    zero or more whitespace chars
         // [>]      a single raquo
         // [\s]*    zero or more whitespace chars
-        readonly Regex _quoteRegex = new Regex(@"[\s]*[>][\s]*", RegexOptions.Compiled);
+        readonly Regex _blockquoteRegex = new Regex(@"[\s]*[>][\s]*", RegexOptions.Compiled);
 
         public void Handle(EditorPreviewKeyDownEvent e)
         {
@@ -32,13 +32,13 @@ namespace MarkPad.Document.EditorBehaviours
             
             // should really handle shift-enter too (insert hard break, indent, then on enter restart list)...
 
-            if (!e.Editor.IsCaratAtEndOfLine()) return;
+            //if (!e.Editor.IsCaratAtEndOfLine()) return;
 
             var handled = false;
 
             handled = handled || HandleUnorderedList(e.Editor);
             handled = handled || HandleOrderedList(e.Editor);
-            handled = handled || HandleQuote(e.Editor);
+            handled = handled || HandleBlockquote(e.Editor);
 
             e.Args.Handled = handled;
         }
@@ -48,7 +48,7 @@ namespace MarkPad.Document.EditorBehaviours
             var match = _unorderedListRegex.Match(editor.GetTextLeftOfCursor());
             if (!match.Success) return false;
 
-            if (match.Value == editor.GetTextLeftOfCursor()) EndList(editor);
+            if (match.Value == editor.GetTextLeftOfCursor() && editor.IsCaratAtEndOfLine()) EndList(editor);
             else editor.TextArea.Selection.ReplaceSelectionWithText(Environment.NewLine + match.Value);
 
             return true;
@@ -59,7 +59,7 @@ namespace MarkPad.Document.EditorBehaviours
             var match = _orderedListRegex.Match(editor.GetTextLeftOfCursor());
             if (!match.Success) return false;
 
-            if (match.Value == editor.GetTextLeftOfCursor())
+            if (match.Value == editor.GetTextLeftOfCursor() && editor.IsCaratAtEndOfLine())
             {
                 EndList(editor);
             }
@@ -77,12 +77,12 @@ namespace MarkPad.Document.EditorBehaviours
             return true;
         }
 
-        bool HandleQuote(TextEditor editor)
+        bool HandleBlockquote(TextEditor editor)
         {
-            var match = _quoteRegex.Match(editor.GetTextLeftOfCursor());
+            var match = _blockquoteRegex.Match(editor.GetTextLeftOfCursor());
             if (!match.Success) return false;
 
-            if (match.Value == editor.GetTextLeftOfCursor()) EndList(editor);
+            if (match.Value == editor.GetTextLeftOfCursor() && editor.IsCaratAtEndOfLine()) EndList(editor);
             else editor.TextArea.Selection.ReplaceSelectionWithText(Environment.NewLine + match.Value);
 
             return true;

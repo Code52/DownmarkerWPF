@@ -53,7 +53,8 @@ namespace MarkPad.Document
                 new ControlRightTweakedForMarkdown(),
                 new HardLineBreak(),
                 overtypeMode,
-                new AutoContinueLists()
+                new AutoContinueLists(),
+                new IndentLists()
             };
             editorTextEnteringHandlers = new IHandle<EditorTextEnteringEvent>[] {
                 overtypeMode
