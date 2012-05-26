@@ -53,7 +53,8 @@ namespace MarkPad.Document
                 new CursorLeftRightWithSelection(),
                 new ControlRightTweakedForMarkdown(),
                 new HardLineBreak(),
-                overtypeMode
+                overtypeMode,
+                new AutoContinueLists()
             };
             editorTextEnteringHandlers = new IHandle<EditorTextEnteringEvent>[] {
                 overtypeMode
