@@ -437,8 +437,8 @@
     		Margin="10,0"
     		Grid.Row="1" />
 
-        <Rectangle x:Name="settingsShadow" Fill="#3F000000" Stroke="Black" StrokeThickness="0" Visibility="Collapsed"/>
-        <Settings:SettingsView x:Name="settingsControl" Visibility="Collapsed"  DataContext="{Binding Settings}" Margin="100,0,0,0" RenderTransformOrigin="0.5,0.5"  >
+        <Rectangle x:Name="settingsShadow" Fill="#3F000000" Stroke="Black" StrokeThickness="0" Visibility="Collapsed" Grid.RowSpan="2"/>
+        <Settings:SettingsView x:Name="settingsControl" Visibility="Collapsed"  DataContext="{Binding Settings}" Margin="100,0,0,0" RenderTransformOrigin="0.5,0.5" Grid.RowSpan="2">
         	<Settings:SettingsView.RenderTransform>
         		<TransformGroup>
         			<ScaleTransform/>
