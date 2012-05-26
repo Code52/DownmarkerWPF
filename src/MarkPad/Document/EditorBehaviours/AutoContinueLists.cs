@@ -14,6 +14,12 @@ namespace MarkPad.Document.EditorBehaviours
         // [\s]+    one or more whitespace chars
         readonly Regex _unorderedListRegex = new Regex(@"[\s]*[-\*][\s]+", RegexOptions.Compiled);
 
+        // [\s]*    zero or more whitespace chars
+        // [0-9]+   one or more of 0-9
+        // [.]      a single period
+        // [\s]+    one or more whitespace chars
+        readonly Regex _orderedListRegex = new Regex(@"[\s]*[0-9]+[.][\s]+", RegexOptions.Compiled);
+
         public void Handle(EditorPreviewKeyDownEvent e)
         {
             if (Keyboard.Modifiers != ModifierKeys.None) return;
@@ -24,6 +30,7 @@ namespace MarkPad.Document.EditorBehaviours
             var handled = false;
 
             handled = handled || HandleUnorderedList(e.Editor);
+            handled = handled || HandleOrderedList(e.Editor);
 
             e.Args.Handled = handled;
         }
@@ -36,10 +43,7 @@ namespace MarkPad.Document.EditorBehaviours
 
             if (match.Value == editor.GetTextLeftOfCursor())
             {
-                var currentPosition = editor.TextArea.Caret.Offset;
-                editor.SelectionStart = editor.GetCurrentLine().Offset;
-                editor.SelectionLength = currentPosition - editor.GetCurrentLine().Offset;
-                editor.TextArea.Selection.ReplaceSelectionWithText("");
+                EndList(editor);
             }
             else
             {
@@ -47,6 +51,38 @@ namespace MarkPad.Document.EditorBehaviours
             }
 
             return true;
+        }
+
+        bool HandleOrderedList(TextEditor editor)
+        {
+            var match = _orderedListRegex.Match(editor.GetTextLeftOfCursor());
+
+            if (!match.Success) return false;
+
+            if (match.Value == editor.GetTextLeftOfCursor())
+            {
+                EndList(editor);
+            }
+            else
+            {
+                var index = 1;
+                var indexText = match.Value.Replace(".", "").Trim();
+                var canParse = int.TryParse(indexText, out index);
+                var nextLine = match.Value;
+                if (canParse) nextLine = match.Value.Replace(indexText, (index+1).ToString());
+
+                editor.TextArea.Selection.ReplaceSelectionWithText(Environment.NewLine + nextLine);
+            }
+
+            return true;
+        }
+
+        private static void EndList(TextEditor editor)
+        {
+            var currentPosition = editor.TextArea.Caret.Offset;
+            editor.SelectionStart = editor.GetCurrentLine().Offset;
+            editor.SelectionLength = currentPosition - editor.GetCurrentLine().Offset;
+            editor.TextArea.Selection.ReplaceSelectionWithText("");
         }
     }
 }
