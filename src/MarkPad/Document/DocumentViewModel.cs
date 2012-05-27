@@ -126,68 +126,46 @@ namespace MarkPad.Document
 
         public bool SaveAs()
         {
-            var path = dialogService.GetFileSavePath("Choose a location to save the document.", "*.md", Constants.ExtensionFilter + "|All Files (*.*)|*.*");
+            var path = dialogService.GetFileSavePath("Save As", "*.md", Constants.ExtensionFilter + "|All Files (*.*)|*.*");
 
             if (string.IsNullOrEmpty(path))
                 return false;
 
             FileName = path;
+
+            if (!Save())
+                return false;
+
             title = new FileInfo(FileName).Name;
             NotifyOfPropertyChange(() => DisplayName);
             EvaluateContext();
 
-            return Save();
+            return true;
         }
 
         public bool Save()
         {
-            if (!HasChanges)
-                return true;
-
             if (string.IsNullOrEmpty(FileName))
-            {
-                var path = dialogService.GetFileSavePath("Choose a location to save the document.", "*.md", Constants.ExtensionFilter + "|All Files (*.*)|*.*");
-
-                if (string.IsNullOrEmpty(path))
-                    return false;
-
-                FileName = path;
-                title = new FileInfo(FileName).Name;
-                NotifyOfPropertyChange(() => DisplayName);
-                EvaluateContext();
-            }
+                return SaveAs();
 
             try
             {
                 File.WriteAllText(FileName, Document.Text);
-                Original = Document.Text;
             }
             catch (Exception)
             {
                 var saveResult = dialogService.ShowConfirmation("MarkPad", "Cannot save file",
-                                                String.Format("Do you want to save changes for {0} to a different file?", title),
-                                                new ButtonExtras(ButtonType.Yes, "Save", "Save the file at a different location."),
-                                                new ButtonExtras(ButtonType.No, "Do not save", "The file will be considered a New Document.  The next save will prompt for a file location."));
+                                                "You may not have permission to save this file to the selected location, or the location may not be currently available.",
+                                                new ButtonExtras(ButtonType.Yes, "Select a different location", "Save this file to a different location."),
+                                                new ButtonExtras(ButtonType.No, "Cancel", ""));
 
-                string prevFileName = FileName;
-                string prevTitle = title;
+                if (!saveResult)
+                    return false;
 
-                title = "New Document";
-                FileName = "";
-                if (saveResult)
-                {
-                    saveResult = Save();
-                    if (!saveResult)  //We decide not to save, keep existing title and filename 
-                    {
-                        title = prevTitle;
-                        FileName = prevFileName;
-                    }
-                }
-
-                NotifyOfPropertyChange(() => DisplayName);
-                return saveResult;
+                return SaveAs();
             }
 
+            Original = Document.Text;
             return true;
         }
 
