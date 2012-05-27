@@ -218,32 +218,29 @@ namespace MarkPad.Document
                 return;
             }
 
-            var saveResult = dialogService.ShowConfirmationWithCancel("MarkPad", "Save modifications.", "Do you want to save your changes to '" + title + "'?",
+            var saveResult = dialogService.ShowConfirmationWithCancel("MarkPad", "Save file", "Do you want to save the changes to '" + title + "'?",
                 new ButtonExtras(ButtonType.Yes, "Save",
                     string.IsNullOrEmpty(FileName) ? "The file has not been saved yet" : "The file will be saved to " + Path.GetFullPath(FileName)),
-                new ButtonExtras(ButtonType.No, "Don't Save", "Close the document without saving the modifications"),
-                new ButtonExtras(ButtonType.Cancel, "Cancel", "Don't close the document")
+                new ButtonExtras(ButtonType.No, "Discard", "Discard the changes to this file"),
+                new ButtonExtras(ButtonType.Cancel, "Cancel", "Cancel closing the application")
             );
-            var result = false;
 
-            // true = Yes
-            switch (saveResult)
+            if (saveResult == true)
             {
-                case true:
-                    result = Save();
-                    break;
-                case false:
-                    result = true;
-                    break;
+                var saved = Save();
+                if (saved) CheckAndCloseView(view);
+                callback(saved);
+                return;
             }
 
-            // Close browser if tab is being closed
-            if (result)
+            if (saveResult == false)
             {
                 CheckAndCloseView(view);
+                callback(true);
+                return;
             }
 
-            callback(result);
+            callback(false);
         }
 
         private static void CheckAndCloseView(DocumentView view)
