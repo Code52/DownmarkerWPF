@@ -1,14 +1,13 @@
-using System.Windows;
-using System.Windows.Input;
-using MarkPad.Framework;
-using MarkPad.PluginApi;
 using System.Collections.Generic;
-using System.Windows.Controls;
-using MarkPad.Framework;
-using System.Linq;
 using System.ComponentModel.Composition;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using Caliburn.Micro;
+using MarkPad.Framework;
 using MarkPad.Framework.Events;
+using MarkPad.PluginApi;
 
 namespace MarkPad.Shell
 {

@@ -120,75 +120,6 @@ namespace MarkPad.Document
             markdownEditor.Editor.FontFamily = GetFontFamily();
         }
 
-        void WebControlLinkClicked(object sender, OpenExternalLinkEventArgs e)
-        {
-            // Although all links have "target='_blank'" added (see ParsedDocument.ToHtml()), they go through this first
-            // unless the url is local (a bug in Awesomium) in which case this event isn't triggered, and the "target='_blank'"
-            // takes over to avoid crashing the preview. Local resource requests where the resource doesn't exist are thrown
-            // away. See WebControl_ResourceRequest().
-
-            string filename = e.Url;
-            if (e.Url.StartsWith(LocalRequestUrlBase))
-            {
-                filename = GetResourceFilename(e.Url.Replace(LocalRequestUrlBase, "")) ?? "";
-                if (!File.Exists(filename)) return;
-            }
-
-            if (string.IsNullOrWhiteSpace(filename)) return;
-
-            Process.Start(filename);
-        }
-
-        ResourceResponse WebControlResourceRequest(object o, ResourceRequestEventArgs e)
-        {
-            // This tries to get a local resource. If there is no local resource null is returned by GetLocalResource, which
-            // triggers the default handler, which should respect the "target='_blank'" attribute added
-            // in ParsedDocument.ToHtml(), thus avoiding a bug in Awesomium where trying to navigate to a
-            // local resource fails when showing an in-memory file (https://github.com/Code52/DownmarkerWPF/pull/208)
-
-            // What works:
-            //	- resource requests for remote resources (like <link href="http://somecdn.../jquery.js"/>)
-            //	- resource requests for local resources that exist relative to filename of the file (like <img src="images/logo.png"/>)
-            //	- clicking links for remote resources (like [Google](http://www.google.com))
-            //	- clicking links for local resources which don't exist (eg [test](test)) does nothing (WebControl_LinkClicked checks for existence)
-            // What fails:
-            //	- clicking links for local resources where the resource exists (like [test](images/logo.png))
-            //		- This _sometimes_ opens the resource in the preview pane, and sometimes opens the resource 
-            //		using Process.Start (WebControl_LinkClicked gets triggered). The behaviour seems stochastic.
-            //	- alt text for images where the image resource is not found
-
-            if (e.Request.Url.StartsWith(LocalRequestUrlBase)) return GetLocalResource(e.Request.Url.Replace(LocalRequestUrlBase, ""));
-
-            // If the request wasn't local, return null to let the usual handler load the url from the network			
-            return null;
-        }
-        ResourceResponse GetLocalResource(string url)
-        {
-			if (string.IsNullOrWhiteSpace(url))
-			{
-				string result = null;
-				var encoding = new System.Text.UTF8Encoding();
-
-				(DataContext as DocumentViewModel).ExecuteSafely(vm => result = vm.Render);
-
-				return new ResourceResponse(encoding.GetBytes(result), "text/html");
-			}
-
-            var resourceFilename = GetResourceFilename(url);
-            if (!File.Exists(resourceFilename)) return null;
-
-            return new ResourceResponse(resourceFilename);
-        }
-        public string GetResourceFilename(string url)
-        {
-            var vm = DataContext as DocumentViewModel;
-            if (vm == null) return null;
-            if (string.IsNullOrEmpty(vm.FileName)) return null;
-
-            var resourceFilename = Path.Combine(Path.GetDirectoryName(vm.FileName), url);
-            return resourceFilename;
-        }
-
         void DocumentViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
             // Hide web browser when the window is too small for it to make much sense
@@ -227,8 +158,6 @@ namespace MarkPad.Document
             ApplyFont();
             markdownEditor.Editor.TextArea.TextView.Redraw();
             ViewModel.ExecuteSafely(vm => vm.RefreshFont());
-            ApplyExtensions();
-            ApplyZoom();
         }
 
 		public void Handle(PluginsChangedEvent e)
