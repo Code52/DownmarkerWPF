@@ -1,0 +1,1 @@
+powershell -File commands.ps1 Update-Version
