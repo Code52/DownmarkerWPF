@@ -2,10 +2,9 @@
 using System.Windows.Input;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit;
-using ICSharpCode.AvalonEdit.Document;
 using MarkPad.Framework.Events;
 
-namespace MarkPad.Document.AvalonEditPreviewKeyDownHandlers
+namespace MarkPad.Document.EditorBehaviours
 {
     public class ControlRightTweakedForMarkdown : IHandle<EditorPreviewKeyDownEvent>
     {
@@ -34,10 +33,10 @@ namespace MarkPad.Document.AvalonEditPreviewKeyDownHandlers
              *      if the recorded text is null or whitespace, move to the end of the current word
              * */
 
-            var textLeftOfCursor = GetTextLeftOfCursor(e.Editor);
-            if (GetIsCaratAtEndOfLine(e.Editor))
+            var textLeftOfCursor = e.Editor.GetTextLeftOfCursor();
+            if (e.Editor.IsCaratAtEndOfLine())
             {
-                e.Editor.CaretOffset = GetCurrentLine(e.Editor).NextLine.Offset;
+                e.Editor.CaretOffset = e.Editor.GetCurrentLine().NextLine.Offset;
             }
             else if (_wordRegex.IsMatch(GetNextCharacter(e.Editor)))
             {
@@ -68,14 +67,9 @@ namespace MarkPad.Document.AvalonEditPreviewKeyDownHandlers
             return;
         }
 
-        bool GetIsCaratAtEndOfLine(TextEditor editor)
-        {
-            return GetCurrentLine(editor).EndOffset == editor.TextArea.Caret.Offset;
-        }
-
         void MoveToEndOfCurrentWord(TextEditor editor)
         {
-            if (GetIsCaratAtEndOfLine(editor)) return;
+            if (editor.IsCaratAtEndOfLine()) return;
             if (editor.CaretOffset + 1 >= editor.Document.TextLength) return;
 
             editor.CaretOffset++;
@@ -98,21 +92,10 @@ namespace MarkPad.Document.AvalonEditPreviewKeyDownHandlers
             return textBeforeNextWord;
         }
 
-        string GetTextLeftOfCursor(TextEditor editor)
-        {
-            var currentLine = GetCurrentLine(editor);
-            return editor.Document.GetText(currentLine.Offset, editor.CaretOffset - currentLine.Offset);
-        }
-
-        DocumentLine GetCurrentLine(TextEditor editor)
-        {
-            return editor.Document.GetLineByOffset(editor.TextArea.Caret.Offset);
-        }
-
         void MoveToBeginningOfNextWord(TextEditor editor)
         {
             if (_wordRegex.IsMatch(GetNextCharacter(editor))) return;
-            if (GetIsCaratAtEndOfLine(editor)) return;
+            if (editor.IsCaratAtEndOfLine()) return;
             if (editor.CaretOffset >= editor.Document.TextLength) return;
 
             editor.CaretOffset++;
@@ -123,7 +106,7 @@ namespace MarkPad.Document.AvalonEditPreviewKeyDownHandlers
         void MoveToFirstNonwhitespaceCharacter(TextEditor editor)
         {
             if (_nonWhitespaceRegex.IsMatch(GetNextCharacter(editor))) return;
-            if (GetIsCaratAtEndOfLine(editor)) return;
+            if (editor.IsCaratAtEndOfLine()) return;
             if (editor.CaretOffset >= editor.Document.TextLength) return;
 
             editor.CaretOffset++;

@@ -1,11 +1,11 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using ICSharpCode.AvalonEdit;
-using MarkPad.Document.AvalonEditPreviewKeyDownHandlers;
+using MarkPad.Document.EditorBehaviours;
 using MarkPad.Framework.Events;
 using Xunit;
 
-namespace MarkPad.Tests.Document.AvalonEditPreviewKeyDownHandlers
+namespace MarkPad.Tests.Document.EditorBehaviours
 {
     public class CursorLeftRightWithSelectionTests
     {

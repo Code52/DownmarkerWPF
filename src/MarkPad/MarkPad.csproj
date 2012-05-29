@@ -151,11 +151,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Document\EditorBehaviours\ControlRightTweakedForMarkdown.cs" />
+    <Compile Include="Document\EditorBehaviours\AutoContinueLists.cs" />
+    <Compile Include="Document\EditorBehaviours\IndentLists.cs" />
     <Compile Include="Document\EditorBehaviours\CopyLeadingWhitespaceOnNewLine.cs" />
     <Compile Include="Document\EditorBehaviours\CursorLeftRightWithSelection.cs" />
     <Compile Include="Document\EditorBehaviours\HardLineBreak.cs" />
     <Compile Include="Document\EditorBehaviours\PasteImagesUsingSiteContext.cs" />
     <Compile Include="Document\DisplayCommands.cs" />
+    <Compile Include="Document\EditorBehaviours\TextEditorExtensions.cs" />
     <Compile Include="Document\MarkdownEditor.xaml.cs">
       <DependentUpon>MarkdownEditor.xaml</DependentUpon>
     </Compile>
