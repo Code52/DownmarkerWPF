@@ -6,5 +6,5 @@ using System.Reflection;
 [assembly: AssemblyCompany("Code52")]
 [assembly: AssemblyCopyright("Copyright © Code52")]
 
-[assembly: AssemblyVersion("1.0.0.5")]
-[assembly: AssemblyFileVersion("1.0.0.5")]
+[assembly: AssemblyVersion("1.0.0.6")]
+[assembly: AssemblyFileVersion("1.0.0.6")]
