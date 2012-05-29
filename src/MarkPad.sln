@@ -24,7 +24,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.Contracts", "MarkPa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{930C63A3-C919-4AA1-9292-DB3C4B81F4DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.PluginApi", "MarkPad.PluginApi\MarkPad.PluginApi.csproj", "{E780D0E3-37A4-43D3-89C1-76053FA63752}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.Plugins", "MarkPad.PluginApi\MarkPad.Plugins.csproj", "{E780D0E3-37A4-43D3-89C1-76053FA63752}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamplePlugin", "Plugins\ExamplePlugin\ExamplePlugin.csproj", "{B780B8AD-169E-4300-A29F-713471EF3056}"
 EndProject

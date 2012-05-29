@@ -49,9 +49,9 @@
       <Project>{96FA74A6-397A-4BE2-A6BF-AAD39A159DD2}</Project>
       <Name>MarkPad.Contracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\MarkPad.PluginApi\MarkPad.PluginApi.csproj">
+    <ProjectReference Include="..\..\MarkPad.PluginApi\MarkPad.Plugins.csproj">
       <Project>{E780D0E3-37A4-43D3-89C1-76053FA63752}</Project>
-      <Name>MarkPad.PluginApi</Name>
+      <Name>MarkPad.Plugins</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
