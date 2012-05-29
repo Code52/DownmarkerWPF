@@ -1,1 +1,1 @@
-powershell -File update-version.ps1 Run-Tests
+powershell -File commands.ps1 Run-Tests

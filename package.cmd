@@ -1,1 +1,1 @@
-powershell -File update-version.ps1 Create-Package
+powershell -File commands.ps1 Create-Package
