@@ -31,8 +31,8 @@ namespace MarkPad.Tests.Document.AvalonEditPreviewKeyDownHandlers
         [Fact]
         public void sets_to_left_of_selection_on_cursor_left()
         {
-            var editor = new TextEditor()
-            {
+            var editor = new TextEditor
+                             {
                 Text = "this is a test",
                 SelectionStart = 3,
                 SelectionLength = 5,

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Autofac;
+﻿using Autofac;
 using MarkPad.Document;
 using MarkPad.Contracts;
 using MarkPad.Services.Implementation;

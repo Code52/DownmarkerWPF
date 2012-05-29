@@ -11,7 +11,6 @@ using MarkPad.Framework.Events;
 using MarkPad.Plugins;
 using MarkPad.Services;
 using MarkPad.Services.Implementation;
-using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;
 using Microsoft.Win32;
 using System.ComponentModel.Composition;
@@ -87,8 +86,16 @@ namespace MarkPad.Settings
             FontSizes = Enum.GetValues(typeof(FontSizes)).OfType<FontSizes>().ToArray();
             FontFamilies = Fonts.SystemFontFamilies.OrderBy(f => f.Source);
 
-			var spellCheckPluginSettings = plugins.OfType<SpellCheckPlugin.SpellCheckPlugin>().First().Settings as SpellCheckPlugin.SpellCheckPluginSettings;
-			SelectedLanguage = spellCheckPluginSettings.Language;
+            var spellCheckPlugin = plugins.OfType<SpellCheckPlugin.SpellCheckPluginSettings>().FirstOrDefault();
+
+            if (spellCheckPlugin != null)
+            {
+                SelectedLanguage = spellCheckPlugin.Language;    
+            }
+            else
+            {
+                SelectedLanguage = SpellingLanguages.UnitedStates;
+            }
 
             var fontFamily = settings.FontFamily;
             SelectedFontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == fontFamily);
@@ -217,11 +224,15 @@ namespace MarkPad.Settings
 			
             settingsService.SaveSettings(settings);
 
-			/// TODO: Move to per-plugin setting screen
-			var spellCheckPluginSettings = plugins.OfType<SpellCheckPlugin.SpellCheckPlugin>().First().Settings as SpellCheckPlugin.SpellCheckPluginSettings;
-			spellCheckPluginSettings.Language = SelectedLanguage;
-			settingsService.SaveSettings(spellCheckPluginSettings);
+			// TODO: Move to per-plugin setting screen
+            var spellCheckPluginSettings = plugins.OfType<SpellCheckPlugin.SpellCheckPluginSettings>().FirstOrDefault();
 
+            if (spellCheckPluginSettings != null)
+            {
+                spellCheckPluginSettings.Language = SelectedLanguage;
+                settingsService.SaveSettings(spellCheckPluginSettings);
+            }
+			
             eventAggregator.Publish(new SettingsChangedEvent());
         }
 
