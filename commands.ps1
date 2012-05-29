@@ -16,7 +16,7 @@ function Update-Version
     Create-ReleaseDirectory $version
     Create-Package
     Bundle-Package  $version
-    #Update-Manifest
+    Update-Manifest
 }
 
 
@@ -33,7 +33,7 @@ function Set-Version
 
     Log-Message "Updating version to $version"
     $infile=get-content $assembly_info
-    $regex = New-Object System.Text.RegularExpressions.Regex "(`"\d+.\d+.\d+.\d+.`")"
+    $regex = New-Object System.Text.RegularExpressions.Regex "\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b"
     $replace = $regex.Replace($infile,$version)
     set-content -Value $replace $assembly_info
 }
