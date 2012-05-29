@@ -14,10 +14,11 @@ using MarkPad.Services.Interfaces;
 using MarkPad.Services.Metaweblog;
 using MarkPad.Services.Settings;
 using Ookii.Dialogs.Wpf;
+using MarkPad.Contracts;
 
 namespace MarkPad.Document
 {
-    public class DocumentViewModel : Screen
+    public class DocumentViewModel : Screen, IDocumentViewModel
     {
         private static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
         private const double ZoomDelta = 0.1;
@@ -28,6 +29,7 @@ namespace MarkPad.Document
         private readonly ISiteContextGenerator siteContextGenerator;
         private readonly Func<string, IMetaWeblogService> getMetaWeblog;
         private readonly ISettingsProvider settingsProvider;
+		private readonly IDocumentParser documentParser;
 
         private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
         private readonly DispatcherTimer timer;
@@ -41,13 +43,15 @@ namespace MarkPad.Document
             IWindowManager windowManager, 
             ISiteContextGenerator siteContextGenerator,
             Func<string, IMetaWeblogService> getMetaWeblog,
-            ISettingsProvider settingsProvider)
+            ISettingsProvider settingsProvider,
+			IDocumentParser documentParser)
         {
             this.dialogService = dialogService;
             this.windowManager = windowManager;
             this.siteContextGenerator = siteContextGenerator;
             this.getMetaWeblog = getMetaWeblog;
             this.settingsProvider = settingsProvider;
+            this.documentParser = documentParser;
 
             FontSize = GetFontSize();
 
@@ -69,7 +73,7 @@ namespace MarkPad.Document
         {
             timer.Stop();
 
-            Task.Factory.StartNew(text => DocumentParser.Parse(text.ToString()), Document.Text)
+			Task.Factory.StartNew(text => documentParser.Parse(text.ToString()), Document.Text)
             .ContinueWith(s =>
             {
                 if (s.IsFaulted)
@@ -175,6 +179,7 @@ namespace MarkPad.Document
         }
 
         public TextDocument Document { get; private set; }
+		public string MarkdownContent { get { return Document.Text; } }
 
         public string Original { get; set; }
 

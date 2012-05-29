@@ -166,12 +166,11 @@
     <Compile Include="HtmlPreview.xaml.cs">
       <DependentUpon>HtmlPreview.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Framework\Events\PluginsChangedEvent.cs" />
     <Compile Include="InPathMultiConverter.cs" />
     <Compile Include="Extensions\DataImage.cs" />
     <Compile Include="Extensions\DataObjectExtensions.cs" />
-    <Compile Include="MarkPadExtensions\MarkPadExtensionsAutofacModule.cs" />
-    <Compile Include="MarkPadExtensions\IDocumentViewExtension.cs" />
-    <Compile Include="MarkPadExtensions\SpellCheck\SpellCheckExtension.cs" />
+    <Compile Include="MarkPadAutofacModule.cs" />
     <Compile Include="Framework\Events\SettingsChangedEvent.cs" />
     <Compile Include="Framework\FocusExtension.cs" />
     <Compile Include="Framework\FontHelpers.cs" />
@@ -188,6 +187,7 @@
     <Compile Include="HyperlinkEditor\HyperlinkEditorViewModel.cs" />
     <Compile Include="MarkPadExtensions\SpellCheck\SpellCheckProvider.cs" />
     <Compile Include="OpenFromWeb\Entry.cs" />
+    <Compile Include="PluginManager.cs" />
     <Compile Include="Settings\BlogSettingsView.xaml.cs">
       <DependentUpon>BlogSettingsView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -199,6 +199,7 @@
     <Compile Include="Settings\FetchedBlogInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Settings\PluginViewModel.cs" />
     <Compile Include="Settings\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -342,6 +343,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MarkPad.Contracts\MarkPad.Contracts.csproj">
+      <Project>{96FA74A6-397A-4BE2-A6BF-AAD39A159DD2}</Project>
+      <Name>MarkPad.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MarkPad.PluginApi\MarkPad.PluginApi.csproj">
+      <Project>{E780D0E3-37A4-43D3-89C1-76053FA63752}</Project>
+      <Name>MarkPad.PluginApi</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MarkPad.Services\MarkPad.Services.csproj">
       <Project>{8088D80C-14AF-4618-B12A-F47C2771EBDD}</Project>
       <Name>MarkPad.Services</Name>
@@ -349,6 +358,18 @@
     <ProjectReference Include="..\MarkPad.XAML\MarkPad.XAML.csproj">
       <Project>{F5C76E3F-AC91-477D-86DE-778850F3E14B}</Project>
       <Name>MarkPad.XAML</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Plugins\ExamplePlugin\ExamplePlugin.csproj">
+      <Project>{B780B8AD-169E-4300-A29F-713471EF3056}</Project>
+      <Name>ExamplePlugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Plugins\ExportToHtmlPlugin\ExportToHtmlPlugin.csproj">
+      <Project>{F5EF3169-748F-4C96-A4A1-F33381572619}</Project>
+      <Name>ExportToHtmlPlugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Plugins\SpellCheckPlugin\SpellCheckPlugin.csproj">
+      <Project>{2FD996E4-8647-4A21-AE43-3652F66D4685}</Project>
+      <Name>SpellCheckPlugin</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

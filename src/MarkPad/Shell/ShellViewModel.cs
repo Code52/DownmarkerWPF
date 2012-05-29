@@ -18,11 +18,10 @@ using MarkPad.Services.Settings;
 using MarkPad.Settings;
 using Ookii.Dialogs.Wpf;
 using MarkPad.Updater;
-using MarkPad.Services.MarkPadExtensions;
 
 namespace MarkPad.Shell
 {
-    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>, IHandle<SettingsChangedEvent>
+    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>
     {
         private readonly IEventAggregator eventAggregator;
         private readonly IDialogService dialogService;
@@ -30,7 +29,6 @@ namespace MarkPad.Shell
         private readonly ISettingsProvider settingsService;
         private readonly Func<DocumentViewModel> documentCreator;
         private readonly Func<OpenFromWebViewModel> openFromWebCreator;
-        private readonly Func<MarkPadExtensions.SpellCheck.SpellCheckExtension> spellCheckExtensionCreator;
 
         public ShellViewModel(
             IDialogService dialogService,
@@ -41,8 +39,7 @@ namespace MarkPad.Shell
             SettingsViewModel settingsViewModel,
             UpdaterViewModel updaterViewModel,
             Func<DocumentViewModel> documentCreator,
-            Func<OpenFromWebViewModel> openFromWebCreator,
-            Func<MarkPadExtensions.SpellCheck.SpellCheckExtension> spellCheckExtensionCreator)
+            Func<OpenFromWebViewModel> openFromWebCreator)
         {
             this.eventAggregator = eventAggregator;
             this.dialogService = dialogService;
@@ -52,12 +49,9 @@ namespace MarkPad.Shell
             Updater = updaterViewModel;
             this.documentCreator = documentCreator;
             this.openFromWebCreator = openFromWebCreator;
-            this.spellCheckExtensionCreator = spellCheckExtensionCreator;
 
             Settings = settingsViewModel;
             Settings.Initialize();
-
-            UpdateMarkPadExtensions();
 
             ActivateItem(mdi);
         }
@@ -72,24 +66,31 @@ namespace MarkPad.Shell
         public MDIViewModel MDI { get; private set; }
         public SettingsViewModel Settings { get; private set; }
         public UpdaterViewModel Updater { get; set; }
+		public DocumentViewModel ActiveDocumentViewModel { get { return MDI.ActiveItem as DocumentViewModel; } }
 
         public void Exit()
         {
             TryClose();
         }
 
-        public void NewDocument()
-        {
-            MDI.Open(documentCreator());
-        }
+		public void NewDocument(string text = "")
+		{
+            // C.M passes in "text"...?
+			if (text == "text") text = "";
+
+			var creator = documentCreator();
+
+            creator.Document.BeginUpdate();
+			creator.Document.Text = text;
+            creator.Document.EndUpdate();
+            
+			MDI.Open(creator);			
+			creator.Update();
+		}
 
         public void NewJekyllDocument()
         {
-            var creator = documentCreator();
-            creator.Document.BeginUpdate();
-            creator.Document.Text = CreateJekyllHeader();
-            creator.Document.EndUpdate();
-            MDI.Open(creator);
+			NewDocument(CreateJekyllHeader());
         }
 
         private static string CreateJekyllHeader()
@@ -318,23 +319,5 @@ namespace MarkPad.Shell
         {
             CurrentState = "HideSettings";
         }
-
-        public void Handle(SettingsChangedEvent message)
-        {
-            UpdateMarkPadExtensions();
-        }
-
-        void UpdateMarkPadExtensions()
-        {
-            var settings = settingsService.GetSettings<MarkPadSettings>();
-            var extensions = new List<IMarkPadExtension>();
-            if (settings.SpellCheckEnabled)
-            {
-                var spellCheck = spellCheckExtensionCreator();
-                extensions.Add(spellCheck);
-            }
-            MarkPadExtensionsProvider.Extensions = extensions;
-        }
-
     }
 }

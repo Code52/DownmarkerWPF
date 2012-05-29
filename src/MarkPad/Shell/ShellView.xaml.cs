@@ -1,15 +1,67 @@
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using Caliburn.Micro;
 using MarkPad.Framework;
+using MarkPad.Framework.Events;
+using MarkPad.PluginApi;
 
 namespace MarkPad.Shell
 {
-    public partial class ShellView
+    public partial class ShellView : IHandle<PluginsChangedEvent>
     {
-        public ShellView()
+		readonly IPluginManager _pluginManager;
+
+		[ImportMany]
+		IEnumerable<ICanCreateNewPage> _canCreateNewPagePlugins;
+		[ImportMany]
+		IEnumerable<ICanSavePage> _canSavePagePlugins;
+
+        public ShellView(IPluginManager pluginManager)
         {
+			_pluginManager = pluginManager;
+			_pluginManager.Container.ComposeParts(this);
+
             InitializeComponent();
+
+			UpdatePlugins();
         }
+
+		void UpdatePlugins()
+		{
+			CreateNewPageHook.Children.Clear();
+			foreach (var plugin in _canCreateNewPagePlugins.Where(p => p.Settings.IsEnabled))
+			{
+				var button = new Button { Content = plugin.CreateNewPageLabel.ToUpper(), Tag = plugin };
+				button.Click += new RoutedEventHandler((o, e) =>
+				{
+					var text = plugin.CreateNewPage();
+					(DataContext as ShellViewModel).ExecuteSafely(vm => vm.NewDocument(text));
+				});
+				CreateNewPageHook.Children.Add(button);
+			}
+
+			SavePageHook.Children.Clear();
+			foreach (var plugin in _canSavePagePlugins.Where(p => p.Settings.IsEnabled))
+			{
+				var button = new Button { Content = plugin.SavePageLabel.ToUpper(), Tag = plugin };
+				button.Click += new RoutedEventHandler((o, e) =>
+					(DataContext as ShellViewModel).ExecuteSafely(vm =>
+					{
+						if (vm.ActiveDocumentViewModel == null) return;
+						plugin.SavePage(vm.ActiveDocumentViewModel);
+					}));
+				SavePageHook.Children.Add(button);
+			}
+		}
+
+		public void Handle(PluginsChangedEvent e)
+		{
+			UpdatePlugins();
+		}
 
         private bool ignoreNextMouseMove;
 

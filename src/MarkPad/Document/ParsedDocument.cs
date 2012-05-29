@@ -4,10 +4,13 @@ using System.Text.RegularExpressions;
 using Awesomium.Core;
 using MarkdownDeep;
 using System.Text;
+using System.ComponentModel.Composition;
+using MarkPad.Contracts;
 
 namespace MarkPad.Document
 {
-    static class DocumentParser
+	[Export(typeof(IDocumentParser))]
+    public class DocumentParser : IDocumentParser
     {
         private static readonly Markdown markdown = new Markdown();
 
@@ -16,16 +19,37 @@ namespace MarkPad.Document
             markdown.NewWindowForExternalLinks = true;
         }
 
-        public static string Parse(string source)
-        {
-            string header;
-            string contents;
-            SplitHeaderAndContents(source, out header, out contents);
+		public string Parse(string source)
+		{
+			string header;
+			string contents;
+			SplitHeaderAndContents(source, out header, out contents);
 
-            return ToHtml(header, contents);
-        }
+			const string linkScript = @"
+<script type='text/javascript'>
+	window.onload = function(){
+		var links = document.getElementsByTagName('a');
+		for (var i = 0; i < links.length; i++) {
+			var l = links[i];
+			if (l.getAttribute('href')) l.target = '_blank';
+		}
+	};
+</script>
+			";
 
-        public static string GetBodyContents(string source)
+			return ToHtml(header, contents, linkScript);
+		}
+
+		public string ParseClean(string source)
+		{
+			string header;
+			string contents;
+			SplitHeaderAndContents(source, out header, out contents);
+
+			return ToHtml(header, contents, "");
+		}
+		
+		public static string GetBodyContents(string source)
         {
             string header;
             string contents;
@@ -42,51 +66,50 @@ namespace MarkPad.Document
             }
         }
 
-        private static string ToHtml(string header, string contents)
+        private static string ToHtml(string header, string contents, string extraScripts)
         {
-            var body = MarkdownConvert(contents);
+			var body = MarkdownConvert(contents);
 
-            string themeName;
-            var head = "";
-            var scripts = "";
+			var stylesheets = GetResources(
+				header,
+				"*.css",
+				"<link rel=\"stylesheet\" type=\"text/css\" href=\"{0}/{1}\" />\r\n");
 
-			scripts += GetLinkScript();
+			var scripts = GetResources(
+				header,
+				"*.js",
+				"<script type=\"text/javascript\" src=\"{0}/{1}\"></script>\r\n");
 
-            if (TryGetHeaderValue(header, "theme", out themeName))
-            {
-                var path = Path.Combine(WebCore.BaseDirectory, themeName);
-                foreach(var stylesheet in Directory.GetFiles(path, "*.css"))
-                {
-                    head += String.Format("<link rel=\"stylesheet\" type=\"text/css\" href=\"{0}/{1}\" />\r\n", themeName, Path.GetFileName(stylesheet));
-                }
+			var document = String.Format(
+				"<html>\r\n<head>\r\n{0}\r\n</head>\r\n<body>\r\n{1}\r\n{2}{3}\r\n</body>\r\n</html>",
+				stylesheets,
+				body,
+				scripts,
+				extraScripts);
 
-                foreach (var stylesheet in Directory.GetFiles(path, "*.js"))
-                {
-                    scripts += String.Format("<script type=\"text/javascript\" src=\"{0}/{1}\"></script>\r\n", themeName, Path.GetFileName(stylesheet));
-                }
-            }
+			return document;
+		}
 
-            var document = String.Format("<html>\r\n<head>\r\n{0}\r\n</head>\r\n<body>\r\n{1}\r\n{2}\r\n</body>\r\n</html>", head, body, scripts);
-
-            return document;
-        }
-
-		static string GetLinkScript()
+		private static string GetResources(string header, string filter, string resourceTemplate)
 		{
-			return @"
-<script type='text/javascript'>
-	window.onload = function(){
-		var links = document.getElementsByTagName('a');
-		for (var i = 0; i < links.length; i++) {
-			var l = links[i];
-			if (l.getAttribute('href')) l.target = '_blank';
-		}
-	};
-</script>
-			";
+			var themeName = "";
+			if (!TryGetHeaderValue(header, "theme", out themeName)) return "";
+
+			var resources = "";
+			var path = Path.Combine(WebCore.BaseDirectory, themeName);
+
+			foreach (var resource in Directory.GetFiles(path, filter))
+			{
+				resources += String.Format(
+					resourceTemplate,
+					themeName,
+					Path.GetFileName(resource));
+			}
+
+			return resources;
 		}
 
-        private static bool TryGetHeaderValue(string header, string key, out string value)
+		private static bool TryGetHeaderValue(string header, string key, out string value)
         {
             // TODO: Cache these?
             var match = Regex.Match(header, "^" + key + "\\s*:\\s*(.*)$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
@@ -109,5 +132,5 @@ namespace MarkPad.Document
             header = "";
             contents = source;
         }
-    }
+	}
 }

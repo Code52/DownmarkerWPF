@@ -1,4 +1,5 @@
 using Autofac;
+using MarkPad.Contracts;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Metaweblog.Rsd;
@@ -17,12 +18,6 @@ namespace MarkPad.Services
             builder.RegisterType<MetaWeblogService>().As<IMetaWeblogService>();
             builder.RegisterType<TaskSchedulerFactory>().As<ITaskSchedulerFactory>();
             builder.RegisterType<SettingsProvider>().As<ISettingsProvider>().SingleInstance();
-            builder.RegisterType<SpellingService>().As<ISpellingService>().SingleInstance().OnActivating(args =>
-            {
-                var settingsService = args.Context.Resolve<ISettingsProvider>();
-                var settings = settingsService.GetSettings<MarkPadSettings>();
-                args.Instance.SetLanguage(settings.Language);    
-            });
         }
     }
 }
