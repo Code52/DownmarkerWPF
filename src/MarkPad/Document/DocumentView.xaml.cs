@@ -12,19 +12,27 @@ using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.MarkPadExtensions;
 using MarkPad.Services.Interfaces;
-using MarkPad.Services.MarkPadExtensions;
 using MarkPad.Services.Settings;
 using MarkPad.XAML;
+using MarkPad.Contracts;
+using System.ComponentModel.Composition;
+using MarkPad.PluginApi;
 
 namespace MarkPad.Document
 {
-    public partial class DocumentView : IHandle<SettingsChangedEvent>
+    public partial class DocumentView : 
+		IDocumentView,
+		IHandle<SettingsChangedEvent>,
+		IHandle<PluginsChangedEvent>
     {
         private ScrollViewer documentScrollViewer;
-        private readonly IList<IDocumentViewExtension> extensions = new List<IDocumentViewExtension>();
         private readonly ISettingsProvider settingsProvider;
+		private readonly IPluginManager pluginManager;
 
         MarkPadSettings settings;
+		[ImportMany]
+		IEnumerable<IDocumentViewPlugin> documentViewPlugins;
+		IEnumerable<IDocumentViewPlugin> connectedDocumentViewPlugins = new IDocumentViewPlugin[0];
 
         #region public double ScrollPercentage
         public static DependencyProperty ScrollPercentageProperty = DependencyProperty.Register("ScrollPercentage", typeof(double), typeof(DocumentView),
@@ -37,17 +45,24 @@ namespace MarkPad.Document
         }
         #endregion
 
-        public DocumentView(ISettingsProvider settingsProvider)
+        public DocumentView(
+			ISettingsProvider settingsProvider,
+			IPluginManager pluginManager)
         {
-            this.settingsProvider = settingsProvider;
+			this.settingsProvider = settingsProvider;
+			this.pluginManager = pluginManager;
 
+			this.pluginManager.Container.ComposeParts(this);
+			
             InitializeComponent();
+
+			UpdatePlugins();
 
             Loaded += DocumentViewLoaded;
             SizeChanged += DocumentViewSizeChanged;
             markdownEditor.Editor.MouseWheel += HandleEditorMouseWheel;
 
-            Handle(new SettingsChangedEvent());
+			Handle(new SettingsChangedEvent());
 
             CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomIn, (x, y) => ViewModel.ExecuteSafely(vm=>vm.ZoomIn())));
             CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomOut, (x, y) => ViewModel.ExecuteSafely(vm=>vm.ZoomOut())));
@@ -58,6 +73,22 @@ namespace MarkPad.Document
         {
             get { return DataContext as DocumentViewModel; }
         }
+
+		public void UpdatePlugins()
+		{
+			var enabledPlugins = documentViewPlugins.Where(p => p.Settings.IsEnabled);
+
+			foreach (var plugin in connectedDocumentViewPlugins.Except(enabledPlugins))
+			{
+				plugin.DisconnectFromDocumentView(this);
+			}
+			foreach (var plugin in enabledPlugins.Except(connectedDocumentViewPlugins))
+			{
+				plugin.ConnectToDocumentView(this);
+			}
+
+			connectedDocumentViewPlugins = new List<IDocumentViewPlugin>(enabledPlugins);
+		}
 
         public TextEditor Editor
         {
@@ -87,25 +118,6 @@ namespace MarkPad.Document
         private void ApplyFont()
         {
             markdownEditor.Editor.FontFamily = GetFontFamily();
-        }
-
-        private void ApplyExtensions()
-        {
-            var allExtensions = MarkPadExtensionsProvider.Extensions.OfType<IDocumentViewExtension>().ToList();
-            var extensionsToAdd = allExtensions.Except(extensions).ToList();
-            var extensionsToRemove = extensions.Except(allExtensions).ToList();
-
-            foreach (var extension in extensionsToAdd)
-            {
-                extension.ConnectToDocumentView(this);
-                extensions.Add(extension);
-            }
-
-            foreach (var extension in extensionsToRemove)
-            {
-                extension.DisconnectFromDocumentView(this);
-                extensions.Remove(extension);
-            }
         }
 
         void DocumentViewSizeChanged(object sender, SizeChangedEventArgs e)
@@ -146,8 +158,12 @@ namespace MarkPad.Document
             ApplyFont();
             markdownEditor.Editor.TextArea.TextView.Redraw();
             ViewModel.ExecuteSafely(vm => vm.RefreshFont());
-            ApplyExtensions();
         }
+
+		public void Handle(PluginsChangedEvent e)
+		{
+			UpdatePlugins();
+		}
 
         private void SiteFilesMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {

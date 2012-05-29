@@ -5,14 +5,12 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
+using MarkPad.Contracts;
 
 namespace MarkPad.Services.Settings
 {
     public class MarkPadSettings
     {
-        [DefaultValue(SpellingLanguages.Australian)]
-        public SpellingLanguages Language { get; set; }
-
         public List<string> RecentFiles { get; set; }
 
         [DefaultValue(FontSizes.FontSize12)]
@@ -43,8 +41,5 @@ namespace MarkPad.Services.Settings
 
 		[DefaultValue(true)]
 		public bool FloatingToolBarEnabled { get; set; }
-
-		[DefaultValue(true)]
-		public bool SpellCheckEnabled { get; set; }
     }
 }
