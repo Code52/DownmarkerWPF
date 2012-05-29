@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MarkPad.XAML.Converters;
+﻿using MarkPad.XAML.Converters;
 
 namespace MarkPad.Contracts
 {
