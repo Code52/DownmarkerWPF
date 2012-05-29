@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Caliburn.Micro;
-using MarkPad.PluginApi;
+using MarkPad.Plugins;
 using MarkPad.Services.Settings;
 using MarkPad.Framework.Events;
 

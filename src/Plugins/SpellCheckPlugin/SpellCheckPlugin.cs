@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ComponentModel.Composition;
-using MarkPad.Contracts;
-using MarkPad.PluginApi;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
+using System.Linq;
+using MarkPad.Contracts;
+using MarkPad.Plugins;
 
 namespace SpellCheckPlugin
 {

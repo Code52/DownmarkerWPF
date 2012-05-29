@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MarkPad.PluginApi;
+﻿using System.ComponentModel;
 using System.ComponentModel.Composition;
-using MarkPad.Contracts;
-using System.ComponentModel;
+using MarkPad.Plugins;
 
 namespace ExamplePlugin
 {
@@ -13,7 +8,7 @@ namespace ExamplePlugin
 	{
 		readonly IPluginSettingsProvider _settingsProvider;
 
-		private ExampleSettings _settings;
+		ExampleSettings _settings;
 
 		public string Name { get { return "Example plugin"; } }
 		public string Version { get { return "0.1"; } }

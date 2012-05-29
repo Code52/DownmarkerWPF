@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MarkPad.Contracts;
+﻿using MarkPad.Contracts;
 using System.ComponentModel.Composition;
 
-namespace MarkPad.PluginApi
+namespace MarkPad.Plugins
 {
 	[InheritedExport]
 	public interface IDocumentViewPlugin : IPlugin

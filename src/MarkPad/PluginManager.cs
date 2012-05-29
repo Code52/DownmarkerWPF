@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using MarkPad.PluginApi;
+using MarkPad.Plugins;
 
 namespace MarkPad
 {
@@ -24,7 +24,7 @@ namespace MarkPad
 			var catalog = new AggregateCatalog();
 
 			catalog.Catalogs.Add(new AssemblyCatalog(System.Reflection.Assembly.GetExecutingAssembly()));
-			catalog.Catalogs.Add(new AssemblyCatalog(typeof(MarkPad.PluginApi.IPlugin).Assembly));
+			catalog.Catalogs.Add(new AssemblyCatalog(typeof(IPlugin).Assembly));
 			catalog.Catalogs.Add(new AssemblyCatalog(typeof(MarkPad.Contracts.IDocumentView).Assembly));
 			catalog.Catalogs.Add(new AssemblyCatalog(typeof(MarkPad.Services.Settings.PluginSettingsProvider).Assembly));
 

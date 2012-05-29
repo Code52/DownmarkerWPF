@@ -11,12 +11,12 @@ using ICSharpCode.AvalonEdit;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.MarkPadExtensions;
+using MarkPad.Plugins;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;
 using MarkPad.XAML;
 using MarkPad.Contracts;
 using System.ComponentModel.Composition;
-using MarkPad.PluginApi;
 
 namespace MarkPad.Document
 {

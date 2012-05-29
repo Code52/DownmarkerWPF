@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel.Composition;
-using MarkPad.PluginApi;
+using MarkPad.Plugins;
 
 namespace MarkPad.Services.Settings
 {

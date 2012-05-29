@@ -8,12 +8,12 @@ using System.Windows.Media;
 using Caliburn.Micro;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
+using MarkPad.Plugins;
 using MarkPad.Services;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;
 using Microsoft.Win32;
-using MarkPad.PluginApi;
 using System.ComponentModel.Composition;
 using MarkPad.Contracts;
 

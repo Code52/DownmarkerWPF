@@ -7,7 +7,7 @@ using System.Windows.Input;
 using Caliburn.Micro;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
-using MarkPad.PluginApi;
+using MarkPad.Plugins;
 
 namespace MarkPad.Shell
 {

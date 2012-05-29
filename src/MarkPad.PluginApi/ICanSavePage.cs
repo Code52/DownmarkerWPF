@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using MarkPad.Contracts;
 
-namespace MarkPad.PluginApi
+namespace MarkPad.Plugins
 {
 	[InheritedExport]
 	public interface ICanSavePage : IPlugin
