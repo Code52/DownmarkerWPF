@@ -12,7 +12,6 @@ using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
-using MarkPad.Document.AvalonEditPreviewKeyDownHandlers;
 using MarkPad.Document.EditorBehaviours;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
@@ -53,7 +52,9 @@ namespace MarkPad.Document
                 new CursorLeftRightWithSelection(),
                 new ControlRightTweakedForMarkdown(),
                 new HardLineBreak(),
-                overtypeMode
+                overtypeMode,
+                new AutoContinueLists(),
+                new IndentLists()
             };
             editorTextEnteringHandlers = new IHandle<EditorTextEnteringEvent>[] {
                 overtypeMode

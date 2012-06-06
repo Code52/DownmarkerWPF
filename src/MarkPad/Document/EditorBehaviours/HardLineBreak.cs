@@ -3,7 +3,7 @@ using System.Windows.Input;
 using Caliburn.Micro;
 using MarkPad.Framework.Events;
 
-namespace MarkPad.Document.AvalonEditPreviewKeyDownHandlers
+namespace MarkPad.Document.EditorBehaviours
 {
     public class HardLineBreak : IHandle<EditorPreviewKeyDownEvent>
     {
