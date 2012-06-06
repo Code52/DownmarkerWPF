@@ -15,6 +15,7 @@ using ICSharpCode.AvalonEdit.Rendering;
 using MarkPad.Document.EditorBehaviours;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
+using MarkPad.Services.Settings;
 
 namespace MarkPad.Document
 {
@@ -23,8 +24,8 @@ namespace MarkPad.Document
         const int NumSpaces = 4;
         const string Spaces = "    ";
 
-        IEnumerable<IHandle<EditorPreviewKeyDownEvent>> editorPreviewKeyDownHandlers;
-        IEnumerable<IHandle<EditorTextEnteringEvent>> editorTextEnteringHandlers;
+        readonly IEnumerable<IHandle<EditorPreviewKeyDownEvent>> editorPreviewKeyDownHandlers;
+        readonly IEnumerable<IHandle<EditorTextEnteringEvent>> editorTextEnteringHandlers;
 
         public MarkdownEditor()
         {
@@ -36,7 +37,7 @@ namespace MarkPad.Document
             Editor.PreviewMouseLeftButtonDown += HandleEditorPreviewMouseLeftButtonDown;
 
             Editor.MouseMove += (s, e) => e.Handled = true;
-            Editor.TextArea.TextEntering += new TextCompositionEventHandler(TextArea_TextEntering);
+            Editor.TextArea.TextEntering += TextAreaTextEntering;
 
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleBold, (x, y) => ToggleBold(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleItalic, (x, y) => ToggleItalic(), CanEditDocument));
@@ -61,6 +62,18 @@ namespace MarkPad.Document
             };
         }
 
+        #region public IndentType IndentType
+        public static readonly DependencyProperty IndentTypeProperty =
+            DependencyProperty.Register("IndentType", typeof (IndentType), typeof (MarkdownEditor), new PropertyMetadata(IndentType.Spaces));
+
+        public IndentType IndentType
+        {
+            get { return (IndentType) GetValue(IndentTypeProperty); }
+            set { SetValue(IndentTypeProperty, value); }
+        }
+        #endregion
+
+        #region public TextDocument Document
         public static readonly DependencyProperty DocumentProperty =
             DependencyProperty.Register("Document", typeof(TextDocument), typeof(MarkdownEditor), new PropertyMetadata(default(TextDocument)));
 
@@ -69,6 +82,7 @@ namespace MarkPad.Document
             get { return (TextDocument)GetValue(DocumentProperty); }
             set { SetValue(DocumentProperty, value); }
         }
+        #endregion
 
         #region public bool FloatingToolbarEnabled
         public static readonly DependencyProperty FloatingToolbarEnabledProperty =
@@ -85,6 +99,7 @@ namespace MarkPad.Document
         public static DependencyProperty EditorFontSizeProperty = DependencyProperty.Register("EditorFontSize", typeof (double), typeof (MarkdownEditor), 
             new PropertyMetadata(default(double), EditorFontSizeChanged));
 
+
         public double EditorFontSize
         {
             get { return (double) GetValue(EditorFontSizeProperty); }
@@ -97,7 +112,7 @@ namespace MarkPad.Document
             ((MarkdownEditor) dependencyObject).Editor.FontSize = (double)dependencyPropertyChangedEventArgs.NewValue;
         }
 
-        private void EditorLoaded(object sender, RoutedEventArgs e)
+        void EditorLoaded(object sender, RoutedEventArgs e)
         {
             using (var stream = Assembly.GetEntryAssembly().GetManifestResourceStream("MarkPad.Syntax.Markdown.xshd"))
             using (var reader = new XmlTextReader(stream))
@@ -115,7 +130,7 @@ namespace MarkPad.Document
             Editor.Focus();
         }
 
-        private void SelectionChanged(object sender, EventArgs e)
+        void SelectionChanged(object sender, EventArgs e)
         {
             if (!FloatingToolbarEnabled) return;
 
@@ -176,7 +191,7 @@ namespace MarkPad.Document
             floatingToolBar.Show(Editor, popupPoint);
         }
 
-        private void EditorPreviewKeyDown(object sender, KeyEventArgs e)
+        void EditorPreviewKeyDown(object sender, KeyEventArgs e)
         {
             foreach (var handler in editorPreviewKeyDownHandlers)
             {
@@ -184,7 +199,7 @@ namespace MarkPad.Document
             }
         }
 
-        void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
+        void TextAreaTextEntering(object sender, TextCompositionEventArgs e)
         {
             foreach (var handler in editorTextEnteringHandlers)
             {
@@ -234,25 +249,32 @@ namespace MarkPad.Document
         private void ToggleCodeBlock()
         {
             var lines = Editor.SelectedText.Split(Environment.NewLine.ToCharArray());
-            if (lines[0].Length > 4)
+            var firstLine = lines[0];
+
+            if (firstLine.Length > 4 && firstLine.Substring(0, 4) == Spaces)
+                RemoveCodeBlock(Spaces, NumSpaces);
+            else if (firstLine.FirstOrDefault() == '\t')
+                RemoveCodeBlock("\t", 1);
+            else
             {
-                if (lines[0].Substring(0, 4) == Spaces)
-                {
-                    Editor.SelectedText = Editor.SelectedText.Replace((Environment.NewLine + Spaces), Environment.NewLine);
+                var spacer = IndentType == IndentType.Spaces ? Spaces : "\t";
 
-                    // remember the first line
-                    if (Editor.SelectedText.Length >= NumSpaces)
-                    {
-                        var firstFour = Editor.SelectedText.Substring(0, NumSpaces);
-                        var rest = Editor.SelectedText.Substring(NumSpaces);
-
-                        Editor.SelectedText = firstFour.Replace(Spaces, string.Empty) + rest;
-                    }
-                    return;
-                }
+                Editor.SelectedText = spacer + Editor.SelectedText.Replace(Environment.NewLine, Environment.NewLine + spacer);                
             }
+        }
 
-            Editor.SelectedText = Spaces + Editor.SelectedText.Replace(Environment.NewLine, Environment.NewLine + Spaces);
+        private void RemoveCodeBlock(string replace, int numberSpaces)
+        {
+            Editor.SelectedText = Editor.SelectedText.Replace((Environment.NewLine + replace), Environment.NewLine);
+
+            // remember the first line
+            if (Editor.SelectedText.Length >= numberSpaces)
+            {
+                var firstFour = Editor.SelectedText.Substring(0, numberSpaces);
+                var rest = Editor.SelectedText.Substring(numberSpaces);
+
+                Editor.SelectedText = firstFour.Replace(replace, string.Empty) + rest;
+            }
         }
 
         internal void SetHyperlink()

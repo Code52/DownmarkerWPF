@@ -67,6 +67,7 @@
         
         <Document:MarkdownEditor x:Name="markdownEditor"
                                  Grid.Column="1"
+                                 IndentType="{Binding IndentType}"
                                  EditorFontSize="{Binding FontSize}"
                                  Document="{Binding Document}"/>
 

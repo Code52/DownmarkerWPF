@@ -7,6 +7,7 @@ using System.Windows.Threading;
 using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using ICSharpCode.AvalonEdit.Document;
+using MarkPad.Framework.Events;
 using MarkPad.HyperlinkEditor;
 using MarkPad.Services;
 using MarkPad.Services.Implementation;
@@ -18,7 +19,7 @@ using MarkPad.Contracts;
 
 namespace MarkPad.Document
 {
-    public class DocumentViewModel : Screen, IDocumentViewModel
+    public class DocumentViewModel : Screen, IDocumentViewModel, IHandle<SettingsChangedEvent>
     {
         private static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
         private const double ZoomDelta = 0.1;
@@ -33,8 +34,6 @@ namespace MarkPad.Document
 
         private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
         private readonly DispatcherTimer timer;
-
-        private string title;
 
         readonly Regex wordCountRegex = new Regex(@"[\S]+", RegexOptions.Compiled);
 
@@ -54,8 +53,9 @@ namespace MarkPad.Document
             this.documentParser = documentParser;
 
             FontSize = GetFontSize();
-
-            title = "New Document";
+            IndentType = settingsProvider.GetSettings<MarkPadSettings>().IndentType;
+            
+            Title = "New Document";
             Original = "";
             Document = new TextDocument();
             Post = new Post();
@@ -96,7 +96,7 @@ namespace MarkPad.Document
         public void Open(string path)
         {
             FileName = path;
-            title = new FileInfo(path).Name;
+            Title = new FileInfo(path).Name;
 
             var text = File.ReadAllText(path);
             Document.Text = text;
@@ -110,7 +110,7 @@ namespace MarkPad.Document
         {
             Post = post;
 
-            title = post.title ?? string.Empty;
+            Title = post.title ?? string.Empty;
             Document.Text = post.description ?? string.Empty;
             Original = post.description ?? string.Empty;
 
@@ -140,7 +140,7 @@ namespace MarkPad.Document
             if (!Save())
                 return false;
 
-            title = new FileInfo(FileName).Name;
+            Title = new FileInfo(FileName).Name;
             NotifyOfPropertyChange(() => DisplayName);
             EvaluateContext();
 
@@ -192,16 +192,12 @@ namespace MarkPad.Document
 
         public override string DisplayName
         {
-            get { return title; }
+            get { return Title; }
         }
 
         public string FileName { get; private set; }
 
-        public string Title
-        {
-            get { return title; }
-            set { title = value; }
-        }
+        public string Title { get; set; }
 
         public bool FloatingToolbarEnabled
         {
@@ -223,7 +219,7 @@ namespace MarkPad.Document
                 return;
             }
 
-            var saveResult = dialogService.ShowConfirmationWithCancel("MarkPad", "Save file", "Do you want to save the changes to '" + title + "'?",
+            var saveResult = dialogService.ShowConfirmationWithCancel("MarkPad", "Save file", "Do you want to save the changes to '" + Title + "'?",
                 new ButtonExtras(ButtonType.Yes, "Save",
                     string.IsNullOrEmpty(FileName) ? "The file has not been saved yet" : "The file will be saved to " + Path.GetFullPath(FileName)),
                 new ButtonExtras(ButtonType.No, "Discard", "Discard the changes to this file"),
@@ -292,6 +288,8 @@ namespace MarkPad.Document
         {
             get { return 0.5; }
         }
+
+        public IndentType IndentType { get; private set; }
 
         /// <summary>
         /// Get the font size that was set in the settings.
@@ -391,7 +389,7 @@ namespace MarkPad.Document
 
             Post = newpost;
             Original = Document.Text;
-            title = postTitle;
+            Title = postTitle;
             NotifyOfPropertyChange(() => DisplayName);
         }
 
@@ -413,6 +411,11 @@ namespace MarkPad.Document
         public void RefreshFont()
         {
             FontSize = GetFontSize()*ZoomLevel;
+        }
+
+        public void Handle(SettingsChangedEvent message)
+        {
+            IndentType = settingsProvider.GetSettings<MarkPadSettings>().IndentType;            
         }
     }
 }

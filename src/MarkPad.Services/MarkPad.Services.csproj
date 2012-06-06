@@ -137,6 +137,7 @@
     <Compile Include="Implementation\JekyllSiteContext.cs" />
     <Compile Include="Settings\BlogInfo.cs" />
     <Compile Include="Settings\BlogSetting.cs" />
+    <Compile Include="Settings\IndentType.cs" />
     <Compile Include="Settings\IsolatedStorageSettingsStore.cs" />
     <Compile Include="Settings\MarkPadSettings.cs" />
     <Compile Include="Settings\PluginSettingsProvider.cs" />
