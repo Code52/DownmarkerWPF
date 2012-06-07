@@ -43,6 +43,7 @@ namespace MarkPad.Settings
 		public bool EnableFloatingToolBar { get; set; }
 		public PluginViewModel SelectedPlugin { get; set; }
 		public IEnumerable<PluginViewModel> Plugins { get; private set; }
+        public IndentType IndentType { get; set; }
 
 		[ImportMany]
 		IEnumerable<IPlugin> plugins;
@@ -88,14 +89,7 @@ namespace MarkPad.Settings
 
             var spellCheckPlugin = plugins.OfType<SpellCheckPlugin.SpellCheckPluginSettings>().FirstOrDefault();
 
-            if (spellCheckPlugin != null)
-            {
-                SelectedLanguage = spellCheckPlugin.Language;    
-            }
-            else
-            {
-                SelectedLanguage = SpellingLanguages.UnitedStates;
-            }
+            SelectedLanguage = spellCheckPlugin != null ? spellCheckPlugin.Language : SpellingLanguages.UnitedStates;
 
             var fontFamily = settings.FontFamily;
             SelectedFontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == fontFamily);
@@ -197,6 +191,11 @@ namespace MarkPad.Settings
 
         public bool CanRemoveBlog { get { return currentBlog != null; } }
 
+        public ObservableCollection<IndentType> IndentTypes
+        {
+            get { return new ObservableCollection<IndentType>{IndentType.Tabs, IndentType.Spaces}; }
+        }
+
         public void RemoveBlog()
         {
             if (CurrentBlog != null)
@@ -221,6 +220,7 @@ namespace MarkPad.Settings
             settings.FontSize = SelectedFontSize;
             settings.FontFamily = SelectedFontFamily.Source;
 			settings.FloatingToolBarEnabled = EnableFloatingToolBar;
+            settings.IndentType = IndentType;
 			
             settingsService.SaveSettings(settings);
 

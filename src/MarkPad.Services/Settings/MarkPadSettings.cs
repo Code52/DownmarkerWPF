@@ -4,8 +4,6 @@ using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using MarkPad.Services.Implementation;
-using MarkPad.Services.Interfaces;
-using MarkPad.Contracts;
 
 namespace MarkPad.Services.Settings
 {
@@ -41,5 +39,7 @@ namespace MarkPad.Services.Settings
 
 		[DefaultValue(true)]
 		public bool FloatingToolBarEnabled { get; set; }
+
+        public IndentType IndentType { get; set; }
     }
 }
