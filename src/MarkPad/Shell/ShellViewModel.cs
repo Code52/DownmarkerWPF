@@ -23,6 +23,7 @@ namespace MarkPad.Shell
 {
     internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>
     {
+        private const string ShowSettingsState = "ShowSettings";
         private readonly IEventAggregator eventAggregator;
         private readonly IDialogService dialogService;
         private readonly IWindowManager windowManager;
@@ -149,6 +150,12 @@ namespace MarkPad.Shell
 
         public void CloseDocument()
         {
+            if (CurrentState == ShowSettingsState)
+            {
+                Handle(new SettingsCloseEvent());
+                return;
+            }
+
             var doc = MDI.ActiveItem as DocumentViewModel;
             if (doc != null)
             {
@@ -178,7 +185,7 @@ namespace MarkPad.Shell
 
         public void ShowSettings()
         {
-            CurrentState = "ShowSettings";
+            CurrentState = ShowSettingsState;
         }
 
         public void ToggleWebView()
