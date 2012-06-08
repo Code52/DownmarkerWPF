@@ -178,13 +178,12 @@ namespace MarkPad.Document
 
         public void Cleanup()
         {
-            if (htmlPreview.wb != null)
-                htmlPreview.wb.Close();
+                htmlPreview.Close();
         }
 
         public void Print()
         {
-            htmlPreview.wb.Print();
+            htmlPreview.Print();
         }
     }
 }

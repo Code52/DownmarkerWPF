@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:MarkPad="clr-namespace:MarkPad">
-    <MarkPad:InPathMultiConverter x:Key="InPathMultiConverter" />
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:MarkPad="clr-namespace:MarkPad"
+                    xmlns:Converters="clr-namespace:MarkPad.Converters">
+    <Converters:InPathMultiConverter x:Key="InPathMultiConverter" />
     <Style TargetType="TreeViewItem">
         <Setter Property="BorderThickness" Value="1"/>
         <Style.Triggers>

@@ -4,8 +4,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:shared="http://schemas.markpad.net/winfx/xaml/shared"
-    xmlns:awe="clr-namespace:Awesomium.Windows.Controls;assembly=Awesomium.Windows.Controls"
-    xmlns:Document="clr-namespace:MarkPad.Document" xmlns:MarkPad="clr-namespace:MarkPad"
+    xmlns:Document="clr-namespace:MarkPad.Document"
+    xmlns:PreviewControl="clr-namespace:MarkPad.PreviewControl;assembly=MarkPad.PreviewControl"
     x:Class="MarkPad.Document.DocumentView"
     mc:Ignorable="d" 
     d:DesignHeight="300" d:DesignWidth="400" d:DataContext="{d:DesignInstance Document:DocumentViewModel}"
@@ -91,7 +91,7 @@
             </TextBlock>
         </Label>
         
-        <MarkPad:HtmlPreview Html="{Binding Render}"
+        <PreviewControl:HtmlPreview Html="{Binding Render}"
                              Filename="{Binding FileName}"
                              Margin="10,0,10,10" 
                              Grid.Column="2"

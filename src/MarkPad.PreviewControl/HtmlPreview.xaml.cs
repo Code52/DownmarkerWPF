@@ -1,15 +1,13 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using Awesomium.Core;
-using Awesomium.Windows.Controls;
-using MarkPad.Document;
-using MarkPad.Framework;
 using MarkPad.Services;
 
-namespace MarkPad
+namespace MarkPad.PreviewControl
 {
     public partial class HtmlPreview
     {
@@ -88,7 +86,6 @@ namespace MarkPad
             if (string.IsNullOrEmpty(content))
                 content = " ";
 
-
             var htmlPreview = (HtmlPreview) d;
             var webControl = htmlPreview.wb;
             webControl.CacheMode = new BitmapCache();
@@ -140,11 +137,9 @@ namespace MarkPad
 
         public string GetResourceFilename(string url)
         {
-            var vm = DataContext as DocumentViewModel;
-            if (vm == null) return null;
-            if (string.IsNullOrEmpty(vm.FileName)) return null;
+            if (string.IsNullOrEmpty(Filename)) return null;
 
-            var resourceFilename = Path.Combine(Path.GetDirectoryName(vm.FileName), url);
+            var resourceFilename = Path.Combine(Path.GetDirectoryName(Filename), url);
             return resourceFilename;
         }
 
@@ -181,18 +176,27 @@ namespace MarkPad
         {
             if (string.IsNullOrWhiteSpace(url))
             {
-                string result = null;
-                var encoding = new System.Text.UTF8Encoding();
+                var encoding = new UTF8Encoding();
 
-                (DataContext as DocumentViewModel).ExecuteSafely(vm => result = vm.Render);
-
-                return new ResourceResponse(encoding.GetBytes(result), "text/html");
+                return new ResourceResponse(encoding.GetBytes(Html), "text/html");
             }
 
             var resourceFilename = GetResourceFilename(url);
             if (!File.Exists(resourceFilename)) return null;
 
             return new ResourceResponse(resourceFilename);
+        }
+
+        public void Close()
+        {
+            if (wb != null)
+                wb.Close();
+        }
+
+        public void Print()
+        {
+            if (wb != null)
+                wb.Print();
         }
     }
 }
