@@ -10,17 +10,20 @@ namespace MarkPad.PreviewControl
 {
     public class AwesomiumHost : MarshalByRefObject, IDisposable
     {
-        readonly Application app;
         WebControl wb;
         long? windowHandle;
+        readonly Application app;
         readonly UserControl control;
         readonly ManualResetEvent loadedWaitHandle;
+        readonly string baseDirectory;
+        static bool awesomiumInitialised;
 
-        public AwesomiumHost(string filename)
+        public AwesomiumHost(string filename, string baseDirectory)
         {
             if (Application.Current == null)
                 app = new Application();
             Filename = filename;
+            this.baseDirectory = baseDirectory;
 
             loadedWaitHandle = new ManualResetEvent(false);
 
@@ -106,6 +109,22 @@ namespace MarkPad.PreviewControl
         {
             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
+                if (!awesomiumInitialised)
+                {
+                    var c = new Awesomium.Core.WebCoreConfig
+                    {
+                        CustomCSS = @"body { font-family: Segoe UI, sans-serif; font-size:0.8em;}
+                              ::-webkit-scrollbar { width: 12px; height: 12px; }
+                              ::-webkit-scrollbar-track { background-color: white; }
+                              ::-webkit-scrollbar-thumb { background-color: #B9B9B9; }
+                              ::-webkit-scrollbar-thumb:hover { background-color: #000000; }",
+                    };
+
+                    Awesomium.Core.WebCore.Initialize(c, true);
+                    Awesomium.Core.WebCore.BaseDirectory = baseDirectory;
+                    awesomiumInitialised = true;
+                }
+
                 Html = content;
                 if (wb == null) return;
                 wb.CacheMode = new BitmapCache();

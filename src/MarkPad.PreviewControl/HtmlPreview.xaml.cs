@@ -12,10 +12,12 @@ namespace MarkPad.PreviewControl
 {
     public partial class HtmlPreview
     {
+        static string content;
         AwesomiumHost host;
         AppDomain hostAppDomain;
-        static string content;
         HwndContentHost hwndContentHost;
+
+        public static string BaseDirectory { get; set; }
 
         #region public string Html
         public static DependencyProperty HtmlProperty = DependencyProperty.Register("Html", typeof (string), typeof (HtmlPreview),
@@ -59,6 +61,7 @@ namespace MarkPad.PreviewControl
             get { return (double)GetValue(ScrollPercentageProperty); }
             set { SetValue(ScrollPercentageProperty, value); }
         }
+
         #endregion
 
         public HtmlPreview()
@@ -146,7 +149,7 @@ namespace MarkPad.PreviewControl
             {
                 var awesomiumHostType = typeof(AwesomiumHost);
                 host = (AwesomiumHost)hostAppDomain.CreateInstanceAndUnwrap(awesomiumHostType.Assembly.FullName, awesomiumHostType.FullName,
-                false, BindingFlags.Default, null, new object[] { filename }, CultureInfo.CurrentCulture, null);
+                false, BindingFlags.Default, null, new object[] { filename, BaseDirectory }, CultureInfo.CurrentCulture, null);
 
                 host.SetHtml(content);
 

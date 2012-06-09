@@ -7,6 +7,7 @@ using Autofac;
 using Caliburn.Micro;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
+using MarkPad.PreviewControl;
 using MarkPad.Services;
 using MarkPad.Shell;
 using System.Windows;
@@ -91,17 +92,7 @@ namespace MarkPad
 
         private void SetAwesomiumDefaults()
         {
-            var c = new Awesomium.Core.WebCoreConfig
-            {
-                CustomCSS = @"body { font-family: Segoe UI, sans-serif; font-size:0.8em;}
-                              ::-webkit-scrollbar { width: 12px; height: 12px; }
-                              ::-webkit-scrollbar-track { background-color: white; }
-                              ::-webkit-scrollbar-thumb { background-color: #B9B9B9; }
-                              ::-webkit-scrollbar-thumb:hover { background-color: #000000; }",
-            };
-
-            Awesomium.Core.WebCore.Initialize(c, true);
-            Awesomium.Core.WebCore.BaseDirectory = Path.Combine(
+            HtmlPreview.BaseDirectory = Path.Combine(
                     Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
                     "Themes"
             );
