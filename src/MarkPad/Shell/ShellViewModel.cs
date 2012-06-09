@@ -176,9 +176,9 @@ namespace MarkPad.Shell
             {
                 if (File.Exists(message.Path))
                 {
-                        var doc = documentCreator();
-                        doc.Open(message.Path);
-                        MDI.Open(doc);
+                    var doc = documentCreator();
+                    doc.Open(message.Path);
+                    MDI.Open(doc);
                 }
             }
         }

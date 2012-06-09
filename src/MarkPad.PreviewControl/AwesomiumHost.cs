@@ -1,160 +1,155 @@
 using System;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
+using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Media.Effects;
-using Awesomium.Core;
 using Awesomium.Windows.Controls;
 
 namespace MarkPad.PreviewControl
 {
-    public class AwesomiumHost : IDisposable
+    public class AwesomiumHost : MarshalByRefObject, IDisposable
     {
-        readonly string filename;
-        readonly WebControl wb;
-        string html;
-        const string LocalRequestUrlBase = "local://base_request.html/";
+        readonly Application app;
+        WebControl wb;
+        long? windowHandle;
+        readonly UserControl control;
+        readonly ManualResetEvent loadedWaitHandle;
 
         public AwesomiumHost(string filename)
         {
-            this.filename = filename;
+            if (Application.Current == null)
+                app = new Application();
+            Filename = filename;
+
+            loadedWaitHandle = new ManualResetEvent(false);
+
+            // We need a hosting user control because awesomium has issues rendering if we create it before
+            // dispatcher is running
+            control = new UserControl();
+            control.Loaded += ControlLoaded;
+        }
+
+        public string Filename { get; private set; }
+        public string Html { get; set; }
+
+        void ControlLoaded(object sender, RoutedEventArgs e)
+        {
+            control.Loaded -= ControlLoaded;
 
             wb = new WebControl
             {
                 UseLayoutRounding = true,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
-                Effect = new DropShadowEffect
-                {
-                    BlurRadius = 10,
-                    Color = Colors.Black,
-                    Opacity = 0.25,
-                    Direction = 270
-                }
+                VerticalAlignment = VerticalAlignment.Stretch,
             };
+
             wb.Loaded += WbLoaded;
-            wb.OpenExternalLink += WebControlLinkClicked;
-            wb.ResourceRequest += WebControlResourceRequest;
+            AwesomiumResourceHandler.Host = this;
+            wb.OpenExternalLink += AwesomiumResourceHandler.WebControlLinkClicked;
+            wb.ResourceRequest += AwesomiumResourceHandler.WebControlResourceRequest;
+            wb.LoadHTML(Html);
+
+            control.Content = wb;
         }
 
         void WbLoaded(object sender, RoutedEventArgs e)
         {
             WbProcentualZoom();
+            loadedWaitHandle.Set();
         }
 
         public int ScrollPercentage { get; set; }
 
-        public int ControlHandle
+        public IntPtr ControlHandle
         {
-            get { return 0; }
+            get
+            {
+                if (windowHandle == null)
+                {
+                    windowHandle = (long)Application.Current.Dispatcher.Invoke(
+                        new Func<long>(() => CreateWindowHandle(control)));
+
+                    loadedWaitHandle.WaitOne();
+                }
+                return new IntPtr(windowHandle.Value);
+            }
         }
 
-        public object Host { get { return wb; } }
+        /// <summary>
+        /// Convert the framework element to a Window Handle so it can be serialized.
+        /// </summary>
+        /// <param name="frameworkElement">The framework element to convert to a Window Handle.</param>
+        /// <returns>The Window Handle that is hosting the framework element.</returns>
+        static long CreateWindowHandle(Visual frameworkElement)
+        {
+            // ReSharper disable InconsistentNaming
+            const int WS_VISIBLE = 0x10000000;
+            // ReSharper restore InconsistentNaming
+
+            var parameters = new HwndSourceParameters(String.Format("NewWindowHost{0}", Guid.NewGuid()), 1, 1);
+            parameters.WindowStyle &= ~WS_VISIBLE;
+
+            var intPtr = new HwndSource(parameters)
+                {
+                    RootVisual = frameworkElement
+                }.Handle;
+            return intPtr.ToInt64();
+        }
 
         public void SetZoom(int getZoomLevel)
         {
-            wb.Zoom = getZoomLevel;
+            app.Dispatcher.BeginInvoke(new Action(() => wb.Zoom = getZoomLevel));
         }
 
         public void SetHtml(string content)
         {
-            html = content;
-            var webControl = wb;
-            webControl.CacheMode = new BitmapCache();
-            EventHandler webControlOnLoadCompleted = null;
-            webControlOnLoadCompleted = (sender, args) =>
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
-                webControl.LoadCompleted -= webControlOnLoadCompleted;
-                WbProcentualZoom();
-                webControl.CacheMode = null;
-            };
-            webControl.LoadCompleted += webControlOnLoadCompleted;
-            webControl.LoadHTML(content);
+                Html = content;
+                if (wb == null) return;
+                wb.CacheMode = new BitmapCache();
+                EventHandler webControlOnLoadCompleted = null;
+                webControlOnLoadCompleted = (sender, args) =>
+                {
+                    wb.LoadCompleted -= webControlOnLoadCompleted;
+                    WbProcentualZoom();
+                    wb.CacheMode = null;
+                };
+                wb.LoadCompleted += webControlOnLoadCompleted;
+                wb.LoadHTML(content);
+            }));
         }
 
         public void WbProcentualZoom()
         {
-            wb.ExecuteJavascript("window.scrollTo(0," + ScrollPercentage + " * (document.body.scrollHeight - document.body.clientHeight));");
-        }
-
-        ResourceResponse WebControlResourceRequest(object o, ResourceRequestEventArgs e)
-        {
-            // This tries to get a local resource. If there is no local resource null is returned by GetLocalResource, which
-            // triggers the default handler, which should respect the "target='_blank'" attribute added
-            // in ParsedDocument.ToHtml(), thus avoiding a bug in Awesomium where trying to navigate to a
-            // local resource fails when showing an in-memory file (https://github.com/Code52/DownmarkerWPF/pull/208)
-
-            // What works:
-            //	- resource requests for remote resources (like <link href="http://somecdn.../jquery.js"/>)
-            //	- resource requests for local resources that exist relative to filename of the file (like <img src="images/logo.png"/>)
-            //	- clicking links for remote resources (like [Google](http://www.google.com))
-            //	- clicking links for local resources which don't exist (eg [test](test)) does nothing (WebControl_LinkClicked checks for existence)
-            // What fails:
-            //	- clicking links for local resources where the resource exists (like [test](images/logo.png))
-            //		- This _sometimes_ opens the resource in the preview pane, and sometimes opens the resource 
-            //		using Process.Start (WebControl_LinkClicked gets triggered). The behaviour seems stochastic.
-            //	- alt text for images where the image resource is not found
-
-            if (e.Request.Url.StartsWith(LocalRequestUrlBase)) return GetLocalResource(e.Request.Url.Replace(LocalRequestUrlBase, ""));
-
-            // If the request wasn't local, return null to let the usual handler load the url from the network			
-            return null;
-        }
-
-        ResourceResponse GetLocalResource(string url)
-        {
-            if (string.IsNullOrWhiteSpace(url))
+            if (!app.Dispatcher.CheckAccess())
             {
-                var encoding = new UTF8Encoding();
-
-                return new ResourceResponse(encoding.GetBytes(html), "text/html");
+                app.Dispatcher.BeginInvoke(new Action(WbProcentualZoom));
+                return;
             }
 
-            var resourceFilename = GetResourceFilename(url);
-            if (!File.Exists(resourceFilename)) return null;
-
-            return new ResourceResponse(resourceFilename);
-        }
-
-        void WebControlLinkClicked(object sender, OpenExternalLinkEventArgs e)
-        {
-            // Although all links have "target='_blank'" added (see ParsedDocument.ToHtml()), they go through this first
-            // unless the url is local (a bug in Awesomium) in which case this event isn't triggered, and the "target='_blank'"
-            // takes over to avoid crashing the preview. Local resource requests where the resource doesn't exist are thrown
-            // away. See WebControl_ResourceRequest().
-
-            var file = e.Url;
-            if (e.Url.StartsWith(LocalRequestUrlBase))
-            {
-                file = GetResourceFilename(e.Url.Replace(LocalRequestUrlBase, "")) ?? "";
-                if (!File.Exists(file)) return;
-            }
-
-            if (string.IsNullOrWhiteSpace(file)) return;
-
-            Process.Start(file);
-        }
-
-        public string GetResourceFilename(string url)
-        {
-            if (string.IsNullOrEmpty(filename)) return null;
-
-            var directoryName = Path.GetDirectoryName(filename);
-            if (directoryName == null)
-                return null;
-            var resourceFilename = Path.Combine(directoryName, url);
-            return resourceFilename;
+            var javascript = string.Format("window.scrollTo(0,{0} * (document.body.scrollHeight - document.body.clientHeight));", ScrollPercentage);
+            wb.ExecuteJavascript(javascript);
         }
 
         public void Dispose()
         {
-            wb.Close();
+            app.Dispatcher.Invoke(new Action(() =>
+            {
+                app.Shutdown();
+                wb.Close();
+            }));
         }
 
         public void Print()
         {
-            wb.Print();
+            app.Dispatcher.BeginInvoke(new Action(() => wb.Print()));
+        }
+
+        public void Run()
+        {
+            app.Run();
         }
     }
 }

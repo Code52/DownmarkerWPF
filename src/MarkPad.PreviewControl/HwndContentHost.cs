@@ -19,7 +19,6 @@ namespace MarkPad.PreviewControl
         {
             this.handle = handle;
         }
-
         /// <summary>
         /// Creates the window to be hosted.
         /// </summary>
