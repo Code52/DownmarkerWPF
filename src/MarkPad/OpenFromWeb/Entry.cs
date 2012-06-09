@@ -1,4 +1,4 @@
-using MarkPad.Services.Metaweblog;
+using MarkPad.DocumentSources.MetaWeblog.Service;
 
 namespace MarkPad.OpenFromWeb
 {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -6,10 +6,11 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Caliburn.Micro;
+using MarkPad.Services;
 using MarkPad.Services.Events;
 using MarkPad.Services.Interfaces;
 
-namespace MarkPad.Services.Implementation
+namespace MarkPad.DocumentSources.FileSystem
 {
     public class JekyllSiteContext : PropertyChangedBase, ISiteContext
     {

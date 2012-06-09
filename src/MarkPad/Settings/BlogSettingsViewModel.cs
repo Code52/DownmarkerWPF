@@ -4,9 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Caliburn.Micro;
+using MarkPad.DocumentSources.MetaWeblog.Service;
+using MarkPad.DocumentSources.MetaWeblog.Service.Rsd;
 using MarkPad.Framework;
 using MarkPad.Services.Interfaces;
-using MarkPad.Services.Metaweblog.Rsd;
 using MarkPad.Services.Settings;
 
 namespace MarkPad.Settings
@@ -133,7 +134,7 @@ namespace MarkPad.Settings
 
         public void DiscoverAddress()
         {
-            var startAddress = CurrentBlog.WebAPI;
+            var startAddress = CurrentBlog.WebAPI ?? string.Empty;
 
             if (!startAddress.StartsWith("http://"))
                 startAddress = "http://" + startAddress;

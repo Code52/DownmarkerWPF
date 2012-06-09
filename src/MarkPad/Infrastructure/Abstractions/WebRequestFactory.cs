@@ -1,8 +1,7 @@
 using System;
 using System.Net;
-using MarkPad.Services.Metaweblog.Rsd;
 
-namespace MarkPad.Services
+namespace MarkPad.Infrastructure.Abstractions
 {
     public class WebRequestFactory : IWebRequestFactory
     {

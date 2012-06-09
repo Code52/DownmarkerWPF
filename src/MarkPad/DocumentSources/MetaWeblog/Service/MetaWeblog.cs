@@ -1,12 +1,11 @@
 
-namespace MarkPad.Services.Metaweblog
+namespace MarkPad.DocumentSources.MetaWeblog.Service
 {
     public partial class MetaWeblog
     {
         public MetaWeblog(string url)
-            : base()
         {
-            this.Url = url;
+            Url = url;
         }
     }
 }

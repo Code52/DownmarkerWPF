@@ -1,6 +1,6 @@
 using System;
 
-namespace MarkPad.Services.Metaweblog
+namespace MarkPad.DocumentSources.MetaWeblog.Service
 {
     [Serializable]
     public struct MediaObjectInfo

@@ -1,6 +1,6 @@
 using CookComputing.XmlRpc;
 
-namespace MarkPad.Services.Metaweblog
+namespace MarkPad.DocumentSources.MetaWeblog.Service
 {
     [XmlRpcMissingMapping(MappingAction.Ignore)]
     public struct MediaObject

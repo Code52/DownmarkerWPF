@@ -100,41 +100,15 @@
     <Compile Include="Interfaces\ISiteItem.cs" />
     <Compile Include="Implementation\ButtonExtras.cs" />
     <Compile Include="Implementation\FontSizes.cs" />
-    <Compile Include="Implementation\MetaWeblogService.cs" />
-    <Compile Include="Implementation\SiteContextGenerator.cs" />
     <Compile Include="Implementation\SpellingService.cs" />
     <Compile Include="Implementation\DialogMessageService.cs" />
     <Compile Include="Implementation\DialogService.cs" />
     <Compile Include="Implementation\TaskSchedulerFactory.cs" />
-    <Compile Include="Interfaces\IMetaWeblogService.cs" />
     <Compile Include="Interfaces\ISiteContext.cs" />
     <Compile Include="Interfaces\ISiteContextGenerator.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />
     <Compile Include="Interfaces\ITaskSchedulerFactory.cs" />
-    <Compile Include="Metaweblog\Category.cs" />
-    <Compile Include="Metaweblog\CategoryInfo.cs" />
-    <Compile Include="Metaweblog\Enclosure.cs" />
-    <Compile Include="Metaweblog\Generated\MetaWeblog.generated.cs">
-      <DependentUpon>MetaWeblog.tt</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Metaweblog\MediaObject.cs" />
-    <Compile Include="Metaweblog\MediaObjectInfo.cs" />
-    <Compile Include="Metaweblog\MetaWeblog.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Metaweblog\Post.cs" />
-    <Compile Include="Metaweblog\Rsd\DiscoveryResult.cs" />
-    <Compile Include="Metaweblog\Rsd\IRsdService.cs" />
-    <Compile Include="Metaweblog\Rsd\IWebRequestFactory.cs" />
-    <Compile Include="Metaweblog\Rsd\RsdService.cs" />
-    <Compile Include="Metaweblog\Source.cs" />
-    <Compile Include="Metaweblog\UserInfo.cs" />
-    <Compile Include="ServicesModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Implementation\JekyllSiteContext.cs" />
     <Compile Include="Settings\BlogInfo.cs" />
     <Compile Include="Settings\BlogSetting.cs" />
     <Compile Include="Settings\IndentType.cs" />
@@ -142,7 +116,6 @@
     <Compile Include="Settings\MarkPadSettings.cs" />
     <Compile Include="Settings\PluginSettingsProvider.cs" />
     <Compile Include="Settings\SettingsProvider.cs" />
-    <Compile Include="WebRequestFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MarkPad.Contracts\MarkPad.Contracts.csproj">
@@ -167,12 +140,6 @@
     <EmbeddedResource Include="Implementation\Dictionaries\en_US.dic" />
     <EmbeddedResource Include="Implementation\Dictionaries\es_ES.aff" />
     <EmbeddedResource Include="Implementation\Dictionaries\es_ES.dic" />
-    <None Include="Metaweblog\Generated\BloggerAPI.json" />
-    <None Include="Metaweblog\Generated\MetaWeblog.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>MetaWeblog.generated.cs</LastGenOutput>
-    </None>
-    <None Include="Metaweblog\Generated\MetaWeblogAPI.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

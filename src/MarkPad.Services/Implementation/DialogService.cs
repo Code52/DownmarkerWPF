@@ -3,7 +3,7 @@ using Ookii.Dialogs.Wpf;
 
 namespace MarkPad.Services.Implementation
 {
-    internal class DialogService : IDialogService
+    public class DialogService : IDialogService
     {
         public bool ShowConfirmation(string title, string text, string extra, params ButtonExtras[] buttonExtras)
         {

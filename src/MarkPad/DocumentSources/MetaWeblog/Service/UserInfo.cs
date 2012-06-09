@@ -1,4 +1,4 @@
-namespace MarkPad.Services.Metaweblog
+namespace MarkPad.DocumentSources.MetaWeblog.Service
 {
     public struct UserInfo
     {

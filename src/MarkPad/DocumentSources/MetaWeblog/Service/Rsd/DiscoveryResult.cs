@@ -1,6 +1,6 @@
 using System;
 
-namespace MarkPad.Services.Metaweblog.Rsd
+namespace MarkPad.DocumentSources.MetaWeblog.Service.Rsd
 {
     public class DiscoveryResult
     {
@@ -18,7 +18,8 @@ namespace MarkPad.Services.Metaweblog.Rsd
                 ex = ((AggregateException) ex).Flatten().InnerException;
             }
             Exception = ex;
-            FailMessage = ex.Message;
+            if (ex != null)
+                FailMessage = ex.Message;
         }
 
         public bool Success { get; private set; }

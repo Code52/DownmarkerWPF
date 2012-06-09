@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace MarkPad.Services.Metaweblog.Rsd
+namespace MarkPad.DocumentSources.MetaWeblog.Service.Rsd
 {
     public interface IRsdService
     {

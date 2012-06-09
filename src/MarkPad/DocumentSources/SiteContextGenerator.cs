@@ -1,10 +1,12 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using Caliburn.Micro;
+using MarkPad.DocumentSources.FileSystem;
+using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 
-namespace MarkPad.Services.Implementation
+namespace MarkPad.DocumentSources
 {
     public class SiteContextGenerator : ISiteContextGenerator
     {

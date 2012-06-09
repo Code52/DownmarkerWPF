@@ -1,13 +1,11 @@
-﻿using System.Threading.Tasks;
-using MarkPad.Services.Interfaces;
-using MarkPad.Services.Metaweblog;
+using System.Threading.Tasks;
 using MarkPad.Services.Settings;
 
-namespace MarkPad.Services.Implementation
+namespace MarkPad.DocumentSources.MetaWeblog.Service
 {
     public class MetaWeblogService : IMetaWeblogService
     {
-        private MetaWeblog proxy;
+        readonly MetaWeblog proxy;
 
         public MetaWeblogService(string url)
         {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -7,8 +7,9 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using MarkPad.Infrastructure.Abstractions;
 
-namespace MarkPad.Services.Metaweblog.Rsd
+namespace MarkPad.DocumentSources.MetaWeblog.Service.Rsd
 {
     public class RsdService : IRsdService
     {
@@ -37,7 +38,8 @@ namespace MarkPad.Services.Metaweblog.Rsd
                         completionSource.SetResult(c.Result);
                     else
                     {
-                        Trace.WriteLine(string.Format("Rsd.xml does not exist, trying to discover via link. Error was {0}", c.Result.FailMessage), "INFO");
+                        Trace.WriteLine(string.Format(
+                            "Rsd.xml does not exist, trying to discover via link. Error was {0}", c.Result.FailMessage), "INFO");
 
                         DiscoverRsdLink(webAPI)
                             .ContinueWith(t => completionSource.SetResult(t.Result));

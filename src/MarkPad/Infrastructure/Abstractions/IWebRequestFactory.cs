@@ -1,7 +1,7 @@
 using System;
 using System.Net;
 
-namespace MarkPad.Services.Metaweblog.Rsd
+namespace MarkPad.Infrastructure.Abstractions
 {
     public interface IWebRequestFactory
     {

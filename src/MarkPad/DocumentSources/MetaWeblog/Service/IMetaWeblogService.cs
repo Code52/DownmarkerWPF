@@ -1,8 +1,7 @@
 ﻿using System.Threading.Tasks;
-using MarkPad.Services.Metaweblog;
 using MarkPad.Services.Settings;
 
-namespace MarkPad.Services.Interfaces
+namespace MarkPad.DocumentSources.MetaWeblog.Service
 {
     public interface IMetaWeblogService
     {

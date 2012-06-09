@@ -70,10 +70,12 @@ namespace MarkPad
             set
             {
                 currentState = value;
-                var documentView = (DocumentView) ActiveDocumentViewModel.GetView();
-                documentView.htmlPreview.Visibility = currentState == ShowSettingsState 
-                    ? Visibility.Hidden
-                    : Visibility.Visible;
+
+                if (ActiveDocumentViewModel == null) return;
+                var documentView = (DocumentView)ActiveDocumentViewModel.GetView();
+                documentView.htmlPreview.Visibility = currentState == ShowSettingsState
+                                                          ? Visibility.Hidden
+                                                          : Visibility.Visible;
             }
         }
 

@@ -1,11 +1,14 @@
 using Autofac;
-using MarkPad.Contracts;
+using MarkPad.DocumentSources;
+using MarkPad.DocumentSources.MetaWeblog.Service;
+using MarkPad.DocumentSources.MetaWeblog.Service.Rsd;
+using MarkPad.Infrastructure.Abstractions;
+using MarkPad.Services;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
-using MarkPad.Services.Metaweblog.Rsd;
 using MarkPad.Services.Settings;
 
-namespace MarkPad.Services
+namespace MarkPad
 {
     public class ServicesModule : Module
     {

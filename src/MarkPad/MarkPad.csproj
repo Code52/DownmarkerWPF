@@ -109,6 +109,10 @@
     <Reference Include="MarkdownDeep">
       <HintPath>..\packages\MarkdownDeep.NET.1.4\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CompilerServices.AsyncTargetingPack.Net4, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.CompilerServices.AsyncTargetingPack.1.0.0\lib\net40\Microsoft.CompilerServices.AsyncTargetingPack.Net4.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Microsoft.Expression.Interactions.dll</HintPath>
     </Reference>
@@ -140,6 +144,30 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DocumentSources\FileSystem\JekyllSiteContext.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\Category.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\CategoryInfo.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\Enclosure.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\Generated\MetaWeblog.generated.cs">
+      <DependentUpon>MetaWeblog.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="DocumentSources\MetaWeblog\Service\IMetaWeblogService.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\MediaObject.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\MediaObjectInfo.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\MetaWeblog.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DocumentSources\MetaWeblog\Service\MetaWeblogService.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\Post.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\Rsd\DiscoveryResult.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\Rsd\IRsdService.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\Rsd\RsdService.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\Source.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\UserInfo.cs" />
+    <Compile Include="DocumentSources\SiteContextGenerator.cs" />
     <Compile Include="Document\Controls\HyperlinkEditorView.xaml.cs">
       <DependentUpon>HyperlinkEditorView.xaml</DependentUpon>
     </Compile>
@@ -166,6 +194,8 @@
     <Compile Include="Converters\InPathMultiConverter.cs" />
     <Compile Include="Extensions\DataImage.cs" />
     <Compile Include="Extensions\DataObjectExtensions.cs" />
+    <Compile Include="Infrastructure\Abstractions\IWebRequestFactory.cs" />
+    <Compile Include="Infrastructure\Abstractions\WebRequestFactory.cs" />
     <Compile Include="MarkPadAutofacModule.cs" />
     <Compile Include="Framework\Events\SettingsChangedEvent.cs" />
     <Compile Include="Framework\FocusExtension.cs" />
@@ -180,6 +210,7 @@
     <Compile Include="Document\SpellCheck\SpellCheckProvider.cs" />
     <Compile Include="OpenFromWeb\Entry.cs" />
     <Compile Include="PluginManager.cs" />
+    <Compile Include="ServicesModule.cs" />
     <Compile Include="Settings\BlogSettingsView.xaml.cs">
       <DependentUpon>BlogSettingsView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -300,6 +331,12 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="DocumentSources\MetaWeblog\Service\Generated\BloggerAPI.json" />
+    <None Include="DocumentSources\MetaWeblog\Service\Generated\MetaWeblog.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MetaWeblog.generated.cs</LastGenOutput>
+    </None>
+    <None Include="DocumentSources\MetaWeblog\Service\Generated\MetaWeblogAPI.json" />
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
     <EmbeddedResource Include="Syntax\Markdown.xshd" />
@@ -419,6 +456,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!--<Import Project="$(SolutionDir)..\tools\EmbedAssemblies.targets" Condition="'$(Configuration)' != 'Testing' AND $(NCrunch) != '1'" />-->
