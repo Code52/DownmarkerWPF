@@ -1,6 +1,7 @@
 ﻿using System.Windows.Input;
 using Caliburn.Micro;
-using MarkPad.Framework.Events;
+using MarkPad.Document.Events;
+using MarkPad.Events;
 
 namespace MarkPad.Document.EditorBehaviours
 {

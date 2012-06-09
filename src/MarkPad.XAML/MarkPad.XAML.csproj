@@ -77,24 +77,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Themes\Generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Analects\XAMLConverters\BoolToVisibilityConverter.cs" />
-    <Compile Include="Analects\XAMLConverters\DebugConverter.cs" />
-    <Compile Include="Analects\XAMLConverters\MarkupConverter.cs" />
-    <Compile Include="Analects\XAMLConverters\NullToVisibilityConverter.cs" />
-    <Compile Include="Analects\XAMLConverters\ToLowerConverter.cs" />
-    <Compile Include="Analects\XAMLConverters\ToUpperConverter.cs" />
     <Compile Include="Controls\FloatingToolBar.cs" />
-    <Compile Include="Converters\BoolToGridLengthConverter.cs" />
-    <Compile Include="Converters\EnumDisplayConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -7,7 +7,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Shell;
 using Caliburn.Micro;
-using MarkPad.Framework.Events;
+using MarkPad.Events;
 using MarkPad.Services;
 using MarkPad.Services.Events;
 using MarkPad.Services.Settings;

@@ -1,8 +1,8 @@
 using System;
 using System.Windows;
-using Analects.XAMLConverters;
+using MahApps.Metro.Converters;
 
-namespace MarkPad.XAML.Converters
+namespace MarkPad.Converters
 {
     public class BoolToGridLengthConverter : MarkupConverter
     {

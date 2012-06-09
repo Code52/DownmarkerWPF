@@ -24,7 +24,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace MarkPad
+namespace MarkPad.Infrastructure
 {
     internal enum WM
     {

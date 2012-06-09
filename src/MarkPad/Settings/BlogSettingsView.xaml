@@ -5,9 +5,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
         xmlns:cal="http://www.caliburnproject.org"
-        xmlns:Settings="clr-namespace:MarkPad.Settings"
-        xmlns:XAMLConverters="clr-namespace:Analects.XAMLConverters;assembly=MarkPad.XAML"
-        x:Class="MarkPad.Settings.BlogSettingsView" 
+        xmlns:Settings="clr-namespace:MarkPad.Settings" x:Class="MarkPad.Settings.BlogSettingsView" 
         MouseLeftButtonDown="DragMoveWindow"
         Icon="/markpad.ico"
         ShowInTaskbar="False"
@@ -31,6 +29,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MarkPad;component/Styles/MarkPad.Accents.xaml" />
             </ResourceDictionary.MergedDictionaries>
+          <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         </ResourceDictionary>
     </Window.Resources>
 
@@ -66,7 +65,7 @@
                 <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="METAWEBLOG API ADDRESS"  FontWeight="Bold" FontSize="10.667"/>
                 <TextBox x:Name="CurrentBlog_WebAPI" HorizontalAlignment="Stretch" />
 
-                <ProgressBar Visibility="{Binding DiscoveringAddress, Converter={XAMLConverters:BoolToVisibilityConverter}}"
+                <ProgressBar Visibility="{Binding DiscoveringAddress, Converter={StaticResource BooleanToVisibilityConverter}}"
                              IsIndeterminate="{Binding DiscoveringAddress}" />
                 <Button x:Name="DiscoverAddress">
                     <Button.Style>

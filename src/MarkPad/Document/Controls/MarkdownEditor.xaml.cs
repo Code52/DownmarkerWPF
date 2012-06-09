@@ -14,8 +14,9 @@ using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
 using MarkPad.Document.Commands;
 using MarkPad.Document.EditorBehaviours;
+using MarkPad.Document.Events;
+using MarkPad.Events;
 using MarkPad.Framework;
-using MarkPad.Framework.Events;
 using MarkPad.Services.Settings;
 
 namespace MarkPad.Document.Controls

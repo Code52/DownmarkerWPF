@@ -1,8 +1,9 @@
 using System.IO;
 using System.Linq;
 using Caliburn.Micro;
+using MarkPad.Services.Interfaces;
 
-namespace MarkPad.Services.Interfaces
+namespace MarkPad.DocumentSources
 {
     public class FileSystemSiteItem : PropertyChangedBase, ISiteItem
     {

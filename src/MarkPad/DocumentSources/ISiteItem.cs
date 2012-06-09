@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace MarkPad.Services.Interfaces
+namespace MarkPad.DocumentSources
 {
     public interface ISiteItem : INotifyPropertyChanged
     {

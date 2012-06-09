@@ -6,8 +6,8 @@ using System.Windows;
 using System.Windows.Threading;
 using Autofac;
 using Caliburn.Micro;
+using MarkPad.Events;
 using MarkPad.Framework;
-using MarkPad.Framework.Events;
 using MarkPad.PreviewControl;
 using MarkPad.Services;
 

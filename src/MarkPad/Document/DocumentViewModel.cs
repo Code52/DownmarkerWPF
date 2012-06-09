@@ -10,7 +10,7 @@ using ICSharpCode.AvalonEdit.Document;
 using MarkPad.Document.Controls;
 using MarkPad.DocumentSources;
 using MarkPad.DocumentSources.MetaWeblog.Service;
-using MarkPad.Framework.Events;
+using MarkPad.Events;
 using MarkPad.Services;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;

@@ -5,8 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Caliburn.Micro;
+using MarkPad.Events;
 using MarkPad.Framework;
-using MarkPad.Framework.Events;
 using MarkPad.Plugins;
 
 namespace MarkPad

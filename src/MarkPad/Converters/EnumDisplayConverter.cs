@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using Analects.XAMLConverters;
+using MahApps.Metro.Converters;
 
-namespace MarkPad.XAML.Converters
+namespace MarkPad.Converters
 {
     public class EnumDisplayConverter : MarkupConverter
     {

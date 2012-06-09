@@ -7,7 +7,7 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:Settings="clr-namespace:MarkPad.Settings"
              xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-             x:Class="MarkPad.Settings.SettingsView"
+             xmlns:Converters="clr-namespace:MarkPad.Converters" x:Class="MarkPad.Settings.SettingsView"
              d:DataContext="{d:DesignInstance Settings:SettingsViewModel}"
              mc:Ignorable="d">
     <UserControl.Resources>
@@ -58,7 +58,7 @@
                 <ComboBox x:Name="Languages" ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}"  VerticalAlignment="Top" Margin="0,40,0,0">
                   <ComboBox.ItemTemplate>
                     <DataTemplate>
-                      <TextBlock Text="{Binding Converter={Custom:EnumDisplayConverter}}" />
+                      <TextBlock Text="{Binding Converter={Converters:EnumDisplayConverter}}" />
                     </DataTemplate>
                   </ComboBox.ItemTemplate>
                 </ComboBox>
@@ -91,7 +91,7 @@
                           Grid.Column="1">
                     <ComboBox.ItemTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Converter={Custom:EnumDisplayConverter}}" />
+                        <TextBlock Text="{Binding Converter={Converters:EnumDisplayConverter}}" />
                       </DataTemplate>
                     </ComboBox.ItemTemplate>
                   </ComboBox>
@@ -172,7 +172,7 @@
                             <ComboBox x:Name="FontSizes" ItemsSource="{Binding FontSizes}" SelectedItem="{Binding SelectedFontSize}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Converter={Custom:EnumDisplayConverter}}" />
+                                        <TextBlock Text="{Binding Converter={Converters:EnumDisplayConverter}}" />
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>

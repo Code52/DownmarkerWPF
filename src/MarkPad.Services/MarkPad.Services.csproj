@@ -96,8 +96,6 @@
     </Compile>
     <Compile Include="Constants.cs" />
     <Compile Include="Events\FileOpenEvent.cs" />
-    <Compile Include="Interfaces\FileSystemSiteItem.cs" />
-    <Compile Include="Interfaces\ISiteItem.cs" />
     <Compile Include="Implementation\ButtonExtras.cs" />
     <Compile Include="Implementation\FontSizes.cs" />
     <Compile Include="Implementation\DialogMessageService.cs" />

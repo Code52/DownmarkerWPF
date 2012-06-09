@@ -35,7 +35,5 @@ using System.Windows.Markup;
 )]
 
 [assembly: XmlnsDefinition("http://schemas.markpad.net/winfx/xaml/shared", "MarkPad.XAML.AttachedProperties")]
-[assembly: XmlnsDefinition("http://schemas.markpad.net/winfx/xaml/shared", "MarkPad.XAML.Converters")]
 [assembly: XmlnsDefinition("http://schemas.markpad.net/winfx/xaml/shared", "MarkPad.XAML.Triggers")]
-
 [assembly: XmlnsDefinition("http://schemas.markpad.net/winfx/xaml/controls", "MarkPad.XAML.Controls")]

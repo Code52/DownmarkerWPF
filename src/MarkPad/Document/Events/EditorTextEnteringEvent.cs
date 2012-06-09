@@ -1,8 +1,7 @@
 ﻿using System.Windows.Input;
 using ICSharpCode.AvalonEdit;
-using MarkPad.Document;
 
-namespace MarkPad.Framework.Events
+namespace MarkPad.Document.Events
 {
     public class EditorTextEnteringEvent
     {

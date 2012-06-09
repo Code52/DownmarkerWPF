@@ -147,9 +147,13 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Converters\BoolToGridLengthConverter.cs" />
+    <Compile Include="Converters\EnumDisplayConverter.cs" />
+    <Compile Include="DocumentSources\FileSystemSiteItem.cs" />
     <Compile Include="DocumentSources\FileSystem\JekyllSiteContext.cs" />
     <Compile Include="DocumentSources\ISiteContext.cs" />
     <Compile Include="DocumentSources\ISiteContextGenerator.cs" />
+    <Compile Include="DocumentSources\ISiteItem.cs" />
     <Compile Include="DocumentSources\MetaWeblog\Entry.cs" />
     <Compile Include="DocumentSources\MetaWeblog\OpenFromWebView.xaml.cs">
       <DependentUpon>OpenFromWebView.xaml</DependentUpon>
@@ -202,9 +206,9 @@
     <Compile Include="Document\EditorBehaviours\OvertypeMode.cs" />
     <Compile Include="Document\SpellCheck\SpellCheckProviderFactory.cs" />
     <Compile Include="Document\SpellCheck\SpellingService.cs" />
-    <Compile Include="Framework\Events\EditorPreviewKeyDownEvent.cs" />
-    <Compile Include="Framework\Events\EditorTextEnteringEvent.cs" />
-    <Compile Include="Framework\Events\PluginsChangedEvent.cs" />
+    <Compile Include="Document\Events\EditorPreviewKeyDownEvent.cs" />
+    <Compile Include="Document\Events\EditorTextEnteringEvent.cs" />
+    <Compile Include="Events\PluginsChangedEvent.cs" />
     <Compile Include="Converters\InPathMultiConverter.cs" />
     <Compile Include="Extensions\DataImage.cs" />
     <Compile Include="Extensions\DataObjectExtensions.cs" />
@@ -218,8 +222,9 @@
       <DependentUpon>ExceptionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\JumpListIntegration.cs" />
+    <Compile Include="Infrastructure\SingleInstance.cs" />
     <Compile Include="MarkPadAutofacModule.cs" />
-    <Compile Include="Framework\Events\SettingsChangedEvent.cs" />
+    <Compile Include="Events\SettingsChangedEvent.cs" />
     <Compile Include="Framework\FocusExtension.cs" />
     <Compile Include="Framework\FontHelpers.cs" />
     <Compile Include="Framework\FrameworkExtensions.cs" />
@@ -248,10 +253,9 @@
     <Compile Include="Settings\SettingsViewModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SingleInstance.cs" />
     <Compile Include="Document\Commands\FormattingCommands.cs" />
     <Compile Include="Framework\ObjectExtensions.cs" />
-    <Compile Include="Framework\Events\SettingsCloseEvent.cs" />
+    <Compile Include="Events\SettingsCloseEvent.cs" />
     <Compile Include="Framework\MarkdownHelpers.cs" />
     <Compile Include="Document\SpellCheck\SpellCheckBackgroundRenderer.cs" />
     <Compile Include="Updater\UpdaterChangesViewModel.cs" />
@@ -271,7 +275,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Framework\Events\AppReadyEvent.cs" />
+    <Compile Include="Events\AppReadyEvent.cs" />
     <Compile Include="Document\DocumentView.xaml.cs">
       <DependentUpon>DocumentView.xaml</DependentUpon>
     </Compile>

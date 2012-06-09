@@ -7,7 +7,7 @@ using System.Windows;
 using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.DocumentSources.MetaWeblog;
-using MarkPad.Framework.Events;
+using MarkPad.Events;
 using MarkPad.MDI;
 using MarkPad.Services;
 using MarkPad.Services.Events;

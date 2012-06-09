@@ -1,4 +1,4 @@
-namespace MarkPad.Framework.Events
+namespace MarkPad.Events
 {
     /// <summary>
     /// Event for components to subscribe to to execute code after the shell is visible

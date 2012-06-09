@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Caliburn.Micro;
+using MarkPad.Events;
 using MarkPad.Plugins;
 using MarkPad.Services.Settings;
-using MarkPad.Framework.Events;
 
 namespace MarkPad.Settings
 {
