@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace MarkPad.Framework
+namespace MarkPad.Infrastructure.CaliburnExtensions
 {
     internal class DebugLogger : Caliburn.Micro.ILog
     {
@@ -9,12 +9,12 @@ namespace MarkPad.Framework
 
         public DebugLogger(Type type)
         {
-            this.typeName = type.FullName;
+            typeName = type.FullName;
 
             if (type.Namespace == "Caliburn.Micro")
-                this.typeName = "CM." + type.Name;
+                typeName = "CM." + type.Name;
 
-            this.typeName = this.typeName.PadRight(20) + " ";
+            if (typeName != null) typeName = typeName.PadRight(20) + " ";
         }
 
         public void Info(string format, params object[] args)

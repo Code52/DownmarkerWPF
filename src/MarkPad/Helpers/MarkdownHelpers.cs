@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 
 namespace MarkPad.Framework
@@ -36,7 +35,6 @@ namespace MarkPad.Framework
             return inputString.StartsWith(CodeDelimiter)
                    && inputString.EndsWith(CodeDelimiter);
         }
-
 
         public static string ToggleItalic(this string inputString, bool makeItalic)
         {

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using MarkPad.Services.Settings;
+using MarkPad.Settings.Models;
 
 namespace MarkPad.DocumentSources.MetaWeblog.Service
 {

@@ -3,12 +3,11 @@ using MarkPad.DocumentSources;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.DocumentSources.MetaWeblog.Service.Rsd;
 using MarkPad.Infrastructure.Abstractions;
-using MarkPad.Services;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;
 
-namespace MarkPad
+namespace MarkPad.Infrastructure
 {
     public class ServicesModule : Module
     {

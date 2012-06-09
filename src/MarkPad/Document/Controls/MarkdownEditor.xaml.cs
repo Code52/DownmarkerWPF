@@ -15,9 +15,8 @@ using ICSharpCode.AvalonEdit.Rendering;
 using MarkPad.Document.Commands;
 using MarkPad.Document.EditorBehaviours;
 using MarkPad.Document.Events;
-using MarkPad.Events;
 using MarkPad.Framework;
-using MarkPad.Services.Settings;
+using MarkPad.Settings.Models;
 
 namespace MarkPad.Document.Controls
 {

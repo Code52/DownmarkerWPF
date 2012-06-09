@@ -2,7 +2,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace MarkPad.XAML.AttachedProperties
+namespace MarkPad.Behaviors
 {
     public class VisualStateHelper : DependencyObject
     {

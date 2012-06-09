@@ -1,18 +1,13 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using MarkPad.Contracts;
 using MarkPad.Plugins;
 using MarkPad.Services.Settings;
 
-namespace MarkPad
+namespace MarkPad.Infrastructure.Plugins
 {
-	public interface IPluginManager
-	{
-		CompositionContainer Container { get; }
-	}
-
-	public class PluginManager : IPluginManager
+    public class PluginManager : IPluginManager
 	{
 		public CompositionContainer Container { get; private set; }
 		[ImportMany]

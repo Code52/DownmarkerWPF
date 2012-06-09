@@ -7,6 +7,7 @@ using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Infrastructure.Abstractions;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;
+using MarkPad.Settings.Models;
 using NSubstitute;
 using Xunit;
 

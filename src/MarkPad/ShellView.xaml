@@ -9,7 +9,8 @@
     xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
     xmlns:sys="clr-namespace:System;assembly=mscorlib" 
     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-    xmlns:Settings="clr-namespace:MarkPad.Settings" xmlns:MarkPad="clr-namespace:MarkPad" x:Class="MarkPad.ShellView"
+    xmlns:Settings="clr-namespace:MarkPad.Settings" xmlns:MarkPad="clr-namespace:MarkPad"
+    xmlns:Behaviors="clr-namespace:MarkPad.Behaviors" x:Class="MarkPad.ShellView"
     mc:Ignorable="d" 
     MouseLeftButtonDown="DragMoveWindow"
 	MouseMove="MouseMoveWindow"
@@ -106,7 +107,7 @@
             <GradientStop Color="White" Offset="1"/>
         </LinearGradientBrush>
     </Window.Background>
-    <Grid Margin="0" s:VisualStateHelper.VisualStateName="{Binding CurrentState}" >
+    <Grid Margin="0" Behaviors:VisualStateHelper.VisualStateName="{Binding CurrentState}" >
         <Grid.RowDefinitions>
     		<RowDefinition Height="Auto" MinHeight="58" />
     		<RowDefinition />

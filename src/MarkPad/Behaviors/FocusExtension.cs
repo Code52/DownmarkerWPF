@@ -1,12 +1,9 @@
 ﻿//FocusExtension code came from http://stackoverflow.com/a/1356781/75963
 //Thanks to http://stackoverflow.com/users/125351/anvaka
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using System.Windows;
 
-namespace MarkPad.Framework
+namespace MarkPad.Behaviors
 {
     public static class FocusExtension
     {

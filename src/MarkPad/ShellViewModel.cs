@@ -10,11 +10,11 @@ using MarkPad.DocumentSources.MetaWeblog;
 using MarkPad.Events;
 using MarkPad.MDI;
 using MarkPad.Services;
-using MarkPad.Services.Events;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;
 using MarkPad.Settings;
+using MarkPad.Settings.Models;
 using Ookii.Dialogs.Wpf;
 using MarkPad.Updater;
 

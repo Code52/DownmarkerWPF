@@ -13,9 +13,10 @@ using MarkPad.Document.Commands;
 using MarkPad.DocumentSources;
 using MarkPad.Events;
 using MarkPad.Framework;
+using MarkPad.Infrastructure.Plugins;
 using MarkPad.Plugins;
-using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;
+using MarkPad.Settings.Models;
 using MarkPad.XAML;
 using MarkPad.Contracts;
 using System.ComponentModel.Composition;
@@ -27,11 +28,11 @@ namespace MarkPad.Document
 		IHandle<SettingsChangedEvent>,
 		IHandle<PluginsChangedEvent>
     {
-        private ScrollViewer documentScrollViewer;
-        private readonly ISettingsProvider settingsProvider;
-		private readonly IPluginManager pluginManager;
-
         MarkPadSettings settings;
+        ScrollViewer documentScrollViewer;
+        readonly ISettingsProvider settingsProvider;
+		readonly IPluginManager pluginManager;
+
 		[ImportMany]
 		IEnumerable<IDocumentViewPlugin> documentViewPlugins;
 		IEnumerable<IDocumentViewPlugin> connectedDocumentViewPlugins = new IDocumentViewPlugin[0];

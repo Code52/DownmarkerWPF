@@ -1,11 +1,11 @@
-﻿using Autofac;
-using MarkPad.Document;
+using Autofac;
 using MarkPad.Contracts;
+using MarkPad.Document;
 using MarkPad.Document.SpellCheck;
-using MarkPad.Services.Implementation;
+using MarkPad.Infrastructure.Plugins;
 using MarkPad.Services.Settings;
 
-namespace MarkPad
+namespace MarkPad.Infrastructure
 {
 	public class MarkPadAutofacModule : Module
 	{

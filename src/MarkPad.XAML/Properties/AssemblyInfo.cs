@@ -34,6 +34,5 @@ using System.Windows.Markup;
     // app, or any theme specific resource dictionaries)
 )]
 
-[assembly: XmlnsDefinition("http://schemas.markpad.net/winfx/xaml/shared", "MarkPad.XAML.AttachedProperties")]
 [assembly: XmlnsDefinition("http://schemas.markpad.net/winfx/xaml/shared", "MarkPad.XAML.Triggers")]
 [assembly: XmlnsDefinition("http://schemas.markpad.net/winfx/xaml/controls", "MarkPad.XAML.Controls")]

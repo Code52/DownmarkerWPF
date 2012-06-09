@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using MarkPad.Services.Implementation;
 
-namespace MarkPad.Services.Settings
+namespace MarkPad.Settings.Models
 {
     public class MarkPadSettings
     {

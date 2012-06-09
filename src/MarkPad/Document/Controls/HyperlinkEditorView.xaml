@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
-        xmlns:local="clr-namespace:MarkPad.Framework" MouseLeftButtonDown="DragMoveWindow"
+        xmlns:Behaviors="clr-namespace:MarkPad.Behaviors"
+        MouseLeftButtonDown="DragMoveWindow"
         Icon="/markpad.ico"
         WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False"
@@ -66,7 +67,7 @@
         <TextBox
             x:Name="Url"
             Grid.Row="1" Grid.Column="1"
-            local:FocusExtension.IsFocused="{Binding IsUrlFocussed}"
+            Behaviors:FocusExtension.IsFocused="{Binding IsUrlFocussed}"
             />
         
         <StackPanel HorizontalAlignment="Right"

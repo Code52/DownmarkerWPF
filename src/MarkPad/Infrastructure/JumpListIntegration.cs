@@ -9,8 +9,8 @@ using System.Windows.Shell;
 using Caliburn.Micro;
 using MarkPad.Events;
 using MarkPad.Services;
-using MarkPad.Services.Events;
 using MarkPad.Services.Settings;
+using MarkPad.Settings.Models;
 
 namespace MarkPad.Infrastructure
 {

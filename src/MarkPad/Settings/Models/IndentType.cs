@@ -1,4 +1,4 @@
-namespace MarkPad.Services.Settings
+namespace MarkPad.Settings.Models
 {
     public enum IndentType
     {

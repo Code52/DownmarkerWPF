@@ -1,4 +1,4 @@
-namespace MarkPad.Framework.Events
+namespace MarkPad.Events
 {
     public class FileOpenEvent
     {

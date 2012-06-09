@@ -1,6 +1,6 @@
 using System;
 
-namespace MarkPad.Services.Settings
+namespace MarkPad.Settings.Models
 {
     [Serializable]
     public struct BlogInfo

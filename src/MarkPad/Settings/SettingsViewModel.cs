@@ -8,10 +8,12 @@ using System.Windows.Media;
 using Caliburn.Micro;
 using MarkPad.Events;
 using MarkPad.Framework;
+using MarkPad.Infrastructure.Plugins;
 using MarkPad.Plugins;
 using MarkPad.Services;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Settings;
+using MarkPad.Settings.Models;
 using Microsoft.Win32;
 using System.ComponentModel.Composition;
 using MarkPad.Contracts;
@@ -28,9 +30,9 @@ namespace MarkPad.Settings
         private readonly IWindowManager windowManager;
         private readonly IEventAggregator eventAggregator;
         private readonly Func<BlogSettingsViewModel> blogSettingsCreator;
-		private readonly IPluginManager pluginManager;
-		private readonly Func<IPlugin, PluginViewModel> pluginViewModelCreator;
-		private readonly ISpellingService spellingService;
+        private readonly IPluginManager pluginManager;
+        private readonly Func<IPlugin, PluginViewModel> pluginViewModelCreator;
+        private readonly ISpellingService spellingService;
 
         public IEnumerable<ExtensionViewModel> Extensions { get; set; }
         public IEnumerable<FontSizes> FontSizes { get; set; }
@@ -40,44 +42,38 @@ namespace MarkPad.Settings
         public SpellingLanguages SelectedLanguage { get; set; }
         public FontSizes SelectedFontSize { get; set; }
         public FontFamily SelectedFontFamily { get; set; }
-		public bool EnableFloatingToolBar { get; set; }
-		public PluginViewModel SelectedPlugin { get; set; }
-		public IEnumerable<PluginViewModel> Plugins { get; private set; }
+        public bool EnableFloatingToolBar { get; set; }
+        public PluginViewModel SelectedPlugin { get; set; }
+        public IEnumerable<PluginViewModel> Plugins { get; private set; }
         public IndentType IndentType { get; set; }
 
-		[ImportMany]
-		IEnumerable<IPlugin> plugins;
+        [ImportMany]
+        IEnumerable<IPlugin> plugins;
 
         public SettingsViewModel(
             ISettingsProvider settingsService,
             IWindowManager windowManager,
             IEventAggregator eventAggregator,
             Func<BlogSettingsViewModel> blogSettingsCreator,
-			IPluginManager pluginManager,
-			Func<IPlugin, PluginViewModel> pluginViewModelCreator,
-			ISpellingService spellingService)
+            IPluginManager pluginManager,
+            Func<IPlugin, PluginViewModel> pluginViewModelCreator,
+            ISpellingService spellingService)
         {
             this.settingsService = settingsService;
             this.windowManager = windowManager;
             this.eventAggregator = eventAggregator;
             this.blogSettingsCreator = blogSettingsCreator;
-			this.pluginManager = pluginManager;
-			this.pluginViewModelCreator = pluginViewModelCreator;
-			this.spellingService = spellingService;
+            this.pluginManager = pluginManager;
+            this.pluginViewModelCreator = pluginViewModelCreator;
+            this.spellingService = spellingService;
 
-			this.pluginManager.Container.ComposeParts(this);
+            this.pluginManager.Container.ComposeParts(this);
         }
 
         public void Initialize()
         {
-            using (var key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes"))
-            {
-                Extensions = Constants.DefaultExtensions
-                    .Select(s => new ExtensionViewModel(s,
-                        key.GetSubKeyNames().Contains(s) && !string.IsNullOrEmpty(key.OpenSubKey(s).GetValue("").ToString())))
-                    .ToArray();
-            }
-            
+            InitialiseExtensions();
+
             var settings = settingsService.GetSettings<MarkPadSettings>();
             var blogs = settings.GetBlogs();
 
@@ -100,11 +96,42 @@ namespace MarkPad.Settings
                 SelectedFontFamily = FontHelpers.TryGetFontFamilyFromStack(Constants.DEFAULT_EDITOR_FONT_FAMILY);
                 SelectedFontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
             }
-			EnableFloatingToolBar = settings.FloatingToolBarEnabled;
+            EnableFloatingToolBar = settings.FloatingToolBarEnabled;
 
-			Plugins = plugins
-				.Where(plugin => !plugin.IsHidden)
-				.Select(plugin => pluginViewModelCreator(plugin));
+            Plugins = plugins
+                .Where(plugin => !plugin.IsHidden)
+                .Select(plugin => pluginViewModelCreator(plugin));
+        }
+
+        private void InitialiseExtensions()
+        {
+            var softwareKey = Registry.CurrentUser.OpenSubKey("Software");
+            if (softwareKey == null) return;
+            using (var key = softwareKey.OpenSubKey("Classes"))
+            {
+                if (key == null)
+                {
+                    Extensions = new ExtensionViewModel[0];
+                    return;
+                }
+
+                Extensions = Constants.DefaultExtensions
+                    .Select(s =>
+                    {
+                        
+                        var openSubKey = key.OpenSubKey(s);
+                        return new ExtensionViewModel(s, Enabled(s, key, openSubKey));
+                    })
+                    .Where(e => e != null)
+                    .ToArray();
+            }
+        }
+
+        private static bool Enabled(string s, RegistryKey key, RegistryKey openSubKey)
+        {
+            return openSubKey != null &&
+                   (key.GetSubKeyNames().Contains(s) &&
+                    !string.IsNullOrEmpty(openSubKey.GetValue("").ToString()));
         }
 
         private BlogSetting currentBlog;
@@ -193,7 +220,7 @@ namespace MarkPad.Settings
 
         public ObservableCollection<IndentType> IndentTypes
         {
-            get { return new ObservableCollection<IndentType>{IndentType.Tabs, IndentType.Spaces}; }
+            get { return new ObservableCollection<IndentType> { IndentType.Tabs, IndentType.Spaces }; }
         }
 
         public void RemoveBlog()
@@ -219,12 +246,12 @@ namespace MarkPad.Settings
             settings.SaveBlogs(Blogs.ToList());
             settings.FontSize = SelectedFontSize;
             settings.FontFamily = SelectedFontFamily.Source;
-			settings.FloatingToolBarEnabled = EnableFloatingToolBar;
+            settings.FloatingToolBarEnabled = EnableFloatingToolBar;
             settings.IndentType = IndentType;
-			
+
             settingsService.SaveSettings(settings);
 
-			// TODO: Move to per-plugin setting screen
+            // TODO: Move to per-plugin setting screen
             var spellCheckPluginSettings = plugins.OfType<SpellCheckPlugin.SpellCheckPluginSettings>().FirstOrDefault();
 
             if (spellCheckPluginSettings != null)
@@ -232,44 +259,52 @@ namespace MarkPad.Settings
                 spellCheckPluginSettings.Language = SelectedLanguage;
                 settingsService.SaveSettings(spellCheckPluginSettings);
             }
-			
+
             eventAggregator.Publish(new SettingsChangedEvent());
         }
 
-		public void HideSettings()
-		{
-			eventAggregator.Publish(new SettingsCloseEvent());
-			Accept();
-		}
+        public void HideSettings()
+        {
+            eventAggregator.Publish(new SettingsCloseEvent());
+            Accept();
+        }
 
         private void UpdateExtensionRegistryKeys()
         {
             var exePath = Assembly.GetEntryAssembly().Location;
 
-            using (var key = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Classes", true))
+            var software = Registry.CurrentUser.OpenSubKey("Software");
+            if (software == null) return;
+            using (var classesKey = software.OpenSubKey("Classes", true))
             {
+                if (classesKey == null) return;
                 foreach (var ext in Extensions)
                 {
-                    using (var extensionKey = key.CreateSubKey(ext.Extension))
+                    using (var extensionKey = classesKey.CreateSubKey(ext.Extension))
                     {
-                        extensionKey.SetValue("", ext.Enabled ? MarkpadKeyName : "");
+                        if (extensionKey != null)
+                            extensionKey.SetValue("", ext.Enabled ? MarkpadKeyName : "");
                     }
                 }
 
-                using (var markpadKey = key.CreateSubKey(MarkpadKeyName))
+                using (var markpadKey = classesKey.CreateSubKey(MarkpadKeyName))
                 {
+                    if (markpadKey == null) return;
                     using (var defaultIconKey = markpadKey.CreateSubKey("DefaultIcon"))
                     {
-                        defaultIconKey.SetValue("", Path.Combine(Constants.IconDir, Constants.Icons[0]));
+                        if (defaultIconKey != null)
+                            defaultIconKey.SetValue("", Path.Combine(Constants.IconDir, Constants.Icons[0]));
                     }
 
                     using (var shellKey = markpadKey.CreateSubKey("shell"))
                     {
+                        if (shellKey == null) return;
                         using (var openKey = shellKey.CreateSubKey("open"))
                         {
-                            using (RegistryKey commandKey = openKey.CreateSubKey("command"))
+                            if (openKey == null) return;
+                            using (var commandKey = openKey.CreateSubKey("command"))
                             {
-                                commandKey.SetValue("", "\"" + exePath + "\" \"%1\"");
+                                if (commandKey != null) commandKey.SetValue("", "\"" + exePath + "\" \"%1\"");
                             }
                         }
                     }

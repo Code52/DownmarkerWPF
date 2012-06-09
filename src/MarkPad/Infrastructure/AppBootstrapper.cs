@@ -7,7 +7,7 @@ using System.Windows.Threading;
 using Autofac;
 using Caliburn.Micro;
 using MarkPad.Events;
-using MarkPad.Framework;
+using MarkPad.Infrastructure.CaliburnExtensions;
 using MarkPad.PreviewControl;
 using MarkPad.Services;
 
@@ -91,10 +91,10 @@ namespace MarkPad.Infrastructure
 
         private void SetAwesomiumDefaults()
         {
-            HtmlPreview.BaseDirectory = Path.Combine(
-                    Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
-                    "Themes"
-            );
+            var directoryName = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)
+                ?? Directory.GetCurrentDirectory();
+
+            HtmlPreview.BaseDirectory = Path.Combine(directoryName, "Themes");
         }
 
         private void DumpIconsForDocuments()
@@ -109,10 +109,12 @@ namespace MarkPad.Infrastructure
                 if (File.Exists(Path.Combine(Constants.IconDir, file)))
                     continue;
 
-                using (Stream stm = Assembly.GetExecutingAssembly().GetManifestResourceStream(String.Format("{0}.{1}", assemblyName.Name, file)))
+                var executingAssembly = Assembly.GetExecutingAssembly();
+                using (Stream stm = executingAssembly.GetManifestResourceStream(String.Format("{0}.{1}", assemblyName.Name, file)))
                 using (Stream outFile = File.Create(Path.Combine(Constants.IconDir, file)))
                 {
-                    stm.CopyTo(outFile);
+                    if (stm != null) 
+                        stm.CopyTo(outFile);
                 }
             }
         }

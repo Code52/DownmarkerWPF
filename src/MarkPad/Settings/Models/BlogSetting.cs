@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.Serialization;
 
-namespace MarkPad.Services.Settings
+namespace MarkPad.Settings.Models
 {
     [DataContract]
     public class BlogSetting : INotifyPropertyChanged, IEditableObject
@@ -28,9 +28,9 @@ namespace MarkPad.Services.Settings
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(this.WebAPI) ||
-                    string.IsNullOrWhiteSpace(this.Username) ||
-                    string.IsNullOrWhiteSpace(this.Password))
+                if (string.IsNullOrWhiteSpace(WebAPI) ||
+                    string.IsNullOrWhiteSpace(Username) ||
+                    string.IsNullOrWhiteSpace(Password))
                 {
                     return false;
                 }
@@ -43,12 +43,12 @@ namespace MarkPad.Services.Settings
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(this.WebAPI) ||
-                    string.IsNullOrWhiteSpace(this.Username) ||
-                    string.IsNullOrWhiteSpace(this.Password) ||
-                    string.IsNullOrWhiteSpace(this.BlogName) ||
-                    string.IsNullOrWhiteSpace(this.Language) ||
-                    string.IsNullOrWhiteSpace(this.BlogInfo.blogid))
+                if (string.IsNullOrWhiteSpace(WebAPI) ||
+                    string.IsNullOrWhiteSpace(Username) ||
+                    string.IsNullOrWhiteSpace(Password) ||
+                    string.IsNullOrWhiteSpace(BlogName) ||
+                    string.IsNullOrWhiteSpace(Language) ||
+                    string.IsNullOrWhiteSpace(BlogInfo.blogid))
                 {
                     return false;
                 }
