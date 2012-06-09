@@ -95,7 +95,6 @@
     <Compile Include="Controls\FloatingToolBar.cs" />
     <Compile Include="Converters\BoolToGridLengthConverter.cs" />
     <Compile Include="Converters\EnumDisplayConverter.cs" />
-    <Compile Include="Converters\EnumDisplayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
