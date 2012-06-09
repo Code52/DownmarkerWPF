@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,7 +9,6 @@ using Caliburn.Micro;
 using ICSharpCode.AvalonEdit;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
-using MarkPad.MarkPadExtensions;
 using MarkPad.Plugins;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;
@@ -76,7 +74,7 @@ namespace MarkPad.Document
 
 		public void UpdatePlugins()
 		{
-			var enabledPlugins = documentViewPlugins.Where(p => p.Settings.IsEnabled);
+			var enabledPlugins = documentViewPlugins.Where(p => p.Settings.IsEnabled).ToArray();
 
 			foreach (var plugin in connectedDocumentViewPlugins.Except(enabledPlugins))
 			{
@@ -178,7 +176,7 @@ namespace MarkPad.Document
 
         public void Cleanup()
         {
-                htmlPreview.Close();
+            htmlPreview.Close();
         }
 
         public void Print()

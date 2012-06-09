@@ -1,11 +1,7 @@
 <UserControl x:Class="MarkPad.PreviewControl.HtmlPreview"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:awe="clr-namespace:Awesomium.Windows.Controls;assembly=Awesomium.Windows.Controls">
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Loaded="HtmlPreviewLoaded">
 
-    <awe:WebControl x:Name="wb" UseLayoutRounding="True" HorizontalAlignment="Stretch" >
-        <awe:WebControl.Effect>
-            <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.25" Direction="270" />
-        </awe:WebControl.Effect>
-    </awe:WebControl>
+    
 </UserControl>
