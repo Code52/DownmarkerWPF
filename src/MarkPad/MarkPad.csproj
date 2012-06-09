@@ -59,7 +59,7 @@
     <ApplicationIcon>markpad.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>MarkPad.Loader</StartupObject>
+    <StartupObject>MarkPad.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Testing|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -332,7 +332,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Loader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

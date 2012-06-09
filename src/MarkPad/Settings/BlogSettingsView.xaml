@@ -9,7 +9,7 @@
         xmlns:XAMLConverters="clr-namespace:Analects.XAMLConverters;assembly=MarkPad.XAML"
         x:Class="MarkPad.Settings.BlogSettingsView" 
         MouseLeftButtonDown="DragMoveWindow"
-        Icon="../markpad.ico"
+        Icon="/markpad.ico"
         ShowInTaskbar="False"
         SnapsToDevicePixels="True"
         WindowStartupLocation="CenterOwner" 
