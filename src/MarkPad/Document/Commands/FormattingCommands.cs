@@ -1,7 +1,6 @@
-using System;
 using System.Windows.Input;
 
-namespace MarkPad.Document
+namespace MarkPad.Document.Commands
 {
     public class FormattingCommands
     {

@@ -1,9 +1,8 @@
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
-using Awesomium.Core;
+using MarkPad.PreviewControl;
 using MarkdownDeep;
-using System.Text;
 using System.ComponentModel.Composition;
 using MarkPad.Contracts;
 
@@ -12,11 +11,11 @@ namespace MarkPad.Document
 	[Export(typeof(IDocumentParser))]
     public class DocumentParser : IDocumentParser
     {
-        private static readonly Markdown markdown = new Markdown();
+        static readonly Markdown Markdown = new Markdown();
 
         static DocumentParser() 
         {
-            markdown.NewWindowForExternalLinks = true;
+            Markdown.NewWindowForExternalLinks = true;
         }
 
 		public string Parse(string source)
@@ -60,9 +59,9 @@ namespace MarkPad.Document
 
         private static string MarkdownConvert(string contents)
         {
-            lock (markdown)
+            lock (Markdown)
             {
-                return markdown.Transform(contents);
+                return Markdown.Transform(contents);
             }
         }
 
@@ -92,11 +91,11 @@ namespace MarkPad.Document
 
 		private static string GetResources(string header, string filter, string resourceTemplate)
 		{
-			var themeName = "";
+			string themeName;
 			if (!TryGetHeaderValue(header, "theme", out themeName)) return "";
 
 			var resources = "";
-			var path = Path.Combine(WebCore.BaseDirectory, themeName);
+			var path = Path.Combine(HtmlPreview.BaseDirectory, themeName);
 
 			foreach (var resource in Directory.GetFiles(path, filter))
 			{

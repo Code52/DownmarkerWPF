@@ -21,11 +21,12 @@ namespace MarkPad.Services.Interfaces
                     .Concat(Directory.GetFiles(filePath) //TODO Restrict to markdown files only?
                                 .Select(ToFileSystemItem)
                                 .OrderBy(i => i.Name))
+                    .Cast<ISiteItem>()
                     .ToArray();
             }
         }
 
-        FileSystemSiteItem ToFileSystemItem(string path)
+        static FileSystemSiteItem ToFileSystemItem(string path)
         {
             return new FileSystemSiteItem(path);
         }

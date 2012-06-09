@@ -7,6 +7,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Rendering;
+using MarkPad.Document.Commands;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.Plugins;
@@ -65,6 +68,16 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomIn, (x, y) => ViewModel.ExecuteSafely(vm=>vm.ZoomIn())));
             CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomOut, (x, y) => ViewModel.ExecuteSafely(vm=>vm.ZoomOut())));
             CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomReset, (x, y) => ViewModel.ExecuteSafely(vm=>vm.ZoomReset())));
+        }
+
+        public TextView TextView
+        {
+            get { return Editor.TextArea.TextView; }
+        }
+
+        public TextDocument Document
+        {
+            get { return Editor.Document; }
         }
 
         private DocumentViewModel ViewModel

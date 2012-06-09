@@ -1,6 +1,6 @@
 using Caliburn.Micro;
 
-namespace MarkPad.HyperlinkEditor
+namespace MarkPad.Document.Controls
 {
     public class HyperlinkEditorViewModel : Screen
     {

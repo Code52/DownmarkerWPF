@@ -6,16 +6,17 @@
     xmlns:shared="http://schemas.markpad.net/winfx/xaml/shared"
     xmlns:Document="clr-namespace:MarkPad.Document"
     xmlns:PreviewControl="clr-namespace:MarkPad.PreviewControl;assembly=MarkPad.PreviewControl"
+    xmlns:Controls="clr-namespace:MarkPad.Document.Controls" xmlns:Commands="clr-namespace:MarkPad.Document.Commands"
     x:Class="MarkPad.Document.DocumentView"
     mc:Ignorable="d" 
     d:DesignHeight="300" d:DesignWidth="400" d:DataContext="{d:DesignInstance Document:DocumentViewModel}"
     x:Name="doc">
     <UserControl.InputBindings>
-        <KeyBinding Command="Document:DisplayCommands.ZoomIn" Key="OemPlus" Modifiers="Control"/>
-        <KeyBinding Command="Document:DisplayCommands.ZoomIn" Key="Add" Modifiers="Control"/>
-        <KeyBinding Command="Document:DisplayCommands.ZoomOut" Key="OemMinus" Modifiers="Control"/>
-        <KeyBinding Command="Document:DisplayCommands.ZoomOut" Key="Subtract" Modifiers="Control"/>
-        <KeyBinding Command="Document:DisplayCommands.ZoomReset" Key="D0" Modifiers="Control"/>
+        <KeyBinding Command="Commands:DisplayCommands.ZoomIn" Key="OemPlus" Modifiers="Control"/>
+        <KeyBinding Command="Commands:DisplayCommands.ZoomIn" Key="Add" Modifiers="Control"/>
+        <KeyBinding Command="Commands:DisplayCommands.ZoomOut" Key="OemMinus" Modifiers="Control"/>
+        <KeyBinding Command="Commands:DisplayCommands.ZoomOut" Key="Subtract" Modifiers="Control"/>
+        <KeyBinding Command="Commands:DisplayCommands.ZoomReset" Key="D0" Modifiers="Control"/>
     </UserControl.InputBindings>
     <UserControl.Resources>
         <ResourceDictionary>
@@ -65,7 +66,7 @@
             </TreeView.ItemTemplate>
         </TreeView>
         
-        <Document:MarkdownEditor x:Name="markdownEditor"
+        <Controls:MarkdownEditor x:Name="markdownEditor"
                                  Grid.Column="1"
                                  IndentType="{Binding IndentType}"
                                  EditorFontSize="{Binding FontSize}"

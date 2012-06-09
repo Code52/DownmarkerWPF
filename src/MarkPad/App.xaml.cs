@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using MarkPad.Services.Events;
-using Microsoft.Shell;
 
 namespace MarkPad
 {

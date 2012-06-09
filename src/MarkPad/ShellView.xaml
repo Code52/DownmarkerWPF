@@ -7,11 +7,9 @@
     xmlns:s="http://schemas.markpad.net/winfx/xaml/shared"
     xmlns:cm="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
-    xmlns:Shell="clr-namespace:MarkPad.Shell" 
     xmlns:sys="clr-namespace:System;assembly=mscorlib" 
     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-    xmlns:Settings="clr-namespace:MarkPad.Settings"
-    x:Class="MarkPad.Shell.ShellView"
+    xmlns:Settings="clr-namespace:MarkPad.Settings" xmlns:MarkPad="clr-namespace:MarkPad" x:Class="MarkPad.ShellView"
     mc:Ignorable="d" 
     MouseLeftButtonDown="DragMoveWindow"
 	MouseMove="MouseMoveWindow"
@@ -21,7 +19,7 @@
     SnapsToDevicePixels="True"
     AllowDrop="True"
     x:Name="window"
-    d:DataContext="{d:DesignInstance {x:Type Shell:ShellViewModel}}">
+    d:DataContext="{d:DesignInstance {x:Type MarkPad:ShellViewModel}}">
 
     <Window.Resources>
         <ResourceDictionary>

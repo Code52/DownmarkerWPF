@@ -12,7 +12,7 @@ using MarkPad.Services;
 using MarkPad.Services.Events;
 using MarkPad.Services.Settings;
 
-namespace MarkPad.Shell
+namespace MarkPad
 {
     /// <summary>
     /// Class for interacting with the Windows7 JumpList

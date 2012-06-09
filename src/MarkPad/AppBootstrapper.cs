@@ -9,7 +9,6 @@ using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.PreviewControl;
 using MarkPad.Services;
-using MarkPad.Shell;
 using System.Windows;
 
 namespace MarkPad

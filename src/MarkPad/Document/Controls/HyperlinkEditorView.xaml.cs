@@ -1,6 +1,6 @@
 using System.Windows.Input;
 
-namespace MarkPad.HyperlinkEditor
+namespace MarkPad.Document.Controls
 {
     public partial class HyperlinkEditorView
     {

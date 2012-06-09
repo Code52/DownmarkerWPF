@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
-namespace MarkPad.Document
+namespace MarkPad.Document.Commands
 {
 	public static class DisplayCommands
 	{

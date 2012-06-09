@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -12,12 +12,13 @@ using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
+using MarkPad.Document.Commands;
 using MarkPad.Document.EditorBehaviours;
 using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.Services.Settings;
 
-namespace MarkPad.Document
+namespace MarkPad.Document.Controls
 {
     public partial class MarkdownEditor
     {

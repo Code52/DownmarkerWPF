@@ -19,7 +19,7 @@ using MarkPad.Settings;
 using Ookii.Dialogs.Wpf;
 using MarkPad.Updater;
 
-namespace MarkPad.Shell
+namespace MarkPad
 {
     internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>
     {

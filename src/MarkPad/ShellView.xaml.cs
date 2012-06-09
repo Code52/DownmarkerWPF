@@ -9,7 +9,7 @@ using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.Plugins;
 
-namespace MarkPad.Shell
+namespace MarkPad
 {
     public partial class ShellView : IHandle<PluginsChangedEvent>
     {

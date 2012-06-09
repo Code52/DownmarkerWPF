@@ -140,6 +140,13 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Document\Controls\HyperlinkEditorView.xaml.cs">
+      <DependentUpon>HyperlinkEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Document\Controls\HyperlinkEditorViewModel.cs" />
+    <Compile Include="Document\Controls\MarkdownEditor.xaml.cs">
+      <DependentUpon>MarkdownEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Document\EditorBehaviours\ControlRightTweakedForMarkdown.cs" />
     <Compile Include="Document\EditorBehaviours\AutoContinueLists.cs" />
     <Compile Include="Document\EditorBehaviours\IndentLists.cs" />
@@ -147,13 +154,11 @@
     <Compile Include="Document\EditorBehaviours\CursorLeftRightWithSelection.cs" />
     <Compile Include="Document\EditorBehaviours\HardLineBreak.cs" />
     <Compile Include="Document\EditorBehaviours\PasteImagesUsingSiteContext.cs" />
-    <Compile Include="Document\DisplayCommands.cs" />
+    <Compile Include="Document\Commands\DisplayCommands.cs" />
     <Compile Include="Document\EditorBehaviours\TextEditorExtensions.cs" />
-    <Compile Include="Document\MarkdownEditor.xaml.cs">
-      <DependentUpon>MarkdownEditor.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Document\MarkPadHyperlink.cs" />
     <Compile Include="Document\EditorBehaviours\OvertypeMode.cs" />
+    <Compile Include="Document\SpellCheck\SpellCheckProviderFactory.cs" />
     <Compile Include="ExceptionBuilder.cs" />
     <Compile Include="Framework\Events\EditorPreviewKeyDownEvent.cs" />
     <Compile Include="Framework\Events\EditorTextEnteringEvent.cs" />
@@ -172,11 +177,7 @@
     </Compile>
     <Compile Include="Framework\DebugLogger.cs" />
     <Compile Include="Framework\TaskExtensions.cs" />
-    <Compile Include="HyperlinkEditor\HyperlinkEditorView.xaml.cs">
-      <DependentUpon>HyperlinkEditorView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="HyperlinkEditor\HyperlinkEditorViewModel.cs" />
-    <Compile Include="MarkPadExtensions\SpellCheck\SpellCheckProvider.cs" />
+    <Compile Include="Document\SpellCheck\SpellCheckProvider.cs" />
     <Compile Include="OpenFromWeb\Entry.cs" />
     <Compile Include="PluginManager.cs" />
     <Compile Include="Settings\BlogSettingsView.xaml.cs">
@@ -199,11 +200,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SingleInstance.cs" />
-    <Compile Include="Document\FormattingCommands.cs" />
+    <Compile Include="Document\Commands\FormattingCommands.cs" />
     <Compile Include="Framework\ObjectExtensions.cs" />
     <Compile Include="Framework\Events\SettingsCloseEvent.cs" />
     <Compile Include="Framework\MarkdownHelpers.cs" />
-    <Compile Include="Document\SpellCheckBackgroundRenderer.cs" />
+    <Compile Include="Document\SpellCheck\SpellCheckBackgroundRenderer.cs" />
     <Compile Include="Updater\UpdaterChangesViewModel.cs" />
     <Compile Include="Updater\UpdaterChangesView.xaml.cs">
       <DependentUpon>UpdaterChangesView.xaml</DependentUpon>
@@ -235,7 +236,7 @@
       <DependentUpon>MDIView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MDI\MDIViewModel.cs" />
-    <Compile Include="Shell\JumpListIntegration.cs" />
+    <Compile Include="JumpListIntegration.cs" />
     <Compile Include="OpenFromWeb\OpenFromWebView.xaml.cs">
       <DependentUpon>OpenFromWebView.xaml</DependentUpon>
     </Compile>
@@ -244,10 +245,14 @@
       <DependentUpon>PublishDetailsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="PublishDetails\PublishDetailsViewModel.cs" />
-    <Compile Include="Shell\ShellViewModel.cs" />
-    <Page Include="Document\MarkdownEditor.xaml">
-      <SubType>Designer</SubType>
+    <Compile Include="ShellViewModel.cs" />
+    <Page Include="Document\Controls\HyperlinkEditorView.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Document\Controls\MarkdownEditor.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Document\Styles\Scrollbars.xaml">
       <SubType>Designer</SubType>
@@ -258,10 +263,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ExceptionDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="HyperlinkEditor\HyperlinkEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -320,11 +321,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Shell\ShellView.xaml">
+    <Page Include="ShellView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Shell\ShellView.xaml.cs">
+    <Compile Include="ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>

@@ -2,24 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using MarkPad.Services.Interfaces;
-using MarkPad.Document;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Document;
 using MarkPad.Contracts;
-using System.ComponentModel.Composition;
 
-namespace MarkPad.MarkPadExtensions.SpellCheck
+namespace MarkPad.Document.SpellCheck
 {
-	[Export(typeof(ISpellCheckProviderFactory))]
-	public class SpellCheckProviderFactory : ISpellCheckProviderFactory
-	{
-		public ISpellCheckProvider GetProvider(ISpellingService spellingService, IDocumentView view)
-		{
-			return new SpellCheckProvider(spellingService, (DocumentView)view);
-		}
-	}
-
     public class SpellCheckProvider : ISpellCheckProvider
     {
         readonly Regex wordSeparatorRegex = new Regex("-[^\\w]+|^'[^\\w]+|[^\\w]+'[^\\w]+|[^\\w]+-[^\\w]+|[^\\w]+'$|[^\\w]+-$|^-$|^'$|[^\\w'-]", RegexOptions.Compiled);
@@ -28,25 +16,24 @@ namespace MarkPad.MarkPadExtensions.SpellCheck
         readonly ISpellingService spellingService;
         readonly SpellCheckBackgroundRenderer spellCheckRenderer;
 
-		DocumentView view;
-		public IDocumentView View { get { return view; } }
+        public IDocumentView View { get; private set; }
 
-        public SpellCheckProvider(ISpellingService spellingService, DocumentView view)
+        public SpellCheckProvider(ISpellingService spellingService, IDocumentView view)
         {
             this.spellingService = spellingService;
             spellCheckRenderer = new SpellCheckBackgroundRenderer();
 
-            this.view = view;
+            View = view;
 
-			this.view.Editor.TextArea.TextView.BackgroundRenderers.Add(spellCheckRenderer);
-			this.view.Editor.TextArea.TextView.VisualLinesChanged += TextViewVisualLinesChanged;
+			View.TextView.BackgroundRenderers.Add(spellCheckRenderer);
+			View.TextView.VisualLinesChanged += TextViewVisualLinesChanged;
         }
 
         public void Disconnect()
         {
             ClearSpellCheckErrors();
-			view.Editor.TextArea.TextView.BackgroundRenderers.Remove(spellCheckRenderer);
-			view.Editor.TextArea.TextView.VisualLinesChanged -= TextViewVisualLinesChanged;
+			View.TextView.BackgroundRenderers.Remove(spellCheckRenderer);
+			View.TextView.VisualLinesChanged -= TextViewVisualLinesChanged;
         }
 
         void TextViewVisualLinesChanged(object sender, EventArgs e)
@@ -56,17 +43,17 @@ namespace MarkPad.MarkPadExtensions.SpellCheck
 
         private void DoSpellCheck()
         {
-			if (!view.Editor.TextArea.TextView.VisualLinesValid) return;
+			if (!View.TextView.VisualLinesValid) return;
 
             spellCheckRenderer.ErrorSegments.Clear();
 
-			IEnumerable<VisualLine> visualLines = view.Editor.TextArea.TextView.VisualLines.AsParallel();
+			IEnumerable<VisualLine> visualLines = View.TextView.VisualLines.AsParallel();
 
             foreach (VisualLine currentLine in visualLines)
             {
                 int startIndex = 0;
 
-				string originalText = view.Editor.Document.GetText(currentLine.FirstDocumentLine.Offset, currentLine.LastDocumentLine.EndOffset - currentLine.FirstDocumentLine.Offset);
+				string originalText = View.Document.GetText(currentLine.FirstDocumentLine.Offset, currentLine.LastDocumentLine.EndOffset - currentLine.FirstDocumentLine.Offset);
                 originalText = Regex.Replace(originalText, "[\\u2018\\u2019\\u201A\\u201B\\u2032\\u2035]", "'");
 
                 var textWithoutURLs = uriFinderRegex.Replace(originalText, "");
