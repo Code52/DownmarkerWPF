@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace MarkPad.Services.Interfaces
+namespace MarkPad.Infrastructure.Abstractions
 {
     public interface ITaskSchedulerFactory
     {

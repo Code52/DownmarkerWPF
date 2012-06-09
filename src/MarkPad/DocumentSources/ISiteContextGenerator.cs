@@ -1,4 +1,6 @@
-﻿namespace MarkPad.Services.Interfaces
+using MarkPad.Services.Interfaces;
+
+namespace MarkPad.DocumentSources
 {
     public interface ISiteContextGenerator
     {

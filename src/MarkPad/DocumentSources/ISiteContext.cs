@@ -1,7 +1,8 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Drawing;
+using MarkPad.Services.Interfaces;
 
-namespace MarkPad.Services.Interfaces
+namespace MarkPad.DocumentSources
 {
     public interface ISiteContext : INotifyPropertyChanged
     {

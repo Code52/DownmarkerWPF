@@ -100,14 +100,9 @@
     <Compile Include="Interfaces\ISiteItem.cs" />
     <Compile Include="Implementation\ButtonExtras.cs" />
     <Compile Include="Implementation\FontSizes.cs" />
-    <Compile Include="Implementation\SpellingService.cs" />
     <Compile Include="Implementation\DialogMessageService.cs" />
     <Compile Include="Implementation\DialogService.cs" />
-    <Compile Include="Implementation\TaskSchedulerFactory.cs" />
-    <Compile Include="Interfaces\ISiteContext.cs" />
-    <Compile Include="Interfaces\ISiteContextGenerator.cs" />
     <Compile Include="Interfaces\IDialogService.cs" />
-    <Compile Include="Interfaces\ITaskSchedulerFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\BlogInfo.cs" />
     <Compile Include="Settings\BlogSetting.cs" />

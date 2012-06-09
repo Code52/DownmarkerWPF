@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using Caliburn.Micro;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Framework;
+using MarkPad.Infrastructure.Abstractions;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;
 
-namespace MarkPad.OpenFromWeb
+namespace MarkPad.DocumentSources.MetaWeblog
 {
     public class OpenFromWebViewModel : Screen
     {

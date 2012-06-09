@@ -1,7 +1,7 @@
 using System.Windows.Input;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 
-namespace MarkPad.OpenFromWeb
+namespace MarkPad.DocumentSources.MetaWeblog
 {
     public partial class OpenFromWebView
     {

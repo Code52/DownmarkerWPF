@@ -144,7 +144,21 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="DocumentSources\FileSystem\JekyllSiteContext.cs" />
+    <Compile Include="DocumentSources\ISiteContext.cs" />
+    <Compile Include="DocumentSources\ISiteContextGenerator.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Entry.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\OpenFromWebView.xaml.cs">
+      <DependentUpon>OpenFromWebView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DocumentSources\MetaWeblog\OpenFromWebViewModel.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\PublishDetailsView.xaml.cs">
+      <DependentUpon>PublishDetailsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DocumentSources\MetaWeblog\PublishDetailsViewModel.cs" />
     <Compile Include="DocumentSources\MetaWeblog\Service\Category.cs" />
     <Compile Include="DocumentSources\MetaWeblog\Service\CategoryInfo.cs" />
     <Compile Include="DocumentSources\MetaWeblog\Service\Enclosure.cs" />
@@ -187,28 +201,32 @@
     <Compile Include="Document\MarkPadHyperlink.cs" />
     <Compile Include="Document\EditorBehaviours\OvertypeMode.cs" />
     <Compile Include="Document\SpellCheck\SpellCheckProviderFactory.cs" />
-    <Compile Include="ExceptionBuilder.cs" />
+    <Compile Include="Document\SpellCheck\SpellingService.cs" />
     <Compile Include="Framework\Events\EditorPreviewKeyDownEvent.cs" />
     <Compile Include="Framework\Events\EditorTextEnteringEvent.cs" />
     <Compile Include="Framework\Events\PluginsChangedEvent.cs" />
     <Compile Include="Converters\InPathMultiConverter.cs" />
     <Compile Include="Extensions\DataImage.cs" />
     <Compile Include="Extensions\DataObjectExtensions.cs" />
+    <Compile Include="Infrastructure\Abstractions\ITaskSchedulerFactory.cs" />
     <Compile Include="Infrastructure\Abstractions\IWebRequestFactory.cs" />
+    <Compile Include="Infrastructure\Abstractions\TaskSchedulerFactory.cs" />
     <Compile Include="Infrastructure\Abstractions\WebRequestFactory.cs" />
+    <Compile Include="Infrastructure\AppBootstrapper.cs" />
+    <Compile Include="Infrastructure\ExceptionBuilder.cs" />
+    <Compile Include="Infrastructure\ExceptionDialog.xaml.cs">
+      <DependentUpon>ExceptionDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Infrastructure\JumpListIntegration.cs" />
     <Compile Include="MarkPadAutofacModule.cs" />
     <Compile Include="Framework\Events\SettingsChangedEvent.cs" />
     <Compile Include="Framework\FocusExtension.cs" />
     <Compile Include="Framework\FontHelpers.cs" />
     <Compile Include="Framework\FrameworkExtensions.cs" />
     <Compile Include="Framework\Dynamic.cs" />
-    <Compile Include="ExceptionDialog.xaml.cs">
-      <DependentUpon>ExceptionDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Framework\DebugLogger.cs" />
     <Compile Include="Framework\TaskExtensions.cs" />
     <Compile Include="Document\SpellCheck\SpellCheckProvider.cs" />
-    <Compile Include="OpenFromWeb\Entry.cs" />
     <Compile Include="PluginManager.cs" />
     <Compile Include="ServicesModule.cs" />
     <Compile Include="Settings\BlogSettingsView.xaml.cs">
@@ -249,14 +267,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="..\GlobalAssemblyInfo.cs">
-      <Link>GlobalAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AppBootstrapper.cs" />
     <Compile Include="Framework\Events\AppReadyEvent.cs" />
     <Compile Include="Document\DocumentView.xaml.cs">
       <DependentUpon>DocumentView.xaml</DependentUpon>
@@ -267,16 +281,15 @@
       <DependentUpon>MDIView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MDI\MDIViewModel.cs" />
-    <Compile Include="JumpListIntegration.cs" />
-    <Compile Include="OpenFromWeb\OpenFromWebView.xaml.cs">
-      <DependentUpon>OpenFromWebView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="OpenFromWeb\OpenFromWebViewModel.cs" />
-    <Compile Include="PublishDetails\PublishDetailsView.xaml.cs">
-      <DependentUpon>PublishDetailsView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="PublishDetails\PublishDetailsViewModel.cs" />
     <Compile Include="ShellViewModel.cs" />
+    <Page Include="DocumentSources\MetaWeblog\OpenFromWebView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DocumentSources\MetaWeblog\PublishDetailsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Document\Controls\HyperlinkEditorView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -293,9 +306,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ExceptionDialog.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Infrastructure\ExceptionDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Settings\BlogSettingsView.xaml">
       <SubType>Designer</SubType>
@@ -347,14 +360,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MDI\MDIView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="OpenFromWeb\OpenFromWebView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="PublishDetails\PublishDetailsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

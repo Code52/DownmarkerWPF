@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Windows;
 using System.Windows.Threading;
 using Autofac;
 using Caliburn.Micro;
@@ -9,9 +10,8 @@ using MarkPad.Framework;
 using MarkPad.Framework.Events;
 using MarkPad.PreviewControl;
 using MarkPad.Services;
-using System.Windows;
 
-namespace MarkPad
+namespace MarkPad.Infrastructure
 {
     class AppBootstrapper : Caliburn.Micro.Autofac.AutofacBootstrapper<ShellViewModel>
     {

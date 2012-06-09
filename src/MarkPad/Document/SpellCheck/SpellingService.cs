@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using MarkPad.Services.Interfaces;
-using NHunspell;
 using MarkPad.Contracts;
-using System.ComponentModel.Composition;
+using NHunspell;
 
-namespace MarkPad.Services.Implementation
+namespace MarkPad.Document.SpellCheck
 {
 	[Export(typeof(ISpellingService))]
     public class SpellingService : ISpellingService

@@ -1,6 +1,6 @@
 using MarkPad.DocumentSources.MetaWeblog.Service;
 
-namespace MarkPad.OpenFromWeb
+namespace MarkPad.DocumentSources.MetaWeblog
 {
     public class Entry
     {

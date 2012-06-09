@@ -1,7 +1,7 @@
 using System.Windows.Input;
 using MarkPad.Services.Interfaces;
 
-namespace MarkPad.PublishDetails
+namespace MarkPad.DocumentSources.MetaWeblog
 {
     public partial class PublishDetailsView
     {

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Caliburn.Micro;
+using MarkPad.DocumentSources.MetaWeblog;
 using MarkPad.DocumentSources.MetaWeblog.Service;
-using MarkPad.OpenFromWeb;
+using MarkPad.Infrastructure.Abstractions;
 using MarkPad.Services.Interfaces;
 using MarkPad.Services.Settings;
 using NSubstitute;

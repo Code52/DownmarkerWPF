@@ -4,7 +4,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 
-namespace MarkPad
+namespace MarkPad.Infrastructure
 {
     /// <summary>
     /// Interaction logic for ExceptionDialog.xaml

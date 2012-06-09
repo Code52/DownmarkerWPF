@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using MarkPad.Document;
 using MarkPad.Contracts;
+using MarkPad.Document.SpellCheck;
 using MarkPad.Services.Implementation;
 using MarkPad.Services.Settings;
 
