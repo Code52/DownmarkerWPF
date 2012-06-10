@@ -90,6 +90,7 @@
     <Compile Include="DocumentSources\FileSystem\FileSystemSiteItemTests.cs" />
     <Compile Include="DocumentSources\FileSystem\JekyllSiteContextTests.cs" />
     <Compile Include="DocumentSources\SiteItemBaseTests.cs" />
+    <Compile Include="DocumentSources\TestItem.cs" />
     <Compile Include="Document\AvalonEditPreviewKeyDownHandlers\CursorLeftRightWithSelectionTests.cs" />
     <Compile Include="OpenFromWeb\OpenFromWebViewModelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
