@@ -1,6 +1,6 @@
 using Caliburn.Micro;
 
-namespace MarkPad.MDI
+namespace MarkPad
 {
     internal class MDIViewModel : Conductor<IScreen>.Collection.OneActive
     {

@@ -1,6 +1,6 @@
 using System.Windows.Controls;
 
-namespace MarkPad.MDI
+namespace MarkPad
 {
     /// <summary>
     /// Interaction logic for MDIView.xaml

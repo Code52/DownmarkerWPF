@@ -76,7 +76,6 @@ namespace MarkPad.DocumentSources.FileSystem
                 if (url.StartsWith("http://"))
                     continue;
 
-
                 var filePath = Path.Combine(basePath, url.TrimStart('/'));
                 if (!File.Exists(filePath))
                     continue;
