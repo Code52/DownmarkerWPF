@@ -245,8 +245,12 @@ namespace MarkPad.Document
             callback(false);
         }
 
-        private static void CheckAndCloseView(DocumentView view)
+        private void CheckAndCloseView(DocumentView view)
         {
+            var disposableSiteContext = SiteContext as IDisposable;
+            if (disposableSiteContext != null)
+                disposableSiteContext.Dispose();
+
             if (view != null)
             {
                 view.Cleanup();

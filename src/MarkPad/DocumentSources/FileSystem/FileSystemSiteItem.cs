@@ -1,43 +1,41 @@
-using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using Caliburn.Micro;
 using MarkPad.Events;
 
-namespace MarkPad.DocumentSources
+namespace MarkPad.DocumentSources.FileSystem
 {
-    public class FileSystemSiteItem : SiteItemBase
+    public class FileSystemSiteItem : SiteItemBase, IHandle<FileRenamedEvent>
     {
+        readonly IFileSystem fileSystem;
         string originalFilename;
 
-        public FileSystemSiteItem(IEventAggregator eventAggregator, string filePath) : 
+        public FileSystemSiteItem(IEventAggregator eventAggregator, IFileSystem fileSystem, string filePath) : 
             base(eventAggregator)
         {
+            this.fileSystem = fileSystem;
             Path = filePath;
             originalFilename = System.IO.Path.GetFileName(filePath);
             Name = originalFilename;
 
-            if (File.Exists(filePath))
+            if (fileSystem.File.Exists(filePath))
                 Children = new ObservableCollection<SiteItemBase>();
             else
             {
-                var siteItems = Directory.GetDirectories(filePath)
-                    .Select(d=>ToFileSystemItem(d, eventAggregator))
+                var siteItems = fileSystem.Directory.GetDirectories(filePath)
+                    .Select(d => new FileSystemSiteItem(eventAggregator, fileSystem, d))
                     .OrderBy(i => i.Name)
-                    .Concat(Directory.GetFiles(filePath) //TODO Restrict to markdown files only?
-                                .Select(d=>ToFileSystemItem(d, eventAggregator))
+                    .Concat(fileSystem.Directory.GetFiles(filePath) //TODO Restrict to markdown files only?
+                                .Select(d => new FileSystemSiteItem(eventAggregator, fileSystem, d))
                                 .OrderBy(i => i.Name));
+
                 Children = new ObservableCollection<SiteItemBase>(siteItems);
             }
         }
 
         public string Path { get; private set; }
-
-        static FileSystemSiteItem ToFileSystemItem(string path, IEventAggregator eventAggregator)
-        {
-            return new FileSystemSiteItem(eventAggregator, path);
-        }
 
         public override void CommitRename()
         {
@@ -46,12 +44,9 @@ namespace MarkPad.DocumentSources
 
             try
             {
-                File.Move(Path, newFilename);
-                EventAggregator.Publish(new FileRenamedEvent(Path, newFilename));
-                Path = newFilename;
-                originalFilename = Name;
+                fileSystem.File.Move(Path, newFilename);
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
                 Name = originalFilename;
                 //TODO show error
@@ -63,6 +58,13 @@ namespace MarkPad.DocumentSources
         {
             Name = originalFilename;
             IsRenaming = false;
+        }
+
+        public void Handle(FileRenamedEvent message)
+        {
+            Path = message.NewFilename;
+            Name = System.IO.Path.GetFileName(Path);
+            originalFilename = Name;
         }
     }
 }

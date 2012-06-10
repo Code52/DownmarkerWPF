@@ -127,6 +127,9 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Abstractions">
+      <HintPath>..\packages\System.IO.Abstractions.1.4.0.13\lib\net35\System.IO.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -151,7 +154,7 @@
     <Compile Include="Behaviors\StateHelper.cs" />
     <Compile Include="Converters\BoolToGridLengthConverter.cs" />
     <Compile Include="Converters\EnumDisplayConverter.cs" />
-    <Compile Include="DocumentSources\FileSystemSiteItem.cs" />
+    <Compile Include="DocumentSources\FileSystem\FileSystemSiteItem.cs" />
     <Compile Include="DocumentSources\FileSystem\JekyllSiteContext.cs" />
     <Compile Include="DocumentSources\ISiteContext.cs" />
     <Compile Include="DocumentSources\ISiteContextGenerator.cs" />
@@ -221,6 +224,10 @@
     <Compile Include="Helpers\DataImage.cs" />
     <Compile Include="Helpers\DataObjectExtensions.cs" />
     <Compile Include="Helpers\VisualExtensions.cs" />
+    <Compile Include="Infrastructure\Abstractions\FileSystemWatcherFactory.cs" />
+    <Compile Include="Infrastructure\Abstractions\FileSystemWatcherWrapper.cs" />
+    <Compile Include="Infrastructure\Abstractions\IFileSystemWatcher.cs" />
+    <Compile Include="Infrastructure\Abstractions\IFileSystemWatcherFactory.cs" />
     <Compile Include="Infrastructure\Abstractions\ITaskSchedulerFactory.cs" />
     <Compile Include="Infrastructure\Abstractions\IWebRequestFactory.cs" />
     <Compile Include="Infrastructure\Abstractions\TaskSchedulerFactory.cs" />

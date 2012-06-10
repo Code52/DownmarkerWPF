@@ -4,7 +4,7 @@ using Caliburn.Micro;
 
 namespace MarkPad.DocumentSources
 {
-    public abstract class SiteItemBase : PropertyChangedBase
+    public abstract class SiteItemBase : PropertyChangedBase, IDisposable
     {
         protected readonly IEventAggregator EventAggregator;
         bool isRenaming;
@@ -14,6 +14,7 @@ namespace MarkPad.DocumentSources
         protected SiteItemBase(IEventAggregator eventAggregator)
         {
             EventAggregator = eventAggregator;
+            EventAggregator.Subscribe(this);
             Children = new ObservableCollection<SiteItemBase>();
         }
 
@@ -25,6 +26,7 @@ namespace MarkPad.DocumentSources
                 if (name != null && !IsRenaming)
                     return;
                 name = value;
+                NotifyOfPropertyChange(()=>Name);
             }
         }
 
@@ -53,6 +55,15 @@ namespace MarkPad.DocumentSources
                 if (!Selected)
                     throw new InvalidOperationException("Item must be selected to rename");
                 isRenaming = value;
+            }
+        }
+
+        public virtual void Dispose()
+        {
+            EventAggregator.Unsubscribe(this);
+            foreach (var child in Children)
+            {
+                child.Dispose();
             }
         }
     }
