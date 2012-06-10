@@ -198,9 +198,9 @@
                     </Grid>
 				</StackPanel>
             </TabItem>
-            <!--<TabItem Header="plugins">
+            <TabItem Header="plugins">
 				<StackPanel Margin="15,0,0,0">
-					<TextBlock TextWrapping="Wrap" FontSize="26.667" Foreground="White" FontWeight="Light" Text="extensions"/>
+					<TextBlock TextWrapping="Wrap" FontSize="26.667" Foreground="White" FontWeight="Light" Text="plugins"/>
 					<ListView ItemsSource="{Binding Plugins}" SelectedItem="{Binding SelectedPlugin}" Height="130">
 						<ListBox.ItemsPanel>
 							<ItemsPanelTemplate>
@@ -213,30 +213,23 @@
 								<GridViewColumn Header="Version" DisplayMemberBinding="{Binding Version}"/>
 								<GridViewColumn Header="Authors" DisplayMemberBinding="{Binding Authors}" />
 								<GridViewColumn Header="Description" DisplayMemberBinding="{Binding Description}" />
-								<GridViewColumn Header="Install">
-									<GridViewColumn.CellTemplate>
-										<DataTemplate>
-											<Button Content="Install" Style="{DynamicResource SquareButtonStyle}"
-													IsEnabled="{Binding CanInstall}"
-													cal:Message.Attach="Install"/>
-										</DataTemplate>
-									</GridViewColumn.CellTemplate>
-								</GridViewColumn>
-								<GridViewColumn Header="Uninstall">
-									<GridViewColumn.CellTemplate>
-										<DataTemplate>
-											<Button Content="Uninstall" Style="{DynamicResource SquareButtonStyle}"
-													IsEnabled="{Binding CanUninstall}"
-													cal:Message.Attach="Uninstall"/>
-										</DataTemplate>
-									</GridViewColumn.CellTemplate>
-								</GridViewColumn>
+                                <GridViewColumn Header="Installed">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Controls:ToggleSwitch 
+                                                Margin="0,0,0,7"
+                                                IsChecked="{Binding IsInstalled, Mode=TwoWay}" 
+                                                Content=""/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
 								<GridViewColumn Header="Settings">
 									<GridViewColumn.CellTemplate>
 										<DataTemplate>
-											<Button Content="Settings" Style="{DynamicResource SquareButtonStyle}"
-												IsEnabled="{Binding IsConfigurable}"
-												cal:Message.Attach="OpenPluginConfiguration"/>
+											<Button Content="Open" Style="{DynamicResource SquareButtonStyle}"
+                                                    Margin="0,6,0,6"
+												    IsEnabled="{Binding IsConfigurable}"
+												    cal:Message.Attach="OpenPluginConfiguration"/>
 										</DataTemplate>
 									</GridViewColumn.CellTemplate>
 								</GridViewColumn>
@@ -244,7 +237,7 @@
 						</ListView.View>
 					</ListView>
 				</StackPanel>
-			</TabItem>-->
+			</TabItem>
         </TabControl>
     </Grid>
 </UserControl>

@@ -27,9 +27,9 @@ namespace MarkPad
 			catalog.Catalogs.Add(new AssemblyCatalog(typeof(IDocumentView).Assembly));
 			catalog.Catalogs.Add(new AssemblyCatalog(typeof(PluginSettingsProvider).Assembly));
 
-            //catalog.Catalogs.Add(new AssemblyCatalog(typeof(ExamplePlugin.ExamplePlugin).Assembly));
-            //catalog.Catalogs.Add(new AssemblyCatalog(typeof(ExportToHtmlPlugin.ExportToHtmlPlugin).Assembly));
-            //catalog.Catalogs.Add(new AssemblyCatalog(typeof(SpellCheckPlugin.SpellCheckPlugin).Assembly));
+            catalog.Catalogs.Add(new AssemblyCatalog(typeof(ExamplePlugin.ExamplePlugin).Assembly));
+            catalog.Catalogs.Add(new AssemblyCatalog(typeof(ExportToHtmlPlugin.ExportToHtmlPlugin).Assembly));
+            catalog.Catalogs.Add(new AssemblyCatalog(typeof(SpellCheckPlugin.SpellCheckPlugin).Assembly));
 
 			Container = new CompositionContainer(catalog);
 			Container.ComposeParts(this);

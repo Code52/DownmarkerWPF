@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Caliburn.Micro;
-using MarkPad.Plugins;
-using MarkPad.Services.Settings;
+﻿using Caliburn.Micro;
 using MarkPad.Framework.Events;
+using MarkPad.Plugins;
 
 namespace MarkPad.Settings
 {
@@ -27,28 +22,23 @@ namespace MarkPad.Settings
 		public string Authors { get { return _plugin.Authors; } }
 		public string Description { get { return _plugin.Description; } }
 		public bool IsConfigurable { get { return _plugin.IsConfigurable; } }
+        public bool IsInstalled
+        {
+            get
+            {
+                return _plugin.Settings.IsEnabled;
+            }
+            set
+            {
+                if (_plugin.Settings.IsEnabled == value) return;
 
-		public bool CanInstall { get { return !_plugin.Settings.IsEnabled; } }
-		public void Install()
-		{
-			SetIsEnabled(true);
-		}
+                _plugin.Settings.IsEnabled = value;
+                _plugin.SaveSettings();
 
-		public bool CanUninstall { get { return _plugin.Settings.IsEnabled; } }
-		public void Uninstall()
-		{
-			SetIsEnabled(false);
-		}
-
-		private void SetIsEnabled(bool isEnabled)
-		{
-			_plugin.Settings.IsEnabled = isEnabled;
-			_plugin.SaveSettings();
-
-			this.NotifyOfPropertyChange(() => CanInstall);
-			this.NotifyOfPropertyChange(() => CanUninstall);
-			_eventAggregator.Publish(new PluginsChangedEvent());
-		}
+                this.NotifyOfPropertyChange(() => IsInstalled);
+                _eventAggregator.Publish(new PluginsChangedEvent());
+            }
+        }
 
 		public void OpenPluginConfiguration()
 		{
