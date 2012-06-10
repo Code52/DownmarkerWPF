@@ -93,12 +93,12 @@
     <Reference Include="Awesomium.Core, Version=1.6.3.0, Culture=neutral, PublicKeyToken=e1a0d7c8071a5214, processorArchitecture=x86">
       <HintPath>..\..\lib\Awesomium.Core.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Awesomium.Windows.Controls, Version=1.6.3.0, Culture=neutral, PublicKeyToken=7a34e179b8b61c39, processorArchitecture=x86">
       <HintPath>..\..\lib\Awesomium.Windows.Controls.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Caliburn.Micro, Version=1.3.1.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -164,13 +164,11 @@
     </Compile>
     <Compile Include="Document\MarkPadHyperlink.cs" />
     <Compile Include="Document\EditorBehaviours\OvertypeMode.cs" />
+    <Compile Include="ExceptionBuilder.cs" />
     <Compile Include="Framework\Events\EditorPreviewKeyDownEvent.cs" />
     <Compile Include="Framework\Events\EditorTextEnteringEvent.cs" />
-    <Compile Include="HtmlPreview.xaml.cs">
-      <DependentUpon>HtmlPreview.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Framework\Events\PluginsChangedEvent.cs" />
-    <Compile Include="InPathMultiConverter.cs" />
+    <Compile Include="Converters\InPathMultiConverter.cs" />
     <Compile Include="Extensions\DataImage.cs" />
     <Compile Include="Extensions\DataObjectExtensions.cs" />
     <Compile Include="MarkPadAutofacModule.cs" />
@@ -273,10 +271,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="HtmlPreview.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="HyperlinkEditor\HyperlinkEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -307,15 +301,18 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="..\..\lib\AwesomiumProcess">
-      <Link>Libs\x86\AwesomiumProcess</Link>
-    </EmbeddedResource>
+    <None Include="..\..\lib\AwesomiumProcess">
+      <Link>AwesomiumProcess</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <EmbeddedResource Include="..\..\tools\wyUpdate\client.wyc">
       <Link>Updater\client.wyc</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="MarkdownHelp.md" />
     <EmbeddedResource Include="MarkPadHelp.md" />
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
     <EmbeddedResource Include="Syntax\Markdown.xshd" />
@@ -354,6 +351,10 @@
       <Project>{E780D0E3-37A4-43D3-89C1-76053FA63752}</Project>
       <Name>MarkPad.Plugins</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MarkPad.PreviewControl\MarkPad.PreviewControl.csproj">
+      <Project>{d1ef806f-2daf-47b3-aa55-eb841adbd4ef}</Project>
+      <Name>MarkPad.PreviewControl</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MarkPad.Services\MarkPad.Services.csproj">
       <Project>{8088D80C-14AF-4618-B12A-F47C2771EBDD}</Project>
       <Name>MarkPad.Services</Name>
@@ -376,25 +377,20 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\..\lib\Awesomium.dll">
-      <Link>Libs\x86\Awesomium.dll</Link>
-    </EmbeddedResource>
+    <None Include="..\..\lib\Awesomium.dll">
+      <Link>Awesomium.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\..\lib\en-US.dll">
-      <Link>Libs\x86\en-US.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\lib\icudt42.dll">
-      <Link>Libs\x86\icudt42.dll</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\..\lib\Awesomium.Core.dll">
-      <Link>Libs\x86\Awesomium.Core.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\lib\Awesomium.Windows.Controls.dll">
-      <Link>Libs\x86\Awesomium.Windows.Controls.dll</Link>
-    </EmbeddedResource>
+    <None Include="..\..\lib\en-US.dll">
+      <Link>en-US.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\lib\icudt42.dll">
+      <Link>icudt42.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Fonts\Entypo.ttf" />
@@ -405,9 +401,10 @@
     <EmbeddedResource Include="markpaddoc.ico" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\..\lib\Hunspell.0.9.6.0\lib\Hunspellx86.dll">
-      <Link>Libs\x86\Hunspellx86.dll</Link>
-    </EmbeddedResource>
+    <None Include="..\..\lib\Hunspell.0.9.6.0\lib\Hunspellx86.dll">
+      <Link>Hunspellx86.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <EmbeddedResource Include="..\..\tools\wyUpdate\wyUpdate.exe">
       <Link>Updater\wyUpdate.exe</Link>
     </EmbeddedResource>
@@ -457,7 +454,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
-  <Import Project="$(SolutionDir)..\tools\EmbedAssemblies.targets" Condition="'$(Configuration)' != 'Testing' AND $(NCrunch) != '1'" />
+  <!--<Import Project="$(SolutionDir)..\tools\EmbedAssemblies.targets" Condition="'$(Configuration)' != 'Testing' AND $(NCrunch) != '1'" />-->
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

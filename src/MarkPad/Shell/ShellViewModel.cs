@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows;
 using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.Framework.Events;
@@ -63,7 +63,20 @@ namespace MarkPad.Shell
             set { }
         }
 
-        public string CurrentState { get; set; }
+        private string currentState;
+        public string CurrentState
+        {
+            get { return currentState; }
+            set
+            {
+                currentState = value;
+                var documentView = (DocumentView) ActiveDocumentViewModel.GetView();
+                documentView.htmlPreview.Visibility = currentState == ShowSettingsState 
+                    ? Visibility.Hidden
+                    : Visibility.Visible;
+            }
+        }
+
         public MDIViewModel MDI { get; private set; }
         public SettingsViewModel Settings { get; private set; }
         public UpdaterViewModel Updater { get; set; }
@@ -176,9 +189,9 @@ namespace MarkPad.Shell
             {
                 if (File.Exists(message.Path))
                 {
-                        var doc = documentCreator();
-                        doc.Open(message.Path);
-                        MDI.Open(doc);
+                    var doc = documentCreator();
+                    doc.Open(message.Path);
+                    MDI.Open(doc);
                 }
             }
         }
