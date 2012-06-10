@@ -2,8 +2,9 @@ using System;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using MarkPad.Helpers;
 
-namespace MarkPad.XAML.Controls
+namespace MarkPad.Document.Controls
 {
     public class FloatingToolBar : Popup
     {

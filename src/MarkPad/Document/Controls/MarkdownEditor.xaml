@@ -4,10 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
-             xmlns:cal="http://www.caliburnproject.org"
-             xmlns:controls="clr-namespace:MarkPad.XAML.Controls;assembly=MarkPad.XAML"
-             xmlns:Document="clr-namespace:MarkPad.Document" xmlns:Commands="clr-namespace:MarkPad.Document.Commands"
-             mc:Ignorable="d" 
+             xmlns:cal="http://www.caliburnproject.org" xmlns:Document="clr-namespace:MarkPad.Document" xmlns:Commands="clr-namespace:MarkPad.Document.Commands"
+             xmlns:controls="clr-namespace:MarkPad.Document.Controls" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              Loaded="EditorLoaded"
              x:Name="editor">

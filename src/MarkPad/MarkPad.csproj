@@ -188,6 +188,7 @@
     <Compile Include="DocumentSources\MetaWeblog\Service\Source.cs" />
     <Compile Include="DocumentSources\MetaWeblog\Service\UserInfo.cs" />
     <Compile Include="DocumentSources\SiteContextGenerator.cs" />
+    <Compile Include="Document\Controls\FloatingToolBar.cs" />
     <Compile Include="Document\Controls\HyperlinkEditorView.xaml.cs">
       <DependentUpon>HyperlinkEditorView.xaml</DependentUpon>
     </Compile>
@@ -215,6 +216,7 @@
     <Compile Include="Converters\InPathMultiConverter.cs" />
     <Compile Include="Helpers\DataImage.cs" />
     <Compile Include="Helpers\DataObjectExtensions.cs" />
+    <Compile Include="Helpers\VisualExtensions.cs" />
     <Compile Include="Infrastructure\Abstractions\ITaskSchedulerFactory.cs" />
     <Compile Include="Infrastructure\Abstractions\IWebRequestFactory.cs" />
     <Compile Include="Infrastructure\Abstractions\TaskSchedulerFactory.cs" />
@@ -228,6 +230,7 @@
     <Compile Include="Infrastructure\ExceptionDialog.xaml.cs">
       <DependentUpon>ExceptionDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\InputBindingTrigger.cs" />
     <Compile Include="Infrastructure\JumpListIntegration.cs" />
     <Compile Include="Infrastructure\MarkPadAutofacModule.cs" />
     <Compile Include="Infrastructure\Plugins\IPluginManager.cs" />
@@ -407,10 +410,6 @@
     <ProjectReference Include="..\MarkPad.PreviewControl\MarkPad.PreviewControl.csproj">
       <Project>{d1ef806f-2daf-47b3-aa55-eb841adbd4ef}</Project>
       <Name>MarkPad.PreviewControl</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MarkPad.XAML\MarkPad.XAML.csproj">
-      <Project>{F5C76E3F-AC91-477D-86DE-778850F3E14B}</Project>
-      <Name>MarkPad.XAML</Name>
     </ProjectReference>
     <ProjectReference Include="..\Plugins\ExamplePlugin\ExamplePlugin.csproj">
       <Project>{B780B8AD-169E-4300-A29F-713471EF3056}</Project>

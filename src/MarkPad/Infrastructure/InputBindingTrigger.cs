@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 
-namespace MarkPad.XAML.Triggers
+namespace MarkPad.Infrastructure
 {
     public class InputBindingTrigger : TriggerBase<FrameworkElement>, ICommand
     {
@@ -14,9 +14,8 @@ namespace MarkPad.XAML.Triggers
         }
 
         public static readonly DependencyProperty InputBindingProperty =
-            DependencyProperty.Register("InputBinding", typeof(InputBinding)
-            , typeof(InputBindingTrigger)
-            , new UIPropertyMetadata(null));
+            DependencyProperty.Register("InputBinding", typeof(InputBinding), typeof(InputBindingTrigger), new UIPropertyMetadata(null));
+
         protected override void OnAttached()
         {
             if (InputBinding != null)
@@ -27,20 +26,18 @@ namespace MarkPad.XAML.Triggers
             base.OnAttached();
         }
 
-        #region ICommand Members
         public bool CanExecute(object parameter)
         {
             // action is anyway blocked by Caliburn at the invoke level
             return true;
         }
+
         public event EventHandler CanExecuteChanged = delegate { };
 
         public void Execute(object parameter)
         {
             InvokeActions(parameter);
         }
-
-        #endregion
     }
 
 }

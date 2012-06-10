@@ -56,12 +56,6 @@
     <Compile Include="SpellingLanguages.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MarkPad.XAML\MarkPad.XAML.csproj">
-      <Project>{F5C76E3F-AC91-477D-86DE-778850F3E14B}</Project>
-      <Name>MarkPad.XAML</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

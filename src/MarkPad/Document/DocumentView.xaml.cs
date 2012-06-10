@@ -13,11 +13,11 @@ using MarkPad.Document.Commands;
 using MarkPad.DocumentSources;
 using MarkPad.Events;
 using MarkPad.Framework;
+using MarkPad.Helpers;
 using MarkPad.Infrastructure.Plugins;
 using MarkPad.Plugins;
 using MarkPad.Settings;
 using MarkPad.Settings.Models;
-using MarkPad.XAML;
 using MarkPad.Contracts;
 using System.ComponentModel.Composition;
 
