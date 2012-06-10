@@ -155,7 +155,7 @@
     <Compile Include="DocumentSources\FileSystem\JekyllSiteContext.cs" />
     <Compile Include="DocumentSources\ISiteContext.cs" />
     <Compile Include="DocumentSources\ISiteContextGenerator.cs" />
-    <Compile Include="DocumentSources\ISiteItem.cs" />
+    <Compile Include="DocumentSources\SiteItemBase.cs" />
     <Compile Include="DocumentSources\MetaWeblog\Entry.cs" />
     <Compile Include="DocumentSources\MetaWeblog\OpenFromWebView.xaml.cs">
       <DependentUpon>OpenFromWebView.xaml</DependentUpon>
@@ -196,6 +196,9 @@
     <Compile Include="Document\Controls\MarkdownEditor.xaml.cs">
       <DependentUpon>MarkdownEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Document\Controls\SiteView.xaml.cs">
+      <DependentUpon>SiteView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Document\EditorBehaviours\ControlRightTweakedForMarkdown.cs" />
     <Compile Include="Document\EditorBehaviours\AutoContinueLists.cs" />
     <Compile Include="Document\EditorBehaviours\IndentLists.cs" />
@@ -212,6 +215,7 @@
     <Compile Include="Document\Events\EditorPreviewKeyDownEvent.cs" />
     <Compile Include="Document\Events\EditorTextEnteringEvent.cs" />
     <Compile Include="Events\FileOpenEvent.cs" />
+    <Compile Include="Events\FileRenamedEvent.cs" />
     <Compile Include="Events\PluginsChangedEvent.cs" />
     <Compile Include="Converters\InPathMultiConverter.cs" />
     <Compile Include="Helpers\DataImage.cs" />
@@ -317,6 +321,10 @@
     <Page Include="Document\Controls\MarkdownEditor.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Document\Controls\SiteView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Document\Styles\Scrollbars.xaml">
       <SubType>Designer</SubType>

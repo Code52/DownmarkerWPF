@@ -20,7 +20,7 @@ using MarkPad.Contracts;
 
 namespace MarkPad.Document
 {
-    public class DocumentViewModel : Screen, IDocumentViewModel, IHandle<SettingsChangedEvent>
+    public class DocumentViewModel : Screen, IDocumentViewModel, IHandle<SettingsChangedEvent>, IHandle<FileRenamedEvent>
     {
         private static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
         private const double ZoomDelta = 0.1;
@@ -417,6 +417,15 @@ namespace MarkPad.Document
         public void Handle(SettingsChangedEvent message)
         {
             IndentType = settingsProvider.GetSettings<MarkPadSettings>().IndentType;            
+        }
+
+        public void Handle(FileRenamedEvent message)
+        {
+            if (FileName == message.OriginalFilename)
+            {
+                FileName = message.NewFilename;
+                Title = new FileInfo(FileName).Name;
+            }
         }
     }
 }

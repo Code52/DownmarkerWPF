@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -16,7 +17,7 @@ namespace MarkPad.DocumentSources.FileSystem
     {
         private readonly string basePath;
         private readonly string filenameWithPath;
-        private ISiteItem[] items;
+        private ObservableCollection<SiteItemBase> items;
         private readonly IEventAggregator eventAggregator;
         private readonly IDialogService dialogService;
 
@@ -86,12 +87,12 @@ namespace MarkPad.DocumentSources.FileSystem
             return htmlDocument;
         }
 
-        public ISiteItem[] Items
+        public ObservableCollection<SiteItemBase> Items
         {
-            get { return items ?? (items = new FileSystemSiteItem(basePath).Children); }
+            get { return items ?? (items = new FileSystemSiteItem(eventAggregator, basePath).Children); }
         }
 
-        public void OpenItem(ISiteItem selectedItem)
+        public void OpenItem(SiteItemBase selectedItem)
         {
             var fileItem = selectedItem as FileSystemSiteItem;
             if (fileItem == null || !File.Exists(fileItem.Path)) return;

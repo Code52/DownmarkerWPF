@@ -30,40 +30,25 @@
             <ColumnDefinition x:Name="webBrowserColumn" Width="{Binding DistractionFree, Converter={Converters:BoolToGridLengthConverter Invert=True}}" />
         </Grid.ColumnDefinitions>
 
-        <TreeView ItemsSource="{Binding SiteContext.Items}"
-                    MouseDoubleClick="SiteFilesMouseDoubleClick"
-                    SelectedValuePath="Path"
-                    x:Name="siteFiles"
-                  Margin="10,0,10,10"
-                  Background="Transparent"
-                  BorderThickness="0">
-            <TreeView.Resources>
-                <ResourceDictionary Source="Styles\Treeview.xaml" />
-            </TreeView.Resources>
-            <TreeView.Style>
-                <Style TargetType="TreeView">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding SiteContext}"
-                                    Value="{x:Null}">
-                            <Setter Property="Visibility"
-                                Value="Collapsed" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding DistractionFree}"
-                                     Value="True">
-                            <Setter Property="Visibility"
-                                    Value="Collapsed" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </TreeView.Style>
-            
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                    <TextBlock Text="{Binding Name}" />
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
-        </TreeView>
-        
+      <Controls:SiteView SiteContext="{Binding SiteContext}">
+        <Controls:SiteView.Style>
+          <Style TargetType="Controls:SiteView">
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding SiteContext}"
+                         Value="{x:Null}">
+              <Setter Property="Visibility"
+                      Value="Collapsed" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding DistractionFree}"
+                         Value="True">
+              <Setter Property="Visibility"
+                      Value="Collapsed" />
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+        </Controls:SiteView.Style>
+      </Controls:SiteView>
+
         <Controls:MarkdownEditor x:Name="markdownEditor"
                                  Grid.Column="1"
                                  IndentType="{Binding IndentType}"

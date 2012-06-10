@@ -178,17 +178,6 @@ namespace MarkPad.Document
 			UpdatePlugins();
 		}
 
-        private void SiteFilesMouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-             var selectedItem = siteFiles.SelectedItem as ISiteItem;
-
-            if (selectedItem !=null)
-            {
-                (DataContext as DocumentViewModel)
-                    .ExecuteSafely(d => d.SiteContext.OpenItem(selectedItem));
-            }
-        }
-
         public void Cleanup()
         {
             htmlPreview.Close();

@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 
@@ -14,8 +15,8 @@ namespace MarkPad.DocumentSources
 
         string ConvertToAbsolutePaths(string htmlDocument);
 
-        ISiteItem[] Items { get; }
+        ObservableCollection<SiteItemBase> Items { get; }
 
-        void OpenItem(ISiteItem selectedItem);
+        void OpenItem(SiteItemBase selectedItem);
     }
 }
