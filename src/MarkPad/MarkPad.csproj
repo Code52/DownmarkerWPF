@@ -217,6 +217,7 @@
     <Compile Include="Document\SpellCheck\SpellingService.cs" />
     <Compile Include="Document\Events\EditorPreviewKeyDownEvent.cs" />
     <Compile Include="Document\Events\EditorTextEnteringEvent.cs" />
+    <Compile Include="Events\FileCreatedEvent.cs" />
     <Compile Include="Events\FileOpenEvent.cs" />
     <Compile Include="Events\FileRenamedEvent.cs" />
     <Compile Include="Events\PluginsChangedEvent.cs" />

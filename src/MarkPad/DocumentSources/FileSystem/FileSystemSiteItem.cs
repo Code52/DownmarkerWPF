@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Abstractions;
@@ -7,7 +8,7 @@ using MarkPad.Events;
 
 namespace MarkPad.DocumentSources.FileSystem
 {
-    public class FileSystemSiteItem : SiteItemBase, IHandle<FileRenamedEvent>
+    public class FileSystemSiteItem : SiteItemBase, IHandle<FileRenamedEvent>, IHandle<FileCreatedEvent>
     {
         readonly IFileSystem fileSystem;
         string originalFilename;
@@ -65,6 +66,20 @@ namespace MarkPad.DocumentSources.FileSystem
             Path = message.NewFilename;
             Name = System.IO.Path.GetFileName(Path);
             originalFilename = Name;
+        }
+
+        public void Handle(FileCreatedEvent message)
+        {
+            if (Path == System.IO.Path.GetDirectoryName(message.FullPath))
+            {
+                var newItem = new FileSystemSiteItem(EventAggregator, fileSystem, message.FullPath);
+                for (int i = 0; i < Children.Count; i++)
+                {
+                    if (String.Compare(Children[i].Name, newItem.Name, StringComparison.Ordinal) < 0) continue;
+                    Children.Insert(i, newItem);
+                    break;
+                }
+            }
         }
     }
 }

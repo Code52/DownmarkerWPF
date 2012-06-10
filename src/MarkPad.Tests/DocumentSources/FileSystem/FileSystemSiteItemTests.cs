@@ -82,5 +82,22 @@ namespace MarkPad.Tests.DocumentSources.FileSystem
             // assert
             fileSystem.File.Received().Move(oldFilename, newFilename);
         }
+
+        [Fact]
+        public void inserts_new_file_into_sitecontext()
+        {
+            // arrange
+            var eventAggregator = Substitute.For<IEventAggregator>();
+            const string oldFilename = @"c:\Site\Folder";
+            var testItem = new FileSystemSiteItem(eventAggregator, fileSystem, oldFilename);
+            testItem.Children.Add(new TestItem(eventAggregator) { Name = "Alpha.txt" });
+            testItem.Children.Add(new TestItem(eventAggregator) { Name = "Gamma.txt" });
+
+            // act
+            testItem.Handle(new FileCreatedEvent(@"c:\Site\Folder\Beta.txt"));
+
+            // assert
+            Assert.Equal("Beta.txt", testItem.Children[1].Name);
+        }
     }
 }

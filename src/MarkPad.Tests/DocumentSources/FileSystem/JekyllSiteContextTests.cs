@@ -85,5 +85,18 @@ namespace MarkPad.Tests.DocumentSources.FileSystem
             // assert
             Assert.True(testItem.Disposed);
         }
+
+        [Fact]
+        public void new_file_raises_file_created_event_for_folder()
+        {
+            // arrange
+            var createdEvent = new FileSystemEventArgs(WatcherChangeTypes.Created, basePath, "NewFolder");
+
+            // act
+            fileSystemWatcher.Created += Raise.Event<FileSystemEventHandler>(null, createdEvent);
+
+            // assert
+            eventAggregator.Received().Publish(Arg.Is<FileCreatedEvent>(c=>c.FullPath == @"C:\Site\NewFolder"));
+        }
     }
 }

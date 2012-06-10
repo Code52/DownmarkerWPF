@@ -81,6 +81,8 @@ namespace MarkPad.DocumentSources.FileSystem
                 fileSystemEventArgs.Name,
                 fileSystemEventArgs.FullPath,
                 fileSystemEventArgs.ChangeType));
+
+            eventAggregator.Publish(new FileCreatedEvent(fileSystemEventArgs.FullPath));
         }
 
         public string SaveImage(Bitmap image)
