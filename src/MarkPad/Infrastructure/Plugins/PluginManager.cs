@@ -3,7 +3,6 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using MarkPad.Contracts;
 using MarkPad.Plugins;
-using MarkPad.Services.Settings;
 
 namespace MarkPad.Infrastructure.Plugins
 {

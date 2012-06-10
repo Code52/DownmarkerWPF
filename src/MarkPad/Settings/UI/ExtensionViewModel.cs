@@ -1,6 +1,6 @@
 using Caliburn.Micro;
 
-namespace MarkPad.Settings
+namespace MarkPad.Settings.UI
 {
     public class ExtensionViewModel : PropertyChangedBase
     {

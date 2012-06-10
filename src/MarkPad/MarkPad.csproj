@@ -213,13 +213,17 @@
     <Compile Include="Events\FileOpenEvent.cs" />
     <Compile Include="Events\PluginsChangedEvent.cs" />
     <Compile Include="Converters\InPathMultiConverter.cs" />
-    <Compile Include="Extensions\DataImage.cs" />
-    <Compile Include="Extensions\DataObjectExtensions.cs" />
+    <Compile Include="Helpers\DataImage.cs" />
+    <Compile Include="Helpers\DataObjectExtensions.cs" />
     <Compile Include="Infrastructure\Abstractions\ITaskSchedulerFactory.cs" />
     <Compile Include="Infrastructure\Abstractions\IWebRequestFactory.cs" />
     <Compile Include="Infrastructure\Abstractions\TaskSchedulerFactory.cs" />
     <Compile Include="Infrastructure\Abstractions\WebRequestFactory.cs" />
     <Compile Include="Infrastructure\AppBootstrapper.cs" />
+    <Compile Include="Infrastructure\DialogService\ButtonExtras.cs" />
+    <Compile Include="Infrastructure\DialogService\DialogMessageService.cs" />
+    <Compile Include="Infrastructure\DialogService\DialogService.cs" />
+    <Compile Include="Infrastructure\DialogService\IDialogService.cs" />
     <Compile Include="Infrastructure\ExceptionBuilder.cs" />
     <Compile Include="Infrastructure\ExceptionDialog.xaml.cs">
       <DependentUpon>ExceptionDialog.xaml</DependentUpon>
@@ -239,25 +243,27 @@
     <Compile Include="Infrastructure\CaliburnExtensions\DebugLogger.cs" />
     <Compile Include="Helpers\TaskExtensions.cs" />
     <Compile Include="Document\SpellCheck\SpellCheckProvider.cs" />
-    <Compile Include="Settings\BlogSettingsView.xaml.cs">
+    <Compile Include="Settings\UI\BlogSettingsView.xaml.cs">
       <DependentUpon>BlogSettingsView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Settings\BlogSettingsViewModel.cs">
+    <Compile Include="Settings\UI\BlogSettingsViewModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Settings\ExtensionViewModel.cs" />
+    <Compile Include="Settings\UI\ExtensionViewModel.cs" />
+    <Compile Include="Settings\IsolatedStorageSettingsStore.cs" />
     <Compile Include="Settings\Models\BlogInfo.cs" />
     <Compile Include="Settings\Models\BlogSetting.cs" />
     <Compile Include="Settings\Models\FetchedBlogInfo.cs" />
     <Compile Include="Settings\Models\IndentType.cs" />
     <Compile Include="Settings\Models\MarkPadSettings.cs" />
-    <Compile Include="Settings\PluginViewModel.cs" />
-    <Compile Include="Settings\SettingsView.xaml.cs">
+    <Compile Include="Settings\UI\PluginViewModel.cs" />
+    <Compile Include="Settings\SettingsProvider.cs" />
+    <Compile Include="Settings\UI\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Settings\SettingsViewModel.cs">
+    <Compile Include="Settings\UI\SettingsViewModel.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Document\Commands\FormattingCommands.cs" />
@@ -321,11 +327,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Settings\BlogSettingsView.xaml">
+    <Page Include="Settings\UI\BlogSettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Settings\SettingsView.xaml">
+    <Page Include="Settings\UI\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -360,6 +366,14 @@
       <LastGenOutput>MetaWeblog.generated.cs</LastGenOutput>
     </None>
     <None Include="DocumentSources\MetaWeblog\Service\Generated\MetaWeblogAPI.json" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\en_AU.aff" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\en_AU.dic" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\en_CA.aff" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\en_CA.dic" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\en_US.aff" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\en_US.dic" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\es_ES.aff" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\es_ES.dic" />
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
     <EmbeddedResource Include="Syntax\Markdown.xshd" />
@@ -393,10 +407,6 @@
     <ProjectReference Include="..\MarkPad.PreviewControl\MarkPad.PreviewControl.csproj">
       <Project>{d1ef806f-2daf-47b3-aa55-eb841adbd4ef}</Project>
       <Name>MarkPad.PreviewControl</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MarkPad.Services\MarkPad.Services.csproj">
-      <Project>{8088D80C-14AF-4618-B12A-F47C2771EBDD}</Project>
-      <Name>MarkPad.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\MarkPad.XAML\MarkPad.XAML.csproj">
       <Project>{F5C76E3F-AC91-477D-86DE-778850F3E14B}</Project>
@@ -471,9 +481,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Settings\UI\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!--<Import Project="$(SolutionDir)..\tools\EmbedAssemblies.targets" Condition="'$(Configuration)' != 'Testing' AND $(NCrunch) != '1'" />-->

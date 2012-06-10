@@ -1,4 +1,4 @@
-﻿namespace MarkPad.Settings
+﻿namespace MarkPad.Settings.UI
 {
     public partial class SettingsView
     {

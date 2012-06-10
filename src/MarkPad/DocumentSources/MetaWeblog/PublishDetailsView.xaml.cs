@@ -1,5 +1,5 @@
 using System.Windows.Input;
-using MarkPad.Services.Interfaces;
+using MarkPad.Infrastructure.DialogService;
 
 namespace MarkPad.DocumentSources.MetaWeblog
 {

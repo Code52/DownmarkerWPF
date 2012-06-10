@@ -6,16 +6,16 @@ using System.Windows;
 using System.Windows.Threading;
 using Autofac;
 using Caliburn.Micro;
+using Caliburn.Micro.Autofac;
 using MarkPad.Events;
 using MarkPad.Infrastructure.CaliburnExtensions;
 using MarkPad.PreviewControl;
-using MarkPad.Services;
 
 namespace MarkPad.Infrastructure
 {
-    class AppBootstrapper : Caliburn.Micro.Autofac.AutofacBootstrapper<ShellViewModel>
+    class AppBootstrapper : AutofacBootstrapper<ShellViewModel>
     {
-        private JumpListIntegration jumpList;
+        JumpListIntegration jumpList;
 
         static AppBootstrapper()
         {
@@ -23,7 +23,8 @@ namespace MarkPad.Infrastructure
         }
 
         protected override void ConfigureBootstrapper()
-        {   //  you must call the base version first!
+        {
+            //  you must call the base version first!
             base.ConfigureBootstrapper();
             //  override namespace naming convention
             EnforceNamespaceConvention = false;

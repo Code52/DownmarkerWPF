@@ -1,5 +1,5 @@
 using MarkPad.Plugins;
-using MarkPad.Services.Settings;
+using MarkPad.Settings;
 
 namespace MarkPad.Infrastructure.Plugins
 {

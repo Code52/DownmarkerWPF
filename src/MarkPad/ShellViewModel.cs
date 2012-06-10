@@ -8,13 +8,12 @@ using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.DocumentSources.MetaWeblog;
 using MarkPad.Events;
+using MarkPad.Infrastructure.DialogService;
 using MarkPad.MDI;
-using MarkPad.Services;
-using MarkPad.Services.Implementation;
-using MarkPad.Services.Interfaces;
-using MarkPad.Services.Settings;
+using MarkPad.PreviewControl;
 using MarkPad.Settings;
 using MarkPad.Settings.Models;
+using MarkPad.Settings.UI;
 using Ookii.Dialogs.Wpf;
 using MarkPad.Updater;
 

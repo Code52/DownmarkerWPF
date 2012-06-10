@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
-namespace MarkPad.Services.Settings
+namespace MarkPad.Settings
 {
     // ReSharper disable InconsistentNaming
     public interface ISettingsProvider

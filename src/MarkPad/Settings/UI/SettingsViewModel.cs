@@ -10,15 +10,13 @@ using MarkPad.Events;
 using MarkPad.Framework;
 using MarkPad.Infrastructure.Plugins;
 using MarkPad.Plugins;
-using MarkPad.Services;
-using MarkPad.Services.Implementation;
-using MarkPad.Services.Settings;
+using MarkPad.PreviewControl;
 using MarkPad.Settings.Models;
 using Microsoft.Win32;
 using System.ComponentModel.Composition;
 using MarkPad.Contracts;
 
-namespace MarkPad.Settings
+namespace MarkPad.Settings.UI
 {
     public class SettingsViewModel : Screen
     {

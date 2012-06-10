@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Input;
 
-namespace MarkPad.Settings
+namespace MarkPad.Settings.UI
 {
     /// <summary>
     /// Interaction logic for BlogSettingsView.xaml

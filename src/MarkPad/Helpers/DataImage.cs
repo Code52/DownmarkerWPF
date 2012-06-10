@@ -1,7 +1,7 @@
 using System.Drawing;
 using System.Windows.Media.Imaging;
 
-namespace MarkPad.Extensions
+namespace MarkPad.Helpers
 {
     public class DataImage
     {

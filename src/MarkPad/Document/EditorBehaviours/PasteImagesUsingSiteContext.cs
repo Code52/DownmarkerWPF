@@ -6,7 +6,7 @@ using System.Windows.Input;
 using Caliburn.Micro;
 using MarkPad.Document.Events;
 using MarkPad.Events;
-using MarkPad.Extensions;
+using MarkPad.Helpers;
 
 namespace MarkPad.Document.EditorBehaviours
 {

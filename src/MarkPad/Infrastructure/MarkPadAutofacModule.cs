@@ -3,7 +3,7 @@ using MarkPad.Contracts;
 using MarkPad.Document;
 using MarkPad.Document.SpellCheck;
 using MarkPad.Infrastructure.Plugins;
-using MarkPad.Services.Settings;
+using MarkPad.Settings;
 
 namespace MarkPad.Infrastructure
 {

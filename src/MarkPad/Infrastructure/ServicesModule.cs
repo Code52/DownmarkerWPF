@@ -3,9 +3,8 @@ using MarkPad.DocumentSources;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.DocumentSources.MetaWeblog.Service.Rsd;
 using MarkPad.Infrastructure.Abstractions;
-using MarkPad.Services.Implementation;
-using MarkPad.Services.Interfaces;
-using MarkPad.Services.Settings;
+using MarkPad.Infrastructure.DialogService;
+using MarkPad.Settings;
 
 namespace MarkPad.Infrastructure
 {
@@ -16,7 +15,7 @@ namespace MarkPad.Infrastructure
             builder.RegisterType<WebRequestFactory>().As<IWebRequestFactory>();
             builder.RegisterType<RsdService>().As<IRsdService>();
             builder.RegisterType<SiteContextGenerator>().As<ISiteContextGenerator>();
-            builder.RegisterType<DialogService>().As<IDialogService>();
+            builder.RegisterType<DialogService.DialogService>().As<IDialogService>();
             builder.RegisterType<MetaWeblogService>().As<IMetaWeblogService>();
             builder.RegisterType<TaskSchedulerFactory>().As<ITaskSchedulerFactory>();
             builder.RegisterType<SettingsProvider>().As<ISettingsProvider>().SingleInstance();

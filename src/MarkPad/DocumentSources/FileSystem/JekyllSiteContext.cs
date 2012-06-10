@@ -7,8 +7,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Caliburn.Micro;
 using MarkPad.Events;
-using MarkPad.Services;
-using MarkPad.Services.Interfaces;
+using MarkPad.Infrastructure.DialogService;
+using MarkPad.PreviewControl;
 
 namespace MarkPad.DocumentSources.FileSystem
 {

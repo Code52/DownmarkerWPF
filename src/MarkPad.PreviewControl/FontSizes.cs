@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace MarkPad.Services.Implementation
+namespace MarkPad.PreviewControl
 
 {
     public enum FontSizes

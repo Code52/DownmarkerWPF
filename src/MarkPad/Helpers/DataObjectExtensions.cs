@@ -1,15 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Net;
-using System.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Point = System.Drawing.Point;
 
-namespace MarkPad.Extensions
+namespace MarkPad.Helpers
 {
     public static class DataObjectExtensions
     {

@@ -7,11 +7,10 @@ using Caliburn.Micro;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.DocumentSources.MetaWeblog.Service.Rsd;
 using MarkPad.Framework;
-using MarkPad.Services.Interfaces;
-using MarkPad.Services.Settings;
+using MarkPad.Infrastructure.DialogService;
 using MarkPad.Settings.Models;
 
-namespace MarkPad.Settings
+namespace MarkPad.Settings.UI
 {
     public class BlogSettingsViewModel : Screen
     {

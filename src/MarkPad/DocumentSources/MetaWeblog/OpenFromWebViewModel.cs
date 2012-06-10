@@ -7,8 +7,7 @@ using Caliburn.Micro;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Framework;
 using MarkPad.Infrastructure.Abstractions;
-using MarkPad.Services.Interfaces;
-using MarkPad.Services.Settings;
+using MarkPad.Infrastructure.DialogService;
 using MarkPad.Settings.Models;
 
 namespace MarkPad.DocumentSources.MetaWeblog

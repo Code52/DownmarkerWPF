@@ -8,8 +8,8 @@ using System.Windows;
 using System.Windows.Shell;
 using Caliburn.Micro;
 using MarkPad.Events;
-using MarkPad.Services;
-using MarkPad.Services.Settings;
+using MarkPad.PreviewControl;
+using MarkPad.Settings;
 using MarkPad.Settings.Models;
 
 namespace MarkPad.Infrastructure
@@ -19,8 +19,8 @@ namespace MarkPad.Infrastructure
     /// </summary>
     public class JumpListIntegration : IHandle<FileOpenEvent>, IHandle<AppReadyEvent>, IDisposable
     {
-        private readonly ISettingsProvider settingsService;
-        private JumpList jumpList;
+        readonly ISettingsProvider settingsService;
+        JumpList jumpList;
 
         public JumpListIntegration(ISettingsProvider settingsService)
         {

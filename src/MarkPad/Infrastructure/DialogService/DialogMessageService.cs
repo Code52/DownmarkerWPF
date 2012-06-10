@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using MarkPad.Services.Interfaces;
 using Ookii.Dialogs.Wpf;
 
-namespace MarkPad.Services.Implementation
+namespace MarkPad.Infrastructure.DialogService
 {
     enum DialogMessageResult
     {

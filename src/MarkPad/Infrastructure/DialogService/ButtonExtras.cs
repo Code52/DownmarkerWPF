@@ -1,6 +1,6 @@
 using Ookii.Dialogs.Wpf;
 
-namespace MarkPad.Services.Implementation
+namespace MarkPad.Infrastructure.DialogService
 {
     public class ButtonExtras
     {

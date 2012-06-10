@@ -3,8 +3,7 @@ using System.IO;
 using System.Linq;
 using Caliburn.Micro;
 using MarkPad.DocumentSources.FileSystem;
-using MarkPad.Services.Implementation;
-using MarkPad.Services.Interfaces;
+using MarkPad.Infrastructure.DialogService;
 
 namespace MarkPad.DocumentSources
 {

@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
-using MarkPad.Services.Implementation;
+using MarkPad.PreviewControl;
 
 namespace MarkPad.Settings.Models
 {

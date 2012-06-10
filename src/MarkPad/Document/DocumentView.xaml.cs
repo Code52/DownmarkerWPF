@@ -15,7 +15,7 @@ using MarkPad.Events;
 using MarkPad.Framework;
 using MarkPad.Infrastructure.Plugins;
 using MarkPad.Plugins;
-using MarkPad.Services.Settings;
+using MarkPad.Settings;
 using MarkPad.Settings.Models;
 using MarkPad.XAML;
 using MarkPad.Contracts;

@@ -1,7 +1,6 @@
 using System.IO;
 using System.Linq;
 using Caliburn.Micro;
-using MarkPad.Services.Interfaces;
 
 namespace MarkPad.DocumentSources
 {

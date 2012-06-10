@@ -2,9 +2,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using MarkPad.Services.Implementation;
 
-namespace MarkPad.Services
+namespace MarkPad.PreviewControl
 {
     public static class Constants
     {

@@ -16,8 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{F95A6BBE-B
 		..\tools\EmbedAssemblies.targets = ..\tools\EmbedAssemblies.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.Services", "MarkPad.Services\MarkPad.Services.csproj", "{8088D80C-14AF-4618-B12A-F47C2771EBDD}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.Tests", "MarkPad.Tests\MarkPad.Tests.csproj", "{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.Contracts", "MarkPad.Contracts\MarkPad.Contracts.csproj", "{96FA74A6-397A-4BE2-A6BF-AAD39A159DD2}"
@@ -53,12 +51,6 @@ Global
 		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Release|x86.Build.0 = Release|x86
 		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Testing|x86.ActiveCfg = Testing|x86
 		{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}.Testing|x86.Build.0 = Testing|x86
-		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Debug|x86.ActiveCfg = Debug|x86
-		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Debug|x86.Build.0 = Debug|x86
-		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Release|x86.ActiveCfg = Release|x86
-		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Release|x86.Build.0 = Release|x86
-		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Testing|x86.ActiveCfg = Testing|x86
-		{8088D80C-14AF-4618-B12A-F47C2771EBDD}.Testing|x86.Build.0 = Testing|x86
 		{96FA74A6-397A-4BE2-A6BF-AAD39A159DD2}.Debug|x86.ActiveCfg = Debug|x86
 		{96FA74A6-397A-4BE2-A6BF-AAD39A159DD2}.Debug|x86.Build.0 = Debug|x86
 		{96FA74A6-397A-4BE2-A6BF-AAD39A159DD2}.Release|x86.ActiveCfg = Release|x86

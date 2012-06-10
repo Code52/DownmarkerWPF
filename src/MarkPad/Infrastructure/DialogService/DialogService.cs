@@ -1,7 +1,6 @@
-using MarkPad.Services.Interfaces;
 using Ookii.Dialogs.Wpf;
 
-namespace MarkPad.Services.Implementation
+namespace MarkPad.Infrastructure.DialogService
 {
     public class DialogService : IDialogService
     {

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
@@ -9,32 +8,26 @@ using NHunspell;
 
 namespace MarkPad.Document.SpellCheck
 {
-	[Export(typeof(ISpellingService))]
+    [Export(typeof(ISpellingService))]
     public class SpellingService : ISpellingService
     {
-        private static readonly Dictionary<SpellingLanguages, string> langLookup;
+        static readonly Dictionary<SpellingLanguages, string> LangLookup;
+        Hunspell speller;
 
         static SpellingService()
         {
-            langLookup = new Dictionary<SpellingLanguages, string>();
-            langLookup.Add(SpellingLanguages.Australian, "en_AU");
-            langLookup.Add(SpellingLanguages.Canadian, "en_CA");
-            langLookup.Add(SpellingLanguages.UnitedStates, "en_US");
-            langLookup.Add(SpellingLanguages.Spain, "es_ES");
-        }
-
-        private Hunspell speller;
-
-        public SpellingService()
-        {
+            LangLookup = new Dictionary<SpellingLanguages, string>
+            {
+                {SpellingLanguages.Australian, "en_AU"},
+                {SpellingLanguages.Canadian, "en_CA"},
+                {SpellingLanguages.UnitedStates, "en_US"},
+                {SpellingLanguages.Spain, "es_ES"}
+            };
         }
 
         public bool Spell(string word)
         {
-            if (speller == null)
-                return true;
-
-            return speller.Spell(word);
+            return speller == null || speller.Spell(word);
         }
 
         public void ClearLanguages()
@@ -46,13 +39,15 @@ namespace MarkPad.Document.SpellCheck
         {
             speller = new Hunspell();
 
-            var languageKey = langLookup[language];
+            var languageKey = LangLookup[language];
 
             var assembly = Assembly.GetExecutingAssembly();
 
-            var dictionaryFiles = assembly.GetManifestResourceNames()
-                .Where(name => name.StartsWith(
-                    String.Format("{0}.Implementation.Dictionaries.{1}", assembly.GetName().Name, languageKey)));
+            var dictionaryFileStart = string.Format("{0}.Document.SpellCheck.Dictionaries.{1}", assembly.GetName().Name, languageKey);
+            var dictionaryFiles = assembly
+                .GetManifestResourceNames()
+                .Where(name => name.StartsWith(dictionaryFileStart))
+                .ToArray();
 
             var affixes = dictionaryFiles.Where(name => name.EndsWith(".aff")).OrderBy(s => s);
             var dictionaries = dictionaryFiles.Where(name => name.EndsWith(".dic")).OrderBy(s => s);
@@ -64,10 +59,13 @@ namespace MarkPad.Document.SpellCheck
                 using (var affStream = assembly.GetManifestResourceStream(pair.aff))
                 using (var dicStream = assembly.GetManifestResourceStream(pair.dic))
                 {
-                    var affBytes = new BinaryReader(affStream).ReadBytes((int)affStream.Length);
-                    var dicBytes = new BinaryReader(dicStream).ReadBytes((int)dicStream.Length);
+                    if (affStream != null && dicStream != null)
+                    {
+                        var affBytes = new BinaryReader(affStream).ReadBytes((int)affStream.Length);
+                        var dicBytes = new BinaryReader(dicStream).ReadBytes((int)dicStream.Length);
 
-                    speller.Load(affBytes, dicBytes);
+                        speller.Load(affBytes, dicBytes);
+                    }
                 }
             }
         }

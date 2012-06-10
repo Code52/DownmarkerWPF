@@ -14,17 +14,18 @@ namespace MarkPad
 {
     public partial class ShellView : IHandle<PluginsChangedEvent>
     {
-		readonly IPluginManager _pluginManager;
+		readonly IPluginManager pluginManager;
+        bool ignoreNextMouseMove;
 
 		[ImportMany]
-		IEnumerable<ICanCreateNewPage> _canCreateNewPagePlugins;
+		IEnumerable<ICanCreateNewPage> canCreateNewPagePlugins;
 		[ImportMany]
-		IEnumerable<ICanSavePage> _canSavePagePlugins;
+		IEnumerable<ICanSavePage> canSavePagePlugins;
 
         public ShellView(IPluginManager pluginManager)
         {
-			_pluginManager = pluginManager;
-			_pluginManager.Container.ComposeParts(this);
+			this.pluginManager = pluginManager;
+			this.pluginManager.Container.ComposeParts(this);
 
             InitializeComponent();
 
@@ -34,27 +35,26 @@ namespace MarkPad
 		void UpdatePlugins()
 		{
 			CreateNewPageHook.Children.Clear();
-			foreach (var plugin in _canCreateNewPagePlugins.Where(p => p.Settings.IsEnabled))
+			foreach (var plugin in canCreateNewPagePlugins.Where(p => p.Settings.IsEnabled))
 			{
 				var button = new Button { Content = plugin.CreateNewPageLabel.ToUpper(), Tag = plugin };
-				button.Click += new RoutedEventHandler((o, e) =>
+				button.Click += (o, e) =>
 				{
-					var text = plugin.CreateNewPage();
-					(DataContext as ShellViewModel).ExecuteSafely(vm => vm.NewDocument(text));
-				});
+				    var text = plugin.CreateNewPage();
+				    (DataContext as ShellViewModel).ExecuteSafely(vm => vm.NewDocument(text));
+				};
 				CreateNewPageHook.Children.Add(button);
 			}
 
 			SavePageHook.Children.Clear();
-			foreach (var plugin in _canSavePagePlugins.Where(p => p.Settings.IsEnabled))
+			foreach (var plugin in canSavePagePlugins.Where(p => p.Settings.IsEnabled))
 			{
 				var button = new Button { Content = plugin.SavePageLabel.ToUpper(), Tag = plugin };
-				button.Click += new RoutedEventHandler((o, e) =>
-					(DataContext as ShellViewModel).ExecuteSafely(vm =>
-					{
-						if (vm.ActiveDocumentViewModel == null) return;
-						plugin.SavePage(vm.ActiveDocumentViewModel);
-					}));
+				button.Click += (sender, args) => (DataContext as ShellViewModel).ExecuteSafely(vm =>
+				{
+				    if (vm.ActiveDocumentViewModel == null) return;
+				    plugin.SavePage(vm.ActiveDocumentViewModel);
+				});
 				SavePageHook.Children.Add(button);
 			}
 		}
@@ -64,11 +64,9 @@ namespace MarkPad
 			UpdatePlugins();
 		}
 
-        private bool ignoreNextMouseMove;
-
         bool DocumentIsOpen { get { return (DataContext as ShellViewModel).Evaluate(vm => vm.MDI.ActiveItem != null); } }
 
-        private void DragMoveWindow(object sender, MouseButtonEventArgs e)
+        void DragMoveWindow(object sender, MouseButtonEventArgs e)
         {
             if (e.MiddleButton == MouseButtonState.Pressed) return;
             if (e.RightButton == MouseButtonState.Pressed) return;
@@ -87,7 +85,7 @@ namespace MarkPad
             DragMove();
         }
 
-        private void MouseMoveWindow(object sender, MouseEventArgs e)
+        void MouseMoveWindow(object sender, MouseEventArgs e)
         {
             if (ignoreNextMouseMove)
             {
@@ -120,24 +118,24 @@ namespace MarkPad
             DragMove();
         }
 
-        private void ToggleMaximized()
+        void ToggleMaximized()
         {
             WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
         }
 
-        void ShellView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        void ShellViewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
             if (DocumentIsOpen && !header.IsMouseOver) return;
             ToggleMaximized();
         }
 
-        private void ButtonMinimiseOnClick(object sender, RoutedEventArgs e)
+        void ButtonMinimiseOnClick(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Minimized;
         }
 
-        private void ButtonMaxRestoreOnClick(object sender, RoutedEventArgs e)
+        void ButtonMaxRestoreOnClick(object sender, RoutedEventArgs e)
         {
             ToggleMaximized();
         }
@@ -148,7 +146,7 @@ namespace MarkPad
             base.OnStateChanged(e);
         }
 
-        private void RefreshMaximiseIconState()
+        void RefreshMaximiseIconState()
         {
             if (WindowState == WindowState.Normal)
             {
@@ -162,7 +160,7 @@ namespace MarkPad
             }
         }
 
-        private void WindowDragOver(object sender, DragEventArgs e)
+        void WindowDragOver(object sender, DragEventArgs e)
         {
             var isFileDrop = e.Data.GetDataPresent(DataFormats.FileDrop);
             e.Effects = isFileDrop ? DragDropEffects.Move : DragDropEffects.None;

@@ -1,5 +1,4 @@
 using Caliburn.Micro;
-using MarkPad.Services.Settings;
 
 namespace MarkPad.Settings.Models
 {

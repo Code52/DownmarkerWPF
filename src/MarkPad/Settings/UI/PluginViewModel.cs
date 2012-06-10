@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using MarkPad.Events;
 using MarkPad.Plugins;
-using MarkPad.Services.Settings;
 
-namespace MarkPad.Settings
+namespace MarkPad.Settings.UI
 {
 	public class PluginViewModel : PropertyChangedBase
 	{
