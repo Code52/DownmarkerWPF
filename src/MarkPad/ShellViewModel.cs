@@ -9,7 +9,6 @@ using MarkPad.Document;
 using MarkPad.DocumentSources.MetaWeblog;
 using MarkPad.Events;
 using MarkPad.Infrastructure.DialogService;
-using MarkPad.MDI;
 using MarkPad.PreviewControl;
 using MarkPad.Settings;
 using MarkPad.Settings.Models;

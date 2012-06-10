@@ -246,6 +246,10 @@
     <Compile Include="Infrastructure\CaliburnExtensions\DebugLogger.cs" />
     <Compile Include="Helpers\TaskExtensions.cs" />
     <Compile Include="Document\SpellCheck\SpellCheckProvider.cs" />
+    <Compile Include="MDIView.xaml.cs">
+      <DependentUpon>MDIView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MDIViewModel.cs" />
     <Compile Include="Settings\UI\BlogSettingsView.xaml.cs">
       <DependentUpon>BlogSettingsView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -297,10 +301,6 @@
     </Compile>
     <Compile Include="Document\DocumentViewModel.cs" />
     <Compile Include="Document\ParsedDocument.cs" />
-    <Compile Include="MDI\MDIView.xaml.cs">
-      <DependentUpon>MDIView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MDI\MDIViewModel.cs" />
     <Compile Include="ShellViewModel.cs" />
     <Page Include="DocumentSources\MetaWeblog\OpenFromWebView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -327,6 +327,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Infrastructure\ExceptionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MDIView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -383,10 +387,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Document\DocumentView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="MDI\MDIView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
