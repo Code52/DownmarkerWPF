@@ -7,8 +7,7 @@
     xmlns:cm="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
     xmlns:sys="clr-namespace:System;assembly=mscorlib" 
-    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-    xmlns:Settings="clr-namespace:MarkPad.Settings" xmlns:MarkPad="clr-namespace:MarkPad"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" xmlns:MarkPad="clr-namespace:MarkPad"
     xmlns:Behaviors="clr-namespace:MarkPad.Behaviors" xmlns:UI="clr-namespace:MarkPad.Settings.UI"
     xmlns:s="clr-namespace:MarkPad.Infrastructure" x:Class="MarkPad.ShellView"
     mc:Ignorable="d" 
@@ -16,11 +15,12 @@
 	MouseMove="MouseMoveWindow"
     MouseDoubleClick="ShellViewMouseDoubleClick"
     DragOver="WindowDragOver"
-    Icon="../markpad.ico"
+    Icon="markpad.ico"
     SnapsToDevicePixels="True"
     AllowDrop="True"
     x:Name="window"
-    d:DataContext="{d:DesignInstance {x:Type MarkPad:ShellViewModel}}">
+    d:DataContext="{d:DesignInstance {x:Type MarkPad:ShellViewModel}}"
+    Closing="WindowClosing">
 
     <Window.Resources>
         <ResourceDictionary>

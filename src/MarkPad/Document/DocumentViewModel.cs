@@ -215,7 +215,7 @@ namespace MarkPad.Document
 
             if (!HasChanges)
             {
-                CheckAndCloseView(view);
+                CheckAndCloseView();
                 callback(true);
                 return;
             }
@@ -230,14 +230,14 @@ namespace MarkPad.Document
             if (saveResult == true)
             {
                 var saved = Save();
-                if (saved) CheckAndCloseView(view);
+                if (saved) CheckAndCloseView();
                 callback(saved);
                 return;
             }
 
             if (saveResult == false)
             {
-                CheckAndCloseView(view);
+                CheckAndCloseView();
                 callback(true);
                 return;
             }
@@ -245,25 +245,11 @@ namespace MarkPad.Document
             callback(false);
         }
 
-        private void CheckAndCloseView(DocumentView view)
+        private void CheckAndCloseView()
         {
             var disposableSiteContext = SiteContext as IDisposable;
             if (disposableSiteContext != null)
                 disposableSiteContext.Dispose();
-
-            if (view != null)
-            {
-                view.Cleanup();
-            }
-        }
-
-        public void Print()
-        {
-            var view = GetView() as DocumentView;
-            if (view != null)
-            {
-                view.Print();
-            }
         }
 
         public bool DistractionFree { get; set; }
@@ -430,6 +416,17 @@ namespace MarkPad.Document
                 FileName = message.NewFilename;
                 Title = new FileInfo(FileName).Name;
             }
+        }
+
+        public DocumentView View
+        {
+            get { return (DocumentView)GetView(); }
+        }
+
+        protected override void OnViewLoaded(object view)
+        {
+            base.OnViewLoaded(view);
+            NotifyOfPropertyChange(()=>View);
         }
     }
 }

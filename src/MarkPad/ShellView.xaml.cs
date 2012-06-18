@@ -166,5 +166,10 @@ namespace MarkPad
             e.Effects = isFileDrop ? DragDropEffects.Move : DragDropEffects.None;
             e.Handled = true;
         }
+
+        private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            ((ShellViewModel)DataContext).MDI.htmlPreview.Close();
+        }
     }
 }

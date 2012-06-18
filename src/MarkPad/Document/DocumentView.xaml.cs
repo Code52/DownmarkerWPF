@@ -178,14 +178,28 @@ namespace MarkPad.Document
 			UpdatePlugins();
 		}
 
-        public void Cleanup()
+        void PlaceHolderSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            htmlPreview.Close();
+            PreviewWidth = previewPlaceHolder.ActualWidth;
+            PreviewHeight = previewPlaceHolder.ActualHeight;
         }
 
-        public void Print()
+        public static readonly DependencyProperty PreviewWidthProperty =
+            DependencyProperty.Register("PreviewWidth", typeof (double), typeof (DocumentView), new PropertyMetadata(default(double)));
+
+        public double PreviewWidth
         {
-            htmlPreview.Print();
+            get { return (double) GetValue(PreviewWidthProperty); }
+            set { SetValue(PreviewWidthProperty, value); }
+        }
+
+        public static readonly DependencyProperty PreviewHeightProperty =
+            DependencyProperty.Register("PreviewHeight", typeof (double), typeof (DocumentView), new PropertyMetadata(default(double)));
+
+        public double PreviewHeight
+        {
+            get { return (double) GetValue(PreviewHeightProperty); }
+            set { SetValue(PreviewHeightProperty, value); }
         }
     }
 }

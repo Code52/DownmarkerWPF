@@ -102,11 +102,16 @@ namespace MarkPad.PreviewControl
 
         public void SetZoom(int getZoomLevel)
         {
-            app.Dispatcher.BeginInvoke(new Action(() => wb.Zoom = getZoomLevel));
+            app.Dispatcher.BeginInvoke(new Action(() =>
+                                                      {
+                                                          if (wb == null) return;
+                                                          wb.Zoom = getZoomLevel;
+                                                      }));
         }
 
         public void SetHtml(string content)
         {
+            if (Application.Current == null) return;
             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
                 if (!awesomiumInitialised)

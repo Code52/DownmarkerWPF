@@ -75,12 +75,9 @@
             </TextBlock>
         </Label>
         
-        <PreviewControl:HtmlPreview Html="{Binding Render}"
-                             Filename="{Binding FileName}"
-                             Margin="10,0,10,10" 
-                             Grid.Column="2"
-                             BrowserFontSize="{Binding FontSize}"
-                             ScrollPercentage="{Binding ScrollPercentage, ElementName=doc}" 
-                             x:Name="htmlPreview"/>
+        <Border Grid.Column="2" 
+                SizeChanged="PlaceHolderSizeChanged"
+                x:Name="previewPlaceHolder"
+                BorderThickness="0"/>
     </Grid>
 </UserControl>
