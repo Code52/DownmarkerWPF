@@ -15,18 +15,25 @@ namespace MarkPad
             ActivateItem(screen);
         }
 
-        public override void ActivateItem(IScreen item)
+        protected override IScreen DetermineNextItemToActivate(System.Collections.Generic.IList<IScreen> list, int lastIndex)
         {
-            base.ActivateItem(item);
-            CurrentDocument = (DocumentViewModel) item;
+            if (list.Count == 0)
+                CurrentDocument = null;
+            return base.DetermineNextItemToActivate(list, lastIndex);
+        }
+
+        protected override void ChangeActiveItem(IScreen newItem, bool closePrevious)
+        {
+            base.ChangeActiveItem(newItem, closePrevious);
+            CurrentDocument = (DocumentViewModel) newItem;
             if (htmlPreview == null)
             {
                 var view = (MDIView)GetView();
                 htmlPreview = new HtmlPreview
-                                  {
-                                      Margin = new Thickness(10, 0, 10, 10),
-                                      HorizontalAlignment = HorizontalAlignment.Stretch,
-                                  };
+                {
+                    Margin = new Thickness(10, 0, 10, 10),
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                };
                 htmlPreview.SetBinding(HtmlPreview.HtmlProperty, new Binding("CurrentDocument.Render"));
                 htmlPreview.SetBinding(HtmlPreview.FilenameProperty, new Binding("CurrentDocument.FileName"));
                 htmlPreview.SetBinding(HtmlPreview.BrowserFontSizeProperty, new Binding("CurrentDocument.FontSize"));
@@ -36,17 +43,7 @@ namespace MarkPad
                 view.previewHost.Child = htmlPreview;
             }
 
-            //<PreviewControl:HtmlPreview Html="{Binding CurrentDocument.Render}"
-            //                 Filename="{Binding CurrentDocument.FileName}"
-            //                 Margin="10,0,10,10" 
-            //                        HorizontalAlignment="Stretch"
-                                    
-            //                 BrowserFontSize="{Binding CurrentDocument.FontSize}"
-            //                 ScrollPercentage="{Binding ScrollPercentage, ElementName=doc}" 
-            //                 x:Name="htmlPreview">
-            //</PreviewControl:HtmlPreview>
-
-            NotifyOfPropertyChange(()=>CurrentDocument);
+            NotifyOfPropertyChange(() => CurrentDocument);
         }
 
         public DocumentViewModel CurrentDocument { get; private set; }
