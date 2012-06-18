@@ -71,7 +71,8 @@ namespace MarkPad.PreviewControl
         private static void ScrollPercentageChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
         {
             var awesomiumHost = ((HtmlPreview) dependencyObject).host;
-            awesomiumHost.ScrollPercentage = (int)dependencyPropertyChangedEventArgs.NewValue;
+            var newValue = (double)dependencyPropertyChangedEventArgs.NewValue;
+            awesomiumHost.ScrollPercentage = (int)newValue;
             awesomiumHost.WbProcentualZoom();
         }
 
@@ -126,7 +127,11 @@ namespace MarkPad.PreviewControl
 
             //This is a perf helper, the MetroContentControl slides content in
             // The preview pane stutters and looks crap, but hiding it then showing it after the animation it looks way better
-            Unloaded += (o, args) => hwndContentHost.Visibility = Visibility.Hidden;
+            Unloaded += (o, args) =>
+                            {
+                                if (hwndContentHost == null) return;
+                                hwndContentHost.Visibility = Visibility.Hidden;
+                            };
             Loaded +=
                 (o, args) =>
                 {
@@ -136,7 +141,6 @@ namespace MarkPad.PreviewControl
                         hwndContentHost.Visibility = Visibility.Visible;
                     }, context);
                 };
-
 
             //We are hosting the Awesomium preview in another appdomain so our main UI thread does not take the hit
             hostAppDomain = AppDomain.CreateDomain("HtmlPreviewDomain");
