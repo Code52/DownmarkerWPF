@@ -7,7 +7,7 @@
     xmlns:cal="http://www.caliburnproject.org"
     xmlns:PreviewControl="clr-namespace:MarkPad.PreviewControl;assembly=MarkPad.PreviewControl"
     xmlns:MarkPad="clr-namespace:MarkPad" mc:Ignorable="d" 
-    d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance MarkPad:MDIViewModel}">
+    d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance MarkPad:MdiViewModel}">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>

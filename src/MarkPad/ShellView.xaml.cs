@@ -169,7 +169,7 @@ namespace MarkPad
 
         private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            ((ShellViewModel)DataContext).MDI.htmlPreview.Close();
+            ((ShellViewModel)DataContext).MDI.HtmlPreview.Close();
         }
     }
 }

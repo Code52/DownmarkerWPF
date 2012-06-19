@@ -33,7 +33,7 @@ namespace MarkPad
             IWindowManager windowManager,
             ISettingsProvider settingsService,
             IEventAggregator eventAggregator,
-            MDIViewModel mdi,
+            MdiViewModel mdi,
             SettingsViewModel settingsViewModel,
             UpdaterViewModel updaterViewModel,
             Func<DocumentViewModel> documentCreator,
@@ -70,13 +70,13 @@ namespace MarkPad
 
                 if (ActiveDocumentViewModel == null) return;
                 var shellView = (ShellView)GetView();
-                ((ShellViewModel)shellView.DataContext).MDI.htmlPreview.Visibility = currentState == ShowSettingsState
+                ((ShellViewModel)shellView.DataContext).MDI.HtmlPreview.Visibility = currentState == ShowSettingsState
                                                           ? Visibility.Hidden
                                                           : Visibility.Visible;
             }
         }
 
-        public MDIViewModel MDI { get; private set; }
+        public MdiViewModel MDI { get; private set; }
         public SettingsViewModel Settings { get; private set; }
         public UpdaterViewModel Updater { get; set; }
 		public DocumentViewModel ActiveDocumentViewModel { get { return MDI.ActiveItem as DocumentViewModel; } }
@@ -212,7 +212,7 @@ namespace MarkPad
         public void PrintDocument()
         {
             var shellView = (ShellViewModel)GetView();
-            shellView.MDI.htmlPreview.Print();
+            shellView.MDI.HtmlPreview.Print();
         }
 
         /// <summary>

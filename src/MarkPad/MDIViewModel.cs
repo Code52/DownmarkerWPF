@@ -6,9 +6,9 @@ using MarkPad.PreviewControl;
 
 namespace MarkPad
 {
-    internal class MDIViewModel : Conductor<IScreen>.Collection.OneActive
+    internal class MdiViewModel : Conductor<IScreen>.Collection.OneActive
     {
-        public HtmlPreview htmlPreview;
+        public HtmlPreview HtmlPreview;
 
         public void Open(IScreen screen)
         {
@@ -26,21 +26,21 @@ namespace MarkPad
         {
             base.ChangeActiveItem(newItem, closePrevious);
             CurrentDocument = (DocumentViewModel) newItem;
-            if (htmlPreview == null)
+            if (HtmlPreview == null)
             {
                 var view = (MDIView)GetView();
-                htmlPreview = new HtmlPreview
+                HtmlPreview = new HtmlPreview
                 {
                     Margin = new Thickness(10, 0, 10, 10),
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                 };
-                htmlPreview.SetBinding(HtmlPreview.HtmlProperty, new Binding("CurrentDocument.Render"));
-                htmlPreview.SetBinding(HtmlPreview.FilenameProperty, new Binding("CurrentDocument.FileName"));
-                htmlPreview.SetBinding(HtmlPreview.BrowserFontSizeProperty, new Binding("CurrentDocument.FontSize"));
-                htmlPreview.SetBinding(HtmlPreview.FilenameProperty, new Binding("CurrentDocument.FileName"));
-                htmlPreview.SetBinding(HtmlPreview.ScrollPercentageProperty, new Binding("CurrentDocument.View.ScrollPercentage"));
+                HtmlPreview.SetBinding(HtmlPreview.HtmlProperty, new Binding("CurrentDocument.Render"));
+                HtmlPreview.SetBinding(HtmlPreview.FilenameProperty, new Binding("CurrentDocument.FileName"));
+                HtmlPreview.SetBinding(HtmlPreview.BrowserFontSizeProperty, new Binding("CurrentDocument.FontSize"));
+                HtmlPreview.SetBinding(HtmlPreview.FilenameProperty, new Binding("CurrentDocument.FileName"));
+                HtmlPreview.SetBinding(HtmlPreview.ScrollPercentageProperty, new Binding("CurrentDocument.View.ScrollPercentage"));
 
-                view.previewHost.Child = htmlPreview;
+                view.previewHost.Child = HtmlPreview;
             }
 
             NotifyOfPropertyChange(() => CurrentDocument);
