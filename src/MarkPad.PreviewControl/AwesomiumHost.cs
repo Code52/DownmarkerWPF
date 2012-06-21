@@ -1,4 +1,5 @@
 using System;
+using System.Security.Permissions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -62,7 +63,7 @@ namespace MarkPad.PreviewControl
             loadedWaitHandle.Set();
         }
 
-        public int ScrollPercentage { get; set; }
+        public double ScrollPercentage { get; set; }
 
         public IntPtr ControlHandle
         {
@@ -174,6 +175,13 @@ namespace MarkPad.PreviewControl
         public void Run()
         {
             app.Run();
+        }
+
+        // http://social.msdn.microsoft.com/Forums/en-US/netfxremoting/thread/3ab17b40-546f-4373-8c08-f0f072d818c9/
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
+        public override object InitializeLifetimeService()
+        {
+            return null;
         }
     }
 }

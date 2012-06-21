@@ -28,7 +28,7 @@ namespace MarkPad
             CurrentDocument = (DocumentViewModel) newItem;
             if (HtmlPreview == null)
             {
-                var view = (MDIView)GetView();
+                var view = (MdiView)GetView();
                 HtmlPreview = new HtmlPreview
                 {
                     Margin = new Thickness(10, 0, 10, 10),

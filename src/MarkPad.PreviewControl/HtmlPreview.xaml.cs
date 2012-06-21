@@ -71,8 +71,7 @@ namespace MarkPad.PreviewControl
         private static void ScrollPercentageChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
         {
             var awesomiumHost = ((HtmlPreview) dependencyObject).host;
-            var newValue = (double)dependencyPropertyChangedEventArgs.NewValue;
-            awesomiumHost.ScrollPercentage = (int)newValue;
+            awesomiumHost.ScrollPercentage = (double)dependencyPropertyChangedEventArgs.NewValue;
             awesomiumHost.WbProcentualZoom();
         }
 

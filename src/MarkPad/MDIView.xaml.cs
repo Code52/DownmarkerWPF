@@ -1,13 +1,8 @@
-using System.Windows.Controls;
-
 namespace MarkPad
 {
-    /// <summary>
-    /// Interaction logic for MDIView.xaml
-    /// </summary>
-    public partial class MDIView : UserControl
+    public partial class MdiView
     {
-        public MDIView()
+        public MdiView()
         {
             InitializeComponent();
         }
