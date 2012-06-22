@@ -258,10 +258,10 @@
     <Compile Include="Infrastructure\CaliburnExtensions\DebugLogger.cs" />
     <Compile Include="Helpers\TaskExtensions.cs" />
     <Compile Include="Document\SpellCheck\SpellCheckProvider.cs" />
-    <Compile Include="MDIView.xaml.cs">
-      <DependentUpon>MDIView.xaml</DependentUpon>
+    <Compile Include="MdiView.xaml.cs">
+      <DependentUpon>MdiView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MDIViewModel.cs" />
+    <Compile Include="MdiViewModel.cs" />
     <Compile Include="Settings\UI\BlogSettingsView.xaml.cs">
       <DependentUpon>BlogSettingsView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -346,7 +346,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="MDIView.xaml">
+    <Page Include="MdiView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
