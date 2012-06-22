@@ -28,9 +28,9 @@ namespace MarkPad.DocumentSources
             this.fileSystemWatcherFactory = fileSystemWatcherFactory;
         }
 
-        public ISiteContext GetContext(string filename)
+        public ISiteContext GetContext(string fileName)
         {
-            var directoryName = Path.GetDirectoryName(filename);
+            var directoryName = Path.GetDirectoryName(fileName);
             if (directoryName == null) return null;
 
             var directory = new DirectoryInfo(directoryName);
@@ -38,7 +38,7 @@ namespace MarkPad.DocumentSources
             if (jekyllSiteBaseDirectory != null)
             {
                 return new JekyllSiteContext(eventAggregator, dialogService, fileSystem, 
-                    fileSystemWatcherFactory, jekyllSiteBaseDirectory, filename);
+                    fileSystemWatcherFactory, jekyllSiteBaseDirectory, fileName);
             }
 
             return null;

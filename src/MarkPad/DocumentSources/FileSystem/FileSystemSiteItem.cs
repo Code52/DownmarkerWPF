@@ -11,15 +11,15 @@ namespace MarkPad.DocumentSources.FileSystem
     public class FileSystemSiteItem : SiteItemBase, IHandle<FileRenamedEvent>, IHandle<FileCreatedEvent>
     {
         readonly IFileSystem fileSystem;
-        string originalFilename;
+        string originalFileName;
 
         public FileSystemSiteItem(IEventAggregator eventAggregator, IFileSystem fileSystem, string filePath) : 
             base(eventAggregator)
         {
             this.fileSystem = fileSystem;
             Path = filePath;
-            originalFilename = System.IO.Path.GetFileName(filePath);
-            Name = originalFilename;
+            originalFileName = System.IO.Path.GetFileName(filePath);
+            Name = originalFileName;
 
             if (fileSystem.File.Exists(filePath))
                 Children = new ObservableCollection<SiteItemBase>();
@@ -41,15 +41,15 @@ namespace MarkPad.DocumentSources.FileSystem
         public override void CommitRename()
         {
             var fileDir = System.IO.Path.GetDirectoryName(Path);
-            var newFilename = System.IO.Path.Combine(fileDir, Name);
+            var newFileName = System.IO.Path.Combine(fileDir, Name);
 
             try
             {
-                fileSystem.File.Move(Path, newFilename);
+                fileSystem.File.Move(Path, newFileName);
             }
             catch (IOException ex)
             {
-                Name = originalFilename;
+                Name = originalFileName;
                 //TODO show error
             }
             IsRenaming = false;
@@ -57,15 +57,15 @@ namespace MarkPad.DocumentSources.FileSystem
 
         public override void UndoRename()
         {
-            Name = originalFilename;
+            Name = originalFileName;
             IsRenaming = false;
         }
 
         public void Handle(FileRenamedEvent message)
         {
-            Path = message.NewFilename;
+            Path = message.NewFileName;
             Name = System.IO.Path.GetFileName(Path);
-            originalFilename = Name;
+            originalFileName = Name;
         }
 
         public void Handle(FileCreatedEvent message)

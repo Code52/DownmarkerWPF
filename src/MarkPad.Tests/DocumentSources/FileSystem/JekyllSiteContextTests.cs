@@ -52,14 +52,14 @@ namespace MarkPad.Tests.DocumentSources.FileSystem
         public void raises_file_renamed_event_when_watcher_notifies_of_rename()
         {
             // arrange
-            const string newFilename = @"C:\Site\Index2.md";
+            const string newFileName = @"C:\Site\Index2.md";
 
             // act
             var renamedEventArgs = new RenamedEventArgs(WatcherChangeTypes.Renamed, basePath, "Index2.md", "Index.md");  
             fileSystemWatcher.Renamed += Raise.Event<RenamedEventHandler>(null, renamedEventArgs);
 
             // assert
-            eventAggregator.Received().Publish(Arg.Is<FileRenamedEvent>(f=>f.NewFilename == newFilename && f.OriginalFilename == filename));
+            eventAggregator.Received().Publish(Arg.Is<FileRenamedEvent>(f=>f.NewFileName == newFileName && f.OriginalFileName == filename));
         }
 
         [Fact]

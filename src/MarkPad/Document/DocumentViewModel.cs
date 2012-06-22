@@ -411,9 +411,9 @@ namespace MarkPad.Document
 
         public void Handle(FileRenamedEvent message)
         {
-            if (FileName == message.OriginalFilename)
+            if (FileName == message.OriginalFileName)
             {
-                FileName = message.NewFilename;
+                FileName = message.NewFileName;
                 Title = new FileInfo(FileName).Name;
             }
         }

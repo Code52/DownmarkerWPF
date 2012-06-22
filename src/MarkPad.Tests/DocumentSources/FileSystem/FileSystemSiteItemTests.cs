@@ -22,9 +22,9 @@ namespace MarkPad.Tests.DocumentSources.FileSystem
             // arrange
             // arrange
             var eventAggregator = Substitute.For<IEventAggregator>();
-            const string oldFilename = @"c:\OldFile.txt";
-            const string newFilename = @"c:\newFile.txt";
-            var testItem = new FileSystemSiteItem(eventAggregator, fileSystem, oldFilename)
+            const string oldFileName = @"c:\OldFile.txt";
+            const string newFileName = @"c:\newFile.txt";
+            var testItem = new FileSystemSiteItem(eventAggregator, fileSystem, oldFileName)
             {
                 Name = "Test",
                 Selected = true,
@@ -32,11 +32,11 @@ namespace MarkPad.Tests.DocumentSources.FileSystem
             };
 
             // act
-            testItem.Handle(new FileRenamedEvent(oldFilename, newFilename));
+            testItem.Handle(new FileRenamedEvent(oldFileName, newFileName));
 
             // assert
             Assert.Equal("newFile.txt", testItem.Name);
-            Assert.Equal(newFilename, testItem.Path);
+            Assert.Equal(newFileName, testItem.Path);
         }
 
         [Fact]
@@ -44,8 +44,8 @@ namespace MarkPad.Tests.DocumentSources.FileSystem
         {
             // arrange
             var eventAggregator = Substitute.For<IEventAggregator>();
-            const string oldFilename = @"c:\OldFile.txt";
-            var testItem = new FileSystemSiteItem(eventAggregator, fileSystem, oldFilename)
+            const string oldFileName = @"c:\OldFile.txt";
+            var testItem = new FileSystemSiteItem(eventAggregator, fileSystem, oldFileName)
             {
                 Name = "Test",
                 Selected = true,
@@ -58,7 +58,7 @@ namespace MarkPad.Tests.DocumentSources.FileSystem
 
             // assert
             Assert.Equal("OldFile.txt", testItem.Name);
-            Assert.Equal(oldFilename, testItem.Path);
+            Assert.Equal(oldFileName, testItem.Path);
         }
 
         [Fact]
@@ -66,9 +66,9 @@ namespace MarkPad.Tests.DocumentSources.FileSystem
         {
             // arrange
             var eventAggregator = Substitute.For<IEventAggregator>();
-            const string oldFilename = @"c:\OldFile.txt";
-            const string newFilename = @"c:\newFile.txt";
-            var testItem = new FileSystemSiteItem(eventAggregator, fileSystem, oldFilename)
+            const string oldFileName = @"c:\OldFile.txt";
+            const string newFileName = @"c:\newFile.txt";
+            var testItem = new FileSystemSiteItem(eventAggregator, fileSystem, oldFileName)
             {
                 Name = "Test",
                 Selected = true,
@@ -76,11 +76,11 @@ namespace MarkPad.Tests.DocumentSources.FileSystem
             };
 
             // act
-            testItem.Name = newFilename;
+            testItem.Name = newFileName;
             testItem.CommitRename();
 
             // assert
-            fileSystem.File.Received().Move(oldFilename, newFilename);
+            fileSystem.File.Received().Move(oldFileName, newFileName);
         }
 
         [Fact]
@@ -88,8 +88,8 @@ namespace MarkPad.Tests.DocumentSources.FileSystem
         {
             // arrange
             var eventAggregator = Substitute.For<IEventAggregator>();
-            const string oldFilename = @"c:\Site\Folder";
-            var testItem = new FileSystemSiteItem(eventAggregator, fileSystem, oldFilename);
+            const string oldFileName = @"c:\Site\Folder";
+            var testItem = new FileSystemSiteItem(eventAggregator, fileSystem, oldFileName);
             testItem.Children.Add(new TestItem(eventAggregator) { Name = "Alpha.txt" });
             testItem.Children.Add(new TestItem(eventAggregator) { Name = "Gamma.txt" });
 

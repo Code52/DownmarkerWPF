@@ -23,7 +23,7 @@ namespace MarkPad.PreviewControl
         {
             if (Application.Current == null)
                 app = new Application();
-            Filename = filename;
+            FileName = filename;
             this.baseDirectory = baseDirectory;
 
             loadedWaitHandle = new ManualResetEvent(false);
@@ -34,7 +34,7 @@ namespace MarkPad.PreviewControl
             control.Loaded += ControlLoaded;
         }
 
-        public string Filename { get; private set; }
+        public string FileName { get; private set; }
         public string Html { get; set; }
 
         void ControlLoaded(object sender, RoutedEventArgs e)

@@ -44,7 +44,7 @@ namespace MarkPad.PreviewControl
             var file = e.Url;
             if (e.Url.StartsWith(LocalRequestUrlBase))
             {
-                file = GetResourceFilename(e.Url.Replace(LocalRequestUrlBase, "")) ?? "";
+                file = GetResourceFileName(e.Url.Replace(LocalRequestUrlBase, "")) ?? "";
                 if (!File.Exists(file)) return;
             }
 
@@ -53,15 +53,15 @@ namespace MarkPad.PreviewControl
             Process.Start(file);
         }
 
-        public static string GetResourceFilename(string url)
+        public static string GetResourceFileName(string url)
         {
-            if (string.IsNullOrEmpty(Host.Filename)) return null;
+            if (string.IsNullOrEmpty(Host.FileName)) return null;
 
-            var directoryName = Path.GetDirectoryName(Host.Filename);
+            var directoryName = Path.GetDirectoryName(Host.FileName);
             if (directoryName == null)
                 return null;
-            var resourceFilename = Path.Combine(directoryName, url);
-            return resourceFilename;
+            var resourceFileName = Path.Combine(directoryName, url);
+            return resourceFileName;
         }
 
         static ResourceResponse GetLocalResource(string url)
@@ -73,10 +73,10 @@ namespace MarkPad.PreviewControl
                 return new ResourceResponse(encoding.GetBytes(Host.Html), "text/html");
             }
 
-            var resourceFilename = GetResourceFilename(url);
-            if (!File.Exists(resourceFilename)) return null;
+            var resourceFileName = GetResourceFileName(url);
+            if (!File.Exists(resourceFileName)) return null;
 
-            return new ResourceResponse(resourceFilename);
+            return new ResourceResponse(resourceFileName);
         }
     }
 }

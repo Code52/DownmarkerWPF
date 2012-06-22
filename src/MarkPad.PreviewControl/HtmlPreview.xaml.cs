@@ -29,14 +29,14 @@ namespace MarkPad.PreviewControl
         }
         #endregion
 
-        #region public string Filename
-        public static readonly DependencyProperty FilenameProperty =
-            DependencyProperty.Register("Filename", typeof (string), typeof (HtmlPreview), new PropertyMetadata(default(string)));
+        #region public string FileName
+        public static readonly DependencyProperty FileNameProperty =
+            DependencyProperty.Register("FileName", typeof (string), typeof (HtmlPreview), new PropertyMetadata(default(string)));
 
-        public string Filename
+        public string FileName
         {
-            get { return (string)GetValue(FilenameProperty); }
-            set { SetValue(FilenameProperty, value); }
+            get { return (string)GetValue(FileNameProperty); }
+            set { SetValue(FileNameProperty, value); }
         }
         #endregion
 
@@ -143,7 +143,7 @@ namespace MarkPad.PreviewControl
 
             //We are hosting the Awesomium preview in another appdomain so our main UI thread does not take the hit
             hostAppDomain = AppDomain.CreateDomain("HtmlPreviewDomain");
-            var filename = Filename;
+            var filename = FileName;
 
             // create the AppDomain on a new thread as we want to ensure it is an 
             // STA thread as this makes life easier for creating UI components

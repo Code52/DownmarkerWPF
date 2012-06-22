@@ -2,13 +2,13 @@ namespace MarkPad.Events
 {
     public class FileRenamedEvent
     {
-        public FileRenamedEvent(string originalFilename, string newFilename)
+        public FileRenamedEvent(string originalFileName, string newFileName)
         {
-            OriginalFilename = originalFilename;
-            NewFilename = newFilename;
+            OriginalFileName = originalFileName;
+            NewFileName = newFileName;
         }
 
-        public string OriginalFilename { get; private set; }
-        public string NewFilename { get; private set; }
+        public string OriginalFileName { get; private set; }
+        public string NewFileName { get; private set; }
     }
 }

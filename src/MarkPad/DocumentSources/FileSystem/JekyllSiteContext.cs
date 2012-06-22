@@ -96,26 +96,26 @@ namespace MarkPad.DocumentSources.FileSystem
             if (fileNameWithoutExtension == null)
                 return null;
 
-            var filename = fileNameWithoutExtension
+            var fileName = fileNameWithoutExtension
                 .Replace(" ", string.Empty)
                 .Replace(".", string.Empty);
             var count = 1;
-            var imageFilename = filename + ".png";
+            var imageFileName = fileName + ".png";
 
-            while (File.Exists(Path.Combine(absoluteImagePath, imageFilename)))
+            while (File.Exists(Path.Combine(absoluteImagePath, imageFileName)))
             {
-                imageFilename = string.Format("{0}{1}.png", filename, count++);
+                imageFileName = string.Format("{0}{1}.png", fileName, count++);
             }
 
-            using (var stream = new FileStream(Path.Combine(absoluteImagePath, imageFilename), FileMode.Create))
+            using (var stream = new FileStream(Path.Combine(absoluteImagePath, imageFileName), FileMode.Create))
             {
                 image.Save(stream, ImageFormat.Png);
             }
 
-            var enumerable = imageFilename.Replace(basePath, string.Empty).TrimStart('\\', '/') //Get rid of starting /
+            var enumerable = imageFileName.Replace(basePath, string.Empty).TrimStart('\\', '/') //Get rid of starting /
                 .Where(c => c == '/' || c == '\\') // select each / or \
                 .Select(c => "..") // turn each into a ..
-                .Concat(new[] { "img", imageFilename }); // concat with the image filename
+                .Concat(new[] { "img", imageFileName }); // concat with the image filename
             var relativePath = string.Join("\\", enumerable); //now we join with path separator giving relative path
 
             return relativePath;
