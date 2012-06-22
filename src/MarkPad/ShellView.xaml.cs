@@ -9,6 +9,7 @@ using MarkPad.Events;
 using MarkPad.Framework;
 using MarkPad.Infrastructure.Plugins;
 using MarkPad.Plugins;
+using MarkPad.PreviewControl;
 
 namespace MarkPad
 {
@@ -169,7 +170,9 @@ namespace MarkPad
 
         private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            ((ShellViewModel)DataContext).MDI.HtmlPreview.Close();
+            HtmlPreview htmlPreview = ((ShellViewModel) DataContext).MDI.HtmlPreview;
+            if (htmlPreview != null)
+                htmlPreview.Close();
         }
     }
 }

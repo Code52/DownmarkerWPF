@@ -3,10 +3,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:cal="http://www.caliburnproject.org"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:Settings="clr-namespace:MarkPad.Settings"
              xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-             xmlns:Converters="clr-namespace:MarkPad.Converters" x:Class="MarkPad.Settings.UI.SettingsView"
-             d:DataContext="{d:DesignInstance Settings:SettingsViewModel}"
+             xmlns:Converters="clr-namespace:MarkPad.Converters" xmlns:UI="clr-namespace:MarkPad.Settings.UI"
+             x:Class="MarkPad.Settings.UI.SettingsView"
+             d:DataContext="{d:DesignInstance UI:SettingsViewModel}"
              mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
