@@ -157,7 +157,9 @@
 
                         <StackPanel Grid.Row="1" Grid.Column="0">
                             <TextBlock Text="FONT" FontWeight="SemiBold" FontSize="12" />
-                            <ListBox ItemsSource="{Binding FontFamilies}" SelectedItem="{Binding SelectedFontFamily}" Height="130" DisplayMemberPath="Source">
+                            <ListBox ItemsSource="{Binding FontFamilies}" SelectedItem="{Binding SelectedFontFamily}" Height="130" DisplayMemberPath="Source"
+                                     Loaded="ScrollToSelection"
+                                     Background="#4D4D4D">
                                 <ListBox.Resources>
                                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Red" Opacity=".5"/>
                                     <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Red"  Opacity="0.25"/>

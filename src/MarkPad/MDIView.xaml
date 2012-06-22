@@ -35,13 +35,14 @@
             </TabControl.ItemTemplate>
         </TabControl>
         
-<Border Width="{Binding CurrentDocument.View.PreviewWidth}"
-        Height="{Binding CurrentDocument.View.PreviewHeight}"
-        BorderThickness="0"
-        HorizontalAlignment="Right"
-        VerticalAlignment="Bottom"
-        x:Name="previewHost">
-<Border.Style>
+        <Border Width="{Binding CurrentDocument.View.PreviewWidth}"
+                Height="{Binding CurrentDocument.View.PreviewHeight}"
+                BorderThickness="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="0,0,0,2"
+                x:Name="previewHost">
+        <Border.Style>
                 <Style TargetType="Border">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding CurrentDocument}"
@@ -52,8 +53,6 @@
                     </Style.Triggers>
                 </Style>
             </Border.Style>
-
-</Border>
-        
+        </Border>
     </Grid>
 </UserControl>
