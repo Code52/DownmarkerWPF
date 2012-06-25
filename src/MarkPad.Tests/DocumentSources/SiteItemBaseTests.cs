@@ -31,19 +31,6 @@ namespace MarkPad.Tests.DocumentSources
         }
 
         [Fact]
-        public void name_will_not_change_when_item_not_being_renamed()
-        {
-            // arrange
-            var testItem = new TestItem(Substitute.For<IEventAggregator>()) {Name = "Test"};
-
-            // act
-            testItem.Name = "Test1";
-
-            // assert
-            Assert.Equal("Test", testItem.Name);
-        }
-
-        [Fact]
         public void isrenaming_throws_when_not_selected()
         {
             // arrange
