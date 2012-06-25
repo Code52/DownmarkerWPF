@@ -30,7 +30,8 @@
             <ColumnDefinition x:Name="webBrowserColumn" Width="{Binding DistractionFree, Converter={Converters:BoolToGridLengthConverter Invert=True}}" />
         </Grid.ColumnDefinitions>
 
-      <Controls:SiteView SiteContext="{Binding SiteContext}">
+      <Controls:SiteView SiteContext="{Binding SiteContext}"
+                         x:Name="siteView">
         <Controls:SiteView.Style>
           <Style TargetType="Controls:SiteView">
           <Style.Triggers>

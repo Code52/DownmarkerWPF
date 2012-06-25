@@ -10,7 +10,6 @@ using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
 using MarkPad.Document.Commands;
-using MarkPad.DocumentSources;
 using MarkPad.Events;
 using MarkPad.Framework;
 using MarkPad.Helpers;

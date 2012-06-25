@@ -428,5 +428,10 @@ namespace MarkPad.Document
             base.OnViewLoaded(view);
             NotifyOfPropertyChange(()=>View);
         }
+
+        protected override void OnDeactivate(bool close)
+        {
+            View.siteView.UndoRename();
+        }
     }
 }

@@ -80,5 +80,11 @@ namespace MarkPad.Document.Controls
                 currentlySelectedItem.IsRenaming = true;
             }
         }
+
+        public void UndoRename()
+        {
+            if (currentlySelectedItem != null && currentlySelectedItem.IsRenaming)
+                currentlySelectedItem.IsRenaming = false;
+        }
     }
 }
