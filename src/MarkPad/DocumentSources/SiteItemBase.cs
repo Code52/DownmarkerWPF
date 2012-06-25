@@ -9,7 +9,6 @@ namespace MarkPad.DocumentSources
         protected readonly IEventAggregator EventAggregator;
         bool isRenaming;
         bool selected;
-        string name;
 
         protected SiteItemBase(IEventAggregator eventAggregator)
         {
@@ -18,17 +17,7 @@ namespace MarkPad.DocumentSources
             Children = new ObservableCollection<SiteItemBase>();
         }
 
-        public string Name
-        {
-            get { return name; }
-            set
-            {
-                if (name != null && !IsRenaming)
-                    return;
-                name = value;
-                NotifyOfPropertyChange(()=>Name);
-            }
-        }
+        public string Name { get; set; }
 
         public ObservableCollection<SiteItemBase> Children { get; protected set; }
 
@@ -44,6 +33,7 @@ namespace MarkPad.DocumentSources
                 if (selected && IsRenaming && !value)
                     CommitRename();
                 selected = value;
+                NotifyOfPropertyChange(() => Selected);
             }
         }
 
@@ -55,6 +45,7 @@ namespace MarkPad.DocumentSources
                 if (!Selected)
                     throw new InvalidOperationException("Item must be selected to rename");
                 isRenaming = value;
+                NotifyOfPropertyChange(() => IsRenaming);
             }
         }
 

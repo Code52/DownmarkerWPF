@@ -63,9 +63,12 @@ namespace MarkPad.DocumentSources.FileSystem
 
         public void Handle(FileRenamedEvent message)
         {
-            Path = message.NewFileName;
-            Name = System.IO.Path.GetFileName(Path);
-            originalFileName = Name;
+            if (Path == message.OriginalFileName)
+            {
+                Path = message.NewFileName;
+                Name = System.IO.Path.GetFileName(Path);
+                originalFileName = Name;
+            }
         }
 
         public void Handle(FileCreatedEvent message)
