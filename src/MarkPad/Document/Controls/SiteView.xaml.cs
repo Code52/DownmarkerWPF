@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using MarkPad.DocumentSources;
@@ -11,6 +12,7 @@ namespace MarkPad.Document.Controls
             DependencyProperty.Register("SiteContext", typeof (ISiteContext), typeof (SiteView), new PropertyMetadata(default(ISiteContext)));
 
         SiteItemBase currentlySelectedItem;
+        DateTime selectedTime;
 
         public SiteView()
         {
@@ -28,7 +30,10 @@ namespace MarkPad.Document.Controls
             var selectedItem = siteFiles.SelectedItem as SiteItemBase;
 
             if (selectedItem != null)
+            {
+                selectedItem.Selected = false;
                 SiteContext.OpenItem(selectedItem);
+            }
         }
 
         void SiteItemOnMouseDown(object sender, MouseButtonEventArgs e)
@@ -36,7 +41,7 @@ namespace MarkPad.Document.Controls
             var textBlock = (TextBlock) sender;
             var siteItem = (SiteItemBase)textBlock.DataContext;
 
-            if (siteItem.Selected)
+            if (siteItem.Selected && DateTime.Now.Subtract(selectedTime).TotalMilliseconds > 500)
             {
                 siteItem.IsRenaming = true;
             }
@@ -71,6 +76,7 @@ namespace MarkPad.Document.Controls
 
             siteItem.Selected = true;
             currentlySelectedItem = siteItem;
+            selectedTime = DateTime.Now;
         }
 
         private void SiteFilesKeyDown(object sender, KeyEventArgs e)

@@ -431,7 +431,8 @@ namespace MarkPad.Document
 
         protected override void OnDeactivate(bool close)
         {
-            View.siteView.UndoRename();
+            if (View != null)
+                View.siteView.UndoRename();
         }
     }
 }
