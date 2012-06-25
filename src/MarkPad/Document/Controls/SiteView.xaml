@@ -2,7 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Controls="clr-namespace:MarkPad.Infrastructure.Controls" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              x:Name="siteView">
     <UserControl.Resources>
@@ -19,24 +20,29 @@
               KeyDown="SiteFilesKeyDown"
               VirtualizingStackPanel.IsVirtualizing="False">
         <TreeView.Resources>
-            <ResourceDictionary Source="..\Styles\Treeview.xaml" />
+            <ResourceDictionary Source="SiteTreeViewStyle.xaml" />
         </TreeView.Resources>
         <TreeView.ItemTemplate>
             <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                 <Grid>
-                    <TextBlock Text="{Binding Name}" MouseDown="SiteItemOnMouseDown">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
+                    <Controls:UITextBlock Text="{Binding Name}" MouseDown="SiteItemOnMouseDown"
+                                          TextTrimming="CharacterEllipsis" MaxWidth="120">
+                        <Controls:UITextBlock.Style>
+                            <Style TargetType="Controls:UITextBlock">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsRenaming}"
                                                  Value="True">
                                         <Setter Property="Visibility"
                                                 Value="Collapsed" />
                                     </DataTrigger>
+                                    <Trigger Property="IsTextTrimmed" Value="True">
+                                        <Setter Property="ToolTip"
+                                                Value="{Binding Name}" />
+                                    </Trigger>
                                 </Style.Triggers>
                             </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
+                        </Controls:UITextBlock.Style>
+                    </Controls:UITextBlock>
                     <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
                    KeyDown="EditBoxKeyDown"
                    Visibility="{Binding IsRenaming, Converter={StaticResource BooleanToVisibilityConverter}}"
