@@ -1,27 +1,50 @@
 ﻿using System;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using MarkPad.DocumentSources;
+using Microsoft.Expression.Interactivity.Core;
 
 namespace MarkPad.Document.Controls
 {
     public partial class SiteView
     {
-        public static DependencyProperty SiteContextProperty = 
-            DependencyProperty.Register("SiteContext", typeof (ISiteContext), typeof (SiteView), new PropertyMetadata(default(ISiteContext)));
+        public static DependencyProperty SiteContextProperty =
+            DependencyProperty.Register("SiteContext", typeof(ISiteContext), typeof(SiteView), new PropertyMetadata(default(ISiteContext)));
 
         SiteItemBase currentlySelectedItem;
-        DateTime selectedTime;
+        DateTime? selectedTime;
+        readonly ContextMenu itemContextMenu;
 
         public SiteView()
         {
             InitializeComponent();
+
+            itemContextMenu = new ContextMenu
+            {
+                Items =
+                {
+                    new MenuItem {Header = "Rename", Command = new ActionCommand(Rename)}, new MenuItem {Header = "Delete", Command = new ActionCommand(DeleteItem)}
+                }
+            };
+        }
+
+        void DeleteItem()
+        {
+            if (currentlySelectedItem != null)
+                currentlySelectedItem.Delete();
+        }
+
+        void Rename()
+        {
+            if (currentlySelectedItem != null)
+                currentlySelectedItem.IsRenaming = true;
         }
 
         public ISiteContext SiteContext
         {
-            get { return (ISiteContext) GetValue(SiteContextProperty); }
+            get { return (ISiteContext)GetValue(SiteContextProperty); }
             set { SetValue(SiteContextProperty, value); }
         }
 
@@ -31,21 +54,51 @@ namespace MarkPad.Document.Controls
 
             if (selectedItem != null)
             {
-                selectedItem.Selected = false;
+                SetItemSelected(selectedItem, false);
                 SiteContext.OpenItem(selectedItem);
             }
         }
 
         void SiteItemOnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            var textBlock = (TextBlock) sender;
+            var textBlock = (TextBlock)sender;
             var siteItem = (SiteItemBase)textBlock.DataContext;
-
-            if (siteItem.Selected && DateTime.Now.Subtract(selectedTime).TotalMilliseconds > 500)
+            if (e.LeftButton == MouseButtonState.Pressed)
             {
-                siteItem.IsRenaming = true;
+
+                if (siteItem.Selected && selectedTime != null &&
+                    DateTime.Now.Subtract(selectedTime.Value).TotalMilliseconds > 500)
+                {
+                    siteItem.IsRenaming = true;
+                }
+            }
+            else if (e.RightButton == MouseButtonState.Pressed)
+            {
+                SetItemSelected(siteItem, true);
+                textBlock.ContextMenu = itemContextMenu;
+                itemContextMenu.PlacementTarget = textBlock;
+                itemContextMenu.IsOpen = true;
             }
         }
+
+        void SetItemSelected(SiteItemBase siteItem, bool isSelected)
+        {
+            try
+            {
+                siteItem.Selected = isSelected;
+                var treeViewItem = TreeViewHelper.GetTreeViewItem(siteFiles, siteItem);
+
+                //uncomment the following line if UI updates are unnecessary
+                treeViewItem.IsSelected = true;
+
+                const BindingFlags bindingFlags = BindingFlags.NonPublic | BindingFlags.Instance;
+                var selectMethod = typeof(TreeViewItem).GetMethod("Select", bindingFlags);
+
+                selectMethod.Invoke(treeViewItem, new object[] { isSelected });
+            }
+            catch { }
+        }
+
 
         void EditBoxKeyDown(object sender, KeyEventArgs e)
         {
@@ -69,10 +122,17 @@ namespace MarkPad.Document.Controls
 
         private void SiteFilesSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            if (currentlySelectedItem!= null)
+            if (currentlySelectedItem != null)
                 currentlySelectedItem.Selected = false;
 
-            var siteItem = (SiteItemBase) e.NewValue;
+            var siteItem = (SiteItemBase)e.NewValue;
+
+            if (siteItem == null)
+            {
+                currentlySelectedItem = null;
+                selectedTime = null;
+                return;
+            }
 
             siteItem.Selected = true;
             currentlySelectedItem = siteItem;

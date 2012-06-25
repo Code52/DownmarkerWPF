@@ -98,5 +98,38 @@ namespace MarkPad.Tests.DocumentSources.FileSystem
             // assert
             eventAggregator.Received().Publish(Arg.Is<FileCreatedEvent>(c=>c.FullPath == @"C:\Site\NewFolder"));
         }
+
+        [Fact]
+        public void deleted_file_raises_deleted_event_for_folder()
+        {
+            // arrange
+            var deletedEvent = new FileSystemEventArgs(WatcherChangeTypes.Deleted, basePath, "File.md");
+
+            // act
+            fileSystemWatcher.Deleted += Raise.Event<FileSystemEventHandler>(null, deletedEvent);
+
+            // assert
+            eventAggregator.Received().Publish(Arg.Is<FileDeletedEvent>(c => c.FileName == @"C:\Site\File.md"));
+        }
+
+        [Fact]
+        public void deletes_matching_child_when_deleted_event_raised()
+        {
+            // arrange
+            const string fileName = @"c:\Folder\file.txt";
+            var testItem = new FileSystemSiteItem(eventAggregator, fileSystem, fileName)
+            {
+                Name = "file.txt",
+                Selected = true,
+                IsRenaming = true
+            };
+            jekyllContext.Items.Add(testItem);
+
+            // act
+            jekyllContext.Handle(new FileDeletedEvent(fileName));
+
+            // assert
+            Assert.Empty(jekyllContext.Items);
+        }
     }
 }

@@ -8,7 +8,7 @@ using MarkPad.Events;
 
 namespace MarkPad.DocumentSources.FileSystem
 {
-    public class FileSystemSiteItem : SiteItemBase, IHandle<FileRenamedEvent>, IHandle<FileCreatedEvent>
+    public class FileSystemSiteItem : SiteItemBase, IHandle<FileRenamedEvent>, IHandle<FileCreatedEvent>, IHandle<FileDeletedEvent>
     {
         readonly IFileSystem fileSystem;
         string originalFileName;
@@ -61,6 +61,11 @@ namespace MarkPad.DocumentSources.FileSystem
             IsRenaming = false;
         }
 
+        public override void Delete()
+        {
+            fileSystem.File.Delete(Path);
+        }
+
         public void Handle(FileRenamedEvent message)
         {
             if (Path == message.OriginalFileName)
@@ -80,6 +85,18 @@ namespace MarkPad.DocumentSources.FileSystem
                 {
                     if (String.Compare(Children[i].Name, newItem.Name, StringComparison.Ordinal) < 0) continue;
                     Children.Insert(i, newItem);
+                    break;
+                }
+            }
+        }
+
+        public void Handle(FileDeletedEvent message)
+        {
+            foreach (var siteItemBase in Children.OfType<FileSystemSiteItem>())
+            {
+                if (siteItemBase.Path == message.FileName)
+                {
+                    Children.Remove(siteItemBase);
                     break;
                 }
             }

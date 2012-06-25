@@ -23,6 +23,7 @@ namespace MarkPad.DocumentSources
 
         public abstract void CommitRename();
         public abstract void UndoRename();
+        public abstract void Delete();
 
         public bool Selected
         {

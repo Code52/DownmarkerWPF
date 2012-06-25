@@ -99,5 +99,33 @@ namespace MarkPad.Tests.DocumentSources.FileSystem
             // assert
             Assert.Equal("Beta.txt", testItem.Children[1].Name);
         }
+
+        [Fact]
+        public void deletes_matching_child_when_deleted_event_raised()
+        {
+            // arrange
+            var eventAggregator = Substitute.For<IEventAggregator>();
+            const string fileName = @"c:\Folder\file.txt";
+            var testItem = new FileSystemSiteItem(eventAggregator, fileSystem, fileName)
+            {
+                Name = "file.txt",
+                Selected = true,
+                IsRenaming = true
+            };
+            var folder = new FileSystemSiteItem(eventAggregator, fileSystem, @"c:\Folder")
+            {
+                Name = "Folder",
+                Children =
+                {
+                    testItem
+                }
+            };
+
+            // act
+            folder.Handle(new FileDeletedEvent(fileName));
+
+            // assert
+            Assert.Empty(folder.Children);
+        }
     }
 }

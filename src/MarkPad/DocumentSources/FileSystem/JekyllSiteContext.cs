@@ -15,7 +15,7 @@ using MarkPad.PreviewControl;
 
 namespace MarkPad.DocumentSources.FileSystem
 {
-    public class JekyllSiteContext : PropertyChangedBase, ISiteContext, IDisposable
+    public class JekyllSiteContext : PropertyChangedBase, ISiteContext, IHandle<FileDeletedEvent>, IDisposable
     {
         readonly string basePath;
         readonly string filenameWithPath;
@@ -54,6 +54,8 @@ namespace MarkPad.DocumentSources.FileSystem
                 fileSystemEventArgs.Name,
                 fileSystemEventArgs.FullPath,
                 fileSystemEventArgs.ChangeType));
+
+            eventAggregator.Publish(new FileDeletedEvent(fileSystemEventArgs.FullPath));
         }
 
         void FileSystemWatcherOnRenamed(object sender, RenamedEventArgs renamedEventArgs)
@@ -176,6 +178,18 @@ namespace MarkPad.DocumentSources.FileSystem
             foreach (var item in Items)
             {
                 item.Dispose();
+            }
+        }
+
+        public void Handle(FileDeletedEvent message)
+        {
+            foreach (var siteItemBase in Items.OfType<FileSystemSiteItem>())
+            {
+                if (siteItemBase.Path == message.FileName)
+                {
+                    Items.Remove(siteItemBase);
+                    break;
+                }
             }
         }
     }

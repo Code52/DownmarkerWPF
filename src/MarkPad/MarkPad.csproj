@@ -202,6 +202,7 @@
     <Compile Include="Document\Controls\SiteView.xaml.cs">
       <DependentUpon>SiteView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Document\Controls\TreeViewHelper.cs" />
     <Compile Include="Document\EditorBehaviours\ControlRightTweakedForMarkdown.cs" />
     <Compile Include="Document\EditorBehaviours\AutoContinueLists.cs" />
     <Compile Include="Document\EditorBehaviours\IndentLists.cs" />
@@ -218,6 +219,7 @@
     <Compile Include="Document\Events\EditorPreviewKeyDownEvent.cs" />
     <Compile Include="Document\Events\EditorTextEnteringEvent.cs" />
     <Compile Include="Events\FileCreatedEvent.cs" />
+    <Compile Include="Events\FileDeletedEvent.cs" />
     <Compile Include="Events\FileOpenEvent.cs" />
     <Compile Include="Events\FileRenamedEvent.cs" />
     <Compile Include="Events\PluginsChangedEvent.cs" />

@@ -19,6 +19,11 @@ namespace MarkPad.Tests.DocumentSources
         
         }
 
+        public override void Delete()
+        {
+            
+        }
+
         public override void Dispose()
         {
             base.Dispose();
