@@ -3,6 +3,65 @@
                     xmlns:Converters="clr-namespace:MarkPad.Converters">
     <Converters:InPathMultiConverter x:Key="InPathMultiConverter" />
     <Style TargetType="TreeViewItem">
+        <Style.Resources>
+            <LinearGradientBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" EndPoint="0,1" StartPoint="0,0">
+                <GradientStop Color="#FFDCEBFC" Offset="0"/>
+                <GradientStop Color="#FFC1DBFC" Offset="1"/>
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="{x:Static SystemColors.ControlBrushKey}" EndPoint="0,1" StartPoint="0,0">
+                <GradientStop Color="#FFF8F8F8" Offset="0"/>
+                <GradientStop Color="#FFE5E5E5" Offset="1"/>
+            </LinearGradientBrush>
+            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+            <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="Black" />
+            <Style TargetType="Border">
+                <Setter Property="CornerRadius" Value="2"/>
+            </Style>
+
+            <Style x:Key="TreeViewItemFocusVisual">
+                <Setter Property="Control.Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Rectangle/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <PathGeometry x:Key="TreeArrow" Figures="M0,0 L0,6 L6,0 z"/>
+            <Style x:Key="ExpandCollapseToggleStyle" TargetType="{x:Type ToggleButton}">
+                <Setter Property="Focusable" Value="False"/>
+                <Setter Property="Width" Value="16"/>
+                <Setter Property="Height" Value="16"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                            <Border Background="Transparent" Height="16" Padding="5,5,5,5" Width="16">
+                                <Path x:Name="ExpandPath" Data="{StaticResource TreeArrow}" Fill="Transparent" Stroke="#FF989898">
+                                    <Path.RenderTransform>
+                                        <RotateTransform Angle="135" CenterY="3" CenterX="3"/>
+                                    </Path.RenderTransform>
+                                </Path>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Stroke" TargetName="ExpandPath" Value="#FF1BBBFA"/>
+                                    <Setter Property="Fill" TargetName="ExpandPath" Value="Transparent"/>
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="RenderTransform" TargetName="ExpandPath">
+                                        <Setter.Value>
+                                            <RotateTransform Angle="180" CenterY="3" CenterX="3"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Fill" TargetName="ExpandPath" Value="#FF595959"/>
+                                    <Setter Property="Stroke" TargetName="ExpandPath" Value="#FF262626"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Style.Resources>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -90,20 +149,6 @@
                 </Setter>
             </DataTrigger>
         </Style.Triggers>
-        <Style.Resources>
-            <LinearGradientBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" EndPoint="0,1" StartPoint="0,0">
-                <GradientStop Color="#FFDCEBFC" Offset="0"/>
-                <GradientStop Color="#FFC1DBFC" Offset="1"/>
-            </LinearGradientBrush>
-            <LinearGradientBrush x:Key="{x:Static SystemColors.ControlBrushKey}" EndPoint="0,1" StartPoint="0,0">
-                <GradientStop Color="#FFF8F8F8" Offset="0"/>
-                <GradientStop Color="#FFE5E5E5" Offset="1"/>
-            </LinearGradientBrush>
-            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
-            <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="Black" />
-            <Style TargetType="Border">
-                <Setter Property="CornerRadius" Value="2"/>
-            </Style>
-        </Style.Resources>
+        
     </Style>
 </ResourceDictionary>
