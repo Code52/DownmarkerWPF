@@ -91,6 +91,7 @@ namespace MarkPad.Infrastructure.Controls
                 textBlock.FontStyle,
                 textBlock.FontWeight,
                 textBlock.FontStretch);
+
             // FormattedText is used to measure the whole width of the text held up by TextBlock container
             var formattedText = new FormattedText(
                 textBlock.Text,
@@ -98,15 +99,10 @@ namespace MarkPad.Infrastructure.Controls
                 textBlock.FlowDirection,
                 typeface,
                 textBlock.FontSize,
-                textBlock.Foreground)
-            {
-                MaxTextWidth = textBlock.ActualWidth
-            };
-            // When the maximum text width of the FormattedText instance is set to the actual
-            // width of the textBlock, if the textBlock is being trimmed to fit then the formatted
-            // text will report a larger height than the textBlock. Should work whether the
-            // textBlock is single or multi-line.
-            return (formattedText.Height > textBlock.ActualHeight);
+                textBlock.Foreground);
+            
+            return formattedText.Width > textBlock.ActualWidth ||
+                formattedText.Height > textBlock.ActualHeight;
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -115,6 +116,7 @@ namespace MarkPad.Document.Controls
 
         void EditorLoaded(object sender, RoutedEventArgs e)
         {
+            if (DesignerProperties.GetIsInDesignMode(this)) return;
             using (var stream = Assembly.GetEntryAssembly().GetManifestResourceStream("MarkPad.Syntax.Markdown.xshd"))
             using (var reader = new XmlTextReader(stream))
             {
