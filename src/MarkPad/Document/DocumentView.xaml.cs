@@ -1,20 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Rendering;
+using MarkPad.Document.Commands;
+using MarkPad.Events;
 using MarkPad.Framework;
-using MarkPad.Framework.Events;
-using MarkPad.MarkPadExtensions;
+using MarkPad.Helpers;
+using MarkPad.Infrastructure.Plugins;
 using MarkPad.Plugins;
-using MarkPad.Services.Interfaces;
-using MarkPad.Services.Settings;
-using MarkPad.XAML;
+using MarkPad.Settings;
+using MarkPad.Settings.Models;
 using MarkPad.Contracts;
 using System.ComponentModel.Composition;
 
@@ -25,11 +27,11 @@ namespace MarkPad.Document
 		IHandle<SettingsChangedEvent>,
 		IHandle<PluginsChangedEvent>
     {
-        private ScrollViewer documentScrollViewer;
-        private readonly ISettingsProvider settingsProvider;
-		private readonly IPluginManager pluginManager;
-
         MarkPadSettings settings;
+        ScrollViewer documentScrollViewer;
+        readonly ISettingsProvider settingsProvider;
+		readonly IPluginManager pluginManager;
+
 		[ImportMany]
 		IEnumerable<IDocumentViewPlugin> documentViewPlugins;
 		IEnumerable<IDocumentViewPlugin> connectedDocumentViewPlugins = new IDocumentViewPlugin[0];
@@ -69,6 +71,16 @@ namespace MarkPad.Document
             CommandBindings.Add(new CommandBinding(DisplayCommands.ZoomReset, (x, y) => ViewModel.ExecuteSafely(vm=>vm.ZoomReset())));
         }
 
+        public TextView TextView
+        {
+            get { return Editor.TextArea.TextView; }
+        }
+
+        public TextDocument Document
+        {
+            get { return Editor.Document; }
+        }
+
         private DocumentViewModel ViewModel
         {
             get { return DataContext as DocumentViewModel; }
@@ -76,7 +88,7 @@ namespace MarkPad.Document
 
 		public void UpdatePlugins()
 		{
-			var enabledPlugins = documentViewPlugins.Where(p => p.Settings.IsEnabled);
+			var enabledPlugins = documentViewPlugins.Where(p => p.Settings.IsEnabled).ToArray();
 
 			foreach (var plugin in connectedDocumentViewPlugins.Except(enabledPlugins))
 			{
@@ -165,26 +177,28 @@ namespace MarkPad.Document
 			UpdatePlugins();
 		}
 
-        private void SiteFilesMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        void PlaceHolderSizeChanged(object sender, SizeChangedEventArgs e)
         {
-             var selectedItem = siteFiles.SelectedItem as ISiteItem;
-
-            if (selectedItem !=null)
-            {
-                (DataContext as DocumentViewModel)
-                    .ExecuteSafely(d => d.SiteContext.OpenItem(selectedItem));
-            }
+            PreviewWidth = previewPlaceHolder.ActualWidth;
+            PreviewHeight = previewPlaceHolder.ActualHeight;
         }
 
-        public void Cleanup()
+        public static readonly DependencyProperty PreviewWidthProperty =
+            DependencyProperty.Register("PreviewWidth", typeof (double), typeof (DocumentView), new PropertyMetadata(default(double)));
+
+        public double PreviewWidth
         {
-            if (htmlPreview.wb != null)
-                htmlPreview.wb.Close();
+            get { return (double) GetValue(PreviewWidthProperty); }
+            set { SetValue(PreviewWidthProperty, value); }
         }
 
-        public void Print()
+        public static readonly DependencyProperty PreviewHeightProperty =
+            DependencyProperty.Register("PreviewHeight", typeof (double), typeof (DocumentView), new PropertyMetadata(default(double)));
+
+        public double PreviewHeight
         {
-            htmlPreview.wb.Print();
+            get { return (double) GetValue(PreviewHeightProperty); }
+            set { SetValue(PreviewHeightProperty, value); }
         }
     }
 }

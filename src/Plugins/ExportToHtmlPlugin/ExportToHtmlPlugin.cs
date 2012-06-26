@@ -48,13 +48,13 @@ namespace ExportToHtmlPlugin
 			if (documentViewModel == null) return;
 
 			var dialogService = new DialogService();
-			var filename = dialogService.GetFileSavePath(SAVE_TITLE, SAVE_DEFAULT_EXT, SAVE_FILTER);
-			if (string.IsNullOrEmpty(filename)) return;
+			var fileName = dialogService.GetFileSavePath(SAVE_TITLE, SAVE_DEFAULT_EXT, SAVE_FILTER);
+			if (string.IsNullOrEmpty(fileName)) return;
 
 			var markdown = documentViewModel.MarkdownContent;
 			var html = _documentParser.ParseClean(markdown);
 
-			File.WriteAllText(filename, html);
+			File.WriteAllText(fileName, html);
 		}
 
 	}

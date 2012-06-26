@@ -1,16 +1,16 @@
-﻿using MarkPad.XAML.Converters;
+﻿using System.ComponentModel;
 
 namespace MarkPad.Contracts
 {
-	public enum SpellingLanguages
-	{
-		[DisplayString("English (Australia)")]
-		Australian,
-		[DisplayString("English (Canada)")]
-		Canadian,
-		[DisplayString("English (United States)")]
-		UnitedStates,
-		[DisplayString("Spanish (Spain)")]
-		Spain
-	}
+    public enum SpellingLanguages
+    {
+        [Description("English (Australia)")]
+        Australian,
+        [Description("English (Canada)")]
+        Canadian,
+        [Description("English (United States)")]
+        UnitedStates,
+        [Description("Spanish (Spain)")]
+        Spain
+    }
 }

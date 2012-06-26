@@ -1,4 +1,4 @@
-﻿using MarkPad.Services.Metaweblog.Rsd;
+﻿using MarkPad.DocumentSources.MetaWeblog.Service.Rsd;
 using Xunit;
 
 namespace MarkPad.Tests.Services

@@ -4,8 +4,9 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using Caliburn.Micro;
-using MarkPad.Extensions;
-using MarkPad.Framework.Events;
+using MarkPad.Document.Events;
+using MarkPad.Events;
+using MarkPad.Helpers;
 
 namespace MarkPad.Document.EditorBehaviours
 {

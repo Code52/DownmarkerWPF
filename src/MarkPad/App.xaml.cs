@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using MarkPad.Services.Events;
-using Microsoft.Shell;
+using System.Reflection;
+using MarkPad.Events;
+using MarkPad.Infrastructure;
 
 namespace MarkPad
 {
@@ -27,8 +30,13 @@ namespace MarkPad
             }
         }
 
-        public static void Start()
+        [STAThread]
+        public static void Main()
         {
+            var directoryName = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            if (directoryName != null && Directory.GetCurrentDirectory() != directoryName)
+                Directory.SetCurrentDirectory(directoryName);
+
             if (SingleInstance<App>.InitializeAsFirstInstance(Unique))
             {
                 new App().Run();

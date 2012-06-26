@@ -2,7 +2,8 @@
 using System.Windows.Input;
 using ICSharpCode.AvalonEdit;
 using MarkPad.Document.EditorBehaviours;
-using MarkPad.Framework.Events;
+using MarkPad.Document.Events;
+using MarkPad.Events;
 using Xunit;
 
 namespace MarkPad.Tests.Document.EditorBehaviours

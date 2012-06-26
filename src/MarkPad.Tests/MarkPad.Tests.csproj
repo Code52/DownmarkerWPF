@@ -66,6 +66,12 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Abstractions">
+      <HintPath>..\packages\System.IO.Abstractions.1.4.0.13\lib\net35\System.IO.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Abstractions.TestingHelpers">
+      <HintPath>..\packages\System.IO.Abstractions.TestingHelpers.1.4.0.13\lib\net35\System.IO.Abstractions.TestingHelpers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Caliburn.Micro.1.3.1\lib\net40\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -81,6 +87,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DocumentSources\FileSystem\FileSystemSiteItemTests.cs" />
+    <Compile Include="DocumentSources\FileSystem\JekyllSiteContextTests.cs" />
+    <Compile Include="DocumentSources\SiteItemBaseTests.cs" />
+    <Compile Include="DocumentSources\TestItem.cs" />
     <Compile Include="Document\AvalonEditPreviewKeyDownHandlers\CursorLeftRightWithSelectionTests.cs" />
     <Compile Include="OpenFromWeb\OpenFromWebViewModelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -94,10 +104,6 @@
     <ProjectReference Include="..\MarkPad.Contracts\MarkPad.Contracts.csproj">
       <Project>{96FA74A6-397A-4BE2-A6BF-AAD39A159DD2}</Project>
       <Name>MarkPad.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MarkPad.Services\MarkPad.Services.csproj">
-      <Project>{8088D80C-14AF-4618-B12A-F47C2771EBDD}</Project>
-      <Name>MarkPad.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\MarkPad\MarkPad.csproj">
       <Project>{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}</Project>
