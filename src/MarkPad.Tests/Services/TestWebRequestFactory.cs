@@ -5,7 +5,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using MarkPad.Services.Metaweblog.Rsd;
+using MarkPad.Infrastructure.Abstractions;
 using NSubstitute;
 
 namespace MarkPad.Tests.Services

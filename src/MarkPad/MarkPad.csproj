@@ -59,7 +59,7 @@
     <ApplicationIcon>markpad.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>MarkPad.Loader</StartupObject>
+    <StartupObject>MarkPad.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Testing|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -90,16 +90,6 @@
     <Reference Include="AutomaticUpdaterWPF">
       <HintPath>..\..\lib\AutomaticUpdaterWPF.dll</HintPath>
     </Reference>
-    <Reference Include="Awesomium.Core, Version=1.6.3.0, Culture=neutral, PublicKeyToken=e1a0d7c8071a5214, processorArchitecture=x86">
-      <HintPath>..\..\lib\Awesomium.Core.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Awesomium.Windows.Controls, Version=1.6.3.0, Culture=neutral, PublicKeyToken=7a34e179b8b61c39, processorArchitecture=x86">
-      <HintPath>..\..\lib\Awesomium.Windows.Controls.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Caliburn.Micro, Version=1.3.1.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Caliburn.Micro.1.3.1\lib\net40\Caliburn.Micro.dll</HintPath>
@@ -119,6 +109,10 @@
     <Reference Include="MarkdownDeep">
       <HintPath>..\packages\MarkdownDeep.NET.1.4\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CompilerServices.AsyncTargetingPack.Net4, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.CompilerServices.AsyncTargetingPack.1.0.0\lib\net40\Microsoft.CompilerServices.AsyncTargetingPack.Net4.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Microsoft.Expression.Interactions.dll</HintPath>
     </Reference>
@@ -133,7 +127,11 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Abstractions">
+      <HintPath>..\packages\System.IO.Abstractions.1.4.0.13\lib\net35\System.IO.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Interactivity">
       <HintPath>..\packages\MahApps.Metro.0.8.0.0\lib\net40\System.Windows.Interactivity.dll</HintPath>
@@ -150,6 +148,61 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Behaviors\StateHelper.cs" />
+    <Compile Include="Converters\BoolToGridLengthConverter.cs" />
+    <Compile Include="Converters\EnumDisplayConverter.cs" />
+    <Compile Include="DocumentSources\FileSystem\FileSystemSiteItem.cs" />
+    <Compile Include="DocumentSources\FileSystem\JekyllSiteContext.cs" />
+    <Compile Include="DocumentSources\ISiteContext.cs" />
+    <Compile Include="DocumentSources\ISiteContextGenerator.cs" />
+    <Compile Include="DocumentSources\SiteItemBase.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Entry.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\OpenFromWebView.xaml.cs">
+      <DependentUpon>OpenFromWebView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DocumentSources\MetaWeblog\OpenFromWebViewModel.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\PublishDetailsView.xaml.cs">
+      <DependentUpon>PublishDetailsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DocumentSources\MetaWeblog\PublishDetailsViewModel.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\Category.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\CategoryInfo.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\Enclosure.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\Generated\MetaWeblog.generated.cs">
+      <DependentUpon>MetaWeblog.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Component</SubType>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="DocumentSources\MetaWeblog\Service\IMetaWeblogService.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\MediaObject.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\MediaObjectInfo.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\MetaWeblog.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DocumentSources\MetaWeblog\Service\MetaWeblogService.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\Post.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\Rsd\DiscoveryResult.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\Rsd\IRsdService.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\Rsd\RsdService.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\Source.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\Service\UserInfo.cs" />
+    <Compile Include="DocumentSources\SiteContextGenerator.cs" />
+    <Compile Include="Document\Controls\FloatingToolBar.cs" />
+    <Compile Include="Document\Controls\HyperlinkEditorView.xaml.cs">
+      <DependentUpon>HyperlinkEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Document\Controls\HyperlinkEditorViewModel.cs" />
+    <Compile Include="Document\Controls\MarkdownEditor.xaml.cs">
+      <DependentUpon>MarkdownEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Document\Controls\SiteView.xaml.cs">
+      <DependentUpon>SiteView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Document\Controls\TreeViewHelper.cs" />
     <Compile Include="Document\EditorBehaviours\ControlRightTweakedForMarkdown.cs" />
     <Compile Include="Document\EditorBehaviours\AutoContinueLists.cs" />
     <Compile Include="Document\EditorBehaviours\IndentLists.cs" />
@@ -157,65 +210,90 @@
     <Compile Include="Document\EditorBehaviours\CursorLeftRightWithSelection.cs" />
     <Compile Include="Document\EditorBehaviours\HardLineBreak.cs" />
     <Compile Include="Document\EditorBehaviours\PasteImagesUsingSiteContext.cs" />
-    <Compile Include="Document\DisplayCommands.cs" />
+    <Compile Include="Document\Commands\DisplayCommands.cs" />
     <Compile Include="Document\EditorBehaviours\TextEditorExtensions.cs" />
-    <Compile Include="Document\MarkdownEditor.xaml.cs">
-      <DependentUpon>MarkdownEditor.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Document\MarkPadHyperlink.cs" />
     <Compile Include="Document\EditorBehaviours\OvertypeMode.cs" />
-    <Compile Include="Framework\Events\EditorPreviewKeyDownEvent.cs" />
-    <Compile Include="Framework\Events\EditorTextEnteringEvent.cs" />
-    <Compile Include="HtmlPreview.xaml.cs">
-      <DependentUpon>HtmlPreview.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Framework\Events\PluginsChangedEvent.cs" />
-    <Compile Include="InPathMultiConverter.cs" />
-    <Compile Include="Extensions\DataImage.cs" />
-    <Compile Include="Extensions\DataObjectExtensions.cs" />
-    <Compile Include="MarkPadAutofacModule.cs" />
-    <Compile Include="Framework\Events\SettingsChangedEvent.cs" />
-    <Compile Include="Framework\FocusExtension.cs" />
-    <Compile Include="Framework\FontHelpers.cs" />
-    <Compile Include="Framework\FrameworkExtensions.cs" />
-    <Compile Include="Framework\Dynamic.cs" />
-    <Compile Include="ExceptionDialog.xaml.cs">
+    <Compile Include="Document\SpellCheck\SpellCheckProviderFactory.cs" />
+    <Compile Include="Document\SpellCheck\SpellingService.cs" />
+    <Compile Include="Document\Events\EditorPreviewKeyDownEvent.cs" />
+    <Compile Include="Document\Events\EditorTextEnteringEvent.cs" />
+    <Compile Include="Events\FileCreatedEvent.cs" />
+    <Compile Include="Events\FileDeletedEvent.cs" />
+    <Compile Include="Events\FileOpenEvent.cs" />
+    <Compile Include="Events\FileRenamedEvent.cs" />
+    <Compile Include="Events\PluginsChangedEvent.cs" />
+    <Compile Include="Converters\InPathMultiConverter.cs" />
+    <Compile Include="Helpers\DataImage.cs" />
+    <Compile Include="Helpers\DataObjectExtensions.cs" />
+    <Compile Include="Helpers\VisualExtensions.cs" />
+    <Compile Include="Infrastructure\Abstractions\FileSystemWatcherFactory.cs" />
+    <Compile Include="Infrastructure\Abstractions\FileSystemWatcherWrapper.cs" />
+    <Compile Include="Infrastructure\Abstractions\IFileSystemWatcher.cs" />
+    <Compile Include="Infrastructure\Abstractions\IFileSystemWatcherFactory.cs" />
+    <Compile Include="Infrastructure\Abstractions\ITaskSchedulerFactory.cs" />
+    <Compile Include="Infrastructure\Abstractions\IWebRequestFactory.cs" />
+    <Compile Include="Infrastructure\Abstractions\TaskSchedulerFactory.cs" />
+    <Compile Include="Infrastructure\Abstractions\WebRequestFactory.cs" />
+    <Compile Include="Infrastructure\AppBootstrapper.cs" />
+    <Compile Include="Infrastructure\Controls\UITextBlock.cs" />
+    <Compile Include="Infrastructure\Controls\UITextBlockAutomationPeer.cs" />
+    <Compile Include="Infrastructure\DialogService\ButtonExtras.cs" />
+    <Compile Include="Infrastructure\DialogService\DialogMessageService.cs" />
+    <Compile Include="Infrastructure\DialogService\DialogService.cs" />
+    <Compile Include="Infrastructure\DialogService\IDialogService.cs" />
+    <Compile Include="Infrastructure\ExceptionBuilder.cs" />
+    <Compile Include="Infrastructure\ExceptionDialog.xaml.cs">
       <DependentUpon>ExceptionDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Framework\DebugLogger.cs" />
-    <Compile Include="Framework\TaskExtensions.cs" />
-    <Compile Include="HyperlinkEditor\HyperlinkEditorView.xaml.cs">
-      <DependentUpon>HyperlinkEditorView.xaml</DependentUpon>
+    <Compile Include="Infrastructure\InputBindingTrigger.cs" />
+    <Compile Include="Infrastructure\JumpListIntegration.cs" />
+    <Compile Include="Infrastructure\MarkPadAutofacModule.cs" />
+    <Compile Include="Infrastructure\Plugins\IPluginManager.cs" />
+    <Compile Include="Infrastructure\Plugins\PluginManager.cs" />
+    <Compile Include="Infrastructure\Plugins\PluginSettingsProvider.cs" />
+    <Compile Include="Infrastructure\ServicesModule.cs" />
+    <Compile Include="Infrastructure\SingleInstance.cs" />
+    <Compile Include="Events\SettingsChangedEvent.cs" />
+    <Compile Include="Behaviors\FocusExtension.cs" />
+    <Compile Include="Helpers\FontHelpers.cs" />
+    <Compile Include="Infrastructure\CaliburnExtensions\FrameworkExtensions.cs" />
+    <Compile Include="Infrastructure\CaliburnExtensions\Dynamic.cs" />
+    <Compile Include="Infrastructure\CaliburnExtensions\DebugLogger.cs" />
+    <Compile Include="Helpers\TaskExtensions.cs" />
+    <Compile Include="Document\SpellCheck\SpellCheckProvider.cs" />
+    <Compile Include="MdiView.xaml.cs">
+      <DependentUpon>MdiView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="HyperlinkEditor\HyperlinkEditorViewModel.cs" />
-    <Compile Include="MarkPadExtensions\SpellCheck\SpellCheckProvider.cs" />
-    <Compile Include="OpenFromWeb\Entry.cs" />
-    <Compile Include="PluginManager.cs" />
-    <Compile Include="Settings\BlogSettingsView.xaml.cs">
+    <Compile Include="MdiViewModel.cs" />
+    <Compile Include="Settings\UI\BlogSettingsView.xaml.cs">
       <DependentUpon>BlogSettingsView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Settings\BlogSettingsViewModel.cs">
+    <Compile Include="Settings\UI\BlogSettingsViewModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Settings\ExtensionViewModel.cs" />
-    <Compile Include="Settings\FetchedBlogInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Settings\PluginViewModel.cs" />
-    <Compile Include="Settings\SettingsView.xaml.cs">
+    <Compile Include="Settings\UI\ExtensionViewModel.cs" />
+    <Compile Include="Settings\IsolatedStorageSettingsStore.cs" />
+    <Compile Include="Settings\Models\BlogInfo.cs" />
+    <Compile Include="Settings\Models\BlogSetting.cs" />
+    <Compile Include="Settings\Models\FetchedBlogInfo.cs" />
+    <Compile Include="Settings\Models\IndentType.cs" />
+    <Compile Include="Settings\Models\MarkPadSettings.cs" />
+    <Compile Include="Settings\UI\PluginViewModel.cs" />
+    <Compile Include="Settings\SettingsProvider.cs" />
+    <Compile Include="Settings\UI\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Settings\SettingsViewModel.cs">
+    <Compile Include="Settings\UI\SettingsViewModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SingleInstance.cs" />
-    <Compile Include="Document\FormattingCommands.cs" />
-    <Compile Include="Framework\ObjectExtensions.cs" />
-    <Compile Include="Framework\Events\SettingsCloseEvent.cs" />
-    <Compile Include="Framework\MarkdownHelpers.cs" />
-    <Compile Include="Document\SpellCheckBackgroundRenderer.cs" />
+    <Compile Include="Document\Commands\FormattingCommands.cs" />
+    <Compile Include="Helpers\ObjectExtensions.cs" />
+    <Compile Include="Events\SettingsCloseEvent.cs" />
+    <Compile Include="Helpers\MarkdownHelpers.cs" />
+    <Compile Include="Document\SpellCheck\SpellCheckBackgroundRenderer.cs" />
     <Compile Include="Updater\UpdaterChangesViewModel.cs" />
     <Compile Include="Updater\UpdaterChangesView.xaml.cs">
       <DependentUpon>UpdaterChangesView.xaml</DependentUpon>
@@ -229,35 +307,34 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="..\GlobalAssemblyInfo.cs">
-      <Link>GlobalAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AppBootstrapper.cs" />
-    <Compile Include="Framework\Events\AppReadyEvent.cs" />
+    <Compile Include="Events\AppReadyEvent.cs" />
     <Compile Include="Document\DocumentView.xaml.cs">
       <DependentUpon>DocumentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Document\DocumentViewModel.cs" />
     <Compile Include="Document\ParsedDocument.cs" />
-    <Compile Include="MDI\MDIView.xaml.cs">
-      <DependentUpon>MDIView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MDI\MDIViewModel.cs" />
-    <Compile Include="Shell\JumpListIntegration.cs" />
-    <Compile Include="OpenFromWeb\OpenFromWebView.xaml.cs">
-      <DependentUpon>OpenFromWebView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="OpenFromWeb\OpenFromWebViewModel.cs" />
-    <Compile Include="PublishDetails\PublishDetailsView.xaml.cs">
-      <DependentUpon>PublishDetailsView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="PublishDetails\PublishDetailsViewModel.cs" />
-    <Compile Include="Shell\ShellViewModel.cs" />
-    <Page Include="Document\MarkdownEditor.xaml">
+    <Compile Include="ShellViewModel.cs" />
+    <Page Include="DocumentSources\MetaWeblog\OpenFromWebView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DocumentSources\MetaWeblog\PublishDetailsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Document\Controls\HyperlinkEditorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Document\Controls\MarkdownEditor.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Document\Controls\SiteView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -265,27 +342,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Document\Styles\Treeview.xaml">
+    <Page Include="Document\Controls\SiteTreeViewStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ExceptionDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="HtmlPreview.xaml">
+    <Page Include="Infrastructure\ExceptionDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="HyperlinkEditor\HyperlinkEditorView.xaml">
+    <Page Include="MdiView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Settings\UI\BlogSettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Settings\BlogSettingsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Settings\SettingsView.xaml">
+    <Page Include="Settings\UI\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -303,19 +376,31 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Loader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="..\..\lib\AwesomiumProcess">
-      <Link>Libs\x86\AwesomiumProcess</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\..\tools\wyUpdate\client.wyc">
       <Link>Updater\client.wyc</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="MarkdownHelp.md" />
     <EmbeddedResource Include="MarkPadHelp.md" />
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="DocumentSources\MetaWeblog\Service\Generated\BloggerAPI.json" />
+    <None Include="DocumentSources\MetaWeblog\Service\Generated\MetaWeblog.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MetaWeblog.generated.cs</LastGenOutput>
+    </None>
+    <None Include="DocumentSources\MetaWeblog\Service\Generated\MetaWeblogAPI.json" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\en_AU.aff" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\en_AU.dic" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\en_CA.aff" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\en_CA.dic" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\en_US.aff" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\en_US.dic" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\es_ES.aff" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\es_ES.dic" />
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
     <EmbeddedResource Include="Syntax\Markdown.xshd" />
@@ -325,23 +410,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="MDI\MDIView.xaml">
+    <Page Include="ShellView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="OpenFromWeb\OpenFromWebView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="PublishDetails\PublishDetailsView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Shell\ShellView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="Shell\ShellView.xaml.cs">
+    <Compile Include="ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -354,13 +427,9 @@
       <Project>{E780D0E3-37A4-43D3-89C1-76053FA63752}</Project>
       <Name>MarkPad.Plugins</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MarkPad.Services\MarkPad.Services.csproj">
-      <Project>{8088D80C-14AF-4618-B12A-F47C2771EBDD}</Project>
-      <Name>MarkPad.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MarkPad.XAML\MarkPad.XAML.csproj">
-      <Project>{F5C76E3F-AC91-477D-86DE-778850F3E14B}</Project>
-      <Name>MarkPad.XAML</Name>
+    <ProjectReference Include="..\MarkPad.PreviewControl\MarkPad.PreviewControl.csproj">
+      <Project>{d1ef806f-2daf-47b3-aa55-eb841adbd4ef}</Project>
+      <Name>MarkPad.PreviewControl</Name>
     </ProjectReference>
     <ProjectReference Include="..\Plugins\ExamplePlugin\ExamplePlugin.csproj">
       <Project>{B780B8AD-169E-4300-A29F-713471EF3056}</Project>
@@ -376,27 +445,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\..\lib\Awesomium.dll">
-      <Link>Libs\x86\Awesomium.dll</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\..\lib\en-US.dll">
-      <Link>Libs\x86\en-US.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\lib\icudt42.dll">
-      <Link>Libs\x86\icudt42.dll</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\..\lib\Awesomium.Core.dll">
-      <Link>Libs\x86\Awesomium.Core.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\..\lib\Awesomium.Windows.Controls.dll">
-      <Link>Libs\x86\Awesomium.Windows.Controls.dll</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Fonts\Entypo.ttf" />
     <Resource Include="icon.png" />
     <Resource Include="markpad.ico" />
@@ -405,9 +453,6 @@
     <EmbeddedResource Include="markpaddoc.ico" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\..\lib\Hunspell.0.9.6.0\lib\Hunspellx86.dll">
-      <Link>Libs\x86\Hunspellx86.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\..\tools\wyUpdate\wyUpdate.exe">
       <Link>Updater\wyUpdate.exe</Link>
     </EmbeddedResource>
@@ -455,9 +500,10 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
-  <Import Project="$(SolutionDir)..\tools\EmbedAssemblies.targets" Condition="'$(Configuration)' != 'Testing' AND $(NCrunch) != '1'" />
+  <!--<Import Project="$(SolutionDir)..\tools\EmbedAssemblies.targets" Condition="'$(Configuration)' != 'Testing' AND $(NCrunch) != '1'" />-->
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -469,4 +515,10 @@
   <Target Name="AfterCompile">
     <NotifyPropertyWeaverMsBuildTask.WeavingTask />
   </Target>
+  <PropertyGroup>
+    <PreBuildEvent>copy $(SolutionDir)..\lib\Awesomium* $(TargetDir)
+copy $(SolutionDir)..\lib\en-US.dll $(TargetDir)
+copy $(SolutionDir)..\lib\icudt42.dll $(TargetDir)
+copy $(SolutionDir)..\lib\Hunspell.0.9.6.0\lib\Hunspellx86.dll $(TargetDir)</PreBuildEvent>
+  </PropertyGroup>
 </Project>

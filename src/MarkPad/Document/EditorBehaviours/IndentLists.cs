@@ -2,7 +2,8 @@
 using System.Windows.Input;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit;
-using MarkPad.Framework.Events;
+using MarkPad.Document.Events;
+using MarkPad.Events;
 
 namespace MarkPad.Document.EditorBehaviours
 {

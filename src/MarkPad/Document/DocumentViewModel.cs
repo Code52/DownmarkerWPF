@@ -7,19 +7,20 @@ using System.Windows.Threading;
 using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using ICSharpCode.AvalonEdit.Document;
-using MarkPad.Framework.Events;
-using MarkPad.HyperlinkEditor;
-using MarkPad.Services;
-using MarkPad.Services.Implementation;
-using MarkPad.Services.Interfaces;
-using MarkPad.Services.Metaweblog;
-using MarkPad.Services.Settings;
+using MarkPad.Document.Controls;
+using MarkPad.DocumentSources;
+using MarkPad.DocumentSources.MetaWeblog.Service;
+using MarkPad.Events;
+using MarkPad.Infrastructure.DialogService;
+using MarkPad.PreviewControl;
+using MarkPad.Settings;
+using MarkPad.Settings.Models;
 using Ookii.Dialogs.Wpf;
 using MarkPad.Contracts;
 
 namespace MarkPad.Document
 {
-    public class DocumentViewModel : Screen, IDocumentViewModel, IHandle<SettingsChangedEvent>
+    public class DocumentViewModel : Screen, IDocumentViewModel, IHandle<SettingsChangedEvent>, IHandle<FileRenamedEvent>
     {
         private static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
         private const double ZoomDelta = 0.1;
@@ -214,7 +215,7 @@ namespace MarkPad.Document
 
             if (!HasChanges)
             {
-                CheckAndCloseView(view);
+                CheckAndCloseView();
                 callback(true);
                 return;
             }
@@ -229,14 +230,14 @@ namespace MarkPad.Document
             if (saveResult == true)
             {
                 var saved = Save();
-                if (saved) CheckAndCloseView(view);
+                if (saved) CheckAndCloseView();
                 callback(saved);
                 return;
             }
 
             if (saveResult == false)
             {
-                CheckAndCloseView(view);
+                CheckAndCloseView();
                 callback(true);
                 return;
             }
@@ -244,21 +245,11 @@ namespace MarkPad.Document
             callback(false);
         }
 
-        private static void CheckAndCloseView(DocumentView view)
+        private void CheckAndCloseView()
         {
-            if (view != null)
-            {
-                view.Cleanup();
-            }
-        }
-
-        public void Print()
-        {
-            var view = GetView() as DocumentView;
-            if (view != null)
-            {
-                view.Print();
-            }
+            var disposableSiteContext = SiteContext as IDisposable;
+            if (disposableSiteContext != null)
+                disposableSiteContext.Dispose();
         }
 
         public bool DistractionFree { get; set; }
@@ -416,6 +407,32 @@ namespace MarkPad.Document
         public void Handle(SettingsChangedEvent message)
         {
             IndentType = settingsProvider.GetSettings<MarkPadSettings>().IndentType;            
+        }
+
+        public void Handle(FileRenamedEvent message)
+        {
+            if (FileName == message.OriginalFileName)
+            {
+                FileName = message.NewFileName;
+                Title = new FileInfo(FileName).Name;
+            }
+        }
+
+        public DocumentView View
+        {
+            get { return (DocumentView)GetView(); }
+        }
+
+        protected override void OnViewLoaded(object view)
+        {
+            base.OnViewLoaded(view);
+            NotifyOfPropertyChange(()=>View);
+        }
+
+        protected override void OnDeactivate(bool close)
+        {
+            if (View != null)
+                View.siteView.UndoRename();
         }
     }
 }
