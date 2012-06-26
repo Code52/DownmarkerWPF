@@ -155,20 +155,26 @@ namespace MarkPad.PreviewControl
 
                 host.SetHtml(content);
 
-                // We need to invoke on the Markpad dispatcher, we are currently in the host appdomains STA Thread.
-                Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    var controlHandle = host.ControlHandle;
+                var controlHandle = host.ControlHandle;
 
-                    hwndContentHost = new HwndContentHost(controlHandle);
-                    //Without the border we don't get the dropshadows
-                    Content = new Border
+                Task.Factory.StartNew(() =>
+                {
+                    //Delay until preview control has loaded before creating content host
+                    host.LoadedWaitHandle.WaitOne();
+
+                    // We need to invoke on the Markpad dispatcher, we are currently in the host appdomains STA Thread.
+                    Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        Background = Brushes.White,
-                        Padding = new Thickness(3),
-                        Child = hwndContentHost
-                    };
-                }));            
+                        hwndContentHost = new HwndContentHost(controlHandle);
+                        //Without the border we don't get the dropshadows
+                        Content = new Border
+                        {
+                            Background = Brushes.White,
+                            Padding = new Thickness(3),
+                            Child = hwndContentHost
+                        };
+                    }));
+                }, TaskCreationOptions.LongRunning);
 
                 host.Run();
                 //I can't get this unloading without an error, 

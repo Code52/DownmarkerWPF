@@ -60,7 +60,7 @@ namespace MarkPad.PreviewControl
         void WbLoaded(object sender, RoutedEventArgs e)
         {
             WbProcentualZoom();
-            loadedWaitHandle.Set();
+            LoadedWaitHandle.Set();
         }
 
         public double ScrollPercentage { get; set; }
@@ -71,13 +71,15 @@ namespace MarkPad.PreviewControl
             {
                 if (windowHandle == null)
                 {
-                    windowHandle = (long)Application.Current.Dispatcher.Invoke(
-                        new Func<long>(() => CreateWindowHandle(control)));
-
-                    loadedWaitHandle.WaitOne();
+                    windowHandle = CreateWindowHandle(control);
                 }
                 return new IntPtr(windowHandle.Value);
             }
+        }
+
+        public ManualResetEvent LoadedWaitHandle
+        {
+            get { return loadedWaitHandle; }
         }
 
         /// <summary>
