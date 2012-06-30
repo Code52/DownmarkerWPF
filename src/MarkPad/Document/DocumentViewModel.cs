@@ -107,9 +107,10 @@ namespace MarkPad.Document
             EvaluateContext();
         }
 
-        public void OpenFromWeb(Post post)
+        public void OpenFromWeb(BlogSetting selectedBlog, Post post)
         {
             Post = post;
+            Blog = selectedBlog;
 
             Title = post.title ?? string.Empty;
             Document.Text = post.description ?? string.Empty;
@@ -119,7 +120,8 @@ namespace MarkPad.Document
             EvaluateContext();
         }
 
-        public Post Post { get; private set; }
+        public BlogSetting Blog { get; private set; }
+        public Post? Post { get; private set; }
 
         public void Update()
         {
@@ -150,6 +152,13 @@ namespace MarkPad.Document
 
         public bool Save()
         {
+            if (Post != null && Blog != null)
+            {
+                var postid = Post.Value.postid == null ? null : Post.Value.postid.ToString();
+                Publish(postid, Post.Value.title, Post.Value.categories, Blog);
+                return true;
+            }
+
             if (string.IsNullOrEmpty(FileName))
                 return SaveAs();
 
@@ -211,8 +220,6 @@ namespace MarkPad.Document
 
         public override void CanClose(Action<bool> callback)
         {
-            var view = GetView() as DocumentView;
-
             if (!HasChanges)
             {
                 CheckAndCloseView();
@@ -335,8 +342,6 @@ namespace MarkPad.Document
             var newpost = new Post();
             try
             {
-                var renderBody = DocumentParser.GetBodyContents(Document.Text);
-
                 if (string.IsNullOrWhiteSpace(postid))
                 {
                     var permalink = DisplayName.Split('.')[0] == "New Document"
@@ -348,7 +353,7 @@ namespace MarkPad.Document
                                    permalink = permalink,
                                    title = postTitle,
                                    dateCreated = DateTime.Now,
-                                   description = blog.Language == "HTML" ? renderBody : Document.Text,
+                                   description = blog.Language == "HTML" ? DocumentParser.GetBodyContents(Document.Text) : Document.Text,
                                    categories = categories,
                                    format = blog.Language
                                };
@@ -358,7 +363,7 @@ namespace MarkPad.Document
                 {
                     newpost = proxy.GetPost(postid, blog);
                     newpost.title = postTitle;
-                    newpost.description = blog.Language == "HTML" ? renderBody : Document.Text;
+                    newpost.description = blog.Language == "HTML" ? DocumentParser.GetBodyContents(Document.Text) : Document.Text;
                     newpost.categories = categories;
                     newpost.format = blog.Language;
 
