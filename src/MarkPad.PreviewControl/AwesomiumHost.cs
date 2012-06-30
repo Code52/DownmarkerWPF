@@ -135,6 +135,7 @@ namespace MarkPad.PreviewControl
 
                 Html = content;
                 if (wb == null) return;
+
                 wb.CacheMode = new BitmapCache();
                 EventHandler webControlOnLoadCompleted = null;
                 webControlOnLoadCompleted = (sender, args) =>
@@ -156,6 +157,7 @@ namespace MarkPad.PreviewControl
                 return;
             }
 
+            if (wb == null) return;
             var javascript = string.Format("window.scrollTo(0,{0} * (document.body.scrollHeight - document.body.clientHeight));", ScrollPercentage);
             wb.ExecuteJavascript(javascript);
         }
