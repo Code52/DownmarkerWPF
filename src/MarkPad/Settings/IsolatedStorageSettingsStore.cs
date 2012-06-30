@@ -15,7 +15,11 @@ namespace MarkPad.Settings
             using (var isoStore = IsolatedStorageFile.GetStore(Scope, null, null))
             {
                 using (var stream = new IsolatedStorageFileStream(filename, FileMode.Create, isoStore))
-                    new StreamWriter(stream).Write(fileContents);
+                using (var streamWriter = new StreamWriter(stream))
+                {
+                    streamWriter.Write(fileContents);
+                    streamWriter.Flush();
+                }
             }
         }
 
@@ -76,7 +80,7 @@ namespace MarkPad.Settings
             if (!string.IsNullOrEmpty(readTextFile))
             {
                 var serializer = new DataContractJsonSerializer(typeof(Dictionary<string, string>));
-                serializer.ReadObject(new MemoryStream(Encoding.Default.GetBytes(readTextFile)));
+                return (Dictionary<string, string>)serializer.ReadObject(new MemoryStream(Encoding.Default.GetBytes(readTextFile)));
             }
 
             return new Dictionary<string, string>();
