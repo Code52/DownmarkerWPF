@@ -384,6 +384,7 @@ namespace MarkPad.Document
             }
 
             Post = newpost;
+            Blog = blog;
             Original = Document.Text;
             Title = postTitle;
             NotifyOfPropertyChange(() => DisplayName);
