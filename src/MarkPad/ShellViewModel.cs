@@ -7,6 +7,7 @@ using System.Windows;
 using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.DocumentSources.MetaWeblog;
+using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Events;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.PreviewControl;
@@ -273,12 +274,13 @@ namespace MarkPad
             var doc = MDI.ActiveItem as DocumentViewModel;
             if (doc != null)
             {
-                var pd = new Details { Title = doc.Post.title, Categories = doc.Post.categories };
+                var post = doc.Post ?? new Post();
+                var pd = new Details { Title = post.title, Categories = post.categories };
                 var detailsResult = windowManager.ShowDialog(new PublishDetailsViewModel(pd, blogs));
                 if (detailsResult != true)
                     return;
 
-                doc.Publish(doc.Post.postid == null ? null : doc.Post.postid.ToString(), pd.Title, pd.Categories, pd.Blog);
+                doc.Publish(post.postid == null ? null : post.postid.ToString(), pd.Title, pd.Categories, pd.Blog);
             }
         }
 
@@ -305,7 +307,7 @@ namespace MarkPad
             var post = openFromWeb.SelectedPost;
 
             var doc = documentCreator();
-            doc.OpenFromWeb(post);
+            doc.OpenFromWeb(openFromWeb.SelectedBlog, post);
             MDI.Open(doc);
         }
 
