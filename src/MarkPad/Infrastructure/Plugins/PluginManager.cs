@@ -25,8 +25,6 @@ namespace MarkPad.Infrastructure.Plugins
             
 			Container = new CompositionContainer(catalog);
 			Container.ComposeParts(this);
-
-            var exports = Container.GetExportedValues<IDocumentViewPlugin>();
 		}
 	}
 }
