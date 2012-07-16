@@ -1,9 +1,9 @@
-﻿using MarkPad.Contracts;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
+using MarkPad.Contracts;
 
 namespace MarkPad.Plugins
 {
-	[InheritedExport]
+    [InheritedExport]
 	public interface IDocumentViewPlugin : IPlugin
 	{
 		void ConnectToDocumentView(IDocumentView view);

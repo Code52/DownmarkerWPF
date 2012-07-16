@@ -1,5 +1,8 @@
-﻿namespace MarkPad.Contracts
+﻿using System.ComponentModel.Composition;
+
+namespace MarkPad.Contracts
 {
+    [InheritedExport]
 	public interface ISpellingService
 	{
 		void ClearLanguages();

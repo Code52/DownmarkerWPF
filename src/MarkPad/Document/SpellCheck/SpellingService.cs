@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -8,7 +7,6 @@ using NHunspell;
 
 namespace MarkPad.Document.SpellCheck
 {
-    [Export(typeof(ISpellingService))]
     public class SpellingService : ISpellingService
     {
         static readonly Dictionary<SpellingLanguages, string> LangLookup;
