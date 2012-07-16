@@ -79,13 +79,13 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=2.6.1.841, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+    <Reference Include="Autofac, Version=2.6.3.862, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Autofac.2.6.1.841\lib\NET40\Autofac.dll</HintPath>
+      <HintPath>..\packages\Autofac.2.6.3.862\lib\NET40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Autofac.Configuration, Version=2.6.1.841, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+    <Reference Include="Autofac.Configuration, Version=2.6.3.862, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Autofac.2.6.1.841\lib\NET40\Autofac.Configuration.dll</HintPath>
+      <HintPath>..\packages\Autofac.2.6.3.862\lib\NET40\Autofac.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="AutomaticUpdaterWPF">
       <HintPath>..\..\lib\AutomaticUpdaterWPF.dll</HintPath>
@@ -94,17 +94,20 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Caliburn.Micro.1.3.1\lib\net40\Caliburn.Micro.dll</HintPath>
     </Reference>
-    <Reference Include="Caliburn.Micro.Autofac">
-      <HintPath>..\packages\Caliburn.Micro.Autofac.1.3.0\lib\net40\Caliburn.Micro.Autofac.dll</HintPath>
+    <Reference Include="Caliburn.Micro.Autofac, Version=1.4.1.9, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Caliburn.Micro.Autofac.1.4.1\lib\net40\Caliburn.Micro.Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="CookComputing.XmlRpcV2">
-      <HintPath>..\packages\xmlrpcnet.2.5.0\lib\net20\CookComputing.XmlRpcV2.dll</HintPath>
+    <Reference Include="CookComputing.XmlRpcV2, Version=3.0.0.0, Culture=neutral, PublicKeyToken=a7d6e17aa302004d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\xmlrpcnet.3.0.0.266\lib\net20\CookComputing.XmlRpcV2.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.AvalonEdit">
       <HintPath>..\packages\AvalonEdit.4.2.0.8783\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
-    <Reference Include="MahApps.Metro">
-      <HintPath>..\packages\MahApps.Metro.0.8.0.0\lib\net40\MahApps.Metro.dll</HintPath>
+    <Reference Include="MahApps.Metro, Version=0.8.0.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MahApps.Metro.0.8.9.30-ALPHA\lib\net40\MahApps.Metro.dll</HintPath>
     </Reference>
     <Reference Include="MarkdownDeep">
       <HintPath>..\packages\MarkdownDeep.NET.1.4\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
@@ -127,14 +130,15 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Abstractions">
-      <HintPath>..\packages\System.IO.Abstractions.1.4.0.13\lib\net35\System.IO.Abstractions.dll</HintPath>
+    <Reference Include="System.IO.Abstractions, Version=1.4.0.32, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\System.IO.Abstractions.1.4.0.32\lib\net35\System.IO.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Windows.Interactivity">
-      <HintPath>..\packages\MahApps.Metro.0.8.0.0\lib\net40\System.Windows.Interactivity.dll</HintPath>
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\MahApps.Metro.0.8.9.30-ALPHA\lib\net40\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -266,6 +270,7 @@
       <DependentUpon>MdiView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MdiViewModel.cs" />
+    <Compile Include="Settings\SettingsProvider.cs" />
     <Compile Include="Settings\UI\BlogSettingsView.xaml.cs">
       <DependentUpon>BlogSettingsView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -281,7 +286,6 @@
     <Compile Include="Settings\Models\IndentType.cs" />
     <Compile Include="Settings\Models\MarkPadSettings.cs" />
     <Compile Include="Settings\UI\PluginViewModel.cs" />
-    <Compile Include="Settings\SettingsProvider.cs" />
     <Compile Include="Settings\UI\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
       <SubType>Code</SubType>
