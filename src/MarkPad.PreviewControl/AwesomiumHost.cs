@@ -167,7 +167,10 @@ namespace MarkPad.PreviewControl
             app.Dispatcher.Invoke(new Action(() =>
             {
                 app.Shutdown();
-                wb.Close();
+                if (wb != null)
+                {
+                    wb.Close();
+                }
             }));
         }
 
