@@ -123,6 +123,9 @@
     <Reference Include="Ookii.Dialogs.Wpf">
       <HintPath>..\packages\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="PropertyChanged">
+      <HintPath>..\packages\PropertyChanged.Fody.1.25.0.0\Lib\NET40\PropertyChanged.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
@@ -146,6 +149,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <None Include="FodyWeavers.xml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\GlobalAssemblyInfo.cs">
@@ -504,21 +510,11 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!--<Import Project="$(SolutionDir)..\tools\EmbedAssemblies.targets" Condition="'$(Configuration)' != 'Testing' AND $(NCrunch) != '1'" />-->
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-  <UsingTask TaskName="NotifyPropertyWeaverMsBuildTask.WeavingTask" AssemblyFile="$(SolutionDir)..\Tools\NotifyPropertyWeaverMsBuildTask.dll" />
-  <Target Name="AfterCompile">
-    <NotifyPropertyWeaverMsBuildTask.WeavingTask />
-  </Target>
   <PropertyGroup>
     <PreBuildEvent>copy $(SolutionDir)..\lib\Awesomium* $(TargetDir)
 copy $(SolutionDir)..\lib\en-US.dll $(TargetDir)
 copy $(SolutionDir)..\lib\icudt42.dll $(TargetDir)
 copy $(SolutionDir)..\lib\Hunspell.0.9.6.0\lib\Hunspellx86.dll $(TargetDir)</PreBuildEvent>
   </PropertyGroup>
+  <Import Project="$(SolutionDir)..\Tools\Fody\Fody.targets" />
 </Project>
