@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ICanChangeMarkup.cs" />
     <Compile Include="ICanCreateNewPage.cs" />
     <Compile Include="ICanSavePage.cs" />
     <Compile Include="IDocumentViewPlugin.cs" />
