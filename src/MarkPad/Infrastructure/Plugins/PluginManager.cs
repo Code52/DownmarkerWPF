@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.IO;
 using System.Reflection;
 using MarkPad.Contracts;
 using MarkPad.Document.SpellCheck;
@@ -21,8 +23,10 @@ namespace MarkPad.Infrastructure.Plugins
 		            new AssemblyCatalog(typeof (IPlugin).Assembly),
 		            new AssemblyCatalog(typeof (IDocumentView).Assembly),
 		            new AssemblyCatalog(typeof (PluginSettingsProvider).Assembly),
-		            new AssemblyCatalog(typeof (SpellCheckPlugin.SpellCheckPlugin).Assembly));
-            
+		            new AssemblyCatalog(typeof (SpellCheckPlugin.SpellCheckPlugin).Assembly),
+					new DirectoryCatalog ( Path.Combine ( System.AppDomain.CurrentDomain.BaseDirectory, "Plugins" ) )
+					);
+
 			Container = new CompositionContainer(catalog);
 			Container.ComposeParts(this);
 		}
