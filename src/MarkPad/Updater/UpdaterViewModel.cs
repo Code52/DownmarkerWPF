@@ -24,7 +24,7 @@ namespace MarkPad.Updater
             au = new AutomaticUpdaterBackend
             {
                 GUID = "code52-markpad",
-                UpdateType = UpdateType.CheckAndDownload
+                UpdateType = UpdateType.DoNothing
             };
 
             au.ProgressChanged += AuProgressChanged;
@@ -32,10 +32,25 @@ namespace MarkPad.Updater
             au.UpToDate += AuUpToDate;
             au.UpdateAvailable += AuUpdateAvailable;
             au.UpdateSuccessful += AuUpdateSuccessful;
+            au.BeforeDownloading += AuBeforeDownloading;
+            au.BeforeChecking += AuBeforeChecking;
 
             au.Initialize();
             au.AppLoaded();
             SetUpdateFlag();
+        }
+
+        private void AuBeforeDownloading(object sender, EventArgs e)
+        {
+            UpdateState = UpdateState.Downloading;
+            Background = false;
+            Progress = 0;
+        }
+
+        private void AuBeforeChecking(object sender, EventArgs e)
+        {
+            UpdateState = UpdateState.Checking;
+            Background = true;
         }
 
         void AuUpdateAvailable(object sender, EventArgs e)
@@ -45,7 +60,8 @@ namespace MarkPad.Updater
 
         void AuUpToDate(object sender, SuccessArgs e)
         {
-            SetUpdateFlag();
+            UpdateState = UpdateState.UpToDate;
+            Background = false;
         }
 
         void AuProgressChanged(object sender, int progress)

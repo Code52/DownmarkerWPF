@@ -11,20 +11,89 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <sys:String x:Key="CheckForUpdatesTooltip">Check for updates?</sys:String>
-            <sys:String x:Key="CheckingForUpdatesTooltip">Checking for updates, please hold..</sys:String>
-            <sys:String x:Key="UpdatePendingTooltip">There is an update waiting!</sys:String>
-            <sys:String x:Key="UpToDateTooltip">Up to date</sys:String>
+            <sys:String x:Key="CheckingForUpdatesTooltip">Checking for updates...</sys:String>
+            <sys:String x:Key="DownloadingUpdatesTooltip">Downloading update...</sys:String>
+            <sys:String x:Key="UpdatePendingTooltip">Update available!</sys:String>
+            <sys:String x:Key="UpToDateTooltip">Up-to-date!</sys:String>
             <Storyboard x:Key="rotate">
                 <DoubleAnimationUsingKeyFrames RepeatBehavior="Forever" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)">
                     <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="364"/>
                 </DoubleAnimationUsingKeyFrames>
             </Storyboard>
+            <Storyboard x:Key="translateShake">
+                <DoubleAnimationUsingKeyFrames RepeatBehavior="Forever" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1" />
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.15" Value="-1" />
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+            <Storyboard x:Key="textOpacityFade">
+                <DoubleAnimationUsingKeyFrames AutoReverse="True"
+                                               RepeatBehavior="Forever"
+                                               Storyboard.TargetProperty="Opacity">
+                    <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0.5" />
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
         </ResourceDictionary>
     </UserControl.Resources>
     <StackPanel Orientation="Horizontal">
-        <TextBlock Text="{Binding Progress}" Visibility="Collapsed">
+        <TextBlock Margin="0,-1,3,0"
+                   FontSize="14">
+            <TextBlock.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform />
+                    <SkewTransform />
+                    <RotateTransform />
+                    <TranslateTransform />
+                </TransformGroup>
+            </TextBlock.RenderTransform>
+            <TextBlock.Style>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding UpdateState}" Value="Checking">
+                            <Setter Property="TextBlock.Text" Value="{DynamicResource CheckingForUpdatesTooltip}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding UpdateState}" Value="UpToDate">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard x:Name="showUpToDateTextStart">
+                                    <Storyboard Storyboard.TargetProperty="(TextBlock.Text)">
+                                        <StringAnimationUsingKeyFrames FillBehavior="Stop" Duration="0:0:1.5">
+                                            <DiscreteStringKeyFrame Value="{StaticResource UpToDateTooltip}" KeyTime="0:0:0" />
+                                        </StringAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <StopStoryboard BeginStoryboardName="showUpToDateTextStart" />
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding UpdateState}" Value="UpdatePending">
+                            <Setter Property="TextBlock.Text" Value="{DynamicResource UpdatePendingTooltip}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding UpdateState}" Value="Downloading">
+                            <Setter Property="TextBlock.Text" Value="{DynamicResource DownloadingUpdatesTooltip}" />
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard x:Name="textOpacityFadeStart1" Storyboard="{StaticResource textOpacityFade}" />
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <StopStoryboard BeginStoryboardName="textOpacityFadeStart1" />
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Background}" Value="True">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard x:Name="textOpacityFadeStart2" Storyboard="{StaticResource textOpacityFade}" />
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <StopStoryboard  BeginStoryboardName="textOpacityFadeStart2" />
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+        <TextBlock  Margin="0,-1,0,0" FontSize="14" Text="{Binding Progress, StringFormat={}{0}%}">
             <TextBlock.Style>
                 <Style TargetType="{x:Type TextBlock}" >
+                    <Setter Property="TextBlock.Visibility" Value="Collapsed" />
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding UpdateState}" Value="Downloading">
                             <Setter Property="TextBlock.Visibility" Value="Visible" />
@@ -49,6 +118,10 @@
                             <Setter Property="Button.Content" Value="d" />
                             <Setter Property="Button.ToolTip" Value="{DynamicResource CheckForUpdatesTooltip}" />
                         </DataTrigger>
+                        <DataTrigger Binding="{Binding UpdateState}" Value="Checking">
+                            <Setter Property="Button.Content" Value="d" />
+                            <Setter Property="Button.ToolTip" Value="{DynamicResource CheckingForUpdatesTooltip}" />
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding Background}" Value="True">
                             <DataTrigger.EnterActions>
                                 <BeginStoryboard x:Name="rotatestart" Storyboard="{StaticResource rotate}" />
@@ -64,10 +137,17 @@
                         <DataTrigger Binding="{Binding UpdateState}" Value="UpdatePending">
                             <Setter Property="Button.Content" Value="?" />
                             <Setter Property="Button.ToolTip" Value="{DynamicResource UpdatePendingTooltip}" />
+                            <Setter Property="Button.Foreground" Value="LimeGreen" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding UpdateState}" Value="Downloading">
                             <Setter Property="Button.Content" Value="x" />
-                            <Setter Property="Button.ToolTip" Value="{DynamicResource CheckingForUpdatesTooltip}" />
+                            <Setter Property="Button.ToolTip" Value="{DynamicResource DownloadingUpdatesTooltip}" />
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard x:Name="translateShakeStart" Storyboard="{StaticResource translateShake}" />
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <StopStoryboard BeginStoryboardName="translateShakeStart" />
+                            </DataTrigger.ExitActions>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
