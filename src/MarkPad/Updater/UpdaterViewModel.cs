@@ -47,7 +47,7 @@ namespace MarkPad.Updater
         void AuFailed(object sender, FailArgs failArgs)
         {
             Background = false;
-            ErrorTitle = failArgs.ErrorTitle;            
+            ErrorTitle = failArgs.ErrorTitle + " Retry?";            
             UpdateState = UpdateState.Error;
         }
 

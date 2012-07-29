@@ -153,6 +153,25 @@
                             <Setter Property="Button.Content" Value="c" />
                             <Setter Property="Button.ToolTip" Value="{Binding ErrorTitle}" />
                         </DataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding UpdateState}" Value="Error" />
+                                <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.EnterActions>
+                                <BeginStoryboard x:Name="showCheckButtonStart">
+                                    <Storyboard Storyboard.TargetProperty="(Button.Content)">
+                                        <StringAnimationUsingKeyFrames FillBehavior="Stop" RepeatBehavior="Forever">
+                                            <DiscreteStringKeyFrame Value="d" KeyTime="0:0:1" />
+                                            <DiscreteStringKeyFrame Value="c" KeyTime="0:0:2" />
+                                        </StringAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </MultiDataTrigger.EnterActions>
+                            <MultiDataTrigger.ExitActions>
+                                <StopStoryboard BeginStoryboardName="showCheckButtonStart" />
+                            </MultiDataTrigger.ExitActions>
+                        </MultiDataTrigger>
                     </Style.Triggers>
                 </Style>
             </Button.Style>
