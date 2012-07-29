@@ -164,6 +164,7 @@
     <Compile Include="Behaviors\StateHelper.cs" />
     <Compile Include="Converters\BoolToGridLengthConverter.cs" />
     <Compile Include="Converters\EnumDisplayConverter.cs" />
+    <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="DocumentSources\FileSystem\FileSystemSiteItem.cs" />
     <Compile Include="DocumentSources\FileSystem\JekyllSiteContext.cs" />
     <Compile Include="DocumentSources\ISiteContext.cs" />
@@ -184,8 +185,8 @@
     <Compile Include="DocumentSources\MetaWeblog\Service\Generated\MetaWeblog.generated.cs">
       <DependentUpon>MetaWeblog.tt</DependentUpon>
       <AutoGen>True</AutoGen>
-      <SubType>Component</SubType>
       <DesignTime>True</DesignTime>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="DocumentSources\MetaWeblog\Service\IMetaWeblogService.cs" />
     <Compile Include="DocumentSources\MetaWeblog\Service\MediaObject.cs" />
