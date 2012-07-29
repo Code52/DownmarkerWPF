@@ -149,6 +149,10 @@
                                 <StopStoryboard BeginStoryboardName="translateShakeStart" />
                             </DataTrigger.ExitActions>
                         </DataTrigger>
+                        <DataTrigger Binding="{Binding UpdateState}" Value="Error">
+                            <Setter Property="Button.Content" Value="c" />
+                            <Setter Property="Button.ToolTip" Value="{Binding ErrorTitle}" />
+                        </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </Button.Style>

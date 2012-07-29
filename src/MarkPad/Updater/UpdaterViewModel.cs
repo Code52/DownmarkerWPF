@@ -15,6 +15,7 @@ namespace MarkPad.Updater
         public int Progress { get; private set; }
         public UpdateState UpdateState { get; set; }
         public bool Background { get; set; }
+        public string ErrorTitle { get; set; }
 
         public UpdaterViewModel(IWindowManager windowManager, Func<UpdaterChangesViewModel> changesCreator)
         {
@@ -35,9 +36,19 @@ namespace MarkPad.Updater
             au.BeforeDownloading += AuBeforeDownloading;
             au.BeforeChecking += AuBeforeChecking;
 
+            au.CheckingFailed += AuFailed;
+            au.DownloadingFailed += AuFailed;
+
             au.Initialize();
             au.AppLoaded();
             SetUpdateFlag();
+        }
+
+        void AuFailed(object sender, FailArgs failArgs)
+        {
+            Background = false;
+            ErrorTitle = failArgs.ErrorTitle;            
+            UpdateState = UpdateState.Error;
         }
 
         private void AuBeforeDownloading(object sender, EventArgs e)
@@ -81,6 +92,13 @@ namespace MarkPad.Updater
 
         public void CheckForUpdate()
         {
+            if(au.UpdateStepOn == UpdateStepOn.UpdateAvailable && UpdateState == UpdateState.Error)
+            {
+                Background = false;
+                au.InstallNow();
+                return;
+            }
+
             switch (au.UpdateStepOn)
             {
                 case UpdateStepOn.UpdateReadyToInstall:
