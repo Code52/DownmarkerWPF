@@ -16,6 +16,7 @@
               Margin="10,0,10,10"
               Background="Transparent"
               BorderThickness="0"
+              ScrollViewer.HorizontalScrollBarVisibility="Auto"
               SelectedItemChanged="SiteFilesSelectedItemChanged"
               KeyDown="SiteFilesKeyDown"
               VirtualizingStackPanel.IsVirtualizing="False">

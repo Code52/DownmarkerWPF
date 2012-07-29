@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using MahApps.Metro.Converters;
+using MarkPad.Document;
 
 namespace MarkPad.Converters
 {
@@ -38,6 +39,25 @@ namespace MarkPad.Converters
             }
 
             return result ^ Invert;
+        }
+    }
+
+    public class DocumentToSiteConverter : MarkupConverter
+    {
+        private readonly GridLength zeroLength = new GridLength(0);
+
+        protected override object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            var doc = (DocumentViewModel)value;
+            if (doc.SiteContext == null)
+                return zeroLength;
+            else
+                return new GridLength(125);
+        }
+
+        protected override object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return null;
         }
     }
 }
