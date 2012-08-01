@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Composition;
+﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
 
 namespace MarkPad.Contracts
 {
@@ -8,5 +9,6 @@ namespace MarkPad.Contracts
 		void ClearLanguages();
 		void SetLanguage(SpellingLanguages language);
 		bool Spell(string word);
+        List<string> Suggestions(string word);
 	}
 }

@@ -70,6 +70,23 @@
             </Border>
         </controls:FloatingToolBar>
         
+        <controls:FloatingToolBar x:Name="spellcheckToolBar" FadeAway="False" PlacementTarget="{Binding ElementName=Editor}" VerticalOffset="-60" HorizontalOffset="-30">
+            <Border Background="#f0f0f0" Padding="3,2,3,2" BorderThickness="1" CornerRadius="1" BorderBrush="#999999">
+                <ItemsControl ItemsSource="{Binding}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding}" Click="SpellcheckerWordClick" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Border>
+        </controls:FloatingToolBar>
+        
         <avalonedit:TextEditor
             x:Name="Editor"
             WordWrap="True"

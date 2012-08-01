@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml;
 using Caliburn.Micro;
@@ -16,6 +17,7 @@ using ICSharpCode.AvalonEdit.Rendering;
 using MarkPad.Document.Commands;
 using MarkPad.Document.EditorBehaviours;
 using MarkPad.Document.Events;
+using MarkPad.Document.SpellCheck;
 using MarkPad.Framework;
 using MarkPad.Settings.Models;
 
@@ -37,6 +39,7 @@ namespace MarkPad.Document.Controls
             Editor.PreviewMouseLeftButtonUp += HandleMouseUp;
             Editor.MouseMove += HandleEditorMouseMove;
             Editor.PreviewMouseLeftButtonDown += HandleEditorPreviewMouseLeftButtonDown;
+            Editor.PreviewMouseRightButtonDown += EditorOnPreviewMouseRightButtonDown;
 
             Editor.MouseMove += (s, e) => e.Handled = true;
             Editor.TextArea.TextEntering += TextAreaTextEntering;
@@ -62,6 +65,57 @@ namespace MarkPad.Document.Controls
             editorTextEnteringHandlers = new IHandle<EditorTextEnteringEvent>[] {
                 overtypeMode
             };
+        }
+
+        void EditorOnPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var spellCheckProvider = SpellCheckProviderFactory.GetProvider() as SpellCheckProvider;
+            if (spellCheckProvider == null) return;
+
+            // Bail out if the mouse isn't over the markdownEditor
+            var editorPosition = Editor.GetPositionFromPoint(e.GetPosition(Editor));
+            if (!editorPosition.HasValue) return;
+
+            var offset = Editor.Document.GetOffset(editorPosition.Value.Line, editorPosition.Value.Column);
+
+            var errorSegments = spellCheckProvider.spellCheckRenderer.ErrorSegments;
+            var wordSegment = errorSegments.FirstOrDefault(segment => segment.StartOffset <= offset && segment.EndOffset >= offset);
+
+            if (wordSegment != null)
+            {
+                var suggestions = spellCheckProvider.spellingService.Suggestions(Editor.Document.GetText(wordSegment));
+                ShowSpellcheckToolBar(wordSegment, suggestions);
+            }
+            else
+            {
+                spellcheckToolBar.Hide();
+            }
+        }
+
+        private void ShowSpellcheckToolBar(TextSegment wordSegment, List<string> suggestions)
+        {
+            spellcheckToolBar.DataContext = suggestions;
+            spellcheckToolBar.Tag = wordSegment;
+
+            // Find the screen position of the start of the word to be corrected
+            var selectionStartLocation = Editor.Document.GetLocation(wordSegment.StartOffset);
+            var selectionStartPosition = new TextViewPosition(selectionStartLocation);
+            var selectionStartPoint = Editor.TextArea.TextView.GetVisualPosition(selectionStartPosition, VisualYPosition.LineBottom);
+
+            var popupPoint = new Point(
+                selectionStartPoint.X + 30,
+                selectionStartPoint.Y);
+
+            spellcheckToolBar.Show(Editor, popupPoint);
+        }
+
+        void SpellcheckerWordClick(object sender, RoutedEventArgs e)
+        {
+            spellcheckToolBar.Hide();
+
+            var word = (string)(sender as Button).DataContext;
+            var segment = (TextSegment)spellcheckToolBar.Tag;
+            Editor.Document.Replace(segment, word);
         }
 
         #region public IndentType IndentType
@@ -135,6 +189,8 @@ namespace MarkPad.Document.Controls
 
         void SelectionChanged(object sender, EventArgs e)
         {
+            spellcheckToolBar.Hide();
+
             if (!FloatingToolbarEnabled) return;
 
             if (Editor.TextArea.Selection.IsEmpty)
@@ -145,6 +201,8 @@ namespace MarkPad.Document.Controls
 
         private void HandleMouseUp(object sender, MouseButtonEventArgs e)
         {
+            spellcheckToolBar.Hide();
+
             if (!FloatingToolbarEnabled)
                 return;
 

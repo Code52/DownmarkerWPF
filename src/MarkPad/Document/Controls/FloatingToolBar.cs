@@ -9,6 +9,7 @@ namespace MarkPad.Document.Controls
     public class FloatingToolBar : Popup
     {
         public static readonly DependencyProperty CommandTargetProperty = DependencyProperty.Register("CommandTarget", typeof(ICommandSource), typeof(FloatingToolBar), new UIPropertyMetadata(null));
+        public static readonly DependencyProperty FadeAwayProperty = DependencyProperty.Register("FadeAway", typeof(bool), typeof(FloatingToolBar), new PropertyMetadata(true));
         private Window window;
 
         public FloatingToolBar()
@@ -24,6 +25,12 @@ namespace MarkPad.Document.Controls
         {
             get { return (ICommandSource)GetValue(CommandTargetProperty); }
             set { SetValue(CommandTargetProperty, value); }
+        }
+
+        public bool FadeAway
+        {
+            get { return (bool)GetValue(FadeAwayProperty); }
+            set { SetValue(FadeAwayProperty, value); }
         }
 
         public FrameworkElement Content
@@ -102,6 +109,12 @@ namespace MarkPad.Document.Controls
             if (Content.IsMouseDirectlyOver)
             {
                 Opacity = 1;
+                return;
+            }
+
+            if(!FadeAway)
+            {
+                Content.Opacity = 1;
                 return;
             }
 

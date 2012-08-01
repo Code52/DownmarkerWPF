@@ -13,8 +13,8 @@ namespace MarkPad.Document.SpellCheck
         readonly Regex wordSeparatorRegex = new Regex("-[^\\w]+|^'[^\\w]+|[^\\w]+'[^\\w]+|[^\\w]+-[^\\w]+|[^\\w]+'$|[^\\w]+-$|^-$|^'$|[^\\w'-]", RegexOptions.Compiled);
         readonly Regex uriFinderRegex = new Regex("(http|ftp|https|mailto):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?", RegexOptions.Compiled);
 
-        readonly ISpellingService spellingService;
-        readonly SpellCheckBackgroundRenderer spellCheckRenderer;
+        public readonly ISpellingService spellingService;
+        public readonly SpellCheckBackgroundRenderer spellCheckRenderer;
 
         public IDocumentView View { get; private set; }
 
