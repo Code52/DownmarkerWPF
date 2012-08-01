@@ -86,6 +86,16 @@ namespace MarkPad.Document.SpellCheck
         {
             spellCheckRenderer.ErrorSegments.Clear();
         }
+
+        public IEnumerable<TextSegment> GetSpellCheckErrors()
+        {
+            return spellCheckRenderer.ErrorSegments;
+        }
+
+        public IEnumerable<string> GetSpellcheckSuggestions(string word)
+        {
+            return spellingService.Suggestions(word);
+        } 
     }
 
 }

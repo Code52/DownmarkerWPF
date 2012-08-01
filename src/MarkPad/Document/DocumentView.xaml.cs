@@ -34,7 +34,7 @@ namespace MarkPad.Document
 
 		[ImportMany]
 		IEnumerable<IDocumentViewPlugin> documentViewPlugins;
-		IEnumerable<IDocumentViewPlugin> connectedDocumentViewPlugins = new IDocumentViewPlugin[0];
+		public IEnumerable<IDocumentViewPlugin> connectedDocumentViewPlugins = new IDocumentViewPlugin[0];
 
         #region public double ScrollPercentage
         public static DependencyProperty ScrollPercentageProperty = DependencyProperty.Register("ScrollPercentage", typeof(double), typeof(DocumentView),

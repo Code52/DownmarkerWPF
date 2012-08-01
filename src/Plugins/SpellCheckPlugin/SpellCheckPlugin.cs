@@ -59,6 +59,11 @@ namespace SpellCheckPlugin
             provider.Disconnect();
             _providers.Remove(provider);
         }
+
+        public ISpellCheckProvider GetProviderForView(IDocumentView view)
+        {
+            return _providers.FirstOrDefault(provider => provider.View == view);
+        }
     }
 
 	public class SpellCheckPluginSettings : PluginSettings

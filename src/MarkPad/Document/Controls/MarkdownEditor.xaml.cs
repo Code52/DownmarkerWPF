@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml;
 using Caliburn.Micro;
@@ -16,6 +17,7 @@ using ICSharpCode.AvalonEdit.Rendering;
 using MarkPad.Document.Commands;
 using MarkPad.Document.EditorBehaviours;
 using MarkPad.Document.Events;
+using MarkPad.Document.SpellCheck;
 using MarkPad.Framework;
 using MarkPad.Settings.Models;
 
@@ -32,6 +34,7 @@ namespace MarkPad.Document.Controls
         public MarkdownEditor()
         {
             InitializeComponent();
+            NameScope.SetNameScope(EditorContextMenu, NameScope.GetNameScope(this));
 
             Editor.TextArea.SelectionChanged += SelectionChanged;
             Editor.PreviewMouseLeftButtonUp += HandleMouseUp;
@@ -316,5 +319,40 @@ namespace MarkPad.Document.Controls
                 e.CanExecute = !Editor.TextArea.Selection.IsEmpty;
             }
         }
+
+        void EditorContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            var viewModel = (DocumentViewModel) DataContext;
+            var spellCheckPlugin = viewModel.View.connectedDocumentViewPlugins.OfType<SpellCheckPlugin.SpellCheckPlugin>().FirstOrDefault();
+            if (spellCheckPlugin == null) return;
+
+            var spellCheckProvider = spellCheckPlugin.GetProviderForView(viewModel.View) as SpellCheckProvider;
+            if (spellCheckProvider == null) return;
+
+            // Bail out if the mouse isn't over the markdownEditor
+            var editorPosition = Editor.GetPositionFromPoint(Mouse.GetPosition(Editor));
+            if (!editorPosition.HasValue) return;
+
+            var offset = Editor.Document.GetOffset(editorPosition.Value.Line, editorPosition.Value.Column);
+            var errorSegments = spellCheckProvider.GetSpellCheckErrors();
+            var misspelledSegment = errorSegments.FirstOrDefault(segment => segment.StartOffset <= offset && segment.EndOffset >= offset);
+
+            if (misspelledSegment != null)
+            {
+                EditorContextMenu.Tag = misspelledSegment;
+                EditorContextMenu.ItemsSource = spellCheckProvider.GetSpellcheckSuggestions(editor.Document.GetText(misspelledSegment));
+            }
+            else
+            {
+                e.Handled = true;
+            }
+        }
+
+        void SpellcheckerWordClick(object sender, RoutedEventArgs e)
+        {
+            var word = (string)(sender as FrameworkElement).DataContext;
+            var segment = (TextSegment)EditorContextMenu.Tag;
+            Editor.Document.Replace(segment, word);
+         }
     }
 }

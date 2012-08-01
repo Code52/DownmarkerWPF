@@ -31,7 +31,7 @@ namespace MarkPad.Document
         private readonly ISiteContextGenerator siteContextGenerator;
         private readonly Func<string, IMetaWeblogService> getMetaWeblog;
         private readonly ISettingsProvider settingsProvider;
-		private readonly IDocumentParser documentParser;
+        private readonly IDocumentParser documentParser;
 
         private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
         private readonly DispatcherTimer timer;
