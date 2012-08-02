@@ -10,6 +10,7 @@
     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" xmlns:MarkPad="clr-namespace:MarkPad"
     xmlns:Behaviors="clr-namespace:MarkPad.Behaviors" xmlns:UI="clr-namespace:MarkPad.Settings.UI"
     xmlns:s="clr-namespace:MarkPad.Infrastructure" x:Class="MarkPad.ShellView"
+      xmlns:Converters="clr-namespace:MarkPad.Converters"
     mc:Ignorable="d" 
     MouseLeftButtonDown="DragMoveWindow"
 	MouseMove="MouseMoveWindow"
@@ -37,6 +38,7 @@
             <sys:String x:Key="WindowCommandsMaximiseToolTip">Maximise</sys:String>
             <sys:String x:Key="WindowCommandsRestoreToolTip">Restore</sys:String>
             <sys:String x:Key="WindowCommandsCloseToolTip">Close</sys:String>
+            <Converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
         </ResourceDictionary>
     </Window.Resources>
 
@@ -111,6 +113,7 @@
         <Grid.RowDefinitions>
     		<RowDefinition Height="Auto" MinHeight="58" />
     		<RowDefinition />
+            <RowDefinition Height="20" />
         </Grid.RowDefinitions>
         <VisualStateManager.VisualStateGroups>
     		<VisualStateGroup x:Name="VisualStateGroup">
@@ -439,7 +442,7 @@
     		Grid.Row="1" />
 
         <Rectangle x:Name="settingsShadow" Fill="#3F000000" Stroke="Black" StrokeThickness="0" Visibility="Collapsed" Grid.RowSpan="2"/>
-        <UI:SettingsView x:Name="settingsControl" Visibility="Collapsed"  DataContext="{Binding Settings}" Margin="100,0,0,0" RenderTransformOrigin="0.5,0.5" Grid.RowSpan="2">
+        <UI:SettingsView x:Name="settingsControl" Visibility="Collapsed"  DataContext="{Binding Settings}" Margin="100,0,0,0" RenderTransformOrigin="0.5,0.5" Grid.RowSpan="3">
         	<UI:SettingsView.RenderTransform>
         		<TransformGroup>
         			<ScaleTransform/>
@@ -449,5 +452,20 @@
         		</TransformGroup>
         	</UI:SettingsView.RenderTransform>
         </UI:SettingsView>
+
+        <Grid Background="#FFbe0606" Grid.Row="2">
+            <TextBlock Margin="20,0,0,0" VerticalAlignment="Center" Foreground="White"  Visibility="{Binding MDI.ActiveItem, Converter={StaticResource NullToVisibilityConverter}}">
+                <Run Text="{Binding MDI.ActiveItem.WordCount, Mode=OneWay}" /> WORDS
+            </TextBlock>
+
+            <Slider Maximum="{Binding MDI.ActiveItem.MaxZoom}"
+                Minimum="{Binding MDI.ActiveItem.MinZoom}"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Width="100"
+                Margin="0,0,20,0"
+                Visibility="{Binding MDI.ActiveItem, Converter={StaticResource NullToVisibilityConverter}}"
+                Value="{Binding MDI.ActiveItem.ZoomLevel}"/>
+        </Grid>
     </Grid>
 </Window>

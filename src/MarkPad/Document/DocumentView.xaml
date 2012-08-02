@@ -55,26 +55,6 @@
                                  IndentType="{Binding IndentType}"
                                  EditorFontSize="{Binding FontSize}"
                                  Document="{Binding Document}"/>
-
-        <Slider Maximum="{Binding MaxZoom}"
-                Minimum="{Binding MinZoom}"
-                VerticalAlignment="Bottom"
-                HorizontalAlignment="Right"
-                Width="100"
-                Margin="0,0,40,20"
-                Grid.Column="1" 
-                Value="{Binding ZoomLevel}"/>
-
-        <Label VerticalAlignment="Bottom"
-               Margin="40,40,10,15"
-               Grid.Column="1"
-               HorizontalAlignment="Left"
-               IsHitTestVisible="False">
-            <TextBlock>
-                <TextBlock Text="wordcount: " />
-                <TextBlock Text="{Binding WordCount}"/>
-            </TextBlock>
-        </Label>
         
         <Border Grid.Column="2" 
                 SizeChanged="PlaceHolderSizeChanged"
