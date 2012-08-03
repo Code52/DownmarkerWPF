@@ -10,6 +10,11 @@
              Loaded="EditorLoaded"
              x:Name="editor">
     <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
         <Style TargetType="{x:Type avalonedit:TextArea}">
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="SelectionBrush">
@@ -50,6 +55,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        </ResourceDictionary>
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Command="Commands:FormattingCommands.ToggleBold" Key="B" Modifiers="Control" />
@@ -70,23 +76,6 @@
             </Border>
         </controls:FloatingToolBar>
         
-        <controls:FloatingToolBar x:Name="spellcheckToolBar" FadeAway="False" PlacementTarget="{Binding ElementName=Editor}" VerticalOffset="-60" HorizontalOffset="-30">
-            <Border Background="#f0f0f0" Padding="3,2,3,2" BorderThickness="1" CornerRadius="1" BorderBrush="#999999">
-                <ItemsControl ItemsSource="{Binding}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Vertical" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button Content="{Binding}" Click="SpellcheckerWordClick" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </Border>
-        </controls:FloatingToolBar>
-        
         <avalonedit:TextEditor
             x:Name="Editor"
             WordWrap="True"
@@ -99,10 +88,20 @@
             RenderOptions.BitmapScalingMode="NearestNeighbor"
             VerticalAlignment="Stretch"
             HorizontalAlignment="Stretch" Padding="0,0,10,0"
-            PreviewKeyDown="EditorPreviewKeyDown">
+            PreviewKeyDown="EditorPreviewKeyDown"
+            ContextMenuOpening="EditorContextMenuOpening">
             <avalonedit:TextEditor.Effect>
                 <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.25" Direction="270" />
             </avalonedit:TextEditor.Effect>
+            <avalonedit:TextEditor.ContextMenu>
+                <ContextMenu x:Name="EditorContextMenu">
+                    <ContextMenu.ItemContainerStyle>
+                        <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
+                            <EventSetter Event="Click" Handler="SpellcheckerWordClick" />
+                        </Style>
+                    </ContextMenu.ItemContainerStyle>
+                </ContextMenu>
+            </avalonedit:TextEditor.ContextMenu>
         </avalonedit:TextEditor>
     </Grid>
 </UserControl>
