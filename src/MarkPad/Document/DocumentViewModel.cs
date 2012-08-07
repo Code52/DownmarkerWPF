@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -14,8 +12,6 @@ using MarkPad.DocumentSources;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Events;
 using MarkPad.Infrastructure.DialogService;
-using MarkPad.Infrastructure.Plugins;
-using MarkPad.Plugins;
 using MarkPad.PreviewControl;
 using MarkPad.Settings;
 using MarkPad.Settings.Models;
@@ -36,13 +32,9 @@ namespace MarkPad.Document
         private readonly Func<string, IMetaWeblogService> getMetaWeblog;
         private readonly ISettingsProvider settingsProvider;
         private readonly IDocumentParser documentParser;
-        private readonly IPluginManager pluginManager;
 
         private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
         private readonly DispatcherTimer timer;
-
-        [ImportMany]
-        public IEnumerable<IDocumentViewPlugin> documentViewPlugins;
 
         readonly Regex wordCountRegex = new Regex(@"[\S]+", RegexOptions.Compiled);
 
@@ -52,8 +44,7 @@ namespace MarkPad.Document
             ISiteContextGenerator siteContextGenerator,
             Func<string, IMetaWeblogService> getMetaWeblog,
             ISettingsProvider settingsProvider,
-			IDocumentParser documentParser,
-            IPluginManager pluginManager)
+			IDocumentParser documentParser)
         {
             this.dialogService = dialogService;
             this.windowManager = windowManager;
@@ -61,9 +52,6 @@ namespace MarkPad.Document
             this.getMetaWeblog = getMetaWeblog;
             this.settingsProvider = settingsProvider;
             this.documentParser = documentParser;
-            this.pluginManager = pluginManager;
-
-            this.pluginManager.Container.ComposeParts(this);
 
             FontSize = GetFontSize();
             IndentType = settingsProvider.GetSettings<MarkPadSettings>().IndentType;

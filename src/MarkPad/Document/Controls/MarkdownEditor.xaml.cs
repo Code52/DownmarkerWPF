@@ -323,10 +323,9 @@ namespace MarkPad.Document.Controls
         void EditorContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
             var viewModel = (DocumentViewModel) DataContext;
-            var spellCheckPlugin = viewModel.documentViewPlugins.OfType<SpellCheckPlugin.SpellCheckPlugin>().FirstOrDefault();
+            var spellCheckPlugin = viewModel.View.connectedDocumentViewPlugins.OfType<SpellCheckPlugin.SpellCheckPlugin>().FirstOrDefault();
             if (spellCheckPlugin == null) return;
 
-            // also checks if the spellcheck plugin is disabled
             var spellCheckProvider = spellCheckPlugin.GetProviderForView(viewModel.View) as SpellCheckProvider;
             if (spellCheckProvider == null) return;
 
