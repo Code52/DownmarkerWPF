@@ -9,6 +9,6 @@ namespace MarkPad.Contracts
 		void ClearLanguages();
 		void SetLanguage(SpellingLanguages language);
 		bool Spell(string word);
-        List<string> Suggestions(string word);
+        IEnumerable<string> Suggestions(string word);
 	}
 }

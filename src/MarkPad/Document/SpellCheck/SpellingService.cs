@@ -28,7 +28,7 @@ namespace MarkPad.Document.SpellCheck
             return speller == null || speller.Spell(word);
         }
 
-        public List<string> Suggestions(string word)
+        public IEnumerable<string> Suggestions(string word)
         {
             return speller.Suggest(word);
         }
