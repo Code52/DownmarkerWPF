@@ -4,75 +4,354 @@
         <name>Awesomium.Windows.Controls</name>
     </assembly>
     <members>
-        <member name="T:Awesomium.Windows.Controls.JSDialog">
+        <member name="M:Awesomium.Windows.Controls.AddressBox.OnKeyDown(System.Windows.Input.KeyEventArgs)">
+            <inheritdoc />
+        </member>
+        <member name="M:Awesomium.Windows.Controls.AddressBox.OnTextChanged(System.Windows.Controls.TextChangedEventArgs)">
+            <inheritdoc />
+        </member>
+        <member name="M:Awesomium.Windows.Controls.AddressBox.OnGotFocus(System.Windows.RoutedEventArgs)">
+            <inheritdoc />
+        </member>
+        <member name="M:Awesomium.Windows.Controls.AddressBox.OnLostFocus(System.Windows.RoutedEventArgs)">
+            <inheritdoc />
+        </member>
+        <member name="M:Awesomium.Windows.Controls.AddressBox.ClearAutoCompleteList">
             <summary>
-            Represents a WPF dialog shown in response to a JS dialog request.
+            Clears the contents of the auto-complete source.
             </summary>
         </member>
-        <member name="F:Awesomium.Windows.Controls.JSDialog.HasOKButtonProperty">
+        <member name="M:Awesomium.Windows.Controls.AddressBox.RefreshAutoComplete">
             <summary>
-            Identifies the <see cref="P:Awesomium.Windows.Controls.JSDialog.HasOKButton"/> dependency property.
+            Updates the contents of the auto-complete source (currently the <see cref="P:Awesomium.Windows.Controls.AddressBox.HistorySource"/>).
             </summary>
         </member>
-        <member name="F:Awesomium.Windows.Controls.JSDialog.HasCancelButtonProperty">
+        <member name="P:Awesomium.Windows.Controls.AddressBox.WebControl">
             <summary>
-            Identifies the <see cref="P:Awesomium.Windows.Controls.JSDialog.HasCancelButton"/> dependency property.
+            Gets or sets the <see cref="T:Awesomium.Windows.Controls.WebControl"/> currently
+            assigned to this <see cref="T:Awesomium.Windows.Controls.AddressBox"/>.
+            </summary>
+            <remarks>
+            When a <see cref="T:Awesomium.Windows.Controls.WebControl"/> has been assigned
+            to this property, the value of <see cref="P:Awesomium.Windows.Controls.AddressBox.URL"/> is bound to the
+            <see cref="P:Awesomium.Windows.Controls.WebControl.Source"/> property:
+            <list type="bullet">
+            <item>
+            <description>
+            Manually setting the <see cref="P:Awesomium.Windows.Controls.AddressBox.URL"/> property, will transfer
+            a navigation request to the to the assigned <see cref="T:Awesomium.Windows.Controls.WebControl"/>.
+            </description>
+            </item>
+            <item>
+            <description>
+            The value of <see cref="P:Awesomium.Windows.Controls.AddressBox.URL"/> is automatically updated based on the URL
+            currently loaded to the assigned <see cref="T:Awesomium.Windows.Controls.WebControl"/>.
+            </description>
+            </item>
+            </list>
+            </remarks>
+            <seealso cref="P:Awesomium.Windows.Controls.AddressBox.URL"/>
+        </member>
+        <member name="P:Awesomium.Windows.Controls.AddressBox.URL">
+            <summary>
+            Gets or sets the URL currently displayed by the <see cref="T:Awesomium.Windows.Controls.AddressBox"/>.
+            </summary>
+            <remarks>
+            When a <see cref="T:Awesomium.Windows.Controls.WebControl"/> has been assigned
+            to the <see cref="P:Awesomium.Windows.Controls.AddressBox.WebControl"/> property,
+            the value of this property is bound to the <see cref="P:Awesomium.Windows.Controls.WebControl.Source"/>
+            property:
+            <list type="bullet">
+            <item>
+            <description>
+            Manually setting this property will transfer a navigation request to the
+            to the assigned <see cref="T:Awesomium.Windows.Controls.WebControl"/>.
+            </description>
+            </item>
+            <item>
+            <description>
+            The value of this property is automatically updated based on the URL
+            currently loaded to the assigned <see cref="T:Awesomium.Windows.Controls.WebControl"/>.
+            </description>
+            </item>
+            </list>
+            </remarks>
+            <seealso cref="P:Awesomium.Windows.Controls.AddressBox.WebControl"/>
+        </member>
+        <member name="P:Awesomium.Windows.Controls.AddressBox.IsDropDownOpen">
+            <summary>
+            Gets or sets if the suggestions drop-down list is open.
             </summary>
         </member>
-        <member name="F:Awesomium.Windows.Controls.JSDialog.HasPromptFieldProperty">
+        <member name="T:Awesomium.Windows.Controls.WebControlDialogLayer">
             <summary>
-            Identifies the <see cref="P:Awesomium.Windows.Controls.JSDialog.HasPromptField"/> dependency property.
+            Represents a dialog layer displayed over a <see cref="T:Awesomium.Windows.Controls.WebControl"/>.
+            </summary>
+            <remarks>
+            Dialog layers are reusable. They should be created only once
+            in the lifetime of the <see cref="T:Awesomium.Windows.Controls.WebControl"/> they will be used with.
+            You should later use the <see cref="M:Awesomium.Windows.Controls.WebControlDialogLayer.Open``1(``0)"/> and <see cref="M:Awesomium.Windows.Controls.WebControlDialogLayer.Close"/>
+            methods to show or hide the layer when needed.
+            </remarks>
+        </member>
+        <member name="T:Awesomium.Windows.Controls.WebControlLayer">
+            <summary>
+            Base class of all control layers associated to a <see cref="T:Awesomium.Windows.Controls.WebControl"/>.
+            </summary>
+            <remarks>
+            You cannot directly derive from this class. You should instead subclass
+            a pre-defined derived class such as <see cref="T:Awesomium.Windows.Controls.WebControlDialogLayer"/>.
+            </remarks>
+        </member>
+        <member name="M:Awesomium.Windows.Controls.WebControlLayer.#ctor(Awesomium.Windows.Controls.WebControl)">
+            <summary>
+            Creates an instance of <see cref="T:Awesomium.Windows.Controls.WebControlDialogLayer"/>.
+            </summary>
+            <param name="parent">
+            Indicated the parent <see cref="T:Awesomium.Windows.Controls.WebControl"/> the layer belongs too.
+            </param>
+        </member>
+        <member name="M:Awesomium.Windows.Controls.WebControlLayer.HitTestCore(System.Windows.Media.GeometryHitTestParameters)">
+            <inheritdoc />
+        </member>
+        <member name="M:Awesomium.Windows.Controls.WebControlLayer.HitTestCore(System.Windows.Media.PointHitTestParameters)">
+            <inheritdoc />
+        </member>
+        <member name="M:Awesomium.Windows.Controls.WebControlLayer.OnContentChanged(System.Object,System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="P:Awesomium.Windows.Controls.WebControlLayer.ParentControl">
+            <summary>
+            Gets the parent <see cref="T:Awesomium.Windows.Controls.WebControl"/> the layer belongs to.
             </summary>
         </member>
-        <member name="F:Awesomium.Windows.Controls.JSDialog.HasMessageProperty">
+        <member name="P:Awesomium.Windows.Controls.WebControlLayer.IsContentVisual">
             <summary>
-            Identifies the <see cref="P:Awesomium.Windows.Controls.JSDialog.HasMessage"/> dependency property.
+            Gets or sets if the specified <see cref="P:System.Windows.Controls.ContentControl.Content"/> should be treated as visual content,
+            or as a data provider only. The default is <c>false</c> which means that the
+            content will be treated as a data provider, visualized using the <see cref="P:System.Windows.Controls.ContentControl.ContentTemplate"/>.
+            </summary>
+            <remarks>
+            Regularly, the use of DataTemplates is preferred when visualizing data, compared to direct
+            visual Content. DataTemplates allow flexible use of Triggers etc.. In such scenarios, 
+            the WebControl or the layers themselves are used as Content (so that the DataTemplate
+            can access them as data providers). Without this property, WPF would attempt to remove the
+            visual Content from the visual tree and add it as a child of this ContentControl.
+            </remarks>
+        </member>
+        <member name="M:Awesomium.Windows.Controls.WebControlDialogLayer.#ctor(Awesomium.Windows.Controls.WebControl)">
+            <summary>
+            Creates an instance of <see cref="T:Awesomium.Windows.Controls.WebControlDialogLayer"/>.
+            </summary>
+            <param name="parent">
+            Indicated the parent <see cref="T:Awesomium.Windows.Controls.WebControl"/> the layer belongs too
+            (see Remarks section).
+            </param>
+            <remarks>
+            Dialog layers are reusable. They should be created only once
+            in the lifetime of the <see cref="T:Awesomium.Windows.Controls.WebControl"/> they will be used with.
+            You should later use the <see cref="M:Awesomium.Windows.Controls.WebControlDialogLayer.Open``1(``0)"/> and <see cref="M:Awesomium.Windows.Controls.WebControlDialogLayer.Close"/>
+            methods to show or hide the layer when needed.
+            </remarks>
+        </member>
+        <member name="M:Awesomium.Windows.Controls.WebControlDialogLayer.OnApplyTemplate">
+            <inheritdoc />
+        </member>
+        <member name="M:Awesomium.Windows.Controls.WebControlDialogLayer.Open``1(``0)">
+            <summary>
+            Shows the dialog layer.
+            </summary>
+            <param name="data">
+            The <see cref="T:System.ComponentModel.CancelEventArgs"/> of the event that triggers
+            the activation of the dialog. All dialog events in <see cref="T:Awesomium.Core.IWebView"/>,
+            inherit <see cref="T:System.ComponentModel.CancelEventArgs"/>.
+            </param>
+        </member>
+        <member name="M:Awesomium.Windows.Controls.WebControlDialogLayer.Close">
+            <summary>
+            Hides the dialog layer.
+            </summary>
+            <remarks>
+            This method should be called by a derived control,
+            usually in response to <see cref="M:Awesomium.Windows.Controls.WebControlDialogLayer.OnResponse(System.Object,System.Windows.Input.ExecutedRoutedEventArgs)"/>.
+            After hiding, the layer will be automatically removed
+            from the <see cref="T:Awesomium.Windows.Controls.WebControl"/>.
+            </remarks>
+        </member>
+        <member name="F:Awesomium.Windows.Controls.WebControlDialogLayer.MessageProperty">
+            <summary>
+            Identifies the <see cref="P:Awesomium.Windows.Controls.WebControlDialogLayer.Message"/> dependency property.
             </summary>
         </member>
-        <member name="F:Awesomium.Windows.Controls.JSDialog.MessageProperty">
+        <member name="F:Awesomium.Windows.Controls.WebControlDialogLayer.ImageSourceProperty">
             <summary>
-            Identifies the <see cref="P:Awesomium.Windows.Controls.JSDialog.Message"/> dependency property.
+            Identifies the <see cref="P:Awesomium.Windows.Controls.WebControlDialogLayer.ImageSource"/> dependency property.
             </summary>
         </member>
-        <member name="F:Awesomium.Windows.Controls.JSDialog.PromptProperty">
+        <member name="F:Awesomium.Windows.Controls.WebControlDialogLayer.HasOKButtonProperty">
             <summary>
-            Identifies the <see cref="P:Awesomium.Windows.Controls.JSDialog.Prompt"/> dependency property.
+            Identifies the <see cref="P:Awesomium.Windows.Controls.WebControlDialogLayer.HasOKButton"/> dependency property.
             </summary>
         </member>
-        <member name="P:Awesomium.Windows.Controls.JSDialog.Respond">
+        <member name="F:Awesomium.Windows.Controls.WebControlDialogLayer.HasCancelButtonProperty">
+            <summary>
+            Identifies the <see cref="P:Awesomium.Windows.Controls.WebControlDialogLayer.HasCancelButton"/> dependency property.
+            </summary>
+        </member>
+        <member name="F:Awesomium.Windows.Controls.WebControlDialogLayer.IsActiveProperty">
+            <summary>
+            Identifies the <see cref="P:Awesomium.Windows.Controls.WebControlDialogLayer.IsActive"/> dependency property.
+            </summary>
+        </member>
+        <member name="M:Awesomium.Windows.Controls.WebControlDialogLayer.OnResponse(System.Object,System.Windows.Input.ExecutedRoutedEventArgs)">
+            <summary>
+            Executed when either the OK or the Cancel button is clicked.
+            </summary>
+            <param name="sender">
+            The command target (dialog button) that is invoking the handler.
+            </param>
+            <param name="e">
+            Event data.
+            <p/>
+            <note>
+            The <see cref="P:System.Windows.Input.ExecutedRoutedEventArgs.Parameter"/> is a boolean value
+            indicating if the <b>OK</b> or the <b>Cancel</b> button has been clicked.
+            </note>
+            </param>
+        </member>
+        <member name="M:Awesomium.Windows.Controls.WebControlDialogLayer.OnCanRespond(System.Object,System.Windows.Input.CanExecuteRoutedEventArgs)">
+            <summary>
+            Occurs when the <see cref="P:Awesomium.Windows.Controls.WebControlDialogLayer.Respond"/> command initiates a check to determine
+            whether the command can be executed on a dialog button.
+            </summary>
+            <param name="sender">
+            The command target (dialog button) that is invoking the handler.
+            </param>
+            <param name="e">
+            Event data.
+            </param>
+            <remarks>
+            The default setting for the <see cref="P:System.Windows.Input.CanExecuteRoutedEventArgs.CanExecute"/> property
+            of the <paramref name="e"/> argument, is <c>true</c> for the <b>Cancel</b> button
+            and <c>false</c> for the <b>OK</b> button.
+            </remarks>
+        </member>
+        <member name="P:Awesomium.Windows.Controls.WebControlDialogLayer.Data">
+            <summary>
+            Gets the dialog's data provided to the <see cref="M:Awesomium.Windows.Controls.WebControlDialogLayer.Open``1(``0)"/>
+            method, or <c>null</c> (<c>Nothing</c> in Visual Basic)
+            if the dialog is not active.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Windows.Controls.WebControlDialogLayer.Respond">
             <summary>
             Routed command assigned to the dialog's buttons.
-            A <see cref="!:ButtonBase.CommandParameter"/> must be set to either
-            <c>true</c> or <c>false</c> to indicate OK or Cancel respectively.
             </summary>
+            <remarks>
+            <see cref="P:System.Windows.Controls.Primitives.ButtonBase.CommandParameter"/> is set to either
+            <c>true</c> or <c>false</c> to indicate OK or Cancel respectively.
+            </remarks>
         </member>
-        <member name="P:Awesomium.Windows.Controls.JSDialog.HasOKButton">
+        <member name="P:Awesomium.Windows.Controls.WebControlDialogLayer.Message">
+            <summary>
+            Gets or sets the main message displayed by the dialog.
+            </summary>
+            <remarks>
+            All dialogs launched by a <see cref="T:Awesomium.Windows.Controls.WebControl"/>,
+            should contain a main message for the user.
+            </remarks>
+        </member>
+        <member name="P:Awesomium.Windows.Controls.WebControlDialogLayer.ImageSource">
+            <summary>
+            Gets or sets the image displayed in the dialog.
+            </summary>
+            <remarks>
+            The fixed width of the column hosting the Image, 
+            can be defined in the <see cref="P:Awesomium.Windows.Controls.WebControlDialogLayer.ImageColumnWidth"/>
+            property.
+            </remarks>
+        </member>
+        <member name="P:Awesomium.Windows.Controls.WebControlDialogLayer.ImageColumnWidth">
+            <summary>
+            Gets the fixed width of the dialogs left column,
+            which hosts the dialogs image. The default is 80px.
+            </summary>
+            <remarks>
+            This property can be very useful for adjusting
+            the width of your columns. If you use a grid in
+            your custom content, bind the width of your left 
+            <see cref="T:System.Windows.Controls.ColumnDefinition"/> to this property.
+            </remarks>
+        </member>
+        <member name="P:Awesomium.Windows.Controls.WebControlDialogLayer.HasOKButton">
             <summary>
             Gets if an OK button is displayed in the dialog.
             </summary>
         </member>
-        <member name="P:Awesomium.Windows.Controls.JSDialog.HasCancelButton">
+        <member name="P:Awesomium.Windows.Controls.WebControlDialogLayer.HasCancelButton">
             <summary>
             Gets if a Cancel button is displayed in the dialog.
             </summary>
         </member>
-        <member name="P:Awesomium.Windows.Controls.JSDialog.HasPromptField">
+        <member name="P:Awesomium.Windows.Controls.WebControlDialogLayer.IsActive">
+            <summary>
+            Gets if the layer is currently active and visible.
+            </summary>
+        </member>
+        <member name="T:Awesomium.Windows.Controls.WebControlJSDialogLayer">
+            <summary>
+            Represents a dialog layer shown in response to a JavaScript dialog request.
+            </summary>
+            <remarks>
+            Dialog layers are reusable. They should be created only once
+            in the lifetime of the <see cref="T:Awesomium.Windows.Controls.WebControl"/> they will be used with.
+            You should later use the <see cref="M:Awesomium.Windows.Controls.WebControlJSDialogLayer.Open``1(``0)"/> and <see cref="M:Awesomium.Windows.Controls.WebControlDialogLayer.Close"/>
+            methods to show or hide the layer when needed.
+            </remarks>
+        </member>
+        <member name="M:Awesomium.Windows.Controls.WebControlJSDialogLayer.Open``1(``0)">
+            <inheritdoc/>
+            <param name="data">
+            The <see cref="T:Awesomium.Core.JavascriptDialogEventArgs"/> of the event that triggers
+            the activation of the dialog.
+            </param>
+        </member>
+        <member name="F:Awesomium.Windows.Controls.WebControlJSDialogLayer.HasPromptFieldProperty">
+            <summary>
+            Identifies the <see cref="P:Awesomium.Windows.Controls.WebControlJSDialogLayer.HasPromptField"/> dependency property.
+            </summary>
+        </member>
+        <member name="F:Awesomium.Windows.Controls.WebControlJSDialogLayer.HasMessageProperty">
+            <summary>
+            Identifies the <see cref="P:Awesomium.Windows.Controls.WebControlJSDialogLayer.HasMessage"/> dependency property.
+            </summary>
+        </member>
+        <member name="F:Awesomium.Windows.Controls.WebControlJSDialogLayer.FrameURLProperty">
+            <summary>
+            Identifies the <see cref="P:Awesomium.Windows.Controls.WebControlJSDialogLayer.FrameURL"/> dependency property.
+            </summary>
+        </member>
+        <member name="F:Awesomium.Windows.Controls.WebControlJSDialogLayer.PromptProperty">
+            <summary>
+            Identifies the <see cref="P:Awesomium.Windows.Controls.WebControlJSDialogLayer.Prompt"/> dependency property.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Windows.Controls.WebControlJSDialogLayer.HasPromptField">
             <summary>
             Gets if a prompt field is displayed in the dialog.
             </summary>
         </member>
-        <member name="P:Awesomium.Windows.Controls.JSDialog.HasMessage">
+        <member name="P:Awesomium.Windows.Controls.WebControlJSDialogLayer.HasMessage">
             <summary>
             Gets if a message is displayed in the dialog.
             </summary>
         </member>
-        <member name="P:Awesomium.Windows.Controls.JSDialog.Message">
+        <member name="P:Awesomium.Windows.Controls.WebControlJSDialogLayer.FrameURL">
             <summary>
-            The message, if any, displayed in the dialog.
+            Gets the address of the page that launches the dialog.
             </summary>
-            <seealso cref="P:Awesomium.Windows.Controls.JSDialog.HasMessage"/>
         </member>
-        <member name="P:Awesomium.Windows.Controls.JSDialog.Prompt">
+        <member name="P:Awesomium.Windows.Controls.WebControlJSDialogLayer.Prompt">
             <summary>
             Gets the default prompt and sets the text the user entered.
             </summary>
@@ -163,6 +442,11 @@
               Looks up a localized string similar to Stop Find.
             </summary>
         </member>
+        <member name="T:Awesomium.Windows.Controls.Utilities">
+            <summary>
+            Utility class providing helper methods that can be used by WPF applications.
+            </summary>
+        </member>
         <member name="M:Awesomium.Windows.Controls.Utilities.GetCursor(Awesomium.Core.CursorType)">
             <summary>
             Gets the WPF <see cref="T:System.Windows.Input.Cursor"/> equivalent of an Awesomium <see cref="T:Awesomium.Core.CursorType"/>.
@@ -175,24 +459,153 @@
             is specified.
             </returns>
         </member>
-        <member name="M:Awesomium.Windows.Controls.Utilities.CopyToBitmap(Awesomium.Core.RenderBuffer,System.Windows.Media.Imaging.WriteableBitmap)">
+        <member name="M:Awesomium.Windows.Controls.Utilities.GetKeyboardEvent(System.Windows.Input.KeyEventArgs,Awesomium.Core.WebKeyType)">
+            <summary>
+            Gets an Awesomium <see cref="T:Awesomium.Core.WebKeyboardEvent"/> equivalent of a WPF key-down or key-up event.
+            </summary>
+            <param name="e">
+            The WPF key-down or key-up event arguments.
+            </param>
+            <param name="eventType">
+            Indicates if this is a key-down or key-up event.
+            </param>
+            <returns>
+            An instance of a <see cref="T:Awesomium.Core.WebKeyboardEvent"/> representing the Awesomium equivalent of a
+            WPF key-down or key-up event.
+            </returns>
+        </member>
+        <member name="M:Awesomium.Windows.Controls.Utilities.GetKeyboardEvent(System.Windows.Input.TextCompositionEventArgs)">
+            <summary>
+            Gets an Awesomium <see cref="T:Awesomium.Core.WebKeyboardEvent"/> equivalent of a WPF key-press (text-input) event.
+            </summary>
+            <param name="e">
+            The WPF key-press (text-input) event arguments. Only the first character of <see cref="P:System.Windows.Input.TextCompositionEventArgs.Text"/>
+            or <see cref="P:System.Windows.Input.TextCompositionEventArgs.SystemText"/> is taken into consideration.
+            </param>
+            <returns>
+            An instance of a <see cref="T:Awesomium.Core.WebKeyboardEvent"/> representing the Awesomium equivalent of a
+            WPF key-press (text-input) event.
+            </returns>
+        </member>
+        <member name="M:Awesomium.Windows.Controls.Utilities.CopyToBitmap(Awesomium.Core.RenderBuffer,System.Windows.Media.Imaging.WriteableBitmap@,System.Nullable{System.Windows.Media.Matrix})">
+            <summary>
+            Copy the buffer to a <see cref="T:System.Windows.Media.Imaging.WriteableBitmap"/> that can be rendered in WPF.
+            </summary>
+            <param name="buffer">
+            A <see cref="T:Awesomium.Core.RenderBuffer"/> obtained through <see cref="M:Awesomium.Windows.Controls.WebControl.Render"/>.
+            </param>
+            <param name="bitmap">
+            Reference to a <see cref="T:System.Windows.Media.Imaging.WriteableBitmap"/> to write to. This should be reused.
+            If a null reference is specified, a new bitmap will be created.
+            </param>
+            <param name="deviceTransform">
+            A tranformation <see cref="T:System.Windows.Media.Matrix"/> used to calculate DPI settings. This can be a null
+            reference. In this case, DPI defaults to 96x96.
+            </param>
+            <remarks>
+            The <paramref name="bitmap"/> must have the same dimensions to the <see cref="T:Awesomium.Core.RenderBuffer"/>.
+            </remarks>
+            <exception cref="T:System.AccessViolationException">
+            Attempted to write to a <see cref="T:System.Windows.Media.Imaging.WriteableBitmap"/> with different dimensions 
+            than the buffer.
+            </exception>
+        </member>
+        <member name="M:Awesomium.Windows.Controls.Utilities.CopyToBitmap(Awesomium.Core.RenderBuffer,System.Windows.Media.Imaging.WriteableBitmap@,Awesomium.Core.AweRect,System.Nullable{System.Windows.Media.Matrix})">
             <summary>
             Copy this buffer to a <see cref="T:System.Windows.Media.Imaging.WriteableBitmap"/> that can be rendered in WPF.
             </summary>
             <param name="buffer">
             A <see cref="T:Awesomium.Core.RenderBuffer"/> obtained through <see cref="M:Awesomium.Windows.Controls.WebControl.Render"/>.
             </param>
-            <param name="destination">
-            The <see cref="T:System.Windows.Media.Imaging.WriteableBitmap"/> to write to. Must have the same dimensions.
+            <param name="bitmap">
+            Reference to a <see cref="T:System.Windows.Media.Imaging.WriteableBitmap"/> to write to. This should be reused.
+            If a null reference is specified, a new bitmap will be created.
+            </param>
+            <param name="rect">
+            An <see cref="T:Awesomium.Core.AweRect"/> representing the rectangle in the source <paramref name="buffer"/>
+            to copy.
+            </param>
+            <param name="deviceTransform">
+            A tranformation <see cref="T:System.Windows.Media.Matrix"/> used to calculate DPI settings. This can be a null
+            reference. In this case, DPI defaults to 96x96.
             </param>
             <remarks>
-            The <paramref name="destination"/> <see cref="T:System.Windows.Media.Imaging.WriteableBitmap"/>
-            must have the same dimensions to this <see cref="T:Awesomium.Core.RenderBuffer"/>.
+            The <paramref name="bitmap"/> must have the same dimensions to this <see cref="T:Awesomium.Core.RenderBuffer"/>.
             </remarks>
             <exception cref="T:System.AccessViolationException">
             Attempted to write to a <see cref="T:System.Windows.Media.Imaging.WriteableBitmap"/> with different dimensions 
             than this buffer.
             </exception>
+        </member>
+        <member name="M:Awesomium.Windows.Controls.Utilities.CopyToBitmap(Awesomium.Core.RenderBuffer,System.Windows.Media.Imaging.WriteableBitmap@,System.Windows.Int32Rect,System.Nullable{System.Windows.Media.Matrix},Awesomium.Core.RenderOperations)">
+            <summary>
+            Copy this buffer to a <see cref="T:System.Windows.Media.Imaging.WriteableBitmap"/> that can be rendered in WPF.
+            </summary>
+            <param name="buffer">
+            A <see cref="T:Awesomium.Core.RenderBuffer"/> obtained through <see cref="M:Awesomium.Windows.Controls.WebControl.Render"/>.
+            </param>
+            <param name="bitmap">
+            Reference to a <see cref="T:System.Windows.Media.Imaging.WriteableBitmap"/> to write to. This should be reused.
+            If a null reference is specified, a new bitmap will be created.
+            </param>
+            <param name="rect">
+            An <see cref="T:System.Windows.Int32Rect"/> representing the rectangle in the source <paramref name="buffer"/>
+            to copy.
+            </param>
+            <param name="deviceTransform">
+            A tranformation <see cref="T:System.Windows.Media.Matrix"/> used to calculate DPI settings. This can be a null
+            reference. In this case, DPI defaults to 96x96.
+            </param>
+            <param name="rop">
+            Defines the operation that will be used for creating the new bitmap.
+            For details, see the <see cref="T:Awesomium.Core.RenderOperations"/> enumeration.
+            </param>
+            <remarks>
+            The <paramref name="bitmap"/> must have the same dimensions to this <see cref="T:Awesomium.Core.RenderBuffer"/>.
+            </remarks>
+            <exception cref="T:System.AccessViolationException">
+            Attempted to write to a <see cref="T:System.Windows.Media.Imaging.WriteableBitmap"/> with different dimensions 
+            than this buffer.
+            </exception>
+        </member>
+        <member name="M:Awesomium.Windows.Controls.Utilities.GetInt32Rect(Awesomium.Core.AweRect)">
+            <summary>
+            Gets an <see cref="T:System.Windows.Int32Rect"/> equivalent of an Awesomium <see cref="T:Awesomium.Core.AweRect"/>.
+            </summary>
+            <param name="aweRect">
+            An <see cref="T:Awesomium.Core.AweRect"/> value representing an Awesomium rectangle.
+            </param>
+            <returns>
+            A <see cref="T:System.Windows.Int32Rect"/> value equivalent of an Awesomium <see cref="T:Awesomium.Core.AweRect"/>.
+            </returns>
+        </member>
+        <member name="M:Awesomium.Windows.Controls.Utilities.Respond(Awesomium.Core.JavascriptDialogEventArgs)">
+            <summary>
+            Allows users to respond to a <see cref="E:Awesomium.Windows.Controls.WebControl.ShowJavascriptDialog"/> event,
+            when the event is handled modally.
+            </summary>
+            <param name="e">
+            Data provided to a <see cref="E:Awesomium.Windows.Controls.WebControl.ShowJavascriptDialog"/> event.
+            </param>
+            <remarks>
+            <note type="caution">
+            This method should only be called if you handle the <see cref="E:Awesomium.Windows.Controls.WebControl.ShowJavascriptDialog"/>
+            modally.
+            </note>
+            The WPF <see cref="T:Awesomium.Windows.Controls.WebControl"/>, automatically displays a <see cref="T:Awesomium.Windows.Controls.WebControlJSDialogLayer"/> in response 
+            to the <see cref="E:Awesomium.Windows.Controls.WebControl.ShowJavascriptDialog"/> event. Users can subclass <see cref="T:Awesomium.Windows.Controls.WebControlJSDialogLayer"/> 
+            to provide their own logic or look and feel if they want. If you style your <see cref="T:Awesomium.Windows.Controls.WebControlJSDialogLayer"/>, 
+            simply assign the <see cref="P:Awesomium.Windows.Controls.WebControlDialogLayer.Respond"/> command to the buttons of your dialog layer,
+            specifying a <c>CommandParameter</c> of <c>true</c> or <c>false</c> to indicate <b>OK</b> or <b>Cancel</b> respectively.
+            <p/>
+            <note>
+            Calling this method will also automatically set <see cref="P:Awesomium.Core.JavascriptDialogEventArgs.Handled"/> to <c>true</c>.
+            You will no longer be able to change the setting of <see cref="P:Awesomium.Core.JavascriptDialogEventArgs.Handled"/> after
+            calling this method.
+            </note>
+            <p/>
+            For more details, read the <b>Remarks</b> section of <see cref="P:Awesomium.Core.JavascriptDialogEventArgs.Handled"/>.
+            </remarks>
         </member>
         <member name="T:Awesomium.Windows.Controls.WebControl">
             <summary>
@@ -210,36 +623,58 @@
             purposes. <see cref="T:Awesomium.Core.WebCore"/> and the underlying web view are only instantiated during runtime.
             </note>
             <p/>
-            <h4>The Role of the <see cref="P:System.Windows.UIElement.IsEnabled"/> Property</h4>
-            In addition to its regular meaning, the <see cref="P:System.Windows.UIElement.IsEnabled"/> property has a special
-            meaning in <see cref="T:Awesomium.Windows.Controls.WebControl"/>: it also indicates if the underlying view is valid and enabled.
-            <p/>
-            A <see cref="T:Awesomium.Windows.Controls.WebControl"/> is considered invalid when it has been destroyed 
-            (by either calling <see cref="M:Awesomium.Windows.Controls.WebControl.Close"/> or <see cref="M:Awesomium.Core.WebCore.Shutdown"/>)
-            or was never properly instantiated.
-            <p/>
-            Manually setting the <see cref="P:System.Windows.UIElement.IsEnabled"/> property to true, will temporarily render 
-            the control disabled.
-            <p/>
-            <note type="inherit">
-            Inheritors should rely on the <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/> property. Accessing <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/> also 
-            updates the value of <see cref="P:System.Windows.UIElement.IsEnabled"/>.
+            <h4>The Role of the <see cref="P:System.Windows.UIElement.IsEnabled"/> Property:</h4>
+            In addition to its regular meaning, the <see cref="P:System.Windows.UIElement.IsEnabled"/> property indicates
+            if internal asynchronous rendering of the underlying web-view, is currently enabled.
+            <note>
+            All rendering in the underlying web-view is actually done asynchronously in a separate process
+            and so the page is usually continuously rendering internally. Setting <see cref="P:System.Windows.UIElement.IsEnabled"/>
+            to <c>false</c>, will temporarily pause rendering. This may be really important, if <see cref="P:Awesomium.Windows.Controls.WebControl.SelfUpdate"/>
+            is enabled.
             </note>
-            <p/>
+            <h4>The Role of the <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/> Property:</h4>
+            A <see cref="T:Awesomium.Windows.Controls.WebControl"/> is considered invalid when it is:
+            <list type="bullet">
+            <item>
+            <description>
+            Crashed (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsCrashed"/>).
             <note>
             When crashed, this control will attempt to recreate its underlying view.
             For details, see: <see cref="P:Awesomium.Windows.Controls.WebControl.IsCrashed"/>.
             </note>
-            <p/>
+            </description>
+            </item>
+            <item>
+            <description>
+            Prematurely destroyed (see <see cref="M:Awesomium.Windows.Controls.WebControl.Close"/> and <see cref="M:Awesomium.Core.WebCore.Shutdown"/>).
+            </description>
+            </item>
+            <item>
+            <description>
+            Not properly instantiated. This means that something went wrong
+            during instantiation of either the <see cref="T:Awesomium.Core.WebCore"/> (if this
+            is the first <see cref="T:Awesomium.Windows.Controls.WebControl"/> created) or of the
+            underlying web-view.
+            </description>
+            </item>
+            </list>
             <note type="caution">
-            While disabled (either because the view is destroyed or because you manually set this property)
-            attempting to access members of this control, may cause a <see cref="T:System.InvalidOperationException"/>
-            (see the documentation of each member).
+            Developers should always check this property before calling <see cref="T:Awesomium.Core.IWebView"/>
+            members implemented by this <see cref="T:Awesomium.Windows.Controls.WebControl"/>. Trying to access the underlying
+            web-view when it is not alive, can throw an <see cref="T:System.InvalidOperationException"/>.
+            <p/>
+            For more details, refer to the documentation of this control's members.
+            </note>
+            <note>
+            <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/> also returns <c>false</c> when the control is shown in a designer.
+            The Awesomium <see cref="T:Awesomium.Core.WebCore"/> and the underlying web-view, are only instantiated
+            during runtime.
             </note>
             </remarks>
             <threadsafety static="true" instance="false"/>
             <seealso cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>
             <seealso cref="P:Awesomium.Windows.Controls.WebControl.IsCrashed"/>
+            <seealso cref="P:Awesomium.Windows.Controls.WebControl.SelfUpdate"/>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.OnIsDirtyChanged(System.Object,System.EventArgs)">
             <summary>
@@ -401,7 +836,47 @@
             is still alive and visible.
             </remarks>
         </member>
+        <member name="M:Awesomium.Windows.Controls.WebControl.OnIsEnabledChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Maintains the relationship between the control's enabled status and internal
+            asynchronous rendering (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsRendering"/>).
+            </summary>
+            <remarks>
+            In addition to its regular meaning, the <see cref="P:System.Windows.UIElement.IsEnabled"/> property indicates
+            if internal asynchronous rendering of the underlying web-view, is currently active.
+            <note>
+            All rendering in the underlying web-view is actually done asynchronously in a separate process
+            and so the page is usually continuously rendering internally. Setting <see cref="P:System.Windows.UIElement.IsEnabled"/>
+            to <c>false</c>, will temporarily pause rendering. This may be really important, if <see cref="P:Awesomium.Windows.Controls.WebControl.SelfUpdate"/>
+            is enabled.
+            </note>
+            <note type="inherit">
+            Inheritors can override <see cref="M:Awesomium.Windows.Controls.WebControl.OnIsEnabledChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)"/>, then set <see cref="P:Awesomium.Windows.Controls.WebControl.IsRendering"/>
+            manually if they want to <i>disconnect</i> internal asynchronous 
+            rendering, from the control's enabled status.
+            </note>
+            <note>
+            Note that this method is provided by the WPF <see cref="T:Awesomium.Windows.Controls.WebControl"/> so that
+            you can control the relationship between the control's enabled status
+            and internal asynchronous rendering (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsRendering"/>). It does
+            not trigger the <see cref="E:System.Windows.UIElement.IsEnabledChanged"/> event.
+            The <see cref="E:System.Windows.UIElement.IsEnabledChanged"/> event is fired by the
+            .NET Framework <b>before</b> this method is called.
+            </note>
+            </remarks>
+            <seealso cref="P:Awesomium.Windows.Controls.WebControl.SelfUpdate"/>
+            <seealso cref="P:Awesomium.Windows.Controls.WebControl.IsRendering"/>
+        </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.GetVisualChild(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:Awesomium.Windows.Controls.WebControl.OnKeyDown(System.Windows.Input.KeyEventArgs)">
+            <inheritdoc />
+        </member>
+        <member name="M:Awesomium.Windows.Controls.WebControl.OnTextInput(System.Windows.Input.TextCompositionEventArgs)">
+            <inheritdoc />
+        </member>
+        <member name="M:Awesomium.Windows.Controls.WebControl.OnKeyUp(System.Windows.Input.KeyEventArgs)">
             <inheritdoc />
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.OnMouseMove(System.Windows.Input.MouseEventArgs)">
@@ -482,39 +957,6 @@
             This value may change between renders and may return null if the <see cref="T:Awesomium.Windows.Controls.WebControl"/> has crashed
             (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsCrashed"/>).
             </returns>
-        </member>
-        <member name="M:Awesomium.Windows.Controls.WebControl.PauseRendering">
-            <summary>
-            Temporarily pauses internal asynchronous rendering.
-            </summary>
-            <remarks>
-            All rendering is actually done asynchronously in a separate process
-            and so the page is usually continuously rendering even if you never call
-            <see cref="M:Awesomium.Windows.Controls.WebControl.Render"/>. Call this to temporarily pause rendering.
-            <note type="inherit">
-            <see cref="T:Awesomium.Windows.Controls.WebControl"/> handles this internally. Inheritors do not need to call this method unless
-            they implement custom logic.
-            </note>
-            <note type="caution">
-            For performance reasons, no validity check is performed when calling protected members.
-            Inheritors should perform any such checks (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>), before calling these members.
-            </note>
-            </remarks>
-        </member>
-        <member name="M:Awesomium.Windows.Controls.WebControl.ResumeRendering">
-            <summary>
-            Resume rendering after a call to <see cref="M:Awesomium.Windows.Controls.WebControl.PauseRendering"/>.
-            </summary>
-            <remarks>
-            <note type="inherit">
-            <see cref="T:Awesomium.Windows.Controls.WebControl"/> handles this internally. Inheritors do not need to call this method unless
-            they implement custom logic.
-            </note>
-            <note type="caution">
-            For performance reasons, no validity check is performed when calling protected members.
-            Inheritors should perform any such checks (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>), before calling these members.
-            </note>
-            </remarks>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.InjectMouseMove(System.Int32,System.Int32)">
             <summary>
@@ -664,7 +1106,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
             <remarks>
             This is usually easier to use than <see cref="M:Awesomium.Windows.Controls.WebControl.InjectKeyboardEvent(Awesomium.Core.WebKeyboardEvent)"/>. All you have to
@@ -883,7 +1325,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.GoBack">
@@ -892,7 +1334,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.GoForward">
@@ -901,7 +1343,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.Stop">
@@ -910,7 +1352,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.Reload">
@@ -929,7 +1371,7 @@
             <param name="javascript">The string of Javascript to execute.</param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.ExecuteJavascript(System.String,System.String)">
@@ -942,7 +1384,7 @@
             leave this blank to execute in the main frame.</param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.ExecuteJavascriptWithResult(System.String)">
@@ -957,7 +1399,7 @@
             "document", or any DOM elements).</returns>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.ExecuteJavascriptWithResult(System.String,System.Int32)">
@@ -975,7 +1417,7 @@
             "document", or any DOM elements).</returns>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.ExecuteJavascriptWithResult(System.String,System.String,System.Int32)">
@@ -995,7 +1437,7 @@
             "document", or any DOM elements).</returns>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.CallJavascriptFunction(System.String,System.String,Awesomium.Core.JSValue[])">
@@ -1013,7 +1455,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.CallJavascriptFunction(System.String,System.String,System.String,Awesomium.Core.JSValue[])">
@@ -1035,7 +1477,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.CreateObject(System.String)">
@@ -1052,7 +1494,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.DestroyObject(System.String)">
@@ -1064,7 +1506,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.SetObjectProperty(System.String,System.String,Awesomium.Core.JSValue)">
@@ -1094,7 +1536,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.SetObjectCallback(System.String,System.String,Awesomium.Core.JSCallback)">
@@ -1132,7 +1574,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.Cut">
@@ -1142,7 +1584,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.Copy">
@@ -1151,7 +1593,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.CopyHTML">
@@ -1160,7 +1602,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.CopyLinkAddress">
@@ -1169,7 +1611,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.Paste">
@@ -1179,7 +1621,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.SelectAll">
@@ -1188,7 +1630,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.ResetZoom">
@@ -1197,7 +1639,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.GetZoomForHost(System.String)">
@@ -1209,7 +1651,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.SetURLFilteringMode(Awesomium.Core.URLFilteringMode)">
@@ -1221,7 +1663,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.AddURLFilter(System.String)">
@@ -1240,7 +1682,7 @@
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.ClearAllURLFilters">
@@ -1249,7 +1691,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.SetHeaderDefinition(System.String,System.Collections.Specialized.NameValueCollection)">
@@ -1264,7 +1706,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.AddHeaderRewriteRule(System.String,System.String)">
@@ -1282,7 +1724,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.RemoveHeaderRewriteRule(System.String)">
@@ -1295,7 +1737,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.RemoveHeaderRewriteRulesByDefinition(System.String)">
@@ -1308,7 +1750,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.Print">
@@ -1322,7 +1764,7 @@
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.RequestScrollData">
@@ -1334,7 +1776,7 @@
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.RequestScrollData(System.String)">
@@ -1349,7 +1791,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.Find(System.String)">
@@ -1366,7 +1808,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.Find(System.String,System.Boolean)">
@@ -1386,7 +1828,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.Find(System.String,System.Boolean,System.Boolean)">
@@ -1409,7 +1851,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.FindNext">
@@ -1418,7 +1860,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.FindNext(System.Boolean)">
@@ -1430,7 +1872,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.StopFind(System.Boolean)">
@@ -1445,7 +1887,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.TranslatePage(System.String,System.String)">
@@ -1463,7 +1905,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.ActivateIME(System.Boolean)">
@@ -1478,7 +1920,7 @@
             <seealso cref="E:Awesomium.Windows.Controls.WebControl.ImeUpdated"/>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.SetIMEComposition(System.String,System.Int32,System.Int32,System.Int32)">
@@ -1491,13 +1933,13 @@
             <param name="targetEnd">The position of the end of the selection.</param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.ConfirmIMEComposition(System.String)">
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.CancelIMEComposition">
@@ -1506,7 +1948,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.CopyImageAt(System.Int32,System.Int32)">
@@ -1521,7 +1963,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.SaveToPNG(System.String)">
@@ -1540,7 +1982,7 @@
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.SaveToPNG(System.String,System.Boolean)">
@@ -1562,7 +2004,7 @@
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Windows.Controls.WebControl.SaveToJPEG(System.String,System.Int32)">
@@ -1584,7 +2026,7 @@
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
             <exception cref="T:System.ArgumentOutOfRangeException">
             An invalid compression quality value is specified.
@@ -1618,7 +2060,7 @@
             </example>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
             <seealso cref="P:Awesomium.Core.WebView.InputController"/>
         </member>
@@ -1673,13 +2115,23 @@
             </example>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
-            (see <see cref="P:System.Windows.UIElement.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
             </exception>
             <seealso cref="P:Awesomium.Windows.Controls.WebControl.InputController"/>
         </member>
-        <member name="F:Awesomium.Windows.Controls.WebControl.IsSourceControlProperty">
+        <member name="M:Awesomium.Windows.Controls.WebControl.Repaint">
             <summary>
-            Identifies the <see cref="P:Awesomium.Windows.Controls.WebControl.IsSourceControl"/> dependency property.
+            Forces this <see cref="T:Awesomium.Windows.Controls.WebControl"/> to repaint the pixel 
+            buffer of its underlying web view.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">
+            The member is called on an invalid <see cref="T:Awesomium.Windows.Controls.WebControl"/> instance
+            (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>).
+            </exception>
+        </member>
+        <member name="F:Awesomium.Windows.Controls.WebControl.IsSourceViewProperty">
+            <summary>
+            Identifies the <see cref="P:Awesomium.Windows.Controls.WebControl.IsSourceView"/> dependency property.
             </summary>
         </member>
         <member name="F:Awesomium.Windows.Controls.WebControl.IsDirtyProperty">
@@ -1720,6 +2172,11 @@
         <member name="F:Awesomium.Windows.Controls.WebControl.TitleProperty">
             <summary>
             Identifies the <see cref="P:Awesomium.Windows.Controls.WebControl.Title"/> dependency property.
+            </summary>
+        </member>
+        <member name="F:Awesomium.Windows.Controls.WebControl.HasTitleProperty">
+            <summary>
+            Identifies the <see cref="P:Awesomium.Windows.Controls.WebControl.HasTitle"/> dependency property.
             </summary>
         </member>
         <member name="F:Awesomium.Windows.Controls.WebControl.HasKeyboardFocusProperty">
@@ -1770,6 +2227,16 @@
         <member name="F:Awesomium.Windows.Controls.WebControl.LatestContextDataProperty">
             <summary>
             Identifies the <see cref="P:Awesomium.Windows.Controls.WebControl.LatestContextData"/> dependency property.
+            </summary>
+        </member>
+        <member name="F:Awesomium.Windows.Controls.WebControl.IsRenderingProperty">
+            <summary>
+            Identifies the <see cref="P:Awesomium.Windows.Controls.WebControl.IsRendering"/> dependency property.
+            </summary>
+        </member>
+        <member name="F:Awesomium.Windows.Controls.WebControl.IsTransparentProperty">
+            <summary>
+            Identifies the <see cref="P:Awesomium.Windows.Controls.WebControl.IsTransparent"/> dependency property.
             </summary>
         </member>
         <member name="F:Awesomium.Windows.Controls.WebControl.FlushAlphaProperty">
@@ -1945,6 +2412,17 @@
             Occurs when a web view has finished resizing to a certain size (and has finished repainting the <see cref="T:Awesomium.Core.RenderBuffer"/>).
             </summary>
         </member>
+        <member name="E:Awesomium.Windows.Controls.WebControl.ShowJavascriptDialog">
+            <summary>
+            Occurs when JS code in a web page requests for a Javascript Dialog.
+            </summary>
+            <remarks>
+            WPF <see cref="T:Awesomium.Windows.Controls.WebControl"/> internally handles this by displaying
+            predefined <see cref="T:Awesomium.Windows.Controls.WebControlJSDialogLayer"/> instances.
+            Read <see cref="P:Awesomium.Core.JavascriptDialogEventArgs.Handled"/> for ways
+            to customize this behavior.
+            </remarks>
+        </member>
         <member name="E:Awesomium.Windows.Controls.WebControl.ResourceRequest">
             <summary>
             This event occurs whenever there is a request for a certain resource (URL). You can either modify the request
@@ -1964,20 +2442,10 @@
         <member name="P:Awesomium.Windows.Controls.WebControl.VisualChildrenCount">
             <inheritdoc />
         </member>
-        <member name="P:Awesomium.Windows.Controls.WebControl.IsLive">
-            <summary>
-            Gets if the control is live and the view is instantiated.
-            </summary>
-        </member>
         <member name="P:Awesomium.Windows.Controls.WebControl.CanRecreateView">
             <summary>
             Gets if this control wraps a previously crashed
             view that can be recreated.
-            </summary>
-        </member>
-        <member name="P:Awesomium.Windows.Controls.WebControl.IsSourceControl">
-            <summary>
-            Gets if this control displays the HTML source of any web-page loaded.
             </summary>
         </member>
         <member name="P:Awesomium.Windows.Controls.WebControl.Layers">
@@ -2147,6 +2615,83 @@
             </example>
             <seealso cref="T:Awesomium.Windows.Controls.WebControlContextMenu"/>
         </member>
+        <member name="P:Awesomium.Windows.Controls.WebControl.ToolTipResourceKey">
+            <summary>
+            Gets the resource key for the tool-tip of a <see cref="T:Awesomium.Windows.Controls.WebControl"/>.
+            </summary>
+            <remarks>
+            This can be used to override the default tool-tip.
+            </remarks>
+        </member>
+        <member name="P:Awesomium.Windows.Controls.WebControl.IsLive">
+            <summary>
+            Gets if the underlying web-view this control wraps, is alive.
+            </summary>
+            <returns>
+            A <see cref="T:System.Boolean"/> value indicating if the underlying web-view this control wraps, 
+            is alive. <c>False</c> indicates that the underlying web-view is:
+            <list type="bullet">
+            <item>
+            <description>
+            Crashed (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsCrashed"/>).
+            <note>
+            When crashed, this control will attempt to recreate its underlying view.
+            For details, see: <see cref="P:Awesomium.Windows.Controls.WebControl.IsCrashed"/>.
+            </note>
+            </description>
+            </item>
+            <item>
+            <description>
+            Prematurely destroyed (see <see cref="M:Awesomium.Windows.Controls.WebControl.Close"/>).
+            </description>
+            </item>
+            <item>
+            <description>
+            Not properly instantiated. This means that something went wrong
+            during instantiation of either the <see cref="T:Awesomium.Core.WebCore"/> (if this
+            is the first <see cref="T:Awesomium.Windows.Controls.WebControl"/> created) or of the
+            underlying web-view.
+            </description>
+            </item>
+            </list>
+            </returns>
+            <remarks>
+            Developers should always check this property before calling <see cref="T:Awesomium.Core.IWebView"/>
+            members implemented by this <see cref="T:Awesomium.Windows.Controls.WebControl"/>. Trying to access the underlying
+            web-view when it is not alive, can throw an <see cref="T:System.InvalidOperationException"/>.
+            <p/>
+            For more details, refer to the documentation of this control's members.
+            <p/>
+            <note>
+            This property also returns <c>false</c> when the control is shown in a designer.
+            The Awesomium <see cref="T:Awesomium.Core.WebCore"/> and the underlying web-view, are only instantiated
+            during runtime.
+            </note>
+            </remarks>
+            <example>
+            <code>
+            private void toolStripButton2_Click( object sender, EventArgs e )
+            {
+                if ( !webControl.IsLive )
+                    return;
+                    
+                webControl.GoForward();
+            }
+            </code>
+            <code lang="VB">
+            Private Sub ToolStripButton2_Click( sender As Object, e As EventArgs ) Handles ToolStripButton2.Click
+                If Not m_WebControl.IsLive Then Return
+                    
+                m_WebControl.GoForward()
+            End Sub
+            </code>
+            </example>
+        </member>
+        <member name="P:Awesomium.Windows.Controls.WebControl.IsSourceView">
+            <summary>
+            Gets if this control displays the HTML source of any web-page loaded.
+            </summary>
+        </member>
         <member name="P:Awesomium.Windows.Controls.WebControl.IsDirty">
             <summary>
             Gets if this <see cref="T:Awesomium.Windows.Controls.WebControl"/> needs to be rendered again.
@@ -2211,6 +2756,12 @@
             For details, see <see cref="P:Awesomium.Windows.Controls.WebControl.NavigationInfo"/>.
             </remarks>
             <seealso cref="P:Awesomium.Windows.Controls.WebControl.NavigationInfo"/>
+        </member>
+        <member name="P:Awesomium.Windows.Controls.WebControl.HasTitle">
+            <summary>
+            Gets if the currently loaded web-page has a title.
+            </summary>
+            <seealso cref="P:Awesomium.Windows.Controls.WebControl.Title"/>
         </member>
         <member name="P:Awesomium.Windows.Controls.WebControl.HasKeyboardFocus">
             <summary>
@@ -2297,6 +2848,61 @@
             <seealso cref="T:Awesomium.Core.WebViewContext"/>
             <seealso cref="E:Awesomium.Windows.Controls.WebControl.ShowContextMenu"/>
         </member>
+        <member name="P:Awesomium.Windows.Controls.WebControl.SelfUpdate">
+            <summary>
+            Gets or sets if this view should use an independent rendering timer. 
+            </summary>
+            <remarks>
+            <note type="caution">
+            Setting this property to <c>true</c> will fail if <see cref="P:Awesomium.Core.WebCore.IsAutoUpdateEnabled"/> is <c>false</c>.
+            It is suggested that you check the value of <see cref="P:Awesomium.Core.WebCore.IsAutoUpdateEnabled"/> before attempting
+            to activate <see cref="P:Awesomium.Windows.Controls.WebControl.SelfUpdate"/>.
+            </note>
+            <p/>
+            When auto-update is enabled (see <see cref="P:Awesomium.Core.WebCore.IsAutoUpdateEnabled"/>), updating
+            <see cref="P:Awesomium.Windows.Controls.WebControl.IsDirty"/> and refreshing WebControls, is controlled by the <see cref="T:Awesomium.Core.WebCore"/>
+            using an internal timer, common for all views. The same timer is used to update the <see cref="T:Awesomium.Core.WebCore"/>
+            (see <see cref="M:Awesomium.Core.WebCore.Update"/>) and fire events. While this is a light and effective technique, it is
+            not ideal when you require high performance quality, such as when video content is displayed in views.
+            In these scenarios, setting <see cref="P:Awesomium.Windows.Controls.WebControl.SelfUpdate"/> to <c>true</c> will tell the view to use an
+            independent timer for rendering only, that will significantly improve the rendering quality, to the expense
+            of CPU resources.
+            <p/>
+            <note>
+            The use of <see cref="P:Awesomium.Windows.Controls.WebControl.SelfUpdate"/> is combined with the use of <see cref="P:System.Windows.UIElement.IsEnabled"/> or <see cref="P:Awesomium.Windows.Controls.WebControl.IsRendering"/>.
+            </note>
+            <p/>
+            <note>
+            The default setting for the WPF <see cref="T:Awesomium.Windows.Controls.WebControl"/>, is <c>true</c>.
+            This is because in WPF only, we get more detailed notifications of when a control is loaded for presentation and thus
+            we can update <see cref="P:Awesomium.Windows.Controls.WebControl.IsRendering"/> internally. However, this property should be set to <c>false</c> 
+            if multiple WebControls with content that update too fast, are simultaneously presented to the user.
+            </note>
+            </remarks>
+            <seealso cref="P:Awesomium.Windows.Controls.WebControl.IsRendering"/>
+            <seealso cref="M:Awesomium.Windows.Controls.WebControl.OnIsEnabledChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)"/>
+            <seealso cref="P:Awesomium.Core.IWebView.SelfUpdate"/>
+        </member>
+        <member name="P:Awesomium.Windows.Controls.WebControl.IsRendering">
+            <summary>
+            Gets or sets if internal asynchronous rendering is currently enabled.
+            </summary>
+            <remarks>
+            All rendering is actually done asynchronously in a separate process
+            and so the page is usually continuously rendering internally.
+            <note>
+            This property is automatically updated by monitoring the control's
+            enabled status and it should not be manually set.
+            The update occurs in <see cref="M:Awesomium.Windows.Controls.WebControl.OnIsEnabledChanged(System.Windows.DependencyPropertyChangedEventArgs)"/>.
+            </note>
+            <note type="inherit">
+            Inheritors can override <see cref="M:Awesomium.Windows.Controls.WebControl.OnIsEnabledChanged(System.Windows.DependencyPropertyChangedEventArgs)"/>,
+            then set this property manually if they want to <i>disconnect</i> internal asynchronous 
+            rendering, from the control's enabled status.
+            </note>
+            </remarks>
+            <seealso cref="P:Awesomium.Windows.Controls.WebControl.SelfUpdate"/>
+        </member>
         <member name="P:Awesomium.Windows.Controls.WebControl.IsTransparent">
             <summary>
             Gets or sets if pages should be rendered with transparency
@@ -2333,7 +2939,19 @@
             </returns>
             <remarks>
             Valid range is from 10 to 500.
+            <p/>
+            This operation is asynchronous: 
+            the value may not change for several milliseconds after
+            you set this property.
+            <note>
+            Note that this setting is applied to the current hostname and
+            not the control in general. Is it dynamically updated when
+            you navigate to another domain with different, or no setting.
+            <p/>
+            To get the Zoom setting of a given hostname, use <see cref="M:Awesomium.Windows.Controls.WebControl.GetZoomForHost(System.String)"/>.
+            </note>
             </remarks>
+            <seealso cref="M:Awesomium.Windows.Controls.WebControl.GetZoomForHost(System.String)"/>
         </member>
         <member name="P:Awesomium.Windows.Controls.WebControl.Source">
             <summary>
@@ -2498,7 +3116,8 @@
             </summary>
             <remarks>
             When executing this command, the <see cref="T:Awesomium.Windows.Controls.WebControl"/> uses the latest right-click coordinates
-            as defined in the <see cref="!:WebViewContext"/> provided by <see cref="!:LatestContextData"/>,
+            as defined in the <see cref="T:Awesomium.Core.WebViewContext"/> provided by 
+            <see cref="P:Awesomium.Windows.Controls.WebControl.LatestContextData"/>,
             to locate the image in the web-page.
             </remarks>
         </member>
@@ -2517,9 +3136,11 @@
             <item>
             <term>Redefine a <see cref="T:Awesomium.Windows.Controls.WebControlContextMenu"/> application resource, 
             using the <see cref="P:Awesomium.Windows.Controls.WebControl.ContextMenuResourceKey"/> as key.</term>
-            <description>Completely substitutes the default context menu. You should bind the <see cref="P:System.Windows.FrameworkElement.DataContext"/> property
+            <description>
+            Completely substitutes the default context menu. You should bind the <see cref="P:System.Windows.FrameworkElement.DataContext"/> property
             to the <see cref="P:System.Windows.Controls.ContextMenu.PlacementTarget"/> property, to access the <see cref="T:Awesomium.Windows.Controls.WebControl"/>. You can later use the
-            <see cref="!:WebViewContext"/> provided through <see cref="P:Awesomium.Windows.Controls.WebControl.LatestContextData"/> to update the state of the menu's items.</description>
+            <see cref="T:Awesomium.Core.WebViewContext"/> provided through <see cref="P:Awesomium.Windows.Controls.WebControl.LatestContextData"/> to update the state of the menu's items.
+            </description>
             </item>
             <item>
             <term>Assign your own context menu to the <see cref="P:System.Windows.FrameworkElement.ContextMenu"/> property.</term>
@@ -2550,10 +3171,19 @@
             </list>
             </remarks>
         </member>
+        <member name="T:Awesomium.Windows.Controls.WebControlLoginLayer">
+            <summary>
+            Represents a layer added to a <see cref="T:Awesomium.Windows.Controls.WebControl"/> to display an authentication request.
+            </summary>
+        </member>
         <member name="T:Awesomium.Windows.Controls.WebSourceControl">
             <summary>
-            Represents a WPF control that displays the HTML source of any web-page loaded using <see cref="M:Awesomium.Windows.Controls.WebControl.LoadURL(System.String)"/>.
+            Represents a WPF control that displays the HTML source
+            of any web-page loaded using <see cref="M:Awesomium.Windows.Controls.WebControl.LoadURL(System.String)"/>.
             </summary>
+        </member>
+        <member name="P:Awesomium.Windows.Controls.WebSourceControl.IsSourceView">
+            <inheritdoc />
         </member>
         <member name="P:Awesomium.Windows.Controls.WebSourceControl.ContextMenuSourceItemsArrayRecourceKey">
             <summary>
