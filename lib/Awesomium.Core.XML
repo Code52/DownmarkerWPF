@@ -16,6 +16,14 @@
         <member name="M:Awesomium.Core.AweRect.Equals(System.Object)">
             <inheritdoc />
         </member>
+        <member name="M:Awesomium.Core.Common.IsDotNetAssembly(System.String)">
+            <summary>
+            Attempts to find out if a specified child process executable, is a .NET assembly.
+            </summary>
+            <param name="asmFile">
+            The path to the executable file.
+            </param>
+        </member>
         <member name="T:Awesomium.Core.EnableThemingInScope">
             <summary>
             This class is intended to be used with the 'using' statement,
@@ -92,16 +100,34 @@
         </member>
         <member name="T:Awesomium.Core.ToolTipChangedEventHandler">
             <summary>
-            Represents the method that will handle the <see cref="E:Awesomium.Core.WebView.ToolTipChanged"/> and 
-            <see cref="E:Awesomium.Windows.Controls.WebControl.ToolTipChanged"/> events.
+            Represents the method that will handle the <see cref="E:Awesomium.Core.IWebView.ToolTipChanged"/> event.
             </summary>
             <param name="sender">The source of the event.</param>
             <param name="e">An <see cref="T:Awesomium.Core.ChangeToolTipEventArgs"/> that contains the event data.</param>
         </member>
         <member name="T:Awesomium.Core.ChangeToolTipEventArgs">
             <summary>
-            Provides data for the <see cref="E:Awesomium.Core.WebView.ToolTipChanged"/> and 
-            <see cref="E:Awesomium.Windows.Controls.WebControl.ToolTipChanged"/> events.
+            Provides data for the <see cref="E:Awesomium.Core.IWebView.ToolTipChanged"/> event.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Core.ChangeToolTipEventArgs.ToolTip">
+            <summary>
+            Gets the current tooltip reported by a <see cref="T:Awesomium.Core.IWebView"/>,
+            for the web-page element currently under the cursor, or a null reference
+            if a previous tooltip is no longer valid.
+            </summary>
+            <remarks>
+            A null reference indicates that the user has moved the cursor outside
+            an area or element that had a tooltip. Any previously displayed tooltips,
+            should be closed when a <see cref="E:Awesomium.Core.IWebView.ToolTipChanged"/> event with
+            a null <see cref="P:Awesomium.Core.ChangeToolTipEventArgs.ToolTip"/> is fired.
+            </remarks>
+        </member>
+        <member name="P:Awesomium.Core.ChangeToolTipEventArgs.Handled">
+            <summary>
+            Gets or sets if this event is handled by an application.
+            If set to false (default), a WebControl
+            will display its predefined tooltip.
             </summary>
         </member>
         <member name="T:Awesomium.Core.HistoryChangedEventHandler">
@@ -115,6 +141,83 @@
             <summary>
             Provides data for the <see cref="E:Awesomium.Core.IWebView.HistoryChanged"/> event.
             </summary>
+        </member>
+        <member name="T:Awesomium.Core.CoreStartEventHandler">
+            <summary>
+            Represents the method that will handle the <see cref="E:Awesomium.Core.WebCore.Started"/> event.
+            </summary>
+            <param name="sender">The source of the event.</param>
+            <param name="e">An <see cref="T:Awesomium.Core.CoreStartEventArgs"/> that contains the event data.</param>
+        </member>
+        <member name="T:Awesomium.Core.CoreStartEventArgs">
+            <summary>
+            Provides data for the <see cref="E:Awesomium.Core.WebCore.Started"/> event.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Core.CoreStartEventArgs.Configuration">
+            <summary>
+            Gets a <see cref="T:Awesomium.Core.WebCoreConfig"/> instance specifying 
+            the settings used to start the <see cref="T:Awesomium.Core.WebCore"/>.
+            </summary>
+        </member>
+        <member name="T:Awesomium.Core.CreatedViewEventHandler">
+            <summary>
+            Represents the method that will handle the <see cref="E:Awesomium.Core.WebCore.CreatedView"/> event.
+            </summary>
+            <param name="sender">The source of the event.</param>
+            <param name="e">An <see cref="T:Awesomium.Core.CreatedViewEventArgs"/> that contains the event data.</param>
+        </member>
+        <member name="T:Awesomium.Core.CreatedViewEventArgs">
+            <summary>
+            Provides data for the <see cref="E:Awesomium.Core.WebCore.CreatedView"/> event.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Core.CreatedViewEventArgs.NewView">
+            <summary>
+            Gets the new view created by the <see cref="T:Awesomium.Core.WebCore"/>.
+            </summary>
+        </member>
+        <member name="T:Awesomium.Core.CoreShutdownEventHandler">
+            <summary>
+            Represents the method that will handle the <see cref="E:Awesomium.Core.WebCore.ShuttingDown"/> event.
+            </summary>
+            <param name="sender">The source of the event.</param>
+            <param name="e">An <see cref="T:Awesomium.Core.CoreShutdownEventArgs"/> that contains the event data.</param>
+        </member>
+        <member name="T:Awesomium.Core.CoreShutdownEventArgs">
+            <summary>
+            Provides data for the <see cref="E:Awesomium.Core.WebCore.ShuttingDown"/> event.
+            </summary>
+        </member>
+        <member name="T:Awesomium.Core.CoreStartingEventHandler">
+            <summary>
+            Represents the method that will handle the <see cref="E:Awesomium.Core.WebCore.Starting"/> event.
+            </summary>
+            <param name="sender">The source of the event.</param>
+            <param name="e">
+            An <see cref="T:System.ComponentModel.CancelEventArgs"/> that contains the event data.
+            <p/>
+            <note type="caution">
+            Setting <see cref="P:System.ComponentModel.CancelEventArgs.Cancel"/> to <c>true</c>,
+            will prevent the <see cref="T:Awesomium.Core.WebCore"/> from starting. 
+            Use with caution.
+            </note>
+            </param>
+        </member>
+        <member name="T:Awesomium.Core.CoreStartingEventArgs">
+            <summary>
+            Provides data for the <see cref="E:Awesomium.Core.WebCore.Starting"/> event.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Core.CoreStartingEventArgs.Configuration">
+            <summary>
+            Gets a <see cref="T:Awesomium.Core.WebCoreConfig"/> instance specifying 
+            the settings that will be used to start the <see cref="T:Awesomium.Core.WebCore"/>.
+            </summary>
+            <remarks>
+            When <see cref="E:Awesomium.Core.WebCore.Starting"/> is fired, you can still modify the 
+            configuration settings. The <see cref="T:Awesomium.Core.WebCore"/> is not initialized yet.
+            </remarks>
         </member>
         <member name="T:Awesomium.Core.ShowJavascriptDialogEventHandler">
             <summary>
@@ -136,12 +239,17 @@
         </member>
         <member name="P:Awesomium.Core.JavascriptDialogEventArgs.Message">
             <summary>
-            The message, if any, to displayed by the dialog.
+            The message, if any, to be displayed by the dialog.
             </summary>
         </member>
         <member name="P:Awesomium.Core.JavascriptDialogEventArgs.DefaultPrompt">
             <summary>
             The default prompt provided by JS, for the dialog's prompt.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Core.JavascriptDialogEventArgs.FrameURL">
+            <summary>
+            Gets the address of the page that launches the dialog.
             </summary>
         </member>
         <member name="P:Awesomium.Core.JavascriptDialogEventArgs.Prompt">
@@ -153,9 +261,54 @@
         <member name="P:Awesomium.Core.JavascriptDialogEventArgs.Handled">
             <summary>
             Gets or sets if this event is handled by an application.
-            If set to false (default), a WebControl
-            will display its predefined user interface.
+            The default is <c>false</c>.
             </summary>
+            <remarks>
+            When set to <c>false</c> (default), a technology specific
+            <c>WebControl</c> may display its predefined dialog (if any).
+            <p></p>
+            You can set this property to <c>true</c> and handle the event
+            in the following ways:
+            <list type="table">
+            <listheader>
+            <term>Handling</term>
+            <description>Procedure</description>
+            </listheader>
+            <item>
+            <term>Asynchronously</term>
+            <description>
+            The WPF <see cref="T:Awesomium.Windows.Controls.WebControl"/>, automatically displays a 
+            <see cref="T:Awesomium.Windows.Controls.WebControlJSDialogLayer"/> in response to the <see cref="E:Awesomium.Core.IWebView.ShowJavascriptDialog"/> 
+            event. Users can subclass <see cref="T:Awesomium.Windows.Controls.WebControlJSDialogLayer"/> to provide their own logic or 
+            look and feel if they want. If you style your <see cref="T:Awesomium.Windows.Controls.WebControlJSDialogLayer"/>, simply assign the 
+            <see cref="P:Awesomium.Windows.Controls.WebControlDialogLayer.Respond"/> command to the buttons of your dialog layer,
+            specifying a <c>CommandParameter</c> of <c>true</c> or <c>false</c> to indicate <b>OK</b> or <b>Cancel</b> respectively.
+            </description>
+            </item>
+            <item>
+            <term>Modally</term>
+            <description>
+            In <see cref="T:Awesomium.Core.WebView"/> and any other technology specific <c>WebControl</c>, the <see cref="E:Awesomium.Core.IWebView.ShowJavascriptDialog"/> event
+            must be handled modally. Upon return, the <see cref="T:Awesomium.Core.WebView"/> and any other technology specific <c>WebControl</c>, internally
+            responds to the calling web page.
+            <h4>WPF <see cref="T:Awesomium.Windows.Controls.WebControl"/>:</h4>
+            If you are using a WPF <see cref="T:Awesomium.Windows.Controls.WebControl"/>, you can still handle the 
+            <see cref="E:Awesomium.Core.IWebView.ShowJavascriptDialog"/> event modally, by calling 
+            <see cref="M:Awesomium.Windows.Controls.Utilities.Respond(Awesomium.Core.JavascriptDialogEventArgs)"/>
+            when you are done with processing the event.
+            <note type="caution">
+            You must always call <see cref="M:Awesomium.Windows.Controls.Utilities.Respond(Awesomium.Core.JavascriptDialogEventArgs)"/> 
+            if you handle the command modally.
+            </note>
+            </description>
+            </item>
+            </list>
+            </remarks>
+            <exception cref="T:System.InvalidOperationException">
+            Attempting to set this property to <c>false</c> on a <see cref="E:Awesomium.Windows.Controls.WebControl.ShowJavascriptDialog"/> 
+            that has already been modally handled by calling 
+            <see cref="M:Awesomium.Windows.Controls.Utilities.Respond(Awesomium.Core.JavascriptDialogEventArgs)"/>.
+            </exception>
         </member>
         <member name="T:Awesomium.Core.ResizeCompleteEventHandler">
             <summary>
@@ -421,6 +574,11 @@
             Provides data for the <see cref="E:Awesomium.Core.WebView.SelectionChanged"/> and <see cref="E:Awesomium.Windows.Controls.WebControl.SelectionChanged"/> events.
             </summary>
         </member>
+        <member name="T:Awesomium.Core.HistoryEntry">
+            <summary>
+            Represents a single entry in a <see cref="T:Awesomium.Core.HistoryQueryResult"/>.
+            </summary>
+        </member>
         <member name="F:Awesomium.Core.HistoryEntry.Empty">
             <summary>
             Represents an empty History Entry.
@@ -436,9 +594,38 @@
             Gets the title of the page.
             </summary>
         </member>
+        <member name="P:Awesomium.Core.HistoryEntry.VisitTime">
+            <summary>
+            Gets the date and time the <see cref="P:Awesomium.Core.HistoryEntry.Url"/>
+            was last visited.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Core.HistoryEntry.VisitCount">
+            <summary>
+            Gets the number of visits to the <see cref="P:Awesomium.Core.HistoryEntry.Url"/>.
+            </summary>
+        </member>
+        <member name="T:Awesomium.Core.HistoryQueryResult">
+            <summary>
+            Represents a collection of entries in History.
+            </summary>
+            <remarks>
+            You get a collection of History entries by calling <see cref="M:Awesomium.Core.WebCore.QueryHistory"/>.
+            <p/>
+            <note>
+            To avoid memory leaks, you should always dispose instances of 
+            <see cref="T:Awesomium.Core.HistoryQueryResult"/> that are no longer used.
+            </note>
+            </remarks>
+        </member>
         <member name="M:Awesomium.Core.HistoryQueryResult.Dispose">
             <summary>
             Disposes and destroys this <see cref="T:Awesomium.Core.HistoryEntry"/>.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Core.HistoryQueryResult.Count">
+            <summary>
+            Gets the number of entries in this collection.
             </summary>
         </member>
         <member name="T:Awesomium.Core.ViewInput">
@@ -1244,6 +1431,16 @@
             </exception>
             <seealso cref="P:Awesomium.Core.IWebView.InputController"/>
         </member>
+        <member name="M:Awesomium.Core.IWebView.Repaint">
+            <summary>
+            Forces a technology specific <c>WebControl</c> to repaint the pixel 
+            buffer of its underlying web view. This method has no effect when 
+            called on a <see cref="T:Awesomium.Core.WebView"/>.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">
+            The member is called on an invalid view.
+            </exception>
+        </member>
         <member name="E:Awesomium.Core.IWebView.IsDirtyChanged">
             <summary>
             Occurs when this view needs to be rendered again.
@@ -1344,13 +1541,9 @@
         <member name="E:Awesomium.Core.IWebView.SelectLocalFiles">
             <summary>
             Occurs whenever a page requests a file chooser dialog to be displayed (usually due
-            to an upload form being clicked by a user). You will need to display your own dialog.
+            to an upload form being clicked by a user). You will need to display your own <b>modal</b> dialog.
             Assign the selected local file(s) to <see cref="P:Awesomium.Core.SelectLocalFilesEventArgs.SelectedFiles"/>
             </summary>
-            <remarks>
-            The dialog does not have to be modal; this request is non-blocking. Once a file has been chosen by the user,
-            you can manually report this back to the view by calling <see cref="!:ChooseFile"/>.
-            </remarks>
         </member>
         <member name="E:Awesomium.Core.IWebView.ScrollDataReceived">
             <summary>
@@ -1421,6 +1614,95 @@
             Occurs whenever a response has been received from a server. This is useful for statistics
             and resource tracking purposes.
             </summary>
+        </member>
+        <member name="P:Awesomium.Core.IWebView.IsLive">
+            <summary>
+            Gets if this view is alive.
+            </summary>
+            <remarks>
+            For a technology specific <c>WebControl</c>, this indicates the status of the 
+            underlying web-view the <c>WebControl</c> wraps.
+            <p/>
+            <note>
+            Several technology specific <c>WebControl</c>s, used to reflect the status
+            of the underlying web-view, using their <c>Enabled</c> property (<c>IsEnabled</c>
+            in WPF, <c>Sensitive</c> in Gtk# etc.). This behavior has now changed in favor
+            of a common property (<see cref="P:Awesomium.Core.IWebView.IsLive"/>), common to all web-views.
+            <p/>
+            The <c>Enabled</c> property of each <c>WebControl</c>, now only controls
+            the rendering status of the underlying web-view of each <c>WebControl</c>.
+            <p/>
+            For more details, refer to the documentation of each technology specific <c>WebControl</c>.
+            </note>
+            </remarks>
+            <seealso cref="P:Awesomium.Core.IWebView.IsCrashed"/>
+        </member>
+        <member name="P:Awesomium.Core.IWebView.SelfUpdate">
+            <summary>
+            Gets or sets if this view should use an independent rendering timer. 
+            </summary>
+            <remarks>
+            <note type="caution">
+            Setting this property to <c>true</c> will fail if <see cref="P:Awesomium.Core.WebCore.IsAutoUpdateEnabled"/> is <c>false</c>.
+            It is suggested that you check the value of <see cref="P:Awesomium.Core.WebCore.IsAutoUpdateEnabled"/> before attempting
+            to activate <see cref="P:Awesomium.Core.IWebView.SelfUpdate"/>.
+            </note>
+            <p/>
+            When auto-update is enabled (see <see cref="P:Awesomium.Core.WebCore.IsAutoUpdateEnabled"/>), updating
+            <see cref="P:Awesomium.Core.IWebView.IsDirty"/> and refreshing WebControls, is controlled by the <see cref="T:Awesomium.Core.WebCore"/>
+            using an internal timer, common for all views. The same timer is used to update the <see cref="T:Awesomium.Core.WebCore"/>
+            (see <see cref="M:Awesomium.Core.WebCore.Update"/>) and fire events. While this is a light and effective technique, it is
+            not ideal when you require high performance quality, such as when video content is displayed in views.
+            In these scenarios, setting <see cref="P:Awesomium.Core.IWebView.SelfUpdate"/> to <c>true</c> will tell the view to use an
+            independent timer for rendering only, that will significantly improve the rendering quality, to the expense
+            of CPU resources.
+            <p/>
+            <note type="caution">
+            You should always combine the use of <see cref="P:Awesomium.Core.IWebView.SelfUpdate"/> with the use of <see cref="P:Awesomium.Core.IWebView.IsRendering"/>,
+            or with the <c>Enabled</c> property of technology specific <c>WebControl</c>s (<c>IsEnabled</c> in WPF, <c>Sensitive</c> in Gtk# etc.).
+            When more than one views are using <see cref="P:Awesomium.Core.IWebView.SelfUpdate"/> and they all display content that updates too fast (such as videos), 
+            controls that are currently not visible to the user (such as controls that are currently covered by other UI or used in a tab 
+            of a tab-control that is currently not visible), should have rendering paused by being disabled,
+            to avoid draining out your CPU resources.
+            </note>
+            <p/>
+            <note>
+            The default setting for all views is <c>false</c>, except WPF WebControl where the default setting is <c>true</c>.
+            This is because in WPF only, we get more detailed notifications of when a control is loaded for presentation and thus
+            we can update <see cref="P:Awesomium.Core.IWebView.IsRendering"/> internally.
+            </note>
+            </remarks>
+            <seealso cref="P:Awesomium.Core.IWebView.IsRendering"/>
+        </member>
+        <member name="P:Awesomium.Core.IWebView.IsRendering">
+            <summary>
+            Gets or sets if internal asynchronous rendering is currently active.
+            </summary>
+            <remarks>
+            All rendering is actually done asynchronously in a separate process
+            and so the page is usually continuously rendering internally.
+            Set this to <c>false</c> to temporarily pause rendering.
+            </remarks>
+            <exception cref="T:System.InvalidOperationException">
+            The member is accessed on an invalid view.
+            </exception>
+            <seealso cref="P:Awesomium.Core.IWebView.SelfUpdate"/>
+        </member>
+        <member name="P:Awesomium.Core.IWebView.IsSourceView">
+            <summary>
+            Gets if this is a source view that displays the source of
+            web-pages loaded to it.
+            </summary>
+            <remarks>
+            You can create a view that displays the source of each web-page
+            loaded to it, by using the <see cref="M:Awesomium.Core.WebCore.CreateSourceWebView(System.Int32,System.Int32)"/>
+            function.
+            <p/>
+            <note>
+            Most technology specific assemblies provided by Awesomium.NET,
+            provide a pre-defined source view web-control.
+            </note>
+            </remarks>
         </member>
         <member name="P:Awesomium.Core.IWebView.IsDirty">
             <summary>
@@ -1498,6 +1780,12 @@
             <summary>
             Gets the title of the page currently loaded in this view.
             </summary>
+        </member>
+        <member name="P:Awesomium.Core.IWebView.HasTitle">
+            <summary>
+            Gets if the currently loaded web-page has a title.
+            </summary>
+            <seealso cref="P:Awesomium.Core.IWebView.Title"/>
         </member>
         <member name="P:Awesomium.Core.IWebView.HasKeyboardFocus">
             <summary>
@@ -2007,8 +2295,15 @@
             <summary>
             Specifies important versioning and identification constants used throughout the project.
             </summary>
+        </member>
+        <member name="F:Awesomium.Core.ReleaseInfo.LIBRARY_VERSION">
+            <summary>
+            Specifies the native Awesomium library version.
+            </summary>
             <remarks>
-            TODO: Instructions tutorial.
+            <note type="caution">
+            Always keep this synchronized with the current version of Awesomium.
+            </note>
             </remarks>
         </member>
         <member name="F:Awesomium.Core.ReleaseInfo.ASSEMBLY_VERSION">
@@ -2032,8 +2327,6 @@
             access to the Awesomium native library through the strong name of
             Awesomium.Core. It is necessary for installing the native dependencies
             in GAC.
-            
-            TODO: Instructions tutorial.
             </remarks>
         </member>
         <member name="F:Awesomium.Core.ReleaseInfo.WPF_PUBLIC_KEY">
@@ -2041,10 +2334,18 @@
             Specifies the full Public Key of the Awesomium.Windows.Controls assembly's Strong Name.
             </summary>
             <remarks>
-            This is used with the InternalsVisibleToAttrinute to allow the internals of this
+            This is used with the InternalsVisibleToAttribute to allow the internals of this
             assembly, be visible from the Awesomium.Windows.Controls assembly.
-            
-            TODO: Instructions tutorial.
+            </remarks>
+        </member>
+        <member name="F:Awesomium.Core.ReleaseInfo.WPF_DESIGN_PUBLIC_KEY">
+            <summary>
+            Specifies the full Public Key of the Awesomium.Windows.Controls.Design
+            assembly's Strong Name.
+            </summary>
+            <remarks>
+            This is used with the InternalsVisibleToAttribute to allow the internals of this
+            assembly, be visible from the Awesomium.Windows.Controls.Design assembly.
             </remarks>
         </member>
         <member name="F:Awesomium.Core.ReleaseInfo.SWF_PUBLIC_KEY">
@@ -2052,10 +2353,35 @@
             Specifies the full Public Key of the Awesomium.Windows.Forms assembly's Strong Name.
             </summary>
             <remarks>
-            This is used with the InternalsVisibleToAttrinute to allow the internals of this
+            This is used with the InternalsVisibleToAttribute to allow the internals of this
             assembly, be visible from the Awesomium.Windows.Forms assembly.
-            
-            TODO: Instructions tutorial.
+            </remarks>
+        </member>
+        <member name="F:Awesomium.Core.ReleaseInfo.SWF_MONO_PUBLIC_KEY">
+            <summary>
+            Specifies the full Public Key of the Awesomium.Mono.Forms assembly's Strong Name.
+            </summary>
+            <remarks>
+            This is used with the InternalsVisibleToAttribute to allow the internals of this
+            assembly, be visible from the Awesomium.Mono.Forms assembly.
+            </remarks>
+        </member>
+        <member name="F:Awesomium.Core.ReleaseInfo.UNITY_PUBLIC_KEY">
+            <summary>
+            Specifies the full Public Key of the Awesomium.Unity assembly's Strong Name.
+            </summary>
+            <remarks>
+            This is used with the InternalsVisibleToAttribute to allow the internals of this
+            assembly, be visible from the Awesomium.Unity assembly.
+            </remarks>
+        </member>
+        <member name="F:Awesomium.Core.ReleaseInfo.GTK_PUBLIC_KEY">
+            <summary>
+            Specifies the full Public Key of the Awesomium.Mono.Gtk assembly's Strong Name.
+            </summary>
+            <remarks>
+            This is used with the InternalsVisibleToAttribute to allow the internals of this
+            assembly, be visible from the Awesomium.Mono.Gtk assembly.
             </remarks>
         </member>
         <member name="T:Awesomium.Core.RenderBuffer">
@@ -2063,7 +2389,7 @@
             Represents a 32-bit BGRA pixel buffer. You can save it
             directly to an image or copy it to some other graphics surface for 
             display in your application. An instance of this class is returned by
-            <see cref="!:IWebView.Render"/>.
+            <see cref="M:Awesomium.Core.WebView.Render"/>.
             </summary>
         </member>
         <member name="M:Awesomium.Core.RenderBuffer.CopyTo(System.IntPtr,System.Int32,System.Int32)">
@@ -2275,6 +2601,16 @@
               resource lookups using this strongly typed resource class.
             </summary>
         </member>
+        <member name="P:Awesomium.Core.CoreResources.AwesomiumChildProcessTest">
+            <summary>
+              Looks up a localized string similar to AwesomiumChildProcessTest.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Core.CoreResources.ChildProcessTestDomainName">
+            <summary>
+              Looks up a localized string similar to Awesomium.ChildProcess.TestDomain.
+            </summary>
+        </member>
         <member name="P:Awesomium.Core.CoreResources.ERR_InvalidJpegQuality">
             <summary>
               Looks up a localized string similar to Valid range is 0 to 100..
@@ -2293,6 +2629,11 @@
         <member name="P:Awesomium.Core.CoreResources.ERR_WebControlDisabled">
             <summary>
               Looks up a localized string similar to The control is disabled either manually or it has been destroyed..
+            </summary>
+        </member>
+        <member name="P:Awesomium.Core.CoreResources.TempCache">
+            <summary>
+              Looks up a localized string similar to {0}{1}TempCache{1}.
             </summary>
         </member>
         <member name="P:Awesomium.Core.CoreResources.TITLE_Crashed">
@@ -2451,6 +2792,26 @@
             </remarks>
             <threadsafety static="false" instance="false"/>
         </member>
+        <member name="M:Awesomium.Core.WebCore.OnStart(Awesomium.Core.CoreStartingEventArgs)">
+            <summary>
+            Triggers the <see cref="E:Awesomium.Core.WebCore.Starting"/> event.
+            </summary>
+        </member>
+        <member name="M:Awesomium.Core.WebCore.OnStarted(Awesomium.Core.CoreStartEventArgs)">
+            <summary>
+            Triggers the Started event.
+            </summary>
+        </member>
+        <member name="M:Awesomium.Core.WebCore.OnShutdown(Awesomium.Core.CoreShutdownEventArgs)">
+            <summary>
+            Triggers the <see cref="E:Awesomium.Core.WebCore.ShuttingDown"/> event.
+            </summary>
+        </member>
+        <member name="M:Awesomium.Core.WebCore.OnCreateView(Awesomium.Core.CreatedViewEventArgs)">
+            <summary>
+            Triggers the <see cref="E:Awesomium.Core.WebCore.CreatedView"/> event.
+            </summary>
+        </member>
         <member name="M:Awesomium.Core.WebCore.VerifyDependencies">
             <summary>
             Verifies the existence of windows specific dependencies.
@@ -2469,6 +2830,20 @@
             Invokes the main method for an Awesomium Child Process.
             </summary>
             <seealso cref="P:Awesomium.Core.WebCoreConfig.ChildProcessPath"/>
+        </member>
+        <member name="M:Awesomium.Core.WebCore.GetUri(System.String)">
+            <summary>
+            Gets a <see cref="T:System.Uri"/> for URL string.
+            </summary>
+            <param name="url">
+            A <see cref="T:System.String"/> value representing a URL.
+            </param>
+            <returns>
+            A <see cref="T:System.Uri"/> representing the specified URL,
+            or a <see cref="T:System.Uri"/> representing <c>about:blank</c>,
+            if the string specified for <paramref name="url"/>,
+            is not a valid URL.
+            </returns>
         </member>
         <member name="M:Awesomium.Core.WebCore.Initialize(Awesomium.Core.WebCoreConfig)">
             <summary>
@@ -2495,7 +2870,7 @@
             <see cref="T:Awesomium.Core.WebCore"/> is possible per application session (process).
             </note>
             <para>
-            If you set <see cref="P:Awesomium.Core.WebCoreConfig.SaveCacheAndCookies"/> to true, 
+            If you set <see cref="P:Awesomium.Core.WebCoreConfig.SaveCacheAndCookies"/> to <c>true</c>, 
             please make sure that your hosting application is a single instance application, 
             unless you are sure that you provide a unique <see cref="P:Awesomium.Core.WebCoreConfig.UserDataPath"/>
             for each of your application's instances.
@@ -2504,7 +2879,15 @@
             <exception cref="T:System.InvalidOperationException">
             The member is called while <see cref="T:Awesomium.Core.WebCore"/> is running.
             </exception>
+            <exception cref="T:System.InvalidOperationException">
+            The member is called on a <see cref="T:Awesomium.Core.WebCore"/> that has previously been shut down.
+            </exception>
+            <exception cref="T:System.InvalidOperationException">
+            Attempting to initialize a <see cref="T:Awesomium.Core.WebCore"/> to use a cache (see: <see cref="P:Awesomium.Core.WebCoreConfig.UserDataPath"/>)
+            that is already being used by another <see cref="T:Awesomium.Core.WebCore"/> instance on the system.
+            </exception>
             <seealso cref="P:Awesomium.Core.WebCore.IsRunning"/>
+            <seealso cref="P:Awesomium.Core.WebCoreConfig.IsCacheUsed"/>
         </member>
         <member name="M:Awesomium.Core.WebCore.Initialize(Awesomium.Core.WebCoreConfig,System.Boolean)">
             <summary>
@@ -2532,7 +2915,7 @@
             <see cref="T:Awesomium.Core.WebCore"/> is possible per application session (process).
             </note>
             <para>
-            If you set <see cref="P:Awesomium.Core.WebCoreConfig.SaveCacheAndCookies"/> to true, 
+            If you set <see cref="P:Awesomium.Core.WebCoreConfig.SaveCacheAndCookies"/> to <c>true</c>, 
             please make sure that your hosting application is a single instance application, 
             unless you are sure that you provide a unique <see cref="P:Awesomium.Core.WebCoreConfig.UserDataPath"/>
             for each of your application's instances.
@@ -2541,7 +2924,15 @@
             <exception cref="T:System.InvalidOperationException">
             The member is called while <see cref="T:Awesomium.Core.WebCore"/> is running.
             </exception>
+            <exception cref="T:System.InvalidOperationException">
+            The member is called on a <see cref="T:Awesomium.Core.WebCore"/> that has previously been shut down.
+            </exception>
+            <exception cref="T:System.InvalidOperationException">
+            Attempting to initialize a <see cref="T:Awesomium.Core.WebCore"/> to use a cache (see: <see cref="P:Awesomium.Core.WebCoreConfig.UserDataPath"/>)
+            that is already being used by another <see cref="T:Awesomium.Core.WebCore"/> instance on the system.
+            </exception>
             <seealso cref="P:Awesomium.Core.WebCore.IsRunning"/>
+            <seealso cref="P:Awesomium.Core.WebCoreConfig.IsCacheUsed"/>
         </member>
         <member name="M:Awesomium.Core.WebCore.Start">
             <summary>
@@ -2600,6 +2991,15 @@
             If you call this method before initializing the <see cref="T:Awesomium.Core.WebCore"/>, Awesomium
             will automatically start with default configuration settings.
             </remarks>
+            <exception cref="T:System.InvalidOperationException">
+            The member is called on a <see cref="T:Awesomium.Core.WebCore"/> that has previously been shut down.
+            </exception>
+            <exception cref="T:System.InvalidOperationException">
+            Attempting to initialize a <see cref="T:Awesomium.Core.WebCore"/> to use a cache (see: <see cref="P:Awesomium.Core.WebCoreConfig.UserDataPath"/>)
+            that is already being used by another <see cref="T:Awesomium.Core.WebCore"/> instance on the system.
+            </exception>
+            <seealso cref="M:Awesomium.Core.WebCore.Initialize(Awesomium.Core.WebCoreConfig)"/>
+            <seealso cref="P:Awesomium.Core.WebCoreConfig.IsCacheUsed"/>
         </member>
         <member name="M:Awesomium.Core.WebCore.CreateSourceWebView(System.Int32,System.Int32)">
             <summary>
@@ -2615,6 +3015,15 @@
             If you call this method before initializing the <see cref="T:Awesomium.Core.WebCore"/>, Awesomium
             will automatically start with default configuration settings.
             </remarks>
+            <exception cref="T:System.InvalidOperationException">
+            The member is called on a <see cref="T:Awesomium.Core.WebCore"/> that has previously been shut down.
+            </exception>
+            <exception cref="T:System.InvalidOperationException">
+            Attempting to initialize a <see cref="T:Awesomium.Core.WebCore"/> to use a cache (see: <see cref="P:Awesomium.Core.WebCoreConfig.UserDataPath"/>)
+            that is already being used by another <see cref="T:Awesomium.Core.WebCore"/> instance on the system.
+            </exception>
+            <seealso cref="M:Awesomium.Core.WebCore.Initialize(Awesomium.Core.WebCoreConfig)"/>
+            <seealso cref="P:Awesomium.Core.WebCoreConfig.IsCacheUsed"/>
         </member>
         <member name="M:Awesomium.Core.WebCore.SetCustomResponsePage(System.Int32,System.String)">
             <summary>
@@ -2814,11 +3223,45 @@
             The member is called before starting <see cref="T:Awesomium.Core.WebCore"/>.
             </exception>
         </member>
+        <member name="E:Awesomium.Core.WebCore.Starting">
+            <summary>
+            Occurs when the <see cref="T:Awesomium.Core.WebCore"/> is starting.
+            </summary>
+            <remarks>
+            <note type="caution">
+            Setting <see cref="P:System.ComponentModel.CancelEventArgs.Cancel"/> to <c>true</c>,
+            will prevent the <see cref="T:Awesomium.Core.WebCore"/> from starting. 
+            Use with caution.
+            </note>
+            </remarks>
+        </member>
+        <member name="E:Awesomium.Core.WebCore.Started">
+            <summary>
+            Occurs right after the <see cref="T:Awesomium.Core.WebCore"/> has successfully started.
+            </summary>
+        </member>
+        <member name="E:Awesomium.Core.WebCore.ShuttingDown">
+            <summary>
+            Occurs when the <see cref="T:Awesomium.Core.WebCore"/> is shutting down.
+            </summary>
+        </member>
+        <member name="E:Awesomium.Core.WebCore.CreatedView">
+            <summary>
+            Occurs when a new view has been created by this <see cref="T:Awesomium.Core.WebCore"/>.
+            The view can be a <see cref="T:Awesomium.Core.WebView"/> instance or any technology specific
+            <c>WebControl</c>, all implementing the <see cref="T:Awesomium.Core.IWebView"/> interface.
+            </summary>
+        </member>
         <member name="P:Awesomium.Core.WebCore.IsChildProcess">
             <summary>
             Gets if the calling process is an Awesomium Child Process.
             </summary>
             <seealso cref="P:Awesomium.Core.WebCoreConfig.ChildProcessPath"/>
+        </member>
+        <member name="P:Awesomium.Core.WebCore.PackagePath">
+            <summary>
+            Gets the path to the loaded native Awesomium library.
+            </summary>
         </member>
         <member name="P:Awesomium.Core.WebCore.PluginsEnabled">
             <summary>
@@ -2910,6 +3353,11 @@
             </note>
             </remarks>
         </member>
+        <member name="P:Awesomium.Core.WebCore.SyncRoot">
+            <summary>
+            Synchronization object.
+            </summary>
+        </member>
         <member name="T:Awesomium.Core.WebCoreConfig">
             <summary>
             Configuration settings for the <see cref="T:Awesomium.Core.WebCore"/>.
@@ -2940,10 +3388,10 @@
             Singleton with default configuration settings.
             </summary>
             <remarks>
-            See the Remarks section of <see cref="M:Awesomium.Core.WebCoreConfig.#ctor"/>
+            See the Remarks section of <see cref="T:Awesomium.Core.WebCoreConfig"/>
             for a list of default configuration settings.
             </remarks>
-            <seealso cref="M:Awesomium.Core.WebCoreConfig.#ctor"/>
+            <seealso cref="T:Awesomium.Core.WebCoreConfig"/>
         </member>
         <member name="M:Awesomium.Core.WebCoreConfig.#ctor">
             <summary>
@@ -2971,7 +3419,7 @@
             </item>
             <item>
             <term><see cref="P:Awesomium.Core.WebCoreConfig.UserDataPath"/></term>
-            <description>An empty string which defaults to: "./Default" directory.</description>
+            <description>An empty string which defaults to: <c>CSIDL_APPDATA\Awesomium\Default\</c></description>
             </item>
             <item>
             <term><see cref="P:Awesomium.Core.WebCoreConfig.PluginPath"/></term>
@@ -2979,7 +3427,7 @@
             </item>
             <item>
             <term><see cref="P:Awesomium.Core.WebCoreConfig.LogPath"/></term>
-            <description>An empty string which defaults to the working directory.</description>
+            <description>An empty string which defaults to <c>CSIDL_APPDATA\Awesomium\</c>.</description>
             </item>
             <item>
             <term><see cref="P:Awesomium.Core.WebCoreConfig.LogLevel"/></term>
@@ -2995,7 +3443,7 @@
             </item>
             <item>
             <term><see cref="P:Awesomium.Core.WebCoreConfig.LocalePath"/></term>
-            <description>An empty string which defaults to the location of Awesomium.dll.</description>
+            <description>An empty string which defaults to the location of the native Awesomium library.</description>
             </item>
             <item>
             <term><see cref="P:Awesomium.Core.WebCoreConfig.EnableAutoDetectEncoding"/></term>
@@ -3054,7 +3502,7 @@
             <description><c>"about:blank"</c></description>
             </item>
             <item>
-            <term><see cref="P:Awesomium.Core.WebCoreConfig.EnableVisualStyles"/></term>
+            <term><c>EnableVisualStyles</c></term>
             <description><c>true</c></description>
             </item>
             </list>
@@ -3063,12 +3511,12 @@
         <member name="P:Awesomium.Core.WebCoreConfig.EnablePlugins">
             <summary>
             Indicates whether or not to enable embedded plugins (e.g., Flash).
-            The default is false.
+            The default is <c>true</c>.
             </summary>
         </member>
         <member name="P:Awesomium.Core.WebCoreConfig.EnableJavascript">
             <summary>
-            Indicates whether or not Javascript is enabled. The default is True.
+            Indicates whether or not Javascript is enabled. The default is <c>true</c>.
             </summary>
         </member>
         <member name="P:Awesomium.Core.WebCoreConfig.EnableDatabases">
@@ -3080,8 +3528,37 @@
         <member name="P:Awesomium.Core.WebCoreConfig.UserDataPath">
             <summary>
             Indicates the path to the directory that will be used to store cache, cookies, and other data. 
-            If an empty string is specified, this path defaults to "./Default".
+            If an empty string is specified, this path defaults to <c>CSIDL_APPDATA\Awesomium\Default</c>.
             </summary>
+            <remarks>
+            Relative paths are resolved against <see cref="P:Awesomium.Core.WebCore.PackagePath"/>.
+            That is, the path where the native Awesomium library is located.
+            <p/>
+            <note type="caution">
+            If you set <see cref="P:Awesomium.Core.WebCoreConfig.SaveCacheAndCookies"/> to <c>true</c>, 
+            please make sure that your hosting application is a single instance application, 
+            unless you are sure that you provide a unique <see cref="P:Awesomium.Core.WebCoreConfig.UserDataPath"/>
+            for each of your application's instances. No more than one process/<see cref="T:Awesomium.Core.WebCore"/>,
+            can access the same cache at any given time.
+            </note>
+            </remarks>
+            <seealso cref="P:Awesomium.Core.WebCoreConfig.IsCacheUsed"/>
+        </member>
+        <member name="P:Awesomium.Core.WebCoreConfig.IsCacheUsed">
+            <summary>
+            Gets if the currently set <see cref="P:Awesomium.Core.WebCoreConfig.UserDataPath"/> or the default cache if none is defined,
+            is currently used by another application.
+            </summary>
+            <remarks>
+            <note type="caution">
+            If you set <see cref="P:Awesomium.Core.WebCoreConfig.SaveCacheAndCookies"/> to <c>true</c>, 
+            please make sure that your hosting application is a single instance application, 
+            unless you are sure that you provide a unique <see cref="P:Awesomium.Core.WebCoreConfig.UserDataPath"/>
+            for each of your application's instances. No more than one process/<see cref="T:Awesomium.Core.WebCore"/>,
+            can access the same cache at any given time.
+            </note>
+            </remarks>
+            <seealso cref="M:Awesomium.Core.WebCore.Initialize(Awesomium.Core.WebCoreConfig)"/>
         </member>
         <member name="P:Awesomium.Core.WebCoreConfig.PluginPath">
             <summary>
@@ -3091,9 +3568,13 @@
         </member>
         <member name="P:Awesomium.Core.WebCoreConfig.LogPath">
             <summary>
-            Indicates the path to store the awesomium.log. 
-            If none is specified, the log will be stored in the working directory.
+            Indicates the path to store the <c>awesomium.log</c>.
+            If none is specified, the log will be stored in <c>CSIDL_APPDATA\Awesomium\</c>.
             </summary>
+            <remarks>
+            Relative paths are resolved against <see cref="P:Awesomium.Core.WebCore.PackagePath"/>.
+            That is, the path where the native Awesomium library is located.
+            </remarks>
         </member>
         <member name="P:Awesomium.Core.WebCoreConfig.LogLevel">
             <summary>
@@ -3119,6 +3600,23 @@
             (this will be AwesomiumProcess if you leave this empty). You can specify your own executable 
             to handle the rendering but you will need to make sure that it calls <see cref="M:Awesomium.Core.WebCore.ChildProcessMain"/>.
             </summary>
+            <remarks>
+            Currently, the use of a managed child process on Windows, is supported on Windows versions
+            newer than and including Windows Vista.
+            <p/>
+            <note type="caution">
+            Your applications must always distribute the default <c>AwesomiumProcess</c>
+            alongside the <c>Awesomium</c> library.
+            <p/>
+            On Windows systems such as Windows XP, setting this property to a managed
+            child process, is ignored and the default rendering process (<c>AwesomiumProcess</c>)
+            is used instead.
+            </note>
+            <note>
+            You can still use C/C++ custom child processes in all Windows versions
+            supported by Awesomium.
+            </note>
+            </remarks>
             <example>
             Example of Usage:
             <code>
@@ -3190,6 +3688,31 @@
             }
             </code>
             </example>
+            <seealso cref="P:Awesomium.Core.WebCoreConfig.SystemSupportsManagedChildProcess"/>
+        </member>
+        <member name="P:Awesomium.Core.WebCoreConfig.SystemSupportsManagedChildProcess">
+            <summary>
+            Gets if the use of a managed custom child process (including <see cref="F:Awesomium.Core.WebCoreConfig.CHILD_PROCESS_SELF"/>),
+            is supported in the current operating system.
+            </summary>
+            <remarks>
+            Currently, the use of a managed child process on Windows, is supported on Windows versions
+            newer than and including Windows Vista.
+            <p/>
+            <note type="caution">
+            Your applications must always distribute the default <c>AwesomiumProcess</c>
+            alongside the <c>Awesomium</c> library.
+            <p/>
+            On Windows systems such as Windows XP, setting <see cref="P:Awesomium.Core.WebCoreConfig.ChildProcessPath"/> to a managed
+            child process, is ignored and the default rendering process (<c>AwesomiumProcess</c>)
+            is used instead.
+            </note>
+            <note>
+            You can still use C/C++ custom child processes in all Windows versions
+            supported by Awesomium.
+            </note>
+            </remarks>
+            <seealso cref="P:Awesomium.Core.WebCoreConfig.ChildProcessPath"/>
         </member>
         <member name="P:Awesomium.Core.WebCoreConfig.LocalePath">
             <summary>
@@ -3297,6 +3820,16 @@
             <summary>
             Indicates whether or not cache and cookies should be saved to disk.
             </summary>
+            <remarks>
+            <note type="caution">
+            When you set this property to <c>true</c>, please make sure that your hosting application 
+            is a single instance application, unless you are sure that you provide a unique 
+            <see cref="P:Awesomium.Core.WebCoreConfig.UserDataPath"/> for each of your application's instances. 
+            No more than one process/<see cref="T:Awesomium.Core.WebCore"/>, can access the same cache at any given time.
+            </note>
+            </remarks>
+            <seealso cref="P:Awesomium.Core.WebCoreConfig.UserDataPath"/>
+            <seealso cref="P:Awesomium.Core.WebCoreConfig.IsCacheUsed"/>
         </member>
         <member name="P:Awesomium.Core.WebCoreConfig.MaxCacheSize">
             <summary>
@@ -3309,6 +3842,9 @@
             See http://en.wikipedia.org/wiki/Same_origin_policy.
             </summary>
         </member>
+        <member name="P:Awesomium.Core.WebCoreConfig.DisableWinMessagePump">
+            <exclude />
+        </member>
         <member name="P:Awesomium.Core.WebCoreConfig.CustomCSS">
             <summary>
             Indicates a string of custom CSS to be included as the global default style for all pages. 
@@ -3320,6 +3856,10 @@
             Indicates the time interval between invocations of WebCore's update, in milliseconds.
             The default is 20.
             </summary>
+            <remarks>
+            When a <see cref="T:Awesomium.Core.WebView"/> or <c>WebControl</c> has <see cref="P:Awesomium.Core.IWebView.SelfUpdate"/>
+            enabled, this property also affects the update frequency of that view.
+            </remarks>
         </member>
         <member name="P:Awesomium.Core.WebCoreConfig.HomeURL">
             <summary>
@@ -3695,7 +4235,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.GoBack">
@@ -3704,7 +4244,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.GoForward">
@@ -3713,7 +4253,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.Stop">
@@ -3722,7 +4262,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.Reload">
@@ -3741,7 +4281,7 @@
             <param name="javascript">The string of Javascript to execute.</param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.ExecuteJavascript(System.String,System.String)">
@@ -3754,7 +4294,7 @@
             leave this blank to execute in the main frame.</param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.ExecuteJavascriptWithResult(System.String)">
@@ -3769,7 +4309,7 @@
             "document", or any DOM elements).</returns>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.ExecuteJavascriptWithResult(System.String,System.Int32)">
@@ -3787,7 +4327,7 @@
             "document", or any DOM elements).</returns>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.ExecuteJavascriptWithResult(System.String,System.String,System.Int32)">
@@ -3807,7 +4347,7 @@
             "document", or any DOM elements).</returns>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.CallJavascriptFunction(System.String,System.String,Awesomium.Core.JSValue[])">
@@ -3825,7 +4365,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.CallJavascriptFunction(System.String,System.String,System.String,Awesomium.Core.JSValue[])">
@@ -3847,7 +4387,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.CreateObject(System.String)">
@@ -3864,7 +4404,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.DestroyObject(System.String)">
@@ -3876,7 +4416,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.SetObjectProperty(System.String,System.String,Awesomium.Core.JSValue)">
@@ -3905,7 +4445,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.SetObjectCallback(System.String,System.String,Awesomium.Core.JSCallback)">
@@ -3942,7 +4482,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.Render">
@@ -3964,30 +4504,7 @@
             </returns>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
-            </exception>
-        </member>
-        <member name="M:Awesomium.Core.WebView.PauseRendering">
-            <summary>
-            Temporarily pauses internal asynchronous rendering.
-            </summary>
-            <remarks>
-            All rendering is actually done asynchronously in a separate process
-            and so the page is usually continuously rendering even if you never call
-            <see cref="M:Awesomium.Core.WebView.Render"/>. Call this to temporarily pause rendering.
-            </remarks>
-            <exception cref="T:System.InvalidOperationException">
-            The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
-            </exception>
-        </member>
-        <member name="M:Awesomium.Core.WebView.ResumeRendering">
-            <summary>
-            Resume rendering after a call to <see cref="M:Awesomium.Core.WebView.PauseRendering"/>.
-            </summary>
-            <exception cref="T:System.InvalidOperationException">
-            The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.InjectMouseMove(System.Int32,System.Int32)">
@@ -4002,7 +4519,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.InjectMouseDown(Awesomium.Core.MouseButton)">
@@ -4014,7 +4531,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.InjectMouseUp(Awesomium.Core.MouseButton)">
@@ -4026,7 +4543,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.InjectMouseWheel(System.Int32)">
@@ -4038,7 +4555,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.InjectMouseWheel(System.Int32,System.Int32)">
@@ -4053,7 +4570,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.InjectKeyboardEvent(Awesomium.Core.WebKeyboardEvent)">
@@ -4066,7 +4583,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.InjectKeyboardEventWin(System.Int32,System.Int32,System.Int32)">
@@ -4084,7 +4601,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
             <remarks>
             This is usually easier to use than <see cref="M:Awesomium.Core.WebView.InjectKeyboardEvent(Awesomium.Core.WebKeyboardEvent)"/>. All you have to
@@ -4098,7 +4615,7 @@
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.Cut">
@@ -4108,7 +4625,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.Copy">
@@ -4117,7 +4634,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.CopyHTML">
@@ -4126,7 +4643,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.CopyLinkAddress">
@@ -4135,7 +4652,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.Paste">
@@ -4145,7 +4662,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.SelectAll">
@@ -4154,7 +4671,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.GetZoomForHost(System.String)">
@@ -4166,7 +4683,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.ResetZoom">
@@ -4175,14 +4692,12 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.Resize(System.Int32,System.Int32)">
             <summary>
-            Resizes this <see cref="T:Awesomium.Core.WebView"/> to certain dimensions. This operation can fail
-            if another resize is already pending (see <see cref="P:Awesomium.Core.WebView.IsResizing"/>) or if
-            the repaint timeout was exceeded.
+            Initiates an asynchronous resize operation.
             </summary>
             <param name="width">
             The width in pixels to resize to.
@@ -4193,26 +4708,25 @@
             <returns>
             True if the resize was successful. False otherwise.
             </returns>
+            <remarks>
+            Handle the <see cref="E:Awesomium.Core.WebView.ResizeComplete"/> event to be notified 
+            when the operation completes. This operation can fail 
+            if another resize is already pending (see <see cref="P:Awesomium.Core.WebView.IsResizing"/>).
+            </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
-        <member name="M:Awesomium.Core.WebView.Resize(System.Int32,System.Int32,System.Boolean,System.Int32)">
+        <member name="M:Awesomium.Core.WebView.Resize(System.Int32,System.Int32,System.Int32)">
             <summary>
-            Resizes this <see cref="T:Awesomium.Core.WebView"/> to certain dimensions. This operation can fail
-            if another resize is already pending (see <see cref="P:Awesomium.Core.WebView.IsResizing"/>) or if
-            the repaint timeout was exceeded.
+            Resizes this <see cref="T:Awesomium.Core.WebView"/> to certain dimensions.
             </summary>
             <param name="width">
             The width in pixels to resize to.
             </param>
             <param name="height">
             The height in pixels to resize to.
-            </param>
-            <param name="waitForRepaint">
-            Whether or not to wait for the <see cref="T:Awesomium.Core.WebView"/> to finish repainting to avoid flicker
-            (default is true).
             </param>
             <param name="repaintTimeoutMs">
             The max amount of time to wait for a repaint, in milliseconds.
@@ -4220,9 +4734,13 @@
             <returns>
             True if the resize was successful. False otherwise.
             </returns>
+            <remarks>
+            This operation can fail if another resize is already pending 
+            (see <see cref="P:Awesomium.Core.WebView.IsResizing"/>) or if the repaint timeout was exceeded.
+            </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.Unfocus">
@@ -4231,7 +4749,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.Focus">
@@ -4244,7 +4762,7 @@
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.SetURLFilteringMode(Awesomium.Core.URLFilteringMode)">
@@ -4256,7 +4774,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.AddURLFilter(System.String)">
@@ -4275,7 +4793,7 @@
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.ClearAllURLFilters">
@@ -4284,7 +4802,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.SetHeaderDefinition(System.String,System.Collections.Specialized.NameValueCollection)">
@@ -4299,7 +4817,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.AddHeaderRewriteRule(System.String,System.String)">
@@ -4317,7 +4835,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.RemoveHeaderRewriteRule(System.String)">
@@ -4330,7 +4848,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.RemoveHeaderRewriteRulesByDefinition(System.String)">
@@ -4343,7 +4861,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.Print">
@@ -4357,7 +4875,7 @@
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.RequestScrollData">
@@ -4369,7 +4887,7 @@
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.RequestScrollData(System.String)">
@@ -4384,7 +4902,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.Find(System.String)">
@@ -4401,7 +4919,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.Find(System.String,System.Boolean)">
@@ -4421,7 +4939,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.Find(System.String,System.Boolean,System.Boolean)">
@@ -4444,7 +4962,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.FindNext">
@@ -4453,7 +4971,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.FindNext(System.Boolean)">
@@ -4465,7 +4983,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.StopFind(System.Boolean)">
@@ -4480,7 +4998,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.TranslatePage(System.String,System.String)">
@@ -4498,7 +5016,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.ActivateIME(System.Boolean)">
@@ -4513,7 +5031,7 @@
             <seealso cref="E:Awesomium.Core.WebView.ImeUpdated"/>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.SetIMEComposition(System.String,System.Int32,System.Int32,System.Int32)">
@@ -4526,13 +5044,13 @@
             <param name="targetEnd">The position of the end of the selection.</param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.ConfirmIMEComposition(System.String)">
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.CancelIMEComposition">
@@ -4541,7 +5059,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.CopyImageAt(System.Int32,System.Int32)">
@@ -4556,7 +5074,7 @@
             </param>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.SaveToPNG(System.String)">
@@ -4575,7 +5093,7 @@
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.SaveToPNG(System.String,System.Boolean)">
@@ -4597,7 +5115,7 @@
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebView.SaveToJPEG(System.String,System.Int32)">
@@ -4619,7 +5137,7 @@
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
             <exception cref="T:System.ArgumentOutOfRangeException">
             An invalid compression quality value is specified.
@@ -4653,7 +5171,7 @@
             </example>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
             <seealso cref="P:Awesomium.Core.WebView.InputController"/>
         </member>
@@ -4708,7 +5226,7 @@
             </example>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
             <seealso cref="P:Awesomium.Core.WebView.InputController"/>
         </member>
@@ -4887,21 +5405,71 @@
             and resource tracking purposes.
             </summary>
         </member>
-        <member name="P:Awesomium.Core.WebView.IsEnabled">
+        <member name="P:Awesomium.Core.WebView.IsLive">
             <summary>
-            Gets if the view is valid and enabled.
+            Gets if this <see cref="T:Awesomium.Core.WebView"/> is alive.
             </summary>
+            <returns>
+            A <see cref="T:System.Boolean"/> value indicating if this <see cref="T:Awesomium.Core.WebView"/>, 
+            is alive. <c>False</c> indicates that the <see cref="T:Awesomium.Core.WebView"/>:
+            <list type="bullet">
+            <item>
+            <description>
+            Crashed (see <see cref="P:Awesomium.Core.WebView.IsCrashed"/>).
+            </description>
+            </item>
+            <item>
+            <description>
+            Prematurely destroyed (see <see cref="M:Awesomium.Core.WebView.Close"/>).
+            </description>
+            </item>
+            <item>
+            <description>
+            Not properly instantiated. This means that something went wrong
+            during instantiation of either the <see cref="T:Awesomium.Core.WebCore"/> (if this
+            is the first <see cref="T:Awesomium.Core.WebView"/> created) or of the <see cref="T:Awesomium.Core.WebView"/>
+            itself.
+            </description>
+            </item>
+            </list>
+            </returns>
             <remarks>
-            <para>
-            A <see cref="T:Awesomium.Core.WebView"/> is considered invalid when it has been destroyed 
-            (by either calling <see cref="M:Awesomium.Core.WebView.Close"/> or <see cref="M:Awesomium.Core.WebCore.Shutdown"/>)
-            or was never properly instantiated. Attempting to access members of this
-            view while the value of this property is false, may cause a <see cref="T:System.InvalidOperationException"/>
-            </para>
+            Developers should always check this property before calling <see cref="T:Awesomium.Core.IWebView"/>
+            members implemented by this <see cref="T:Awesomium.Core.WebView"/>. Trying to access the <see cref="T:Awesomium.Core.WebView"/>
+            when it is not alive, can throw an <see cref="T:System.InvalidOperationException"/>.
             <note>
             There is no way to revive an invalid view. When you are done with reporting any errors
             to the user, dispose it and release any references to it to avoid memory leaks.
             </note>
+            </remarks>
+            <example>
+            <code>
+            private void toolStripButton2_Click( object sender, EventArgs e )
+            {
+                if ( !webView.IsLive )
+                    return;
+                    
+                webView.GoForward();
+            }
+            </code>
+            <code lang="VB">
+            Private Sub ToolStripButton2_Click( sender As Object, e As EventArgs ) Handles ToolStripButton2.Click
+                If Not m_WebView.IsLive Then Return
+                    
+                m_WebView.GoForward()
+            End Sub
+            </code>
+            </example>
+        </member>
+        <member name="P:Awesomium.Core.WebView.IsSourceView">
+            <summary>
+            Gets if this is a source view that displays the source of
+            web-pages loaded to it.
+            </summary>
+            <remarks>
+            You can create a view that displays the source of each web-page
+            loaded to it, by using the <see cref="M:Awesomium.Core.WebCore.CreateSourceWebView(System.Int32,System.Int32)"/>
+            function.
             </remarks>
         </member>
         <member name="P:Awesomium.Core.WebView.IsDirty">
@@ -4910,12 +5478,12 @@
             </summary>
             <remarks>
             Internal changes to this property fire the <see cref="E:Awesomium.Core.WebView.IsDirtyChanged"/>
-            and <see cref="!:INotifyPropertyChanged.PropertyChanged"/> events,
+            and <see cref="E:System.ComponentModel.INotifyPropertyChanged.PropertyChanged"/> events,
             only if <see cref="P:Awesomium.Core.WebCore.IsAutoUpdateEnabled"/> is true.
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is accessed on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
             <seealso cref="E:Awesomium.Core.WebView.IsDirtyChanged"/>
             <seealso cref="M:Awesomium.Core.WebCore.Update"/>
@@ -4930,7 +5498,7 @@
             </returns>
             <exception cref="T:System.InvalidOperationException">
             The member is accessed on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="P:Awesomium.Core.WebView.IsLoadingPage">
@@ -4939,8 +5507,18 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is accessed on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
+        </member>
+        <member name="P:Awesomium.Core.WebView.IsNavigating">
+            <summary>
+            Gets if the <see cref="T:Awesomium.Core.WebView"/> is currently navigating to a Url.
+            </summary>
+            <remarks>
+            Unlike <see cref="P:Awesomium.Core.WebView.IsLoadingPage"/> that updates when the actual contents
+            of a page are being downloaded, this property is updated when navigation
+            starts and updates again when loading completes.
+            </remarks>
         </member>
         <member name="P:Awesomium.Core.WebView.Title">
             <summary>
@@ -4962,7 +5540,7 @@
             </returns>
             <exception cref="T:System.InvalidOperationException">
             The member is accessed on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="P:Awesomium.Core.WebView.HistoryBackCount">
@@ -4971,7 +5549,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is accessed on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="P:Awesomium.Core.WebView.HistoryForwardCount">
@@ -4980,12 +5558,12 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">
             The member is accessed on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="P:Awesomium.Core.WebView.ToolTip">
             <summary>
-            Gets the current tooltip for the element under the cursor.
+            Gets the tooltip for the element currently under the cursor.
             </summary>
         </member>
         <member name="P:Awesomium.Core.WebView.Cursor">
@@ -5060,6 +5638,59 @@
             <seealso cref="T:Awesomium.Core.WebViewContext"/>
             <seealso cref="E:Awesomium.Core.WebView.ShowContextMenu"/>
         </member>
+        <member name="P:Awesomium.Core.WebView.SelfUpdate">
+            <summary>
+            Gets or sets if this view should use an independent rendering timer. 
+            </summary>
+            <remarks>
+            <note type="caution">
+            Setting this property to <c>true</c> will fail if <see cref="P:Awesomium.Core.WebCore.IsAutoUpdateEnabled"/> is <c>false</c>.
+            It is suggested that you check the value of <see cref="P:Awesomium.Core.WebCore.IsAutoUpdateEnabled"/> before attempting
+            to activate <see cref="P:Awesomium.Core.WebView.SelfUpdate"/>.
+            </note>
+            <p/>
+            When auto-update is enabled (see <see cref="P:Awesomium.Core.WebCore.IsAutoUpdateEnabled"/>), updating
+            <see cref="P:Awesomium.Core.WebView.IsDirty"/> and refreshing views, is controlled by the <see cref="T:Awesomium.Core.WebCore"/>
+            using an internal timer, common for all views. The same timer is used to update the <see cref="T:Awesomium.Core.WebCore"/>
+            (see <see cref="M:Awesomium.Core.WebCore.Update"/>) and fire events. While this is a light and effective technique, it is
+            not ideal when you require high performance quality, such as when video content is displayed in views.
+            In these scenarios, setting <see cref="P:Awesomium.Core.WebView.SelfUpdate"/> to <c>true</c> will tell the view to use an
+            independent timer for rendering only, that will significantly improve the rendering quality, to the expense
+            of CPU resources.
+            <p/>
+            <note type="caution">
+            You should always combine the use of <see cref="P:Awesomium.Core.WebView.SelfUpdate"/> with the use of <see cref="P:Awesomium.Core.WebView.IsRendering"/>.
+            When more than one views are using <see cref="P:Awesomium.Core.WebView.SelfUpdate"/> and they all display content that updates too fast (such as videos), 
+            controls that are currently not visible to the user (such as controls that are currently covered by other UI or used in a tab 
+            of a tab-control that is currently not visible), should have rendering paused (see <see cref="P:Awesomium.Core.WebView.IsRendering"/>),
+            to avoid draining out your CPU resources.
+            </note>
+            <p/>
+            <note>
+            The default setting for <see cref="T:Awesomium.Core.WebView"/> is <c>false</c>.
+            </note>
+            </remarks>
+            <exception cref="T:System.InvalidOperationException">
+            The member is accessed on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
+            </exception>
+            <seealso cref="P:Awesomium.Core.WebView.IsRendering"/>
+        </member>
+        <member name="P:Awesomium.Core.WebView.IsRendering">
+            <summary>
+            Gets or sets if internal asynchronous rendering is currently active.
+            </summary>
+            <remarks>
+            All rendering is actually done asynchronously in a separate process
+            and so the page is usually continuously rendering internally.
+            Set this to <c>false</c> to temporarily pause rendering.
+            </remarks>
+            <exception cref="T:System.InvalidOperationException">
+            The member is accessed on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
+            </exception>
+            <seealso cref="P:Awesomium.Core.WebView.SelfUpdate"/>
+        </member>
         <member name="P:Awesomium.Core.WebView.IsTransparent">
             <summary>
             Gets or sets if pages should be rendered with transparency
@@ -5076,8 +5707,12 @@
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is accessed on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
+            <exception cref="T:System.ArgumentException">
+            Attempted to set this property to true while <see cref="P:Awesomium.Core.WebView.FlushAlpha"/> is also true.
+            </exception>
+            <seealso cref="P:Awesomium.Core.WebView.FlushAlpha"/>
         </member>
         <member name="P:Awesomium.Core.WebView.FlushAlpha">
             <summary>
@@ -5090,6 +5725,10 @@
             is set to <c>false</c> in order to set this property to <c>true</c>.
             </note>
             </remarks>
+            <exception cref="T:System.ArgumentException">
+            Attempted to set this property to true while <see cref="P:Awesomium.Core.WebView.IsTransparent"/> is also true.
+            </exception>
+            <seealso cref="P:Awesomium.Core.WebView.IsTransparent"/>
         </member>
         <member name="P:Awesomium.Core.WebView.Zoom">
             <summary>
@@ -5100,10 +5739,17 @@
             This operation is asynchronous: 
             the value may not change for several milliseconds after
             you set this property.
+            <note>
+            Note that this setting is applied to the current hostname and
+            not the control in general. Is it dynamically updated when
+            you navigate to another domain with different, or no setting.
+            <p/>
+            To get the Zoom setting of a given hostname, use <see cref="M:Awesomium.Core.WebView.GetZoomForHost(System.String)"/>.
+            </note>
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
         </member>
         <member name="P:Awesomium.Core.WebView.Source">
@@ -5116,7 +5762,7 @@
             </returns>
             <exception cref="T:System.InvalidOperationException">
             The member is accessed on an invalid <see cref="T:Awesomium.Core.WebView"/> instance
-            (see <see cref="P:Awesomium.Core.WebView.IsEnabled"/>).
+            (see <see cref="P:Awesomium.Core.WebView.IsLive"/>).
             </exception>
             <seealso cref="M:Awesomium.Core.WebView.LoadURL(System.String)"/>
         </member>
@@ -5245,6 +5891,176 @@
             <remarks>
             The value of this property is meaningful when <see cref="P:Awesomium.Core.WebViewContext.IsEditable"/> is set to <c>true</c>.
             </remarks>
+        </member>
+        <member name="P:Awesomium.Windows.CbtEventArgs.Handle">
+            <summary>
+            Win32 handle of the window.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Windows.CbtEventArgs.Title">
+            <summary>
+            Caption of the window.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Windows.CbtEventArgs.ClassName">
+            <summary>
+            Class of the window.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Windows.CbtEventArgs.IsDialogWindow">
+            <summary>
+            Gets if it's a popup dialog.
+            </summary>
+        </member>
+        <member name="M:Awesomium.Windows.LocalWindowsHook.CoreHookProc(System.Int32,System.IntPtr,System.IntPtr)">
+            <summary>
+            Default filter function.
+            </summary>
+        </member>
+        <member name="T:Awesomium.Windows.LocalWindowsHook.HookProc">
+            <summary>
+            Filter function delegate.
+            </summary>
+        </member>
+        <member name="T:Awesomium.Windows.LocalWindowsHook.HookEventHandler">
+            <summary>
+            Event delegate.
+            </summary>
+        </member>
+        <member name="M:Awesomium.Windows.LocalCbtHook.OnWindowCreated(Awesomium.Windows.CbtEventArgs)">
+            <summary>
+            Triggers the WindowCreated event.
+            </summary>
+        </member>
+        <member name="M:Awesomium.Windows.LocalCbtHook.OnWindowDestroyed(Awesomium.Windows.CbtEventArgs)">
+            <summary>
+            Triggers the WindowDestroyed event.
+            </summary>
+        </member>
+        <member name="M:Awesomium.Windows.LocalCbtHook.OnWindowActivated(Awesomium.Windows.CbtEventArgs)">
+            <summary>
+            Triggers the WindowActivated event.
+            </summary>
+        </member>
+        <member name="F:Awesomium.Windows.NativeMethods.SetWindowPosFlags.SynchronousWindowPosition">
+            <summary>If the calling thread and the thread that owns the window are attached to different input queues, 
+            the system posts the request to the thread that owns the window. This prevents the calling thread from 
+            blocking its execution while other threads process the request.</summary>
+            <remarks>SWP_ASYNCWINDOWPOS</remarks>
+        </member>
+        <member name="F:Awesomium.Windows.NativeMethods.SetWindowPosFlags.DeferErase">
+            <summary>Prevents generation of the WM_SYNCPAINT message.</summary>
+            <remarks>SWP_DEFERERASE</remarks>
+        </member>
+        <member name="F:Awesomium.Windows.NativeMethods.SetWindowPosFlags.DrawFrame">
+            <summary>Draws a frame (defined in the window's class description) around the window.</summary>
+            <remarks>SWP_DRAWFRAME</remarks>
+        </member>
+        <member name="F:Awesomium.Windows.NativeMethods.SetWindowPosFlags.FrameChanged">
+            <summary>Applies new frame styles set using the SetWindowLong function. Sends a WM_NCCALCSIZE message to 
+            the window, even if the window's size is not being changed. If this flag is not specified, WM_NCCALCSIZE 
+            is sent only when the window's size is being changed.</summary>
+            <remarks>SWP_FRAMECHANGED</remarks>
+        </member>
+        <member name="F:Awesomium.Windows.NativeMethods.SetWindowPosFlags.HideWindow">
+            <summary>Hides the window.</summary>
+            <remarks>SWP_HIDEWINDOW</remarks>
+        </member>
+        <member name="F:Awesomium.Windows.NativeMethods.SetWindowPosFlags.DoNotActivate">
+            <summary>Does not activate the window. If this flag is not set, the window is activated and moved to the 
+            top of either the topmost or non-topmost group (depending on the setting of the hWndInsertAfter 
+            parameter).</summary>
+            <remarks>SWP_NOACTIVATE</remarks>
+        </member>
+        <member name="F:Awesomium.Windows.NativeMethods.SetWindowPosFlags.DoNotCopyBits">
+            <summary>Discards the entire contents of the client area. If this flag is not specified, the valid 
+            contents of the client area are saved and copied back into the client area after the window is sized or 
+            repositioned.</summary>
+            <remarks>SWP_NOCOPYBITS</remarks>
+        </member>
+        <member name="F:Awesomium.Windows.NativeMethods.SetWindowPosFlags.IgnoreMove">
+            <summary>Retains the current position (ignores X and Y parameters).</summary>
+            <remarks>SWP_NOMOVE</remarks>
+        </member>
+        <member name="F:Awesomium.Windows.NativeMethods.SetWindowPosFlags.DoNotChangeOwnerZOrder">
+            <summary>Does not change the owner window's position in the Z order.</summary>
+            <remarks>SWP_NOOWNERZORDER</remarks>
+        </member>
+        <member name="F:Awesomium.Windows.NativeMethods.SetWindowPosFlags.DoNotRedraw">
+            <summary>Does not redraw changes. If this flag is set, no repainting of any kind occurs. This applies to 
+            the client area, the nonclient area (including the title bar and scroll bars), and any part of the parent 
+            window uncovered as a result of the window being moved. When this flag is set, the application must 
+            explicitly invalidate or redraw any parts of the window and parent window that need redrawing.</summary>
+            <remarks>SWP_NOREDRAW</remarks>
+        </member>
+        <member name="F:Awesomium.Windows.NativeMethods.SetWindowPosFlags.DoNotReposition">
+            <summary>Same as the SWP_NOOWNERZORDER flag.</summary>
+            <remarks>SWP_NOREPOSITION</remarks>
+        </member>
+        <member name="F:Awesomium.Windows.NativeMethods.SetWindowPosFlags.DoNotSendChangingEvent">
+            <summary>Prevents the window from receiving the WM_WINDOWPOSCHANGING message.</summary>
+            <remarks>SWP_NOSENDCHANGING</remarks>
+        </member>
+        <member name="F:Awesomium.Windows.NativeMethods.SetWindowPosFlags.IgnoreResize">
+            <summary>Retains the current size (ignores the cx and cy parameters).</summary>
+            <remarks>SWP_NOSIZE</remarks>
+        </member>
+        <member name="F:Awesomium.Windows.NativeMethods.SetWindowPosFlags.IgnoreZOrder">
+            <summary>Retains the current Z order (ignores the hWndInsertAfter parameter).</summary>
+            <remarks>SWP_NOZORDER</remarks>
+        </member>
+        <member name="F:Awesomium.Windows.NativeMethods.SetWindowPosFlags.ShowWindow">
+            <summary>Displays the window.</summary>
+            <remarks>SWP_SHOWWINDOW</remarks>
+        </member>
+        <member name="T:Awesomium.Core.RenderOperations">
+            <summary>
+            Defines the operations that can be used when creating
+            a technology specific bitmap for a <see cref="T:Awesomium.Core.RenderBuffer"/>.
+            </summary>
+            <remarks>
+            This enumeration is used by technology specific Utilities.
+            </remarks>
+        </member>
+        <member name="F:Awesomium.Core.RenderOperations.PaintAtResize">
+            <summary>
+            Create a new bitmap wrapping the native pixel buffer in memory, 
+            when none is created yet, or when the pixel buffer has been resized.
+            When its size is not changed, copy the native pixel buffer to the bitmap.
+            </summary>
+        </member>
+        <member name="F:Awesomium.Core.RenderOperations.Paint">
+            <summary>
+            Always create a new bitmap, wrapping
+            the native pixel buffer in memory.
+            </summary>
+        </member>
+        <member name="F:Awesomium.Core.RenderOperations.Copy">
+            <summary>
+            Create a new bitmap only when none is created yet,
+            or when the pixel buffer has been resized.
+            Then copy the native pixel buffer to the new bitmap.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Windows.HookEventArgs.HookCode">
+            <summary>
+            Hook code.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Windows.HookEventArgs.WParam">
+            <summary>
+            WPARAM argument.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Windows.HookEventArgs.LParam">
+            <summary>
+            LPARAM argument.
+            </summary>
+        </member>
+        <member name="T:Awesomium.Windows.HookType">
+            <summary>
+            Hook Types.
+            </summary>
         </member>
         <member name="T:Awesomium.Core.WV">
             <summary>
