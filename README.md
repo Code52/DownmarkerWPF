@@ -15,7 +15,7 @@ Our aim is to create a useably, stylish new version of the project utilising Mic
 
 ## Tools required to develop
 
- - Visual Studio 2010
+ - Visual Studio 2012 Beta (2010 is not supported)
  - WiX - to generate the installer (optional)
  - 7-Zip - to generate a zip version of the tool (optional)
 
