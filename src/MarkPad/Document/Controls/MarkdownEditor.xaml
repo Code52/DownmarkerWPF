@@ -134,13 +134,7 @@
                                   Color="Black" />
             </avalonedit:TextEditor.Effect>
             <avalonedit:TextEditor.ContextMenu>
-                <ContextMenu x:Name="EditorContextMenu">
-                    <ContextMenu.ItemContainerStyle>
-                        <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
-                            <EventSetter Event="Click" Handler="SpellcheckerWordClick" />
-                        </Style>
-                    </ContextMenu.ItemContainerStyle>
-                </ContextMenu>
+                <ContextMenu x:Name="EditorContextMenu" MenuItem.Click="SpellcheckerWordClick" />
             </avalonedit:TextEditor.ContextMenu>
         </avalonedit:TextEditor>
     </Grid>
