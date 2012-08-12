@@ -12,9 +12,24 @@ namespace MarkPad.DocumentSources.MetaWeblog.Service
             proxy = new MetaWeblog(url);
         }
 
-        public string NewPost(BlogSetting settings, Post newpost, bool b)
+        public MediaObjectInfo NewMediaObject(BlogSetting settings, MediaObject mediaObject)
         {
-            return proxy.NewPost(settings.BlogInfo.blogid, settings.Username, settings.Password, newpost, b);
+            return proxy.NewMediaObject(settings.BlogInfo.blogid, settings.Username, settings.Password, mediaObject);
+        }
+
+        public bool DeletePost(string postid, BlogSetting settings)
+        {
+            return proxy.DeletePost(string.Empty, postid, settings.Username, settings.Password, false);
+        }
+
+        public Task<bool> DeletePostAsync(string postid, BlogSetting settings)
+        {
+            return proxy.DeletePostAsync(string.Empty, postid, settings.Username, settings.Password, false);
+        }
+
+        public string NewPost(BlogSetting settings, Post newpost, bool publish)
+        {
+            return proxy.NewPost(settings.BlogInfo.blogid, settings.Username, settings.Password, newpost, publish);
         }
 
         public Post GetPost(string postid, BlogSetting settings)
@@ -22,9 +37,9 @@ namespace MarkPad.DocumentSources.MetaWeblog.Service
             return proxy.GetPost(postid, settings.Username, settings.Password);
         }
 
-        public void EditPost(string postid, BlogSetting settings, Post newpost, bool b)
+        public void EditPost(string postid, BlogSetting settings, Post newpost, bool publish)
         {
-            proxy.EditPost(postid, settings.Username, settings.Password, newpost, b);
+            proxy.EditPost(postid, settings.Username, settings.Password, newpost, publish);
         }
 
         public Task<Post[]> GetRecentPostsAsync(BlogSetting settings, int i)

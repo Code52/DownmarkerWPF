@@ -19,7 +19,7 @@ using MarkPad.Updater;
 
 namespace MarkPad
 {
-    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>
+    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>, IHandle<OpenFromWebEvent>, IHandle<SettingsCloseEvent>
     {
         private const string ShowSettingsState = "ShowSettings";
         private readonly IEventAggregator eventAggregator;
@@ -336,6 +336,13 @@ namespace MarkPad
         public void Handle(SettingsCloseEvent message)
         {
             CurrentState = "HideSettings";
+        }
+
+        public void Handle(OpenFromWebEvent message)
+        {
+            var doc = documentCreator();
+            doc.OpenFromWeb(message.SelectedBlog, message.Post);
+            MDI.Open(doc);
         }
     }
 }

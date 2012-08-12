@@ -1,4 +1,5 @@
 using Autofac;
+using MarkPad.Document;
 using MarkPad.DocumentSources;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.DocumentSources.MetaWeblog.Service.Rsd;
@@ -19,6 +20,7 @@ namespace MarkPad.Infrastructure
             builder.RegisterType<MetaWeblogService>().As<IMetaWeblogService>();
             builder.RegisterType<TaskSchedulerFactory>().As<ITaskSchedulerFactory>();
             builder.RegisterType<SettingsProvider>().As<ISettingsProvider>().SingleInstance();
+            builder.RegisterType<PublishService>().As<IPublishService>().SingleInstance();
         }
     }
 }

@@ -6,7 +6,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Caliburn.Micro;
 using MarkPad.Events;
 using MarkPad.Infrastructure.Abstractions;
@@ -91,64 +90,37 @@ namespace MarkPad.DocumentSources.FileSystem
         {
             var absoluteImagePath = Path.Combine(basePath, "img");
 
-            if (!Directory.Exists(absoluteImagePath))
-                Directory.CreateDirectory(absoluteImagePath);
-
-            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filenameWithPath);
-            if (fileNameWithoutExtension == null)
-                return null;
-
-            var fileName = fileNameWithoutExtension
-                .Replace(" ", string.Empty)
-                .Replace(".", string.Empty);
-            var count = 1;
-            var imageFileName = fileName + ".png";
-
-            while (File.Exists(Path.Combine(absoluteImagePath, imageFileName)))
-            {
-                imageFileName = string.Format("{0}{1}.png", fileName, count++);
-            }
+            var imageFileName = SiteContextHelper.GetFileName(filenameWithPath, absoluteImagePath);
 
             using (var stream = new FileStream(Path.Combine(absoluteImagePath, imageFileName), FileMode.Create))
             {
                 image.Save(stream, ImageFormat.Png);
             }
 
-            var enumerable = imageFileName.Replace(basePath, string.Empty).TrimStart('\\', '/') //Get rid of starting /
+            //This basically will turn an absolute into a relative path in terms of the site context
+            // So if site is c:\Site and img is at c:\Site\Folder\SubFolder\image.png
+            // this will become ..\..\img\image.png
+            var folderUp = imageFileName.Replace(basePath, string.Empty).TrimStart('\\', '/') //Get rid of starting /
                 .Where(c => c == '/' || c == '\\') // select each / or \
                 .Select(c => "..") // turn each into a ..
                 .Concat(new[] { "img", imageFileName }); // concat with the image filename
-            var relativePath = string.Join("\\", enumerable); //now we join with path separator giving relative path
+            var relativePath = string.Join("\\", folderUp); //now we join with path separator giving relative path
 
             return relativePath;
         }
 
         public string ConvertToAbsolutePaths(string htmlDocument)
         {
-            var matches = Regex.Matches(htmlDocument, "src=\"(?<url>(?<!http://).*?)\"", RegexOptions.IgnoreCase);
-
-            foreach (Match match in matches)
-            {
-                var replace = match.Captures[0].Value;
-                var url = match.Groups["url"].Value;
-
-                if (url.StartsWith("http://"))
-                    continue;
-
-                var filePath = Path.Combine(basePath, url.TrimStart('/'));
-                if (!File.Exists(filePath))
-                    continue;
-                var base64String = Convert.ToBase64String(File.ReadAllBytes(filePath));
-                htmlDocument = htmlDocument.Replace(replace, string.Format("src=\"data:image/png;base64,{0}\"", base64String));
-            }
-
-            return htmlDocument;
+            return SiteContextHelper.ConvertToAbsolutePaths(htmlDocument, basePath);
         }
 
         public ObservableCollection<SiteItemBase> Items
         {
             get { return items ?? (items = new FileSystemSiteItem(eventAggregator, fileSystem, basePath).Children); }
         }
+
+        public bool IsLoading { get; private set; }
+        public bool SupportsSave { get { return false; } }
 
         public void OpenItem(SiteItemBase selectedItem)
         {
@@ -170,6 +142,21 @@ namespace MarkPad.DocumentSources.FileSystem
                     dialogService.ShowError("Failed to open file", "Cannot open {0}", ex.Message);
                 }
             }
+        }
+
+        public bool IsCurrentItem(SiteItemBase siteItemBase)
+        {
+            var fileName = filenameWithPath.ToLower();
+            var fileSystemSiteItem = (siteItemBase as FileSystemSiteItem);
+            if (fileSystemSiteItem == null) return false;
+            var path = fileSystemSiteItem.Path.ToLower();
+
+            return fileName.StartsWith(path);
+        }
+
+        public bool Save(string displayName, string content)
+        {
+            return false;
         }
 
         public void Dispose()

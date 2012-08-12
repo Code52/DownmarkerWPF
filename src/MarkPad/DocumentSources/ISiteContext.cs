@@ -16,7 +16,11 @@ namespace MarkPad.DocumentSources
         string ConvertToAbsolutePaths(string htmlDocument);
 
         ObservableCollection<SiteItemBase> Items { get; }
+        bool IsLoading { get; }
+        bool SupportsSave { get; }
 
         void OpenItem(SiteItemBase selectedItem);
+        bool IsCurrentItem(SiteItemBase siteItemBase);
+        bool Save(string displayName, string content);
     }
 }
