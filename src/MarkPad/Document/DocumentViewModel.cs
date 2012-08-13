@@ -1,14 +1,13 @@
 using System;
 using System.IO;
-using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using Caliburn.Micro;
-using CookComputing.XmlRpc;
 using ICSharpCode.AvalonEdit.Document;
 using MarkPad.Document.Controls;
 using MarkPad.DocumentSources;
+using MarkPad.DocumentSources.MetaWeblog;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Events;
 using MarkPad.Infrastructure.DialogService;
@@ -37,6 +36,8 @@ namespace MarkPad.Document
         private readonly DispatcherTimer timer;
 
         readonly Regex wordCountRegex = new Regex(@"[\S]+", RegexOptions.Compiled);
+        readonly IEventAggregator eventAggregator;
+        readonly IPublishService publishService;
 
         public DocumentViewModel(
             IDialogService dialogService, 
@@ -44,7 +45,8 @@ namespace MarkPad.Document
             ISiteContextGenerator siteContextGenerator,
             Func<string, IMetaWeblogService> getMetaWeblog,
             ISettingsProvider settingsProvider,
-			IDocumentParser documentParser)
+			IDocumentParser documentParser, 
+            IEventAggregator eventAggregator, IPublishService publishService)
         {
             this.dialogService = dialogService;
             this.windowManager = windowManager;
@@ -52,6 +54,8 @@ namespace MarkPad.Document
             this.getMetaWeblog = getMetaWeblog;
             this.settingsProvider = settingsProvider;
             this.documentParser = documentParser;
+            this.eventAggregator = eventAggregator;
+            this.publishService = publishService;
 
             FontSize = GetFontSize();
             IndentType = settingsProvider.GetSettings<MarkPadSettings>().IndentType;
@@ -117,7 +121,7 @@ namespace MarkPad.Document
             Original = post.description ?? string.Empty;
 
             Update();
-            EvaluateContext();
+            SiteContext = new MetaWeblogSiteContext(Blog, post, getMetaWeblog, eventAggregator, publishService);
         }
 
         public BlogSetting Blog { get; private set; }
@@ -152,11 +156,12 @@ namespace MarkPad.Document
 
         public bool Save()
         {
-            if (Post != null && Blog != null)
+            if (SiteContext != null && SiteContext.SupportsSave)
             {
-                var postid = Post.Value.postid == null ? null : Post.Value.postid.ToString();
-                Publish(postid, Post.Value.title, Post.Value.categories, Blog);
-                return true;
+                var saveResult = SiteContext.Save(DisplayName, Document.Text);
+                if (saveResult)
+                    Original = Document.Text;
+                return saveResult;
             }
 
             if (string.IsNullOrEmpty(FileName))
@@ -335,54 +340,9 @@ namespace MarkPad.Document
 
         public void Publish(string postid, string postTitle, string[] categories, BlogSetting blog)
         {
-            if (categories == null) categories = new string[0];
+            var newpost = publishService.Publish(postid, postTitle, DisplayName, categories, blog, Document.Text);
 
-            var proxy = getMetaWeblog(blog.WebAPI);
-
-            var newpost = new Post();
-            try
-            {
-                if (string.IsNullOrWhiteSpace(postid))
-                {
-                    var permalink = DisplayName.Split('.')[0] == "New Document"
-                                ? postTitle
-                                : DisplayName.Split('.')[0];
-
-                    newpost = new Post
-                               {
-                                   permalink = permalink,
-                                   title = postTitle,
-                                   dateCreated = DateTime.Now,
-                                   description = blog.Language == "HTML" ? DocumentParser.GetBodyContents(Document.Text) : Document.Text,
-                                   categories = categories,
-                                   format = blog.Language
-                               };
-                    newpost.postid = proxy.NewPost(blog, newpost, true);
-                }
-                else
-                {
-                    newpost = proxy.GetPost(postid, blog);
-                    newpost.title = postTitle;
-                    newpost.description = blog.Language == "HTML" ? DocumentParser.GetBodyContents(Document.Text) : Document.Text;
-                    newpost.categories = categories;
-                    newpost.format = blog.Language;
-
-                    proxy.EditPost(postid, blog, newpost, true);
-                }
-            }
-            catch (WebException ex)
-            {
-                dialogService.ShowError("Error Publishing", ex.Message, "");
-            }
-            catch (XmlRpcException ex)
-            {
-                dialogService.ShowError("Error Publishing", ex.Message, "");
-            }
-            catch (XmlRpcFaultException ex)
-            {
-                dialogService.ShowError("Error Publishing", ex.Message, "");
-            }
-
+            //TODO abstract this out so publish service can update this state
             Post = newpost;
             Blog = blog;
             Original = Document.Text;

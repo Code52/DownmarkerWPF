@@ -86,6 +86,7 @@ namespace MarkPad.DocumentSources.MetaWeblog
 
             var proxy = getMetaWeblog(SelectedBlog.WebAPI);
 
+            //TODO pull out number of blog posts to fetch into settings
             return proxy.GetRecentPostsAsync(SelectedBlog, 100)
                 .ContinueWith(UpdateBlogPosts, taskScheduler.FromCurrentSynchronisationContext())
                 .ContinueWith(HandleFetchError);

@@ -170,6 +170,9 @@
     <Compile Include="DocumentSources\FileSystem\JekyllSiteContext.cs" />
     <Compile Include="DocumentSources\ISiteContext.cs" />
     <Compile Include="DocumentSources\ISiteContextGenerator.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\MetaWebLogItem.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\MetaWeblogSiteContext.cs" />
+    <Compile Include="DocumentSources\SiteContextHelper.cs" />
     <Compile Include="DocumentSources\SiteItemBase.cs" />
     <Compile Include="DocumentSources\MetaWeblog\Entry.cs" />
     <Compile Include="DocumentSources\MetaWeblog\OpenFromWebView.xaml.cs">
@@ -224,8 +227,10 @@
     <Compile Include="Document\EditorBehaviours\PasteImagesUsingSiteContext.cs" />
     <Compile Include="Document\Commands\DisplayCommands.cs" />
     <Compile Include="Document\EditorBehaviours\TextEditorExtensions.cs" />
+    <Compile Include="Document\IPublishService.cs" />
     <Compile Include="Document\MarkPadHyperlink.cs" />
     <Compile Include="Document\EditorBehaviours\OvertypeMode.cs" />
+    <Compile Include="Document\PublishService.cs" />
     <Compile Include="Document\SpellCheck\SpellCheckProviderFactory.cs" />
     <Compile Include="Document\SpellCheck\SpellingService.cs" />
     <Compile Include="Document\Events\EditorPreviewKeyDownEvent.cs" />
@@ -235,7 +240,6 @@
     <Compile Include="Events\FileOpenEvent.cs" />
     <Compile Include="Events\FileRenamedEvent.cs" />
     <Compile Include="Events\PluginsChangedEvent.cs" />
-    <Compile Include="Converters\InPathMultiConverter.cs" />
     <Compile Include="Helpers\DataImage.cs" />
     <Compile Include="Helpers\DataObjectExtensions.cs" />
     <Compile Include="Helpers\VisualExtensions.cs" />
@@ -274,10 +278,12 @@
     <Compile Include="Infrastructure\CaliburnExtensions\DebugLogger.cs" />
     <Compile Include="Helpers\TaskExtensions.cs" />
     <Compile Include="Document\SpellCheck\SpellCheckProvider.cs" />
+    <Compile Include="IsCurrentItemConverter.cs" />
     <Compile Include="MdiView.xaml.cs">
       <DependentUpon>MdiView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MdiViewModel.cs" />
+    <Compile Include="Events\OpenFromWebEvent.cs" />
     <Compile Include="Settings\SettingsProvider.cs" />
     <Compile Include="Settings\UI\BlogSettingsView.xaml.cs">
       <DependentUpon>BlogSettingsView.xaml</DependentUpon>
