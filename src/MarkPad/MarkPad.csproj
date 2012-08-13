@@ -283,7 +283,7 @@
       <DependentUpon>MdiView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MdiViewModel.cs" />
-    <Compile Include="OpenFromWebEvent.cs" />
+    <Compile Include="Events\OpenFromWebEvent.cs" />
     <Compile Include="Settings\SettingsProvider.cs" />
     <Compile Include="Settings\UI\BlogSettingsView.xaml.cs">
       <DependentUpon>BlogSettingsView.xaml</DependentUpon>

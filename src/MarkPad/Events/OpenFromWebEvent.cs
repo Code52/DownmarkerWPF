@@ -1,7 +1,7 @@
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Settings.Models;
 
-namespace MarkPad
+namespace MarkPad.Events
 {
     public class OpenFromWebEvent
     {

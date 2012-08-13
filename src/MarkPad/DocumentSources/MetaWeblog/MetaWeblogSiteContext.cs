@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.DocumentSources.MetaWeblog.Service;
+using MarkPad.Events;
 using MarkPad.Settings.Models;
 
 namespace MarkPad.DocumentSources.MetaWeblog
