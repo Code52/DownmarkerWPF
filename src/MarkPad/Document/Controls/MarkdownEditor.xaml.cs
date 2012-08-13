@@ -322,6 +322,9 @@ namespace MarkPad.Document.Controls
 
         void EditorContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
+            // don't show menu if we bail out with return
+            e.Handled = true;
+
             var viewModel = (DocumentViewModel) DataContext;
             var spellCheckPlugin = viewModel.View.connectedDocumentViewPlugins.OfType<SpellCheckPlugin.SpellCheckPlugin>().FirstOrDefault();
             if (spellCheckPlugin == null) return;
@@ -336,21 +339,24 @@ namespace MarkPad.Document.Controls
             var offset = Editor.Document.GetOffset(editorPosition.Value.Line, editorPosition.Value.Column);
             var errorSegments = spellCheckProvider.GetSpellCheckErrors();
             var misspelledSegment = errorSegments.FirstOrDefault(segment => segment.StartOffset <= offset && segment.EndOffset >= offset);
+            if (misspelledSegment == null) return;
 
-            if (misspelledSegment != null)
+            // check if the clicked offset is the beginning or end of line to prevent snapping to it (like in text selection) with GetPositionFromPoint
+            // in practice makes context menu not show when clicking on the first character of a line
+            var currentLine = Document.GetLineByOffset(offset);
+            if (offset == currentLine.Offset || offset == currentLine.EndOffset)
             {
-                EditorContextMenu.Tag = misspelledSegment;
-                EditorContextMenu.ItemsSource = spellCheckProvider.GetSpellcheckSuggestions(editor.Document.GetText(misspelledSegment));
+                return;
             }
-            else
-            {
-                e.Handled = true;
-            }
+
+            EditorContextMenu.Tag = misspelledSegment;
+            EditorContextMenu.ItemsSource = spellCheckProvider.GetSpellcheckSuggestions(editor.Document.GetText(misspelledSegment));
+            e.Handled = false;
         }
 
         void SpellcheckerWordClick(object sender, RoutedEventArgs e)
         {
-            var word = (string)(sender as FrameworkElement).DataContext;
+            var word = (string)(e.OriginalSource as FrameworkElement).DataContext;
             var segment = (TextSegment)EditorContextMenu.Tag;
             Editor.Document.Replace(segment, word);
          }
