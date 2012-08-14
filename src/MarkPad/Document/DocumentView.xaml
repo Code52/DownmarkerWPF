@@ -25,12 +25,13 @@
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="{Binding Converter={Converters:DocumentToSiteConverter}, ConverterParameter=125}" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition x:Name="webBrowserColumn" Width="{Binding DistractionFree, Converter={Converters:BoolToGridLengthConverter Invert=True}}" />
         </Grid.ColumnDefinitions>
 
       <Controls:SiteView SiteContext="{Binding SiteContext}"
+                         HorizontalAlignment="Stretch"
                          x:Name="siteView">
         <Controls:SiteView.Style>
           <Style TargetType="Controls:SiteView">
@@ -49,7 +50,7 @@
         </Style>
         </Controls:SiteView.Style>
       </Controls:SiteView>
-
+        <GridSplitter Background="#cacaca" Opacity=".75" Width="2" Margin="0,15,0,15" VerticalAlignment="Stretch" />
         <Controls:MarkdownEditor x:Name="markdownEditor"
                                  Grid.Column="1"
                                  IndentType="{Binding IndentType}"
