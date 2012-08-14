@@ -1,6 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
+using MarkPad.Infrastructure.Plugins;
+using MarkPad.Plugins;
 using MarkPad.PreviewControl;
 using MarkdownDeep;
 using System.ComponentModel.Composition;
@@ -8,10 +12,19 @@ using MarkPad.Contracts;
 
 namespace MarkPad.Document
 {
-	[Export(typeof(IDocumentParser))]
     public class DocumentParser : IDocumentParser
     {
         static readonly Markdown Markdown = new Markdown();
+
+		[ImportMany]
+		private IEnumerable<ICanChangeMarkup> canChangeMarkupPlugins;
+		readonly IPluginManager pluginManager;
+
+		public DocumentParser (IPluginManager pluginManager )
+		{
+				this.pluginManager = pluginManager;
+				this.pluginManager.Container.ComposeParts ( this );
+		}
 
         static DocumentParser() 
         {
@@ -65,7 +78,7 @@ namespace MarkPad.Document
             }
         }
 
-        private static string ToHtml(string header, string contents, string extraScripts)
+        private string ToHtml(string header, string contents, string extraScripts)
         {
 			var body = MarkdownConvert(contents);
 
@@ -86,7 +99,12 @@ namespace MarkPad.Document
 				scripts,
 				extraScripts);
 
-			return document;
+			return RunThroughPlugins(document);
+		}
+
+		private string RunThroughPlugins (string document)
+		{
+			return canChangeMarkupPlugins.Aggregate ( document, ( current, plugin ) => plugin.ChangeMarkup ( current ) );
 		}
 
 		private static string GetResources(string header, string filter, string resourceTemplate)
