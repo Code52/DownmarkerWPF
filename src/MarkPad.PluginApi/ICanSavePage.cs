@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.Composition;
-using MarkPad.Contracts;
 
 namespace MarkPad.Plugins
 {
@@ -7,6 +6,6 @@ namespace MarkPad.Plugins
 	public interface ICanSavePage : IPlugin
 	{
 		string SavePageLabel { get; }
-		void SavePage(IDocumentViewModel documentViewModel);
+		void SavePage(IMarkpadDocument documentViewModel);
 	}
 }

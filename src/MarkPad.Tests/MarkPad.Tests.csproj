@@ -104,9 +104,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MarkPad.Contracts\MarkPad.Contracts.csproj">
-      <Project>{96FA74A6-397A-4BE2-A6BF-AAD39A159DD2}</Project>
-      <Name>MarkPad.Contracts</Name>
+    <ProjectReference Include="..\MarkPad.PluginApi\MarkPad.Plugins.csproj">
+      <Project>{E780D0E3-37A4-43D3-89C1-76053FA63752}</Project>
+      <Name>MarkPad.Plugins</Name>
     </ProjectReference>
     <ProjectReference Include="..\MarkPad\MarkPad.csproj">
       <Project>{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}</Project>

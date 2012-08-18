@@ -8,19 +8,20 @@ using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using ICSharpCode.AvalonEdit.Document;
 using MarkPad.Document.Controls;
+using MarkPad.Document.SpellCheck;
 using MarkPad.DocumentSources;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Events;
 using MarkPad.Infrastructure.DialogService;
+using MarkPad.Plugins;
 using MarkPad.PreviewControl;
 using MarkPad.Settings;
 using MarkPad.Settings.Models;
 using Ookii.Dialogs.Wpf;
-using MarkPad.Contracts;
 
 namespace MarkPad.Document
 {
-    public class DocumentViewModel : Screen, IDocumentViewModel, IHandle<SettingsChangedEvent>, IHandle<FileRenamedEvent>
+    public class DocumentViewModel : Screen, IMarkpadDocument, IHandle<SettingsChangedEvent>, IHandle<FileRenamedEvent>
     {
         private static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
         private const double ZoomDelta = 0.1;
@@ -44,8 +45,10 @@ namespace MarkPad.Document
             ISiteContextGenerator siteContextGenerator,
             Func<string, IMetaWeblogService> getMetaWeblog,
             ISettingsProvider settingsProvider,
-			IDocumentParser documentParser)
+			IDocumentParser documentParser,
+            ISpellCheckProvider spellCheckProvider)
         {
+            SpellCheckProvider = spellCheckProvider;
             this.dialogService = dialogService;
             this.windowManager = windowManager;
             this.siteContextGenerator = siteContextGenerator;
@@ -254,6 +257,8 @@ namespace MarkPad.Document
 
         private void CheckAndCloseView()
         {
+            if (SpellCheckProvider != null)
+                SpellCheckProvider.Disconnect();
             var disposableSiteContext = SiteContext as IDisposable;
             if (disposableSiteContext != null)
                 disposableSiteContext.Dispose();
@@ -429,8 +434,11 @@ namespace MarkPad.Document
             get { return (DocumentView)GetView(); }
         }
 
+        public ISpellCheckProvider SpellCheckProvider { get; private set; }
+
         protected override void OnViewLoaded(object view)
         {
+            SpellCheckProvider.Initialise((DocumentView)view);
             base.OnViewLoaded(view);
             NotifyOfPropertyChange(()=>View);
         }

@@ -54,7 +54,8 @@
                                  Grid.Column="1"
                                  IndentType="{Binding IndentType}"
                                  EditorFontSize="{Binding FontSize}"
-                                 Document="{Binding Document}"/>
+                                 Document="{Binding Document}"
+                                 SpellCheckProvider="{Binding SpellCheckProvider}"/>
         
         <Border Grid.Column="2" 
                 SizeChanged="PlaceHolderSizeChanged"

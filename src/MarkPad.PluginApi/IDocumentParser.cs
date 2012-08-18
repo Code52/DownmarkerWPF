@@ -1,4 +1,4 @@
-﻿namespace MarkPad.Contracts
+﻿namespace MarkPad.Plugins
 {
 	public interface IDocumentParser
 	{

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using MarkPad.Document.SpellCheck;
 using MarkPad.PreviewControl;
 
 namespace MarkPad.Settings.Models
@@ -41,5 +42,8 @@ namespace MarkPad.Settings.Models
 		public bool FloatingToolBarEnabled { get; set; }
 
         public IndentType IndentType { get; set; }
+
+        [DefaultValue(SpellingLanguages.Australian)]
+        public SpellingLanguages Language { get; set; }
     }
 }

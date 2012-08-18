@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Collections.Generic;
 
-namespace MarkPad.Contracts
+namespace MarkPad.Document.SpellCheck
 {
-    [InheritedExport]
 	public interface ISpellingService
 	{
 		void ClearLanguages();
