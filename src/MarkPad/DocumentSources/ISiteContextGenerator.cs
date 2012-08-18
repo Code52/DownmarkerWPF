@@ -1,3 +1,5 @@
+using MarkPad.Plugins;
+
 namespace MarkPad.DocumentSources
 {
     public interface ISiteContextGenerator

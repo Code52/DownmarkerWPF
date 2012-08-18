@@ -49,7 +49,7 @@ namespace MarkPad
 			    button.Click += (sender, args) => (DataContext as ShellViewModel).ExecuteSafely(vm =>
 				{
 				    if (vm.ActiveDocumentViewModel == null) return;
-				    capturedPlugin.SavePage(vm.ActiveDocumentViewModel);
+				    capturedPlugin.SavePage(vm.ActiveDocumentViewModel.MarkpadDocument);
 				});
 				SavePageHook.Children.Add(button);
 			}

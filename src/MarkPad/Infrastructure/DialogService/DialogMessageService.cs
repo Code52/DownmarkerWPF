@@ -128,7 +128,15 @@ namespace MarkPad.Infrastructure.DialogService
 
             var resultButtonType = result.ButtonType;
             if (resultButtonType == ButtonType.Custom)
+            {
+                if (ButtonExtras != null)
+                {
+                    var button = ButtonExtras.SingleOrDefault(b => b.ButtonType == ButtonType.Custom && b.Text == result.Text);
+                    if (button != null) 
+                        button.WasClicked = true;
+                }
                 resultButtonType = translation[result];
+            }
 
             switch (resultButtonType)
             {

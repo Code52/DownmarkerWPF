@@ -14,5 +14,7 @@ namespace MarkPad.Infrastructure.DialogService
         public ButtonType ButtonType { get; private set; }
         public string Text { get; private set; }
         public string Note { get; private set; }
+
+        public bool WasClicked { get; set; }
     }
 }

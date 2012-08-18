@@ -6,6 +6,7 @@ using Caliburn.Micro;
 using MarkPad.DocumentSources.FileSystem;
 using MarkPad.Infrastructure.Abstractions;
 using MarkPad.Infrastructure.DialogService;
+using MarkPad.Plugins;
 
 namespace MarkPad.DocumentSources
 {

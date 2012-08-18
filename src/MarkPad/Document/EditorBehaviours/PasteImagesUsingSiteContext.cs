@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Input;
 using Caliburn.Micro;
 using MarkPad.Document.Events;
-using MarkPad.Events;
 using MarkPad.Helpers;
 
 namespace MarkPad.Document.EditorBehaviours
@@ -16,7 +15,7 @@ namespace MarkPad.Document.EditorBehaviours
         {
             if (e.ViewModel == null) return;
             if (Keyboard.Modifiers != ModifierKeys.Control || e.Args.Key != Key.V) return;
-            if (e.ViewModel.SiteContext == null) return;
+            if (e.ViewModel.MarkpadDocument.SiteContext == null) return;
 
             var images = Clipboard.GetDataObject().GetImages();
             if (!images.Any()) return;
@@ -25,7 +24,7 @@ namespace MarkPad.Document.EditorBehaviours
 
             foreach (var dataImage in images)
             {
-                var relativePath = e.ViewModel.SiteContext.SaveImage(dataImage.Bitmap);
+                var relativePath = e.ViewModel.MarkpadDocument.SiteContext.SaveImage(dataImage.Bitmap);
 
                 var imageMarkdown = string.Format("![{0}](/{1})",
                                 Path.GetFileNameWithoutExtension(relativePath),
