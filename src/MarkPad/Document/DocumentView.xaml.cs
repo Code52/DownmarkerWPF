@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,28 +11,16 @@ using MarkPad.Document.Commands;
 using MarkPad.Events;
 using MarkPad.Framework;
 using MarkPad.Helpers;
-using MarkPad.Infrastructure.Plugins;
-using MarkPad.Plugins;
 using MarkPad.Settings;
 using MarkPad.Settings.Models;
-using MarkPad.Contracts;
-using System.ComponentModel.Composition;
 
 namespace MarkPad.Document
 {
-    public partial class DocumentView : 
-		IDocumentView,
-		IHandle<SettingsChangedEvent>,
-		IHandle<PluginsChangedEvent>
+    public partial class DocumentView : IHandle<SettingsChangedEvent>
     {
         MarkPadSettings settings;
         ScrollViewer documentScrollViewer;
         readonly ISettingsProvider settingsProvider;
-		readonly IPluginManager pluginManager;
-
-		[ImportMany]
-		IEnumerable<IDocumentViewPlugin> documentViewPlugins;
-		public IEnumerable<IDocumentViewPlugin> connectedDocumentViewPlugins = new IDocumentViewPlugin[0];
 
         #region public double ScrollPercentage
         public static DependencyProperty ScrollPercentageProperty = DependencyProperty.Register("ScrollPercentage", typeof(double), typeof(DocumentView),
@@ -48,17 +34,11 @@ namespace MarkPad.Document
         #endregion
 
         public DocumentView(
-			ISettingsProvider settingsProvider,
-			IPluginManager pluginManager)
+			ISettingsProvider settingsProvider)
         {
 			this.settingsProvider = settingsProvider;
-			this.pluginManager = pluginManager;
-
-			this.pluginManager.Container.ComposeParts(this);
 			
             InitializeComponent();
-
-			UpdatePlugins();
 
             Loaded += DocumentViewLoaded;
             SizeChanged += DocumentViewSizeChanged;
@@ -85,22 +65,6 @@ namespace MarkPad.Document
         {
             get { return DataContext as DocumentViewModel; }
         }
-
-		public void UpdatePlugins()
-		{
-			var enabledPlugins = documentViewPlugins.Where(p => p.Settings.IsEnabled).ToArray();
-
-			foreach (var plugin in connectedDocumentViewPlugins.Except(enabledPlugins))
-			{
-				plugin.DisconnectFromDocumentView(this);
-			}
-			foreach (var plugin in enabledPlugins.Except(connectedDocumentViewPlugins))
-			{
-				plugin.ConnectToDocumentView(this);
-			}
-
-			connectedDocumentViewPlugins = new List<IDocumentViewPlugin>(enabledPlugins);
-		}
 
         public TextEditor Editor
         {
@@ -171,11 +135,6 @@ namespace MarkPad.Document
             markdownEditor.Editor.TextArea.TextView.Redraw();
             ViewModel.ExecuteSafely(vm => vm.RefreshFont());
         }
-
-		public void Handle(PluginsChangedEvent e)
-		{
-			UpdatePlugins();
-		}
 
         void PlaceHolderSizeChanged(object sender, SizeChangedEventArgs e)
         {

@@ -44,17 +44,12 @@
   <ItemGroup>
     <Compile Include="ICanCreateNewPage.cs" />
     <Compile Include="ICanSavePage.cs" />
-    <Compile Include="IDocumentViewPlugin.cs" />
+    <Compile Include="IDocumentParser.cs" />
+    <Compile Include="IMarkpadDocument.cs" />
     <Compile Include="IPlugin.cs" />
     <Compile Include="IPluginSettings.cs" />
     <Compile Include="IPluginSettingsProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MarkPad.Contracts\MarkPad.Contracts.csproj">
-      <Project>{96FA74A6-397A-4BE2-A6BF-AAD39A159DD2}</Project>
-      <Name>MarkPad.Contracts</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Document;
-using MarkPad.Contracts;
 
 namespace MarkPad.Document.SpellCheck
 {
@@ -15,25 +14,28 @@ namespace MarkPad.Document.SpellCheck
 
         readonly ISpellingService spellingService;
         readonly SpellCheckBackgroundRenderer spellCheckRenderer;
+        DocumentView view;
 
-        public IDocumentView View { get; private set; }
-
-        public SpellCheckProvider(ISpellingService spellingService, IDocumentView view)
+        public SpellCheckProvider(ISpellingService spellingService)
         {
             this.spellingService = spellingService;
             spellCheckRenderer = new SpellCheckBackgroundRenderer();
+        }
 
-            View = view;
-
-			View.TextView.BackgroundRenderers.Add(spellCheckRenderer);
-			View.TextView.VisualLinesChanged += TextViewVisualLinesChanged;
+        public void Initialise(DocumentView documentView)
+        {
+            view = documentView;
+            view.TextView.BackgroundRenderers.Add(spellCheckRenderer);
+            view.TextView.VisualLinesChanged += TextViewVisualLinesChanged;
         }
 
         public void Disconnect()
         {
+            if (view == null) return;
             ClearSpellCheckErrors();
-			View.TextView.BackgroundRenderers.Remove(spellCheckRenderer);
-			View.TextView.VisualLinesChanged -= TextViewVisualLinesChanged;
+            view.TextView.BackgroundRenderers.Remove(spellCheckRenderer);
+            view.TextView.VisualLinesChanged -= TextViewVisualLinesChanged;
+            view = null;
         }
 
         void TextViewVisualLinesChanged(object sender, EventArgs e)
@@ -43,29 +45,30 @@ namespace MarkPad.Document.SpellCheck
 
         private void DoSpellCheck()
         {
-			if (!View.TextView.VisualLinesValid) return;
+            if (view == null) return;
+            if (!view.TextView.VisualLinesValid) return;
 
             spellCheckRenderer.ErrorSegments.Clear();
 
-			IEnumerable<VisualLine> visualLines = View.TextView.VisualLines.AsParallel();
+            IEnumerable<VisualLine> visualLines = view.TextView.VisualLines.AsParallel();
 
             foreach (VisualLine currentLine in visualLines)
             {
                 int startIndex = 0;
 
-				string originalText = View.Document.GetText(currentLine.FirstDocumentLine.Offset, currentLine.LastDocumentLine.EndOffset - currentLine.FirstDocumentLine.Offset);
+                string originalText = view.Document.GetText(currentLine.FirstDocumentLine.Offset, currentLine.LastDocumentLine.EndOffset - currentLine.FirstDocumentLine.Offset);
                 originalText = Regex.Replace(originalText, "[\\u2018\\u2019\\u201A\\u201B\\u2032\\u2035]", "'");
 
-                var textWithoutURLs = uriFinderRegex.Replace(originalText, "");
+                var textWithoutUrls = uriFinderRegex.Replace(originalText, "");
 
-                var query = wordSeparatorRegex.Split(textWithoutURLs)
+                var query = wordSeparatorRegex.Split(textWithoutUrls)
                     .Where(s => !string.IsNullOrEmpty(s));
 
                 foreach (var word in query)
                 {
                     string trimmedWord = word.Trim('\'', '_', '-');
 
-                    int num = currentLine.FirstDocumentLine.Offset + originalText.IndexOf(trimmedWord, startIndex);
+                    int num = currentLine.FirstDocumentLine.Offset + originalText.IndexOf(trimmedWord, startIndex, StringComparison.InvariantCultureIgnoreCase);
 
                     if (!spellingService.Spell(trimmedWord))
                     {
@@ -77,23 +80,26 @@ namespace MarkPad.Document.SpellCheck
                         spellCheckRenderer.ErrorSegments.Add(textSegment);
                     }
 
-                    startIndex = originalText.IndexOf(word, startIndex) + word.Length;
+                    startIndex = originalText.IndexOf(word, startIndex, StringComparison.InvariantCultureIgnoreCase) + word.Length;
                 }
             }
         }
 
         private void ClearSpellCheckErrors()
         {
+            if (spellCheckRenderer == null) return;
             spellCheckRenderer.ErrorSegments.Clear();
         }
 
         public IEnumerable<TextSegment> GetSpellCheckErrors()
         {
+            if (spellCheckRenderer == null) return Enumerable.Empty<TextSegment>();
             return spellCheckRenderer.ErrorSegments;
         }
 
         public IEnumerable<string> GetSpellcheckSuggestions(string word)
         {
+            if (spellCheckRenderer == null) return Enumerable.Empty<string>();
             return spellingService.Suggestions(word);
         } 
     }
