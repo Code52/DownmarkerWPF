@@ -166,11 +166,18 @@
     <Compile Include="Converters\BoolToGridLengthConverter.cs" />
     <Compile Include="Converters\EnumDisplayConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="DocumentSources\DocumentFactory.cs" />
+    <Compile Include="DocumentSources\FileMarkdownDocument.cs" />
     <Compile Include="DocumentSources\FileSystem\FileSystemSiteItem.cs" />
     <Compile Include="DocumentSources\FileSystem\JekyllSiteContext.cs" />
-    <Compile Include="DocumentSources\ISiteContext.cs" />
+    <Compile Include="DocumentSources\HelpDocument.cs" />
+    <Compile Include="DocumentSources\IDocumentFactory.cs" />
     <Compile Include="DocumentSources\ISiteContextGenerator.cs" />
-    <Compile Include="DocumentSources\SiteItemBase.cs" />
+    <Compile Include="DocumentSources\MarkpadDocumentBase.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\BlogService.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\IBlogService.cs" />
+    <Compile Include="DocumentSources\NewMarkpadDocument.cs" />
+    <Compile Include="DocumentSources\SiteItem.cs" />
     <Compile Include="DocumentSources\MetaWeblog\Entry.cs" />
     <Compile Include="DocumentSources\MetaWeblog\OpenFromWebView.xaml.cs">
       <DependentUpon>OpenFromWebView.xaml</DependentUpon>
@@ -203,6 +210,7 @@
     <Compile Include="DocumentSources\MetaWeblog\Service\Source.cs" />
     <Compile Include="DocumentSources\MetaWeblog\Service\UserInfo.cs" />
     <Compile Include="DocumentSources\SiteContextGenerator.cs" />
+    <Compile Include="DocumentSources\WebMarkdownFile.cs" />
     <Compile Include="Document\Controls\FloatingToolBar.cs" />
     <Compile Include="Document\Controls\HyperlinkEditorView.xaml.cs">
       <DependentUpon>HyperlinkEditorView.xaml</DependentUpon>

@@ -18,24 +18,6 @@ namespace MarkPad.Settings.Models
         [DefaultValue("Segoe UI")]
         public string FontFamily { get; set; }
 
-        public List<BlogSetting> GetBlogs()
-        {
-            if (string.IsNullOrEmpty(BlogsJson))
-                return new List<BlogSetting>();
-
-            return (List<BlogSetting>)new DataContractJsonSerializer(typeof(List<BlogSetting>))
-                                           .ReadObject(new MemoryStream(Encoding.Default.GetBytes(BlogsJson)));
-        }
-
-        public void SaveBlogs(List<BlogSetting> blogs)
-        {
-            var ms = new MemoryStream();
-            var writer = JsonReaderWriterFactory.CreateJsonWriter(ms);
-            new DataContractJsonSerializer(typeof(List<BlogSetting>)).WriteObject(ms, blogs);
-            writer.Flush();
-            BlogsJson = Encoding.Default.GetString(ms.ToArray());
-        }
-
         public string BlogsJson { get; set; }
 
 		[DefaultValue(true)]

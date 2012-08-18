@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 
-namespace MarkPad.DocumentSources
+namespace MarkPad.Plugins
 {
     public interface ISiteContext : INotifyPropertyChanged
     {
@@ -15,8 +15,8 @@ namespace MarkPad.DocumentSources
 
         string ConvertToAbsolutePaths(string htmlDocument);
 
-        ObservableCollection<SiteItemBase> Items { get; }
+        ObservableCollection<ISiteItem> Items { get; }
 
-        void OpenItem(SiteItemBase selectedItem);
+        void OpenItem(ISiteItem selectedItem);
     }
 }

@@ -5,10 +5,11 @@ using System.IO.Abstractions;
 using System.Linq;
 using Caliburn.Micro;
 using MarkPad.Events;
+using MarkPad.Plugins;
 
 namespace MarkPad.DocumentSources.FileSystem
 {
-    public class FileSystemSiteItem : SiteItemBase, IHandle<FileRenamedEvent>, IHandle<FileCreatedEvent>, IHandle<FileDeletedEvent>
+    public class FileSystemSiteItem : SiteItem, IHandle<FileRenamedEvent>, IHandle<FileCreatedEvent>, IHandle<FileDeletedEvent>
     {
         readonly IFileSystem fileSystem;
         string originalFileName;
@@ -22,7 +23,7 @@ namespace MarkPad.DocumentSources.FileSystem
             Name = originalFileName;
 
             if (fileSystem.File.Exists(filePath))
-                Children = new ObservableCollection<SiteItemBase>();
+                Children = new ObservableCollection<ISiteItem>();
             else
             {
                 var siteItems = fileSystem.Directory.GetDirectories(filePath)
@@ -32,7 +33,7 @@ namespace MarkPad.DocumentSources.FileSystem
                                 .Select(d => new FileSystemSiteItem(eventAggregator, fileSystem, d))
                                 .OrderBy(i => i.Name));
 
-                Children = new ObservableCollection<SiteItemBase>(siteItems);
+                Children = new ObservableCollection<ISiteItem>(siteItems);
             }
         }
 

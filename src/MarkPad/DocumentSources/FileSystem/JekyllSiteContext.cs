@@ -11,6 +11,7 @@ using Caliburn.Micro;
 using MarkPad.Events;
 using MarkPad.Infrastructure.Abstractions;
 using MarkPad.Infrastructure.DialogService;
+using MarkPad.Plugins;
 using MarkPad.PreviewControl;
 
 namespace MarkPad.DocumentSources.FileSystem
@@ -23,7 +24,7 @@ namespace MarkPad.DocumentSources.FileSystem
         readonly IDialogService dialogService;
         readonly IFileSystemWatcher fileSystemWatcher;
         readonly IFileSystem fileSystem;
-        ObservableCollection<SiteItemBase> items;
+        ObservableCollection<ISiteItem> items;
 
         public JekyllSiteContext(
             IEventAggregator eventAggregator, 
@@ -145,12 +146,12 @@ namespace MarkPad.DocumentSources.FileSystem
             return htmlDocument;
         }
 
-        public ObservableCollection<SiteItemBase> Items
+        public ObservableCollection<ISiteItem> Items
         {
             get { return items ?? (items = new FileSystemSiteItem(eventAggregator, fileSystem, basePath).Children); }
         }
 
-        public void OpenItem(SiteItemBase selectedItem)
+        public void OpenItem(ISiteItem selectedItem)
         {
             var fileItem = selectedItem as FileSystemSiteItem;
             if (fileItem == null || !File.Exists(fileItem.Path)) return;

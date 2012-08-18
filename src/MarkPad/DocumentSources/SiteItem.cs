@@ -1,25 +1,26 @@
 using System;
 using System.Collections.ObjectModel;
 using Caliburn.Micro;
+using MarkPad.Plugins;
 
 namespace MarkPad.DocumentSources
 {
-    public abstract class SiteItemBase : PropertyChangedBase, IDisposable
+    public abstract class SiteItem : PropertyChangedBase, ISiteItem
     {
         protected readonly IEventAggregator EventAggregator;
         bool isRenaming;
         bool selected;
 
-        protected SiteItemBase(IEventAggregator eventAggregator)
+        protected SiteItem(IEventAggregator eventAggregator)
         {
             EventAggregator = eventAggregator;
             EventAggregator.Subscribe(this);
-            Children = new ObservableCollection<SiteItemBase>();
+            Children = new ObservableCollection<ISiteItem>();
         }
 
         public string Name { get; set; }
 
-        public ObservableCollection<SiteItemBase> Children { get; protected set; }
+        public ObservableCollection<ISiteItem> Children { get; protected set; }
 
         public abstract void CommitRename();
         public abstract void UndoRename();

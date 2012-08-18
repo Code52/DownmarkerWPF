@@ -3,7 +3,7 @@ using MarkPad.DocumentSources;
 
 namespace MarkPad.Tests.DocumentSources
 {
-    public class TestItem : SiteItemBase
+    public class TestItem : SiteItem
     {
         public TestItem(IEventAggregator eventAggregator) : base(eventAggregator)
         {

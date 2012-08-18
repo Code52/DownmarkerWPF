@@ -2,6 +2,8 @@ using System.IO.Abstractions;
 using Autofac;
 using MarkPad.Document;
 using MarkPad.Document.SpellCheck;
+using MarkPad.DocumentSources;
+using MarkPad.DocumentSources.MetaWeblog;
 using MarkPad.Infrastructure.Abstractions;
 using MarkPad.Infrastructure.Plugins;
 using MarkPad.Plugins;
@@ -19,6 +21,8 @@ namespace MarkPad.Infrastructure
 		        builder.RegisterInstance(plugin).AsImplementedInterfaces();
 		    }
 
+		    builder.RegisterType<BlogService>().As<IBlogService>();
+		    builder.RegisterType<DocumentFactory>().As<IDocumentFactory>();
 		    builder.RegisterType<FileSystem>().As<IFileSystem>().SingleInstance();
 		    builder.RegisterType<FileSystemWatcherFactory>().As<IFileSystemWatcherFactory>().SingleInstance();
 			builder.RegisterType<DocumentParser>().As<IDocumentParser>();

@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using MarkPad.DocumentSources;
+using MarkPad.Plugins;
 using Microsoft.Expression.Interactivity.Core;
 
 namespace MarkPad.Document.Controls
@@ -13,7 +14,7 @@ namespace MarkPad.Document.Controls
         public static DependencyProperty SiteContextProperty =
             DependencyProperty.Register("SiteContext", typeof(ISiteContext), typeof(SiteView), new PropertyMetadata(default(ISiteContext)));
 
-        SiteItemBase currentlySelectedItem;
+        SiteItem currentlySelectedItem;
         DateTime? selectedTime;
         readonly ContextMenu itemContextMenu;
 
@@ -50,7 +51,7 @@ namespace MarkPad.Document.Controls
 
         void SiteFilesMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var selectedItem = siteFiles.SelectedItem as SiteItemBase;
+            var selectedItem = siteFiles.SelectedItem as SiteItem;
 
             if (selectedItem != null)
             {
@@ -62,7 +63,7 @@ namespace MarkPad.Document.Controls
         void SiteItemOnMouseDown(object sender, MouseButtonEventArgs e)
         {
             var textBlock = (TextBlock)sender;
-            var siteItem = (SiteItemBase)textBlock.DataContext;
+            var siteItem = (SiteItem)textBlock.DataContext;
             if (e.LeftButton == MouseButtonState.Pressed)
             {
 
@@ -81,7 +82,7 @@ namespace MarkPad.Document.Controls
             }
         }
 
-        void SetItemSelected(SiteItemBase siteItem, bool isSelected)
+        void SetItemSelected(SiteItem siteItem, bool isSelected)
         {
             try
             {
@@ -103,7 +104,7 @@ namespace MarkPad.Document.Controls
         void EditBoxKeyDown(object sender, KeyEventArgs e)
         {
             var textBlock = (TextBox)sender;
-            var siteItem = (SiteItemBase)textBlock.DataContext;
+            var siteItem = (SiteItem)textBlock.DataContext;
 
             if (siteItem.IsRenaming)
             {
@@ -125,7 +126,7 @@ namespace MarkPad.Document.Controls
             if (currentlySelectedItem != null)
                 currentlySelectedItem.Selected = false;
 
-            var siteItem = (SiteItemBase)e.NewValue;
+            var siteItem = (SiteItem)e.NewValue;
 
             if (siteItem == null)
             {
