@@ -48,7 +48,7 @@ namespace MarkPad.DocumentSources.FileSystem
             {
                 fileSystem.File.Move(Path, newFileName);
             }
-            catch (IOException ex)
+            catch (IOException)
             {
                 Name = originalFileName;
                 //TODO show error
