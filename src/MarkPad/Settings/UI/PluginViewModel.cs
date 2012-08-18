@@ -1,35 +1,30 @@
 ﻿using Caliburn.Micro;
-using MarkPad.Events;
 using MarkPad.Plugins;
 
 namespace MarkPad.Settings.UI
 {
 	public class PluginViewModel : PropertyChangedBase
 	{
-		readonly IPlugin _plugin;
-		readonly IEventAggregator _eventAggregator;
+		readonly IPlugin plugin;
 
-		public PluginViewModel(
-			IPlugin plugin,
-			IEventAggregator eventAggregator)
+	    public PluginViewModel(IPlugin plugin)
 		{
-			_plugin = plugin;
-			_eventAggregator = eventAggregator;
+			this.plugin = plugin;
 		}
 
-		public string Name { get { return _plugin.Name; } }
-		public string Version { get { return _plugin.Version; } }
-		public string Authors { get { return _plugin.Authors; } }
-		public string Description { get { return _plugin.Description; } }
-		public bool IsConfigurable { get { return _plugin.IsConfigurable; } }
+		public string Name { get { return plugin.Name; } }
+		public string Version { get { return plugin.Version; } }
+		public string Authors { get { return plugin.Authors; } }
+		public string Description { get { return plugin.Description; } }
+		public bool IsConfigurable { get { return plugin.IsConfigurable; } }
 
-		public bool CanInstall { get { return !_plugin.Settings.IsEnabled; } }
+		public bool CanInstall { get { return !plugin.Settings.IsEnabled; } }
 		public void Install()
 		{
 			SetIsEnabled(true);
 		}
 
-		public bool CanUninstall { get { return _plugin.Settings.IsEnabled; } }
+		public bool CanUninstall { get { return plugin.Settings.IsEnabled; } }
 		public void Uninstall()
 		{
 			SetIsEnabled(false);
@@ -37,12 +32,11 @@ namespace MarkPad.Settings.UI
 
 		private void SetIsEnabled(bool isEnabled)
 		{
-			_plugin.Settings.IsEnabled = isEnabled;
-			_plugin.SaveSettings();
+			plugin.Settings.IsEnabled = isEnabled;
+			plugin.SaveSettings();
 
-			this.NotifyOfPropertyChange(() => CanInstall);
-			this.NotifyOfPropertyChange(() => CanUninstall);
-			_eventAggregator.Publish(new PluginsChangedEvent());
+			NotifyOfPropertyChange(() => CanInstall);
+			NotifyOfPropertyChange(() => CanUninstall);
 		}
 
 		public void OpenPluginConfiguration()

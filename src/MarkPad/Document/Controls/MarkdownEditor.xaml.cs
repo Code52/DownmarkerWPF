@@ -325,19 +325,14 @@ namespace MarkPad.Document.Controls
             // don't show menu if we bail out with return
             e.Handled = true;
 
-            var viewModel = (DocumentViewModel) DataContext;
-            var spellCheckPlugin = viewModel.View.connectedDocumentViewPlugins.OfType<SpellCheckPlugin.SpellCheckPlugin>().FirstOrDefault();
-            if (spellCheckPlugin == null) return;
-
-            var spellCheckProvider = spellCheckPlugin.GetProviderForView(viewModel.View) as SpellCheckProvider;
-            if (spellCheckProvider == null) return;
+            if (SpellCheckProvider == null) return;
 
             // Bail out if the mouse isn't over the markdownEditor
             var editorPosition = Editor.GetPositionFromPoint(Mouse.GetPosition(Editor));
             if (!editorPosition.HasValue) return;
 
             var offset = Editor.Document.GetOffset(editorPosition.Value.Line, editorPosition.Value.Column);
-            var errorSegments = spellCheckProvider.GetSpellCheckErrors();
+            var errorSegments = SpellCheckProvider.GetSpellCheckErrors();
             var misspelledSegment = errorSegments.FirstOrDefault(segment => segment.StartOffset <= offset && segment.EndOffset >= offset);
             if (misspelledSegment == null) return;
 
@@ -350,7 +345,7 @@ namespace MarkPad.Document.Controls
             }
 
             EditorContextMenu.Tag = misspelledSegment;
-            EditorContextMenu.ItemsSource = spellCheckProvider.GetSpellcheckSuggestions(editor.Document.GetText(misspelledSegment));
+            EditorContextMenu.ItemsSource = SpellCheckProvider.GetSpellcheckSuggestions(editor.Document.GetText(misspelledSegment));
             e.Handled = false;
         }
 
@@ -360,5 +355,14 @@ namespace MarkPad.Document.Controls
             var segment = (TextSegment)EditorContextMenu.Tag;
             Editor.Document.Replace(segment, word);
          }
+
+        public static readonly DependencyProperty SpellcheckProviderProperty =
+            DependencyProperty.Register("SpellCheckProvider", typeof (ISpellCheckProvider), typeof (MarkdownEditor), new PropertyMetadata(default(ISpellCheckProvider)));
+
+        public ISpellCheckProvider SpellCheckProvider
+        {
+            get { return (ISpellCheckProvider) GetValue(SpellcheckProviderProperty); }
+            set { SetValue(SpellcheckProviderProperty, value); }
+        }
     }
 }

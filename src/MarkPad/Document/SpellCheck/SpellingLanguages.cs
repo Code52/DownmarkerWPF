@@ -1,6 +1,6 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
-namespace MarkPad.Contracts
+namespace MarkPad.Document.SpellCheck
 {
     public enum SpellingLanguages
     {

@@ -2,7 +2,6 @@
 using System.ComponentModel.Composition;
 using System.IO;
 using Analects.DialogService;
-using MarkPad.Contracts;
 using MarkPad.Plugins;
 
 namespace ExportToHtmlPlugin
@@ -43,7 +42,7 @@ namespace ExportToHtmlPlugin
 			_settings = _settingsProvider.GetSettings<ExportToHtmlPluginSettings>();
 		}
 
-		public void SavePage(IDocumentViewModel documentViewModel)
+		public void SavePage(IMarkpadDocument documentViewModel)
 		{
 			if (documentViewModel == null) return;
 

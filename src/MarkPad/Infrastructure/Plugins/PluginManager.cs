@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.Reflection;
-using MarkPad.Contracts;
-using MarkPad.Document.SpellCheck;
 using MarkPad.Plugins;
 
 namespace MarkPad.Infrastructure.Plugins
@@ -12,16 +9,14 @@ namespace MarkPad.Infrastructure.Plugins
 	{
 		public CompositionContainer Container { get; private set; }
 		[ImportMany]
-		public IEnumerable<IPlugin> Plugins { get; private set; }
+		public IEnumerable<IPlugin> Plugins { get; protected set; }
 
 		public PluginManager()
 		{
 			var catalog = 
                 new AggregateCatalog(
 		            new AssemblyCatalog(typeof (IPlugin).Assembly),
-		            new AssemblyCatalog(typeof (IDocumentView).Assembly),
-		            new AssemblyCatalog(typeof (PluginSettingsProvider).Assembly),
-		            new AssemblyCatalog(typeof (SpellCheckPlugin.SpellCheckPlugin).Assembly));
+		            new AssemblyCatalog(typeof (PluginSettingsProvider).Assembly));
             
 			Container = new CompositionContainer(catalog);
 			Container.ComposeParts(this);

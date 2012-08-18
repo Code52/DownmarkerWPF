@@ -119,8 +119,7 @@
                                VerticalAlignment="Stretch"
                                cal:Message.Attach="[Event TextChanged]=[Action Update]"
                                ContextMenuOpening="EditorContextMenuOpening"
-                               Document="{Binding Document,
-                                                  ElementName=editor}"
+                               Document="{Binding Document, ElementName=editor}"
                                Padding="0,0,10,0"
                                PreviewKeyDown="EditorPreviewKeyDown"
                                RenderOptions.BitmapScalingMode="NearestNeighbor"
