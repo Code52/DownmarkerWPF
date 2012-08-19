@@ -15,6 +15,7 @@ namespace MarkPad.Updater
         public int Progress { get; private set; }
         public UpdateState UpdateState { get; set; }
         public bool Background { get; set; }
+        public string ErrorTitle { get; set; }
 
         public UpdaterViewModel(IWindowManager windowManager, Func<UpdaterChangesViewModel> changesCreator)
         {
@@ -24,7 +25,7 @@ namespace MarkPad.Updater
             au = new AutomaticUpdaterBackend
             {
                 GUID = "code52-markpad",
-                UpdateType = UpdateType.CheckAndDownload
+                UpdateType = UpdateType.DoNothing
             };
 
             au.ProgressChanged += AuProgressChanged;
@@ -32,10 +33,35 @@ namespace MarkPad.Updater
             au.UpToDate += AuUpToDate;
             au.UpdateAvailable += AuUpdateAvailable;
             au.UpdateSuccessful += AuUpdateSuccessful;
+            au.BeforeDownloading += AuBeforeDownloading;
+            au.BeforeChecking += AuBeforeChecking;
+
+            au.CheckingFailed += AuFailed;
+            au.DownloadingFailed += AuFailed;
 
             au.Initialize();
             au.AppLoaded();
             SetUpdateFlag();
+        }
+
+        void AuFailed(object sender, FailArgs failArgs)
+        {
+            Background = false;
+            ErrorTitle = failArgs.ErrorTitle + " Retry?";            
+            UpdateState = UpdateState.Error;
+        }
+
+        private void AuBeforeDownloading(object sender, EventArgs e)
+        {
+            UpdateState = UpdateState.Downloading;
+            Background = false;
+            Progress = 0;
+        }
+
+        private void AuBeforeChecking(object sender, EventArgs e)
+        {
+            UpdateState = UpdateState.Checking;
+            Background = true;
         }
 
         void AuUpdateAvailable(object sender, EventArgs e)
@@ -45,7 +71,8 @@ namespace MarkPad.Updater
 
         void AuUpToDate(object sender, SuccessArgs e)
         {
-            SetUpdateFlag();
+            UpdateState = UpdateState.UpToDate;
+            Background = false;
         }
 
         void AuProgressChanged(object sender, int progress)
@@ -65,6 +92,13 @@ namespace MarkPad.Updater
 
         public void CheckForUpdate()
         {
+            if(au.UpdateStepOn == UpdateStepOn.UpdateAvailable && UpdateState == UpdateState.Error)
+            {
+                Background = false;
+                au.InstallNow();
+                return;
+            }
+
             switch (au.UpdateStepOn)
             {
                 case UpdateStepOn.UpdateReadyToInstall:
