@@ -3,21 +3,20 @@ using System.Windows.Input;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit;
 using MarkPad.Document.Events;
-using MarkPad.Events;
 
 namespace MarkPad.Document.EditorBehaviours
 {
     public class ControlRightTweakedForMarkdown : IHandle<EditorPreviewKeyDownEvent>
     {
-        readonly Regex _wordRegex = new Regex(@"[\w]", RegexOptions.Compiled);
-        readonly Regex _nonWordRegex = new Regex(@"[\W]", RegexOptions.Compiled);
-        readonly Regex _nonWhitespaceRegex = new Regex(@"[\S]", RegexOptions.Compiled);
+        readonly Regex wordRegex = new Regex(@"[\w]", RegexOptions.Compiled);
+        readonly Regex nonWordRegex = new Regex(@"[\W]", RegexOptions.Compiled);
+        readonly Regex nonWhitespaceRegex = new Regex(@"[\S]", RegexOptions.Compiled);
 
         public void Handle(EditorPreviewKeyDownEvent e)
         {
             if (Keyboard.Modifiers != ModifierKeys.Control) return;
             if (e.Args.Key != Key.Right) return;
-            
+
             /* This is a tweaked variation of the behaviour in Sublime Text 2. It likes to find words, but
              * also likes control characters at the start of a line, which is a bit nicer for Markdown.
              * It picks the LHS (column zero) before traversing whitespace, which gives a bit more
@@ -37,15 +36,17 @@ namespace MarkPad.Document.EditorBehaviours
             var textLeftOfCursor = e.Editor.GetTextLeftOfCursor();
             if (e.Editor.IsCaratAtEndOfLine())
             {
-                e.Editor.CaretOffset = e.Editor.GetCurrentLine().NextLine.Offset;
+                var documentLine = e.Editor.GetCurrentLine().NextLine;
+                if (documentLine != null)
+                    e.Editor.CaretOffset = documentLine.Offset;
             }
-            else if (_wordRegex.IsMatch(GetNextCharacter(e.Editor)))
+            else if (wordRegex.IsMatch(GetNextCharacter(e.Editor)))
             {
                 MoveToEndOfCurrentWord(e.Editor);
             }
             else if (string.IsNullOrWhiteSpace(textLeftOfCursor))
             {
-                if (_nonWhitespaceRegex.IsMatch(GetNextCharacter(e.Editor)))
+                if (nonWhitespaceRegex.IsMatch(GetNextCharacter(e.Editor)))
                 {
                     MoveToBeginningOfNextWord(e.Editor);
                 }
@@ -65,48 +66,47 @@ namespace MarkPad.Document.EditorBehaviours
             }
 
             e.Args.Handled = true;
-            return;
         }
 
         void MoveToEndOfCurrentWord(TextEditor editor)
         {
             if (editor.IsCaratAtEndOfLine()) return;
-            if (editor.CaretOffset + 1 >= editor.Document.TextLength) return;
+            if (editor.CaretOffset + 1 > editor.Document.TextLength) return;
 
             editor.CaretOffset++;
-            
-            if (_nonWordRegex.IsMatch(GetNextCharacter(editor))) return;
-            
+
+            if (nonWordRegex.IsMatch(GetNextCharacter(editor))) return;
+
             MoveToEndOfCurrentWord(editor);
         }
 
         string GetTextBeforeNextWord(TextEditor editor)
         {
             var initialOffset = editor.CaretOffset;
-            
+
             MoveToBeginningOfNextWord(editor);
-            
+
             var textBeforeNextWord = editor.Document.GetText(initialOffset, editor.CaretOffset - initialOffset);
-            
+
             editor.CaretOffset = initialOffset;
-            
+
             return textBeforeNextWord;
         }
 
         void MoveToBeginningOfNextWord(TextEditor editor)
         {
-            if (_wordRegex.IsMatch(GetNextCharacter(editor))) return;
+            if (wordRegex.IsMatch(GetNextCharacter(editor))) return;
             if (editor.IsCaratAtEndOfLine()) return;
             if (editor.CaretOffset >= editor.Document.TextLength) return;
 
             editor.CaretOffset++;
-            
+
             MoveToBeginningOfNextWord(editor);
         }
 
         void MoveToFirstNonwhitespaceCharacter(TextEditor editor)
         {
-            if (_nonWhitespaceRegex.IsMatch(GetNextCharacter(editor))) return;
+            if (nonWhitespaceRegex.IsMatch(GetNextCharacter(editor))) return;
             if (editor.IsCaratAtEndOfLine()) return;
             if (editor.CaretOffset >= editor.Document.TextLength) return;
 
