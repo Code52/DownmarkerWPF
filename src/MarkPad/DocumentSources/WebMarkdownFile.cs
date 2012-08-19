@@ -1,6 +1,9 @@
-using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Threading.Tasks;
-using MarkPad.Document;
+using MarkPad.DocumentSources.MetaWeblog;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Plugins;
@@ -11,22 +14,26 @@ namespace MarkPad.DocumentSources
 {
     public class WebMarkdownFile : MarkpadDocumentBase
     {
-        readonly BlogSetting blog;
-        readonly Post post;
-        readonly Func<string, IMetaWeblogService> getMetaWeblog;
+        Post post;
         readonly IDialogService dialogService;
+        readonly MetaWeblogSiteContext siteContext;
+        readonly List<string> imagesToSaveOnPublish = new List<string>();
 
         public WebMarkdownFile(
             BlogSetting blog, Post post, 
-            Func<string, IMetaWeblogService> getMetaWeblog, 
             IDialogService dialogService, 
-            IDocumentFactory documentFactory) : 
-                base(post.title, post.description, blog.BlogName, documentFactory)
+            IDocumentFactory documentFactory,
+            MetaWeblogSiteContext siteContext)
+            : base(post.title, post.description, blog.BlogName, documentFactory)
         {
-            this.blog = blog;
             this.post = post;
-            this.getMetaWeblog = getMetaWeblog;
             this.dialogService = dialogService;
+            this.siteContext = siteContext;
+        }
+
+        public List<string> ImagesToSaveOnPublish
+        {
+            get { return imagesToSaveOnPublish; }
         }
 
         public override Task<IMarkpadDocument> Publish()
@@ -46,24 +53,25 @@ namespace MarkPad.DocumentSources
             return TaskEx.FromResult<IMarkpadDocument>(this);
         }
 
+        public override string SaveImage(Bitmap image)
+        {
+            var imageFileName = SiteContextHelper.GetFileName(post.title, siteContext.WorkingDirectory);
+
+            image.Save(Path.Combine(siteContext.WorkingDirectory, imageFileName), ImageFormat.Png);
+
+            ImagesToSaveOnPublish.Add(imageFileName);
+
+            return imageFileName;
+        }
+
+        public override string ConvertToAbsolutePaths(string htmlDocument)
+        {
+            return SiteContextHelper.ConvertToAbsolutePaths(htmlDocument, siteContext.WorkingDirectory);
+        }
+
         public override Task<IMarkpadDocument> Save()
         {
-            return TaskEx.Run<IMarkpadDocument>(() =>
-            {
-                var proxy = getMetaWeblog(blog.WebAPI);
-
-                var newpost = proxy.GetPost((string) post.postid, blog);
-                newpost.title = post.title;
-                newpost.description = blog.Language == "HTML"
-                                          ? DocumentParser.GetBodyContents(MarkdownContent)
-                                          : MarkdownContent;
-                newpost.categories = post.categories;
-                newpost.format = blog.Language;
-
-                proxy.EditPost((string) post.postid, blog, newpost, true);
-
-                return new WebMarkdownFile(blog, newpost, getMetaWeblog, dialogService, DocumentFactory);
-            });
+            return DocumentFactory.PublishDocument(this);
         }
     }
 }

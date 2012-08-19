@@ -166,6 +166,8 @@
     <Compile Include="Converters\BoolToGridLengthConverter.cs" />
     <Compile Include="Converters\EnumDisplayConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="DocumentSources\JekyllMarkdownDocument.cs" />
+    <Compile Include="DocumentSources\SiteContextHelper.cs" />
     <Compile Include="DocumentSources\DocumentFactory.cs" />
     <Compile Include="DocumentSources\FileMarkdownDocument.cs" />
     <Compile Include="DocumentSources\FileSystem\FileSystemSiteItem.cs" />
@@ -175,9 +177,11 @@
     <Compile Include="DocumentSources\ISiteContextGenerator.cs" />
     <Compile Include="DocumentSources\MarkpadDocumentBase.cs" />
     <Compile Include="DocumentSources\MetaWeblog\BlogService.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\MetaWeblogSiteContext.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\MetaWebLogItem.cs" />
     <Compile Include="DocumentSources\MetaWeblog\IBlogService.cs" />
     <Compile Include="DocumentSources\NewMarkpadDocument.cs" />
-    <Compile Include="DocumentSources\SiteItem.cs" />
+    <Compile Include="DocumentSources\SiteItemBase.cs" />
     <Compile Include="DocumentSources\MetaWeblog\Entry.cs" />
     <Compile Include="DocumentSources\MetaWeblog\OpenFromWebView.xaml.cs">
       <DependentUpon>OpenFromWebView.xaml</DependentUpon>
@@ -229,9 +233,10 @@
     <Compile Include="Document\EditorBehaviours\CopyLeadingWhitespaceOnNewLine.cs" />
     <Compile Include="Document\EditorBehaviours\CursorLeftRightWithSelection.cs" />
     <Compile Include="Document\EditorBehaviours\HardLineBreak.cs" />
-    <Compile Include="Document\EditorBehaviours\PasteImagesUsingSiteContext.cs" />
+    <Compile Include="Document\EditorBehaviours\PasteImageIntoDocument.cs" />
     <Compile Include="Document\Commands\DisplayCommands.cs" />
     <Compile Include="Document\EditorBehaviours\TextEditorExtensions.cs" />
+    <Compile Include="Document\Events\OpenFromWebEvent.cs" />
     <Compile Include="Document\MarkPadHyperlink.cs" />
     <Compile Include="Document\EditorBehaviours\OvertypeMode.cs" />
     <Compile Include="Document\SpellCheck\ISpellCheckProvider.cs" />

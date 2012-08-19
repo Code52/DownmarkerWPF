@@ -12,9 +12,9 @@ namespace MarkPad.DocumentSources.MetaWeblog.Service
             proxy = new MetaWeblog(url);
         }
 
-        public string NewPost(BlogSetting settings, Post newpost, bool b)
+        public string NewPost(BlogSetting settings, Post newpost, bool publish)
         {
-            return proxy.NewPost(settings.BlogInfo.blogid, settings.Username, settings.Password, newpost, b);
+            return proxy.NewPost(settings.BlogInfo.blogid, settings.Username, settings.Password, newpost, publish);
         }
 
         public Post GetPost(string postid, BlogSetting settings)
@@ -22,9 +22,24 @@ namespace MarkPad.DocumentSources.MetaWeblog.Service
             return proxy.GetPost(postid, settings.Username, settings.Password);
         }
 
-        public void EditPost(string postid, BlogSetting settings, Post newpost, bool b)
+        public void EditPost(string postid, BlogSetting settings, Post newpost, bool publish)
         {
-            proxy.EditPost(postid, settings.Username, settings.Password, newpost, b);
+            proxy.EditPost(postid, settings.Username, settings.Password, newpost, publish);
+        }
+
+        public bool DeletePost(string postid, BlogSetting blog)
+        {
+            return proxy.DeletePost(string.Empty, postid, blog.Username, blog.Password, false);
+        }
+
+        public MediaObjectInfo NewMediaObject(BlogSetting blog, MediaObject mediaObject)
+        {
+            return proxy.NewMediaObject(blog.BlogInfo.blogid, blog.Username, blog.Password, mediaObject);
+        }
+
+        public Task<Post> GetPostAsync(string postid, BlogSetting settings)
+        {
+            return proxy.GetPostAsync(postid, settings.Username, settings.Password);
         }
 
         public Task<Post[]> GetRecentPostsAsync(BlogSetting settings, int i)
@@ -35,6 +50,16 @@ namespace MarkPad.DocumentSources.MetaWeblog.Service
         public Task<BlogInfo[]> GetUsersBlogsAsync(BlogSetting settings)
         {
             return proxy.GetUsersBlogsAsync("MarkPad", settings.Username, settings.Password);
+        }
+
+        public Task<bool> DeletePostAsync(string postid, BlogSetting blog)
+        {
+            return proxy.DeletePostAsync(string.Empty, postid, blog.Username, blog.Password, false);
+        }
+
+        public Task<MediaObjectInfo> NewMediaObjectAsync(BlogSetting blog, MediaObject mediaObject)
+        {
+            return proxy.NewMediaObjectAsync(blog.BlogInfo.blogid, blog.Username, blog.Password, mediaObject);
         }
     }
 }

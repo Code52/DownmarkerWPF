@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Drawing;
 using System.Threading.Tasks;
 using MarkPad.Plugins;
 
@@ -40,6 +41,9 @@ namespace MarkPad.DocumentSources
         {
             return documentFactory.PublishDocument(this);
         }
+
+        public abstract string SaveImage(Bitmap bitmap);
+        public abstract string ConvertToAbsolutePaths(string htmlDocument);
 
         public event PropertyChangedEventHandler PropertyChanged;
 

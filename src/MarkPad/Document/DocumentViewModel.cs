@@ -77,11 +77,7 @@ namespace MarkPad.Document
                     return;
                 }
 
-                var result = s.Result;
-                if (MarkpadDocument.SiteContext != null)
-                {
-                    result = MarkpadDocument.SiteContext.ConvertToAbsolutePaths(result);
-                }
+                var result = MarkpadDocument.ConvertToAbsolutePaths(s.Result);
 
                 Render = result;
                 UpdateWordCount();
@@ -118,7 +114,7 @@ namespace MarkPad.Document
                     MarkpadDocument = t.Result;
                     Original = Document.Text;
                     return true;
-                });
+                }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         public void Publish()
@@ -131,7 +127,7 @@ namespace MarkPad.Document
                         MarkpadDocument = t.Result;
                         Original = MarkpadDocument.MarkdownContent;
                     }
-                });
+                }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         public Task<bool> Save()

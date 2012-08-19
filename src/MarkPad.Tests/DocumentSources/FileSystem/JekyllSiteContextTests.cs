@@ -37,8 +37,7 @@ namespace MarkPad.Tests.DocumentSources.FileSystem
                 dialogService,
                 fileSystem,
                 fileSystemWatcherFactory,
-                basePath, 
-                filename);
+                basePath);
         }
 
         [Fact]

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -45,12 +46,12 @@ namespace MarkPad.DocumentSources
 
         public IMarkpadDocument NewDocument()
         {
-            return new NewMarkpadDocument(dialogService, this, string.Empty);
+            return new NewMarkpadDocument(this, string.Empty);
         }
 
         public IMarkpadDocument NewDocument(string initalText)
         {
-            return new NewMarkpadDocument(dialogService, this, initalText);
+            return new NewMarkpadDocument(this, initalText);
         }
 
         public IMarkpadDocument CreateHelpDocument(string title, string content)
@@ -73,7 +74,7 @@ namespace MarkPad.DocumentSources
 
                     var siteContext = siteContextGenerator.GetContext(path);
 
-                    return new FileMarkdownDocument(path, markdownContent, dialogService, siteContext, this, eventAggregator);
+                    return new FileMarkdownDocument(path, markdownContent, siteContext, this, eventAggregator);
                 });
         }
 
@@ -91,7 +92,7 @@ namespace MarkPad.DocumentSources
 
                     var siteContext = siteContextGenerator.GetContext(path);
 
-                    return new FileMarkdownDocument(path, t.Result, dialogService, siteContext, this, eventAggregator);
+                    return new FileMarkdownDocument(path, t.Result, siteContext, this, eventAggregator);
                 });
         }
 
@@ -113,7 +114,12 @@ namespace MarkPad.DocumentSources
             if (detailsResult != true)
                 return TaskEx.FromResult<IMarkpadDocument>(null);
 
-            return TaskEx.Run(() => CreateNewWebMarkdownFile(null, pd.Title, pd.Categories, document.MarkdownContent, pd.Blog));
+            return TaskEx.Run(() =>
+            {
+                var webLogItem = document as WebMarkdownFile;
+                var imagesToUpload = webLogItem == null ? new List<string>() : webLogItem.ImagesToSaveOnPublish;
+                return CreateNewWebMarkdownFile(null, pd.Title, pd.Categories, document.MarkdownContent, imagesToUpload, pd.Blog);
+            });
         }
 
         public Task<IMarkpadDocument> OpenFromWeb()
@@ -135,7 +141,10 @@ namespace MarkPad.DocumentSources
             if (result != true)
                 return TaskEx.FromResult<IMarkpadDocument>(null);
 
-            return TaskEx.FromResult<IMarkpadDocument>(new WebMarkdownFile(openFromWeb.SelectedBlog, openFromWeb.SelectedPost, getMetaWeblog, dialogService, this));
+            var metaWeblogSiteContext = new MetaWeblogSiteContext(openFromWeb.SelectedBlog, openFromWeb.SelectedPost,
+                                                                  getMetaWeblog, eventAggregator);
+            var webMarkdownFile = new WebMarkdownFile(openFromWeb.SelectedBlog, openFromWeb.SelectedPost, dialogService, this, metaWeblogSiteContext);
+            return TaskEx.FromResult<IMarkpadDocument>(webMarkdownFile);
         }
 
         public Task<IMarkpadDocument> SaveDocumentAs(IMarkpadDocument document)
@@ -148,9 +157,31 @@ namespace MarkPad.DocumentSources
             return NewMarkdownFile(path, document.MarkdownContent);
         }
 
-        IMarkpadDocument CreateNewWebMarkdownFile(string postid, string postTitle, string[] categories, string content, BlogSetting blog)
+        IMarkpadDocument CreateNewWebMarkdownFile(
+            string postid, string postTitle, 
+            string[] categories, string content, 
+            List<string> imagesToUpload, 
+            BlogSetting blog)
         {
             var proxy = getMetaWeblog(blog.WebAPI);
+
+            if (imagesToUpload.Count > 0)
+            {
+                var metaWebLog = getMetaWeblog(blog.WebAPI);
+
+                foreach (var imageToUpload in imagesToUpload)
+                {
+                    var response = metaWebLog.NewMediaObject(blog, new MediaObject
+                    {
+                        name = imageToUpload,
+                        type = "image/png",
+                        bits = File.ReadAllBytes(imageToUpload)
+                    });
+
+                    content = content.Replace("/" + imageToUpload, response.url);
+                }
+            }
+
 
             var newpost = new Post();
             try
@@ -194,7 +225,8 @@ namespace MarkPad.DocumentSources
                 dialogService.ShowError("Error Publishing", ex.Message, "");
             }
 
-            return new WebMarkdownFile(blog, newpost, getMetaWeblog, dialogService, this);
+            var metaWeblogSiteContext = new MetaWeblogSiteContext(blog, newpost, getMetaWeblog, eventAggregator);
+            return new WebMarkdownFile(blog, newpost, dialogService, this, metaWeblogSiteContext);
         }
     }
 }

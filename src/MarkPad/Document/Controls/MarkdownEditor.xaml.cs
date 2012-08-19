@@ -54,7 +54,7 @@ namespace MarkPad.Document.Controls
 
             editorPreviewKeyDownHandlers = new IHandle<EditorPreviewKeyDownEvent>[] {
                 new CopyLeadingWhitespaceOnNewLine(),
-                new PasteImagesUsingSiteContext(),
+                new PasteImageIntoDocument(),
                 new CursorLeftRightWithSelection(),
                 new ControlRightTweakedForMarkdown(),
                 new HardLineBreak(),
