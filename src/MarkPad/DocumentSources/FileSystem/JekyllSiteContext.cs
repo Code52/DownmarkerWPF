@@ -1,8 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -93,6 +91,8 @@ namespace MarkPad.DocumentSources.FileSystem
         {
             get { return items ?? (items = new FileSystemSiteItem(eventAggregator, fileSystem, SiteBasePath).Children); }
         }
+
+        public bool IsLoading { get { return false; } }
 
         public string SiteBasePath
         {

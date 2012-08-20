@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:MarkPad="clr-namespace:MarkPad"
                     xmlns:Converters="clr-namespace:MarkPad.Converters">
-    <Converters:InPathMultiConverter x:Key="InPathMultiConverter" />
+    <Converters:IsCurrentItemConverter x:Key="IsCurrentItemConverter" />
     <Style TargetType="TreeViewItem">
         <Style.Resources>
             <LinearGradientBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" EndPoint="0,1" StartPoint="0,0">
@@ -133,15 +133,13 @@
             </MultiTrigger>
             <DataTrigger Value="True">
                 <DataTrigger.Binding>
-                    <MultiBinding Converter="{StaticResource InPathMultiConverter}" Mode="OneTime">
-                        <Binding ElementName="siteFiles" Path="DataContext.FileName" />
-                        <Binding Path="Path" />
+                    <MultiBinding Converter="{StaticResource IsCurrentItemConverter}" Mode="OneTime">
+                        <Binding ElementName="siteFiles" Path="DataContext" />
+                        <Binding Path="" />
                     </MultiBinding>
                 </DataTrigger.Binding>
-                <Setter Property="IsSelected"
-                                    Value="True" />
-                <Setter Property="IsExpanded"
-                                    Value="True" />
+                <Setter Property="IsSelected" Value="True" />
+                <Setter Property="IsExpanded" Value="True" />
                 <Setter Property="Foreground">
                     <Setter.Value>
                         <SolidColorBrush Color="{DynamicResource AccentDarkColor}" />
@@ -149,6 +147,6 @@
                 </Setter>
             </DataTrigger>
         </Style.Triggers>
-        
+
     </Style>
 </ResourceDictionary>

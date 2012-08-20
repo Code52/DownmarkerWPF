@@ -3,7 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Document="clr-namespace:MarkPad.Document"
-    xmlns:PreviewControl="clr-namespace:MarkPad.PreviewControl;assembly=MarkPad.PreviewControl"
     xmlns:Controls="clr-namespace:MarkPad.Document.Controls" xmlns:Commands="clr-namespace:MarkPad.Document.Commands"
     xmlns:Converters="clr-namespace:MarkPad.Converters" x:Class="MarkPad.Document.DocumentView"
     mc:Ignorable="d" 
@@ -30,17 +29,23 @@
             <ColumnDefinition x:Name="webBrowserColumn" Width="{Binding DistractionFree, Converter={Converters:BoolToGridLengthConverter Invert=True}}" />
         </Grid.ColumnDefinitions>
 
-      <Controls:SiteView SiteContext="{Binding SiteContext}"
-                         x:Name="siteView">
+      <Controls:SiteView SiteContext="{Binding MarkpadDocument.SiteContext}" x:Name="siteView">
         <Controls:SiteView.Style>
           <Style TargetType="Controls:SiteView">
           <Style.Triggers>
-            <DataTrigger Binding="{Binding SiteContext}"
+              <DataTrigger Binding="{Binding MarkpadDocument.SiteContext}"
                          Value="{x:Null}">
               <Setter Property="Visibility"
                       Value="Collapsed" />
             </DataTrigger>
-            <DataTrigger Binding="{Binding DistractionFree}"
+              <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding MarkpadDocument.SiteContext.IsLoading}" Value="False" />
+                                <Condition Binding="{Binding MarkpadDocument.SiteContext.Items.Count}" Value="0" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </MultiDataTrigger>
+                        <DataTrigger Binding="{Binding DistractionFree}"
                          Value="True">
               <Setter Property="Visibility"
                       Value="Collapsed" />

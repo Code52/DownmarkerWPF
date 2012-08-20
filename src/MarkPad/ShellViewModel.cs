@@ -7,16 +7,18 @@ using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
 using MarkPad.Document;
+using MarkPad.Document.Events;
 using MarkPad.DocumentSources;
 using MarkPad.Events;
 using MarkPad.Infrastructure.DialogService;
+using MarkPad.Plugins;
 using MarkPad.PreviewControl;
 using MarkPad.Settings.UI;
 using MarkPad.Updater;
 
 namespace MarkPad
 {
-    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>
+    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>, IHandle<OpenFromWebEvent>
     {
         private const string ShowSettingsState = "ShowSettings";
         private readonly IEventAggregator eventAggregator;
@@ -179,14 +181,7 @@ namespace MarkPad
                 {
                     documentFactory
                         .OpenDocument(message.Path)
-                        .ContinueWith(t =>
-                        {
-                            var viewModel = documentViewModelFactory();
-
-                            viewModel.Open(t.Result);
-                            MDI.Open(viewModel);
-
-                        }, TaskScheduler.FromCurrentSynchronizationContext());
+                        .ContinueWith(OpenDocumentResult, TaskScheduler.FromCurrentSynchronizationContext());
                 }
             }
         }
@@ -223,7 +218,9 @@ namespace MarkPad
 
             var openedDocs = MDI.Items.Cast<DocumentViewModel>();
 
-            return openedDocs.FirstOrDefault(doc => doc != null && doc.MarkpadDocument is FileMarkdownDocument && filename.Equals(((FileMarkdownDocument)doc.MarkpadDocument).FileName));
+            return openedDocs.FirstOrDefault(doc => 
+                doc != null && doc.MarkpadDocument is FileMarkdownDocument && 
+                filename.Equals(((FileMarkdownDocument)doc.MarkpadDocument).FileName));
         }
 
         public void ShowHelp()
@@ -260,19 +257,27 @@ namespace MarkPad
         public void OpenFromWeb()
         {
             documentFactory.OpenFromWeb()
-                .ContinueWith(t=>
-                {
-                    if (t.IsCanceled || t.Result == null) return;
-
-                    var doc = documentViewModelFactory();
-                    doc.Open(t.Result);
-                    MDI.Open(doc);
-                }, TaskScheduler.FromCurrentSynchronizationContext());
+                .ContinueWith(OpenDocumentResult, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         public void Handle(SettingsCloseEvent message)
         {
             CurrentState = "HideSettings";
+        }
+
+        public void Handle(OpenFromWebEvent message)
+        {
+            documentFactory.OpenBlogPost(message.Blog, message.Post)
+                .ContinueWith(OpenDocumentResult, TaskScheduler.FromCurrentSynchronizationContext());
+            
+        }
+
+        void OpenDocumentResult(Task<IMarkpadDocument> t)
+        {
+            if (t.IsCanceled || t.Result == null) return;
+            var doc = documentViewModelFactory();
+            doc.Open(t.Result);
+            MDI.Open(doc);
         }
     }
 }

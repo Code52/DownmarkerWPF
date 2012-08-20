@@ -141,8 +141,15 @@ namespace MarkPad.DocumentSources
             if (result != true)
                 return TaskEx.FromResult<IMarkpadDocument>(null);
 
-            var metaWeblogSiteContext = new MetaWeblogSiteContext(openFromWeb.SelectedBlog, openFromWeb.SelectedPost, getMetaWeblog, eventAggregator);
+            var metaWeblogSiteContext = new MetaWeblogSiteContext(openFromWeb.SelectedBlog, getMetaWeblog, eventAggregator);
             var webMarkdownFile = new WebMarkdownFile(openFromWeb.SelectedBlog, openFromWeb.SelectedPost, this, metaWeblogSiteContext);
+            return TaskEx.FromResult<IMarkpadDocument>(webMarkdownFile);
+        }
+
+        public Task<IMarkpadDocument> OpenBlogPost(BlogSetting blog, Post post)
+        {
+            var metaWeblogSiteContext = new MetaWeblogSiteContext(blog, getMetaWeblog, eventAggregator);
+            var webMarkdownFile = new WebMarkdownFile(blog, post, this, metaWeblogSiteContext);
             return TaskEx.FromResult<IMarkpadDocument>(webMarkdownFile);
         }
 
@@ -224,7 +231,7 @@ namespace MarkPad.DocumentSources
                 dialogService.ShowError("Error Publishing", ex.Message, "");
             }
 
-            var metaWeblogSiteContext = new MetaWeblogSiteContext(blog, newpost, getMetaWeblog, eventAggregator);
+            var metaWeblogSiteContext = new MetaWeblogSiteContext(blog, getMetaWeblog, eventAggregator);
             return new WebMarkdownFile(blog, newpost, this, metaWeblogSiteContext);
         }
     }

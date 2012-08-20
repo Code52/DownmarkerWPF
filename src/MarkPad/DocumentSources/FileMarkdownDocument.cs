@@ -4,8 +4,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
 using Caliburn.Micro;
+using MarkPad.DocumentSources.FileSystem;
 using MarkPad.Events;
-using MarkPad.Framework;
 using MarkPad.Helpers;
 using MarkPad.Plugins;
 
@@ -79,6 +79,16 @@ namespace MarkPad.DocumentSources
         {
             var imageDirectory = GetImageDirectory(Path.GetDirectoryName(FileName), Title);
             return SiteContextHelper.ConvertToAbsolutePaths(htmlDocument, imageDirectory);
+        }
+
+        public override bool IsSameItem(ISiteItem siteItem)
+        {
+            var fileItem = siteItem as FileSystemSiteItem;
+
+            if (fileItem == null)
+                return false;
+
+            return fileItem.Path == FileName;
         }
 
         public void Handle(FileRenamedEvent message)

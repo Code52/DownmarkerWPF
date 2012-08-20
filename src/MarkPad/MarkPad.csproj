@@ -164,6 +164,7 @@
     </Compile>
     <Compile Include="Behaviors\StateHelper.cs" />
     <Compile Include="Converters\BoolToGridLengthConverter.cs" />
+    <Compile Include="Converters\IsCurrentItemConverter.cs" />
     <Compile Include="Converters\EnumDisplayConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="DocumentSources\JekyllMarkdownDocument.cs" />

@@ -87,5 +87,10 @@ namespace MarkPad.DocumentSources
         {
             return SiteContextHelper.ConvertToAbsolutePaths(htmlDocument, Path.GetTempPath());
         }
+
+        public override bool IsSameItem(ISiteItem siteItem)
+        {
+            return false;
+        }
     }
 }

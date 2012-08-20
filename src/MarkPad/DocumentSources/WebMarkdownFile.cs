@@ -28,6 +28,14 @@ namespace MarkPad.DocumentSources
             this.siteContext = siteContext;
         }
 
+        public override ISiteContext SiteContext
+        {
+            get
+            {
+                return siteContext;
+            }
+        }
+
         public List<string> ImagesToSaveOnPublish
         {
             get { return imagesToSaveOnPublish; }
@@ -77,6 +85,16 @@ namespace MarkPad.DocumentSources
         public override string ConvertToAbsolutePaths(string htmlDocument)
         {
             return SiteContextHelper.ConvertToAbsolutePaths(htmlDocument, siteContext.WorkingDirectory);
+        }
+
+        public override bool IsSameItem(ISiteItem siteItem)
+        {
+            var webItem = siteItem as MetaWebLogItem;
+
+            if (webItem == null)
+                return false;
+
+            return webItem.Post.postid.Equals(post.postid);
         }
 
         public override Task<IMarkpadDocument> Save()

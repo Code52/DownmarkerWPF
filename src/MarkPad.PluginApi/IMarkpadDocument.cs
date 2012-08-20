@@ -22,5 +22,6 @@ namespace MarkPad.Plugins
         string SaveImage(Bitmap image);
 
         string ConvertToAbsolutePaths(string htmlDocument);
+	    bool IsSameItem(ISiteItem siteItem);
 	}
 }

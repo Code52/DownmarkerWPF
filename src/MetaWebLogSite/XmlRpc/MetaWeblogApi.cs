@@ -37,7 +37,7 @@ namespace MetaWebLogSite.XmlRpc
         [XmlRpcMethod("metaWeblog.editPost")]
         public bool EditPost(string postid, string username, string password, Post post, bool publish)
         {
-            var newPost = dbContext.Posts.Find(postid);
+            var newPost = dbContext.Posts.Find(int.Parse(postid));
             newPost.Title = post.title;
             newPost.Categories = post.categories;
             newPost.DateCreated = post.dateCreated;
@@ -50,7 +50,7 @@ namespace MetaWebLogSite.XmlRpc
         [XmlRpcMethod("metaWeblog.getPost")]
         public Post GetPost(string postid, string username, string password)
         {
-            return ToPostInfo(dbContext.Posts.Find(postid));
+            return ToPostInfo(dbContext.Posts.Find(int.Parse(postid)));
         }
 
         [XmlRpcMethod("metaWeblog.getCategories")]
@@ -99,7 +99,7 @@ namespace MetaWebLogSite.XmlRpc
         [XmlRpcMethod("blogger.deletePost")]
         public bool DeletePost(string key, string postid, string username, string password, bool publish)
         {
-            var post = dbContext.Posts.Find(postid);
+            var post = dbContext.Posts.Find(int.Parse(postid));
 
             dbContext.Posts.Remove(post);
             dbContext.SaveChanges();

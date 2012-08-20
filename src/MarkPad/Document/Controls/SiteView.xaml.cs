@@ -26,7 +26,8 @@ namespace MarkPad.Document.Controls
             {
                 Items =
                 {
-                    new MenuItem {Header = "Rename", Command = new ActionCommand(Rename)}, new MenuItem {Header = "Delete", Command = new ActionCommand(DeleteItem)}
+                    new MenuItem {Header = "Rename", Command = new ActionCommand(Rename)}, 
+                    new MenuItem {Header = "Delete", Command = new ActionCommand(DeleteItem)}
                 }
             };
         }
@@ -57,6 +58,7 @@ namespace MarkPad.Document.Controls
             {
                 SetItemSelected(selectedItem, false);
                 SiteContext.OpenItem(selectedItem);
+                e.Handled = true;
             }
         }
 

@@ -22,8 +22,8 @@ namespace MarkPad.DocumentSources
 
         public string MarkdownContent { get; set; }
         public string Title { get; protected set; }
-        public ISiteContext SiteContext { get; protected set; }
         public string SaveLocation { get; protected set; }
+        public virtual ISiteContext SiteContext { get; protected set; }
 
         protected IDocumentFactory DocumentFactory
         {
@@ -44,6 +44,7 @@ namespace MarkPad.DocumentSources
 
         public abstract string SaveImage(Bitmap bitmap);
         public abstract string ConvertToAbsolutePaths(string htmlDocument);
+        public abstract bool IsSameItem(ISiteItem siteItem);
 
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -15,18 +15,16 @@ namespace MarkPad.DocumentSources.MetaWeblog
     {
         readonly string workingDirectory;
         readonly BlogSetting blog;
-        readonly Post post;
         readonly Func<string, IMetaWeblogService> getMetaWeblog;
         readonly IEventAggregator eventAggregator;
         ObservableCollection<ISiteItem> items;
 
         public MetaWeblogSiteContext(
-            BlogSetting blog, Post post,
+            BlogSetting blog,
             Func<string, IMetaWeblogService> getMetaWeblog,
             IEventAggregator eventAggregator)
         {
             this.blog = blog;
-            this.post = post;
             this.getMetaWeblog = getMetaWeblog;
             this.eventAggregator = eventAggregator;
 
@@ -73,15 +71,6 @@ namespace MarkPad.DocumentSources.MetaWeblog
             var metaWebLogItem = selectedItem as MetaWebLogItem;
             if (metaWebLogItem != null)
                 eventAggregator.Publish(new OpenFromWebEvent(metaWebLogItem.Post, blog));
-        }
-
-        public bool IsCurrentItem(SiteItemBase siteItemBase)
-        {
-            var item = siteItemBase as MetaWebLogItem;
-            if (item != null)
-                return post.title == item.Name;
-
-            return false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
