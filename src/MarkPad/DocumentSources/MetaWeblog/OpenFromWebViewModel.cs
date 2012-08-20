@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using MarkPad.DocumentSources.MetaWeblog.Service;
-using MarkPad.Framework;
 using MarkPad.Helpers;
 using MarkPad.Infrastructure.Abstractions;
 using MarkPad.Infrastructure.DialogService;
@@ -71,6 +70,8 @@ namespace MarkPad.DocumentSources.MetaWeblog
             get { return !string.IsNullOrWhiteSpace(CurrentPost.Key); }
         }
 
+        public bool IsFetching { get; private set; }
+
         public void Continue()
         {
             TryClose(true);
@@ -87,9 +88,11 @@ namespace MarkPad.DocumentSources.MetaWeblog
 
             var proxy = getMetaWeblog(SelectedBlog.WebAPI);
 
+            IsFetching = true;
             return proxy.GetRecentPostsAsync(SelectedBlog, 100)
                 .ContinueWith(UpdateBlogPosts, taskScheduler.FromCurrentSynchronisationContext())
-                .ContinueWith(HandleFetchError);
+                .ContinueWith(HandleFetchError)
+                .ContinueWith(t=>IsFetching = false);
         }
 
         private void UpdateBlogPosts(Task<Post[]> t)
