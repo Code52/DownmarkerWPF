@@ -1,12 +1,13 @@
+using System.Drawing;
 using System.Threading.Tasks;
 using MarkPad.Plugins;
 
 namespace MarkPad.DocumentSources
 {
-    public class HelpDocument : MarkpadDocumentBase
+    public class HelpDocument : NewMarkpadDocument
     {
         public HelpDocument(string title, string helpText, IDocumentFactory documentFactory) 
-            : base(title, helpText, null, documentFactory)
+            : base(documentFactory, title, helpText)
         { }
 
         public override Task<IMarkpadDocument> Save()

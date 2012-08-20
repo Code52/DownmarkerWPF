@@ -14,7 +14,7 @@ namespace MarkPad.Document.Controls
         public static DependencyProperty SiteContextProperty =
             DependencyProperty.Register("SiteContext", typeof(ISiteContext), typeof(SiteView), new PropertyMetadata(default(ISiteContext)));
 
-        SiteItem currentlySelectedItem;
+        SiteItemBase currentlySelectedItem;
         DateTime? selectedTime;
         readonly ContextMenu itemContextMenu;
 
@@ -26,7 +26,8 @@ namespace MarkPad.Document.Controls
             {
                 Items =
                 {
-                    new MenuItem {Header = "Rename", Command = new ActionCommand(Rename)}, new MenuItem {Header = "Delete", Command = new ActionCommand(DeleteItem)}
+                    new MenuItem {Header = "Rename", Command = new ActionCommand(Rename)}, 
+                    new MenuItem {Header = "Delete", Command = new ActionCommand(DeleteItem)}
                 }
             };
         }
@@ -51,19 +52,20 @@ namespace MarkPad.Document.Controls
 
         void SiteFilesMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var selectedItem = siteFiles.SelectedItem as SiteItem;
+            var selectedItem = siteFiles.SelectedItem as SiteItemBase;
 
             if (selectedItem != null)
             {
                 SetItemSelected(selectedItem, false);
                 SiteContext.OpenItem(selectedItem);
+                e.Handled = true;
             }
         }
 
         void SiteItemOnMouseDown(object sender, MouseButtonEventArgs e)
         {
             var textBlock = (TextBlock)sender;
-            var siteItem = (SiteItem)textBlock.DataContext;
+            var siteItem = (SiteItemBase)textBlock.DataContext;
             if (e.LeftButton == MouseButtonState.Pressed)
             {
 
@@ -82,7 +84,7 @@ namespace MarkPad.Document.Controls
             }
         }
 
-        void SetItemSelected(SiteItem siteItem, bool isSelected)
+        void SetItemSelected(SiteItemBase siteItem, bool isSelected)
         {
             try
             {
@@ -104,7 +106,7 @@ namespace MarkPad.Document.Controls
         void EditBoxKeyDown(object sender, KeyEventArgs e)
         {
             var textBlock = (TextBox)sender;
-            var siteItem = (SiteItem)textBlock.DataContext;
+            var siteItem = (SiteItemBase)textBlock.DataContext;
 
             if (siteItem.IsRenaming)
             {
@@ -126,7 +128,7 @@ namespace MarkPad.Document.Controls
             if (currentlySelectedItem != null)
                 currentlySelectedItem.Selected = false;
 
-            var siteItem = (SiteItem)e.NewValue;
+            var siteItem = (SiteItemBase)e.NewValue;
 
             if (siteItem == null)
             {

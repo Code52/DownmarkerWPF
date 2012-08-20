@@ -39,6 +39,7 @@
             <sys:String x:Key="WindowCommandsRestoreToolTip">Restore</sys:String>
             <sys:String x:Key="WindowCommandsCloseToolTip">Close</sys:String>
             <Converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         </ResourceDictionary>
     </Window.Resources>
 
@@ -454,10 +455,16 @@
         </UI:SettingsView>
 
         <Grid Background="#FFbe0606" Grid.Row="2">
-            <TextBlock Margin="20,0,0,0" VerticalAlignment="Center" Foreground="White"  Visibility="{Binding MDI.ActiveItem, Converter={StaticResource NullToVisibilityConverter}}">
-                <Run Text="{Binding MDI.ActiveItem.WordCount, Mode=OneWay}" /> WORDS
-            </TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding WorkingText,StringFormat='{}{0}...'}" Visibility="{Binding IsWorking, Converter={StaticResource BooleanToVisibilityConverter}}"
+                           Foreground="White" VerticalAlignment="Center" Margin="20 0 0 0" />
 
+                <TextBlock Margin="20,0,0,0" VerticalAlignment="Center" Foreground="White"
+                           Visibility="{Binding MDI.ActiveItem, Converter={StaticResource NullToVisibilityConverter}}">
+                    <Run Text="{Binding MDI.ActiveItem.WordCount, Mode=OneWay}" /> WORDS
+                </TextBlock>
+            </StackPanel>
+            
             <Slider Maximum="{Binding MDI.ActiveItem.MaxZoom}"
                 Minimum="{Binding MDI.ActiveItem.MinZoom}"
                 VerticalAlignment="Bottom"

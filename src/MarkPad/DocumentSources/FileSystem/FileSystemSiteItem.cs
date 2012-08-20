@@ -9,7 +9,7 @@ using MarkPad.Plugins;
 
 namespace MarkPad.DocumentSources.FileSystem
 {
-    public class FileSystemSiteItem : SiteItem, IHandle<FileRenamedEvent>, IHandle<FileCreatedEvent>, IHandle<FileDeletedEvent>
+    public class FileSystemSiteItem : SiteItemBase, IHandle<FileRenamedEvent>, IHandle<FileCreatedEvent>, IHandle<FileDeletedEvent>
     {
         readonly IFileSystem fileSystem;
         string originalFileName;

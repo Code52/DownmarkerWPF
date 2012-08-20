@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
+using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Plugins;
+using MarkPad.Settings.Models;
 
 namespace MarkPad.DocumentSources
 {
@@ -10,8 +12,9 @@ namespace MarkPad.DocumentSources
         IMarkpadDocument CreateHelpDocument(string title, string content);
         Task<IMarkpadDocument> NewMarkdownFile(string path, string markdownContent);
         Task<IMarkpadDocument> OpenDocument(string path);
-        Task<IMarkpadDocument> PublishDocument(IMarkpadDocument document);
+        Task<IMarkpadDocument> PublishDocument(string postId, IMarkpadDocument document);
         Task<IMarkpadDocument> OpenFromWeb();
         Task<IMarkpadDocument> SaveDocumentAs(IMarkpadDocument document);
+        Task<IMarkpadDocument> OpenBlogPost(BlogSetting blog, Post post);
     }
 }

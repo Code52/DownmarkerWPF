@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Caliburn.Micro;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.DocumentSources.MetaWeblog.Service.Rsd;
-using MarkPad.Framework;
+using MarkPad.Helpers;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Settings.Models;
 
@@ -104,10 +104,12 @@ namespace MarkPad.Settings.UI
 
             APIBlogs = new ObservableCollection<FetchedBlogInfo>();
 
+            IsFetching = true;
             proxy
                 .GetUsersBlogsAsync(CurrentBlog)
                 .ContinueWith(UpdateBlogList, TaskScheduler.FromCurrentSynchronizationContext())
-                .ContinueWith(HandleFetchError);
+                .ContinueWith(HandleFetchError)
+                .ContinueWith(t=>IsFetching = false);
         }
 
         private void UpdateBlogList(Task<BlogInfo[]> t)
@@ -162,5 +164,7 @@ namespace MarkPad.Settings.UI
         }
 
         public bool DiscoveringAddress { get; private set; }
+
+        public bool IsFetching { get; private set; }
     }
 }

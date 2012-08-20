@@ -9,13 +9,12 @@ using MarkPad.Helpers;
 
 namespace MarkPad.Document.EditorBehaviours
 {
-    public class PasteImagesUsingSiteContext : IHandle<EditorPreviewKeyDownEvent>
+    public class PasteImageIntoDocument : IHandle<EditorPreviewKeyDownEvent>
     {
         public void Handle(EditorPreviewKeyDownEvent e)
         {
             if (e.ViewModel == null) return;
             if (Keyboard.Modifiers != ModifierKeys.Control || e.Args.Key != Key.V) return;
-            if (e.ViewModel.MarkpadDocument.SiteContext == null) return;
 
             var images = Clipboard.GetDataObject().GetImages();
             if (!images.Any()) return;
@@ -24,11 +23,11 @@ namespace MarkPad.Document.EditorBehaviours
 
             foreach (var dataImage in images)
             {
-                var relativePath = e.ViewModel.MarkpadDocument.SiteContext.SaveImage(dataImage.Bitmap);
+                var relativePath = e.ViewModel.MarkpadDocument.SaveImage(dataImage.Bitmap);
 
                 var imageMarkdown = string.Format("![{0}](/{1})",
                                 Path.GetFileNameWithoutExtension(relativePath),
-                                relativePath.TrimStart('/').Replace('\\', '/'));
+                                relativePath.Replace('\\', '/').TrimStart('/'));
                 sb.AppendLine(imageMarkdown);
             }
 

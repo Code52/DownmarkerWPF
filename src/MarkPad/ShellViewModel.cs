@@ -1,57 +1,52 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
 using MarkPad.Document;
+using MarkPad.Document.Events;
 using MarkPad.DocumentSources;
+using MarkPad.DocumentSources.FileSystem;
 using MarkPad.DocumentSources.MetaWeblog;
-using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Events;
+using MarkPad.Infrastructure;
 using MarkPad.Infrastructure.DialogService;
+using MarkPad.Plugins;
 using MarkPad.PreviewControl;
-using MarkPad.Settings;
-using MarkPad.Settings.Models;
 using MarkPad.Settings.UI;
-using Ookii.Dialogs.Wpf;
 using MarkPad.Updater;
 
 namespace MarkPad
 {
-    internal class ShellViewModel : Conductor<IScreen>, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>
+    internal class ShellViewModel : Conductor<IScreen>, IShell, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>, IHandle<OpenFromWebEvent>
     {
-        private const string ShowSettingsState = "ShowSettings";
-        private readonly IEventAggregator eventAggregator;
-        private readonly IDialogService dialogService;
-        private readonly IWindowManager windowManager;
-        private readonly ISettingsProvider settingsService;
-        private readonly Func<DocumentViewModel> documentViewModelFactory;
-        private readonly Func<OpenFromWebViewModel> openFromWebCreator;
+        const string ShowSettingsState = "ShowSettings";
+        readonly IEventAggregator eventAggregator;
+        readonly IDialogService dialogService;
+        readonly Func<DocumentViewModel> documentViewModelFactory;
+        readonly List<string> loadingMessages = new List<string>();
+        readonly IFileSystem fileSystem;
 
         public ShellViewModel(
             IDialogService dialogService,
-            IWindowManager windowManager,
-            ISettingsProvider settingsService,
             IEventAggregator eventAggregator,
             MdiViewModel mdi,
             SettingsViewModel settingsViewModel,
             UpdaterViewModel updaterViewModel,
-            Func<DocumentViewModel> documentViewModelFactory,
-            Func<OpenFromWebViewModel> openFromWebCreator, IDocumentFactory documentFactory)
+            Func<DocumentViewModel> documentViewModelFactory, 
+            IDocumentFactory documentFactory, IFileSystem fileSystem)
         {
             this.eventAggregator = eventAggregator;
             this.dialogService = dialogService;
-            this.windowManager = windowManager;
-            this.settingsService = settingsService;
             MDI = mdi;
             Updater = updaterViewModel;
             this.documentViewModelFactory = documentViewModelFactory;
-            this.openFromWebCreator = openFromWebCreator;
             this.documentFactory = documentFactory;
+            this.fileSystem = fileSystem;
 
             Settings = settingsViewModel;
             Settings.Initialize();
@@ -67,6 +62,7 @@ namespace MarkPad
 
         private string currentState;
         readonly IDocumentFactory documentFactory;
+        readonly object workLock = new object();
 
         public string CurrentState
         {
@@ -87,6 +83,30 @@ namespace MarkPad
         public SettingsViewModel Settings { get; private set; }
         public UpdaterViewModel Updater { get; set; }
 		public DocumentViewModel ActiveDocumentViewModel { get { return MDI.ActiveItem as DocumentViewModel; } }
+
+        public string WorkingText { get; private set; }
+        public bool IsWorking { get; private set; }
+
+        public IDisposable DoingWork(string work)
+        {
+            lock (workLock)
+            {
+                IsWorking = true;
+                loadingMessages.Add(work);
+                WorkingText = work;
+
+                return new DelegateDisposable(() =>
+                {
+                    lock (workLock)
+                    {
+                        loadingMessages.Remove(work);
+                        IsWorking = loadingMessages.Count > 0;
+                        if (loadingMessages.Count > 0)
+                            WorkingText = loadingMessages.Last();
+                    }
+                });
+            }
+        }
 
         public void Exit()
         {
@@ -142,7 +162,9 @@ namespace MarkPad
             var doc = MDI.ActiveItem as DocumentViewModel;
             if (doc != null)
             {
-                doc.Save();
+                var finishedLoading = DoingWork(string.Format("Saving {0}", doc.MarkpadDocument.Title));
+                doc.Save()
+                    .ContinueWith(t=>finishedLoading.Dispose(), TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
 
@@ -181,30 +203,6 @@ namespace MarkPad
             TryClose();
         }
 
-        public void Handle(FileOpenEvent message)
-        {
-            DocumentViewModel openedDoc = GetOpenedDocument(message.Path);
-
-            if (openedDoc != null)
-                MDI.ActivateItem(openedDoc);
-            else
-            {
-                if (File.Exists(message.Path))
-                {
-                    documentFactory
-                        .OpenDocument(message.Path)
-                        .ContinueWith(t =>
-                        {
-                            var viewModel = documentViewModelFactory();
-
-                            viewModel.Open(t.Result);
-                            MDI.Open(viewModel);
-
-                        }, TaskScheduler.FromCurrentSynchronizationContext());
-                }
-            }
-        }
-
         public void ShowSettings()
         {
             CurrentState = ShowSettingsState;
@@ -223,21 +221,6 @@ namespace MarkPad
         {
             var shellView = (ShellViewModel)GetView();
             shellView.MDI.HtmlPreview.Print();
-        }
-
-        /// <summary>
-        /// Returns opened document with a given filename. 
-        /// </summary>
-        /// <param name="filename">Fully qualified path to the document file.</param>
-        /// <returns>Opened document or null if file hasn't been yet opened.</returns>
-        private DocumentViewModel GetOpenedDocument(string filename)
-        {
-            if (filename == null)
-                return null;
-
-            var openedDocs = MDI.Items.Cast<DocumentViewModel>();
-
-            return openedDocs.FirstOrDefault(doc => doc != null && doc.MarkpadDocument is FileMarkdownDocument && filename.Equals(((FileMarkdownDocument)doc.MarkpadDocument).FileName));
         }
 
         public void ShowHelp()
@@ -267,24 +250,73 @@ namespace MarkPad
 
             if (doc != null)
             {
-                doc.Publish();
+                var finishedWork = DoingWork(string.Format("Publishing {0}", doc.MarkpadDocument.Title));
+                doc.Publish()
+                    .ContinueWith(t => finishedWork.Dispose(), TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
 
         public void OpenFromWeb()
         {
             documentFactory.OpenFromWeb()
-                .ContinueWith(t=>
-                {
-                    var doc = documentViewModelFactory();
-                    doc.Open(t.Result);
-                    MDI.Open(doc);
-                });
+                .ContinueWith(OpenDocumentResult, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         public void Handle(SettingsCloseEvent message)
         {
             CurrentState = "HideSettings";
+        }
+
+        public void Handle(FileOpenEvent message)
+        {
+            if (!fileSystem.File.Exists(message.Path)) return;
+
+            var openedDocs = MDI.Items.Cast<DocumentViewModel>();
+            var fileSystemSiteItem = new FileSystemSiteItem(eventAggregator, fileSystem, message.Path);
+            var openedDoc = openedDocs.SingleOrDefault(d => d.MarkpadDocument.IsSameItem(fileSystemSiteItem));
+
+            if (openedDoc != null)
+                MDI.ActivateItem(openedDoc);
+            else
+            {
+                var finishedLoading = DoingWork(string.Format("Opening {0}", message.Path));
+                documentFactory
+                    .OpenDocument(message.Path)
+                    .ContinueWith(t =>
+                    {
+                        OpenDocumentResult(t);
+                        finishedLoading.Dispose();
+                    }, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+        }
+
+        public void Handle(OpenFromWebEvent message)
+        {
+            var finishedWork = DoingWork(string.Format("Opening {0}", message.Post.title));
+
+            var openedDocs = MDI.Items.Cast<DocumentViewModel>();
+            var metaWebLogItem = new MetaWebLogItem(null, eventAggregator, message.Post, message.Blog);
+            var openedDoc = openedDocs.SingleOrDefault(d => d.MarkpadDocument.IsSameItem(metaWebLogItem));
+
+            if (openedDoc != null)
+                MDI.ActivateItem(openedDoc);
+            else
+            {
+                documentFactory.OpenBlogPost(message.Blog, message.Post)
+                    .ContinueWith(t =>
+                    {
+                        OpenDocumentResult(t);
+                        finishedWork.Dispose();
+                    }, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+        }
+
+        void OpenDocumentResult(Task<IMarkpadDocument> t)
+        {
+            if (t.IsCanceled || t.Result == null) return;
+            var doc = documentViewModelFactory();
+            doc.Open(t.Result);
+            MDI.Open(doc);
         }
     }
 }

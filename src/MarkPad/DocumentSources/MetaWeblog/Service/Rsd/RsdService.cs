@@ -159,11 +159,10 @@ namespace MarkPad.DocumentSources.MetaWeblog.Service.Rsd
                 IEnumerable<XElement> apiElements;
                 if (document.Root.Attributes().Any(x => x.IsNamespaceDeclaration && x.Value == RsdNamespace))
                 {
-                    apiElements = document
-                        .Element(XName.Get("rsd", RsdNamespace))
-                        .Element(XName.Get("service", RsdNamespace))
-                        .Element(XName.Get("apis", RsdNamespace))
-                        .Elements(XName.Get("api", RsdNamespace));
+                    var xElement = document.Element(XName.Get("rsd", RsdNamespace));
+                    var element = xElement.Element(XName.Get("service", RsdNamespace));
+                    var xElement1 = element.Element(XName.Get("apis", RsdNamespace));
+                    apiElements = xElement1.Elements(XName.Get("api", RsdNamespace));
                 }
                 else
                 {

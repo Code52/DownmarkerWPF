@@ -39,7 +39,7 @@ namespace MarkPad.DocumentSources
             if (jekyllSiteBaseDirectory != null)
             {
                 return new JekyllSiteContext(eventAggregator, dialogService, fileSystem, 
-                    fileSystemWatcherFactory, jekyllSiteBaseDirectory, fileName);
+                    fileSystemWatcherFactory, jekyllSiteBaseDirectory);
             }
 
             return null;

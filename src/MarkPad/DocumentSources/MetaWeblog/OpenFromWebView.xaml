@@ -5,8 +5,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:cal="http://www.caliburnproject.org"
-        xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro" MouseLeftButtonDown="DragMoveWindow"
-        Title="Fetch Posts" Height="320" Width="360" mc:Ignorable="d" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+        xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:MetaWeblog="clr-namespace:MarkPad.DocumentSources.MetaWeblog" MouseLeftButtonDown="DragMoveWindow"
+        Title="Fetch Posts" Height="320" Width="360" mc:Ignorable="d" ResizeMode="NoResize" WindowStartupLocation="CenterOwner"
+        d:DataContext="{d:DesignInstance MetaWeblog:OpenFromWebViewModel}">
     <i:Interaction.Behaviors>
         <Behaviours:BorderlessWindowBehavior />
     </i:Interaction.Behaviors>
@@ -21,6 +24,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MarkPad;component/Styles/MarkPad.Accents.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         </ResourceDictionary>
     </Window.Resources>
 
@@ -37,21 +41,32 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0">
-            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Blog" VerticalAlignment="Top" />
-            <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
-                <ComboBox x:Name="Blogs" 
-                  HorizontalAlignment="Left" Width="250">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding BlogName}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-                <Button x:Name="Fetch" Content="Fetch" Margin="5 0 0 0" Width="50" />
-            </StackPanel>
-        </StackPanel>
-        <ListBox Grid.Row="1" Background="Transparent" x:Name="Posts" SelectedItem="{Binding CurrentPost}" 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+            <TextBlock Text="Blog: " Margin="0 5" VerticalAlignment="Center" />
+        <ComboBox x:Name="Blogs" Grid.Column="1" Margin="0 5" VerticalAlignment="Center">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding BlogName}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Button x:Name="Fetch" Content="Fetch" Margin="5 5 0 5" Width="50" VerticalAlignment="Center" Grid.Column="2" />
+
+            <Controls:ProgressRing IsActive="{Binding IsFetching}" Grid.Column="3" MinWidth="40" MinHeight="40"
+                                   Visibility="{Binding IsFetching, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Controls:ProgressRing.RenderTransform>
+                    <TransformGroup>
+                        <TranslateTransform X="5" Y="5" />
+                        <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="0.8" ScaleY="0.8" />
+                    </TransformGroup>
+                </Controls:ProgressRing.RenderTransform>
+            </Controls:ProgressRing>
+        <ListBox Grid.Row="1" Grid.ColumnSpan="4" Background="Transparent" x:Name="Posts" SelectedItem="{Binding CurrentPost}" 
                  cal:Message.Attach="[Event MouseDoubleClick] = [Action Continue()]">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -59,9 +74,9 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <StackPanel Grid.Row="2" Height="25" Orientation="Horizontal" Margin="0,10,0,0">
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
             <Button x:Name="Continue" Content="Continue" Width="100"/>
-            <Button x:Name="Cancel" Content="Cancel" IsCancel="True" Width="100" Margin="20,0,0,0"/>
+            <Button x:Name="Cancel" Content="Cancel" IsCancel="True" Width="100" Margin="10,0,0,0"/>
         </StackPanel>
     </Grid>
 </Window>

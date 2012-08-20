@@ -5,13 +5,13 @@ using MarkPad.Plugins;
 
 namespace MarkPad.DocumentSources
 {
-    public abstract class SiteItem : PropertyChangedBase, ISiteItem
+    public abstract class SiteItemBase : PropertyChangedBase, ISiteItem
     {
         protected readonly IEventAggregator EventAggregator;
         bool isRenaming;
         bool selected;
 
-        protected SiteItem(IEventAggregator eventAggregator)
+        protected SiteItemBase(IEventAggregator eventAggregator)
         {
             EventAggregator = eventAggregator;
             EventAggregator.Subscribe(this);
