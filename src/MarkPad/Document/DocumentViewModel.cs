@@ -20,17 +20,18 @@ namespace MarkPad.Document
 {
     public class DocumentViewModel : Screen, IHandle<SettingsChangedEvent>
     {
-        private static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
-        private const double ZoomDelta = 0.1;
-        private double zoomLevel = 1;
+        static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
+        const double ZoomDelta = 0.1;
+        double zoomLevel = 1;
 
-        private readonly IDialogService dialogService;
-        private readonly IWindowManager windowManager;
-        private readonly ISettingsProvider settingsProvider;
-        private readonly IDocumentParser documentParser;
+        readonly IDialogService dialogService;
+        readonly IWindowManager windowManager;
+        readonly ISettingsProvider settingsProvider;
+        readonly IDocumentParser documentParser;
+        readonly IShell shell;
 
-        private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
-        private readonly DispatcherTimer timer;
+        readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
+        readonly DispatcherTimer timer;
 
         readonly Regex wordCountRegex = new Regex(@"[\S]+", RegexOptions.Compiled);
 
@@ -39,13 +40,15 @@ namespace MarkPad.Document
             IWindowManager windowManager,
             ISettingsProvider settingsProvider,
 			IDocumentParser documentParser,
-            ISpellCheckProvider spellCheckProvider)
+            ISpellCheckProvider spellCheckProvider,
+            IShell shell)
         {
             SpellCheckProvider = spellCheckProvider;
             this.dialogService = dialogService;
             this.windowManager = windowManager;
             this.settingsProvider = settingsProvider;
             this.documentParser = documentParser;
+            this.shell = shell;
 
             FontSize = GetFontSize();
             IndentType = settingsProvider.GetSettings<MarkPadSettings>().IndentType;
@@ -117,11 +120,11 @@ namespace MarkPad.Document
                 }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        public void Publish()
+        public Task Publish()
         {
             MarkpadDocument.MarkdownContent = Document.Text;
 
-            MarkpadDocument.Publish()
+            return MarkpadDocument.Publish()
                 .ContinueWith(t =>
                 {
                     if (t.Result != null)
@@ -132,7 +135,7 @@ namespace MarkPad.Document
                 }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        public Task<bool> Save()
+        public Task Save()
         {
             MarkpadDocument.MarkdownContent = Document.Text;
 
@@ -207,14 +210,16 @@ namespace MarkPad.Document
 
             if (saveResult == true)
             {
+                var finishedWork = shell.DoingWork(string.Format("Saving {0}", MarkpadDocument.Title));
                 Save()
                     .ContinueWith(t =>
                     {
-                        if (t.Result)
+                        finishedWork.Dispose();
+                        if (t.IsCompleted)
                             CheckAndCloseView();
-
-                        callback(t.Result);
-                    });
+                        else
+                            callback(false);
+                    }, TaskScheduler.FromCurrentSynchronizationContext());
                 return;
             }
 

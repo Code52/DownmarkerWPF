@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading;
 using System.Web;
 using CookComputing.XmlRpc;
 using MetaWebLogSite.Models;
@@ -18,6 +19,7 @@ namespace MetaWebLogSite.XmlRpc
         [XmlRpcMethod("metaWeblog.newPost")]
         public string NewPost(string blogid, string username, string password, Post post, bool publish)
         {
+            Thread.Sleep(1000);
             var newPost = dbContext.Posts.Add(ToPost(post));
             dbContext.SaveChanges();
             return newPost.Id.ToString();
@@ -37,6 +39,7 @@ namespace MetaWebLogSite.XmlRpc
         [XmlRpcMethod("metaWeblog.editPost")]
         public bool EditPost(string postid, string username, string password, Post post, bool publish)
         {
+            Thread.Sleep(1000);
             var newPost = dbContext.Posts.Find(int.Parse(postid));
             newPost.Title = post.title;
             newPost.Categories = post.categories;
@@ -56,7 +59,8 @@ namespace MetaWebLogSite.XmlRpc
         [XmlRpcMethod("metaWeblog.getCategories")]
         public CategoryInfo[] GetCategories(string blogid, string username, string password)
         {
-            return dbContext.Categories.Select(c=>new CategoryInfo
+            Thread.Sleep(1000);
+            return dbContext.Categories.Select(c => new CategoryInfo
             {
                 description = c.Description,
                 categoryid = c.Id.ToString(), 
@@ -67,6 +71,7 @@ namespace MetaWebLogSite.XmlRpc
         [XmlRpcMethod("metaWeblog.getRecentPosts")]
         public Post[] GetRecentPosts(string blogid, string username, string password, int numberOfPosts)
         {
+            Thread.Sleep(1000);
             var recentPosts = dbContext.Posts.ToArray().Select(ToPostInfo).ToArray();
             return recentPosts;
         }
@@ -85,6 +90,7 @@ namespace MetaWebLogSite.XmlRpc
         [XmlRpcMethod("metaWeblog.newMediaObject")]
         public MediaObjectInfo NewMediaObject(string blogid, string username, string password, MediaObject mediaObject)
         {
+            Thread.Sleep(1000);
             dbContext.MediaObjects.Add(new BlogMediaObject
             {
                 Name = mediaObject.name,
@@ -99,6 +105,7 @@ namespace MetaWebLogSite.XmlRpc
         [XmlRpcMethod("blogger.deletePost")]
         public bool DeletePost(string key, string postid, string username, string password, bool publish)
         {
+            Thread.Sleep(1000);
             var post = dbContext.Posts.Find(int.Parse(postid));
 
             dbContext.Posts.Remove(post);
@@ -110,6 +117,7 @@ namespace MetaWebLogSite.XmlRpc
         [XmlRpcMethod("blogger.getUsersBlogs")]
         public BlogInfo[] GetUsersBlogs(string key, string username, string password)
         {
+            Thread.Sleep(1000);
             return new[] {new BlogInfo
             {
                 blogid = "1", 

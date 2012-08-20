@@ -39,6 +39,7 @@ namespace MarkPad.Infrastructure
             builder.RegisterModule<ServicesModule>();
             builder.RegisterType<JumpListIntegration>().SingleInstance();
 			builder.RegisterModule<MarkPadAutofacModule>();
+            builder.RegisterType<ShellViewModel>().AsSelf().As<IShell>().SingleInstance();
         }
 
         protected override void PrepareApplication()

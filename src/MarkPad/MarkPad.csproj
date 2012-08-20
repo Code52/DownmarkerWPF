@@ -266,6 +266,7 @@
     <Compile Include="Infrastructure\AppBootstrapper.cs" />
     <Compile Include="Infrastructure\Controls\UITextBlock.cs" />
     <Compile Include="Infrastructure\Controls\UITextBlockAutomationPeer.cs" />
+    <Compile Include="Infrastructure\DelegateDisposable.cs" />
     <Compile Include="Infrastructure\DialogService\ButtonExtras.cs" />
     <Compile Include="Infrastructure\DialogService\DialogMessageService.cs" />
     <Compile Include="Infrastructure\DialogService\DialogService.cs" />
@@ -290,6 +291,7 @@
     <Compile Include="Infrastructure\CaliburnExtensions\DebugLogger.cs" />
     <Compile Include="Helpers\TaskExtensions.cs" />
     <Compile Include="Document\SpellCheck\SpellCheckProvider.cs" />
+    <Compile Include="IShell.cs" />
     <Compile Include="MdiView.xaml.cs">
       <DependentUpon>MdiView.xaml</DependentUpon>
     </Compile>

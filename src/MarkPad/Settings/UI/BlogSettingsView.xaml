@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
-        xmlns:cal="http://www.caliburnproject.org"
-        xmlns:Settings="clr-namespace:MarkPad.Settings" x:Class="MarkPad.Settings.UI.BlogSettingsView" 
+        xmlns:cal="http://www.caliburnproject.org" xmlns:UI="clr-namespace:MarkPad.Settings.UI"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        x:Class="MarkPad.Settings.UI.BlogSettingsView" 
         MouseLeftButtonDown="DragMoveWindow"
         Icon="/markpad.ico"
         ShowInTaskbar="False"
@@ -14,7 +15,7 @@
         mc:Ignorable="d" 
         Width="300" 
         Height="510" 
-        ResizeMode="NoResize" d:DataContext="{d:DesignInstance Settings:BlogSettingsViewModel}">
+        ResizeMode="NoResize" d:DataContext="{d:DesignInstance UI:BlogSettingsViewModel}">
     <i:Interaction.Behaviors>
         <Behaviours:BorderlessWindowBehavior ResizeWithGrip="False" />
     </i:Interaction.Behaviors>
@@ -105,7 +106,17 @@
 					<StackPanel Grid.Column="1" Margin="5 0 0 0" VerticalAlignment="Top">
 						<Button x:Name="FetchBlogs" Content="Fetch" Height="25" VerticalAlignment="Top"
                                 IsEnabled="{Binding CurrentBlog.IsWebAPICompleted}"/>
-					</StackPanel>
+
+                        <Controls:ProgressRing IsActive="{Binding IsFetching}" MinWidth="40" MinHeight="40"
+                                   Visibility="{Binding IsFetching, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Controls:ProgressRing.RenderTransform>
+                                <TransformGroup>
+                                    <TranslateTransform X="5" Y="5" />
+                                    <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="0.8" ScaleY="0.8" />
+                                </TransformGroup>
+                            </Controls:ProgressRing.RenderTransform>
+                        </Controls:ProgressRing>
+                    </StackPanel>
 				</Grid>
             </StackPanel>
 
