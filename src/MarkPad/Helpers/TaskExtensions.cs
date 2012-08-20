@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace MarkPad.Framework
+namespace MarkPad.Helpers
 {
     public static class TaskExtensions
     {

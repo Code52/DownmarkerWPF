@@ -10,7 +10,7 @@ namespace MarkPad.DocumentSources
         IMarkpadDocument CreateHelpDocument(string title, string content);
         Task<IMarkpadDocument> NewMarkdownFile(string path, string markdownContent);
         Task<IMarkpadDocument> OpenDocument(string path);
-        Task<IMarkpadDocument> PublishDocument(IMarkpadDocument document);
+        Task<IMarkpadDocument> PublishDocument(string postId, IMarkpadDocument document);
         Task<IMarkpadDocument> OpenFromWeb();
         Task<IMarkpadDocument> SaveDocumentAs(IMarkpadDocument document);
     }

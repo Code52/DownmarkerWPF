@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Caliburn.Micro;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.DocumentSources.MetaWeblog.Service.Rsd;
-using MarkPad.Framework;
+using MarkPad.Helpers;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Settings.Models;
 

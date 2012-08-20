@@ -1,6 +1,9 @@
 <ProjectConfiguration>
   <CopyReferencedAssembliesToWorkspace>false</CopyReferencedAssembliesToWorkspace>
   <ConsiderInconclusiveTestsAsPassing>false</ConsiderInconclusiveTestsAsPassing>
+  <PreloadReferencedAssemblies>false</PreloadReferencedAssemblies>
+  <AllowDynamicCodeContractChecking>true</AllowDynamicCodeContractChecking>
+  <AllowStaticCodeContractChecking>false</AllowStaticCodeContractChecking>
   <IgnoreThisComponentCompletely>false</IgnoreThisComponentCompletely>
   <RunPreBuildEvents>false</RunPreBuildEvents>
   <RunPostBuildEvents>false</RunPostBuildEvents>
@@ -13,5 +16,5 @@
   <UseBuildConfiguration></UseBuildConfiguration>
   <ProxyProcessPath></ProxyProcessPath>
   <UseCPUArchitecture>AutoDetect</UseCPUArchitecture>
-  <AdditionalFilesToInclude>..\..\lib\Awesomium.dll;..\..\lib\en-US.dll;..\..\lib\icudt42.dll;..\..\tools\NotifyPropertyWeaverMsBuildTask.dll</AdditionalFilesToInclude>
+  <AdditionalFilesToInclude>..\..\lib\Awesomium.dll;..\..\lib\en-US.dll;..\..\lib\icudt42.dll</AdditionalFilesToInclude>
 </ProjectConfiguration>

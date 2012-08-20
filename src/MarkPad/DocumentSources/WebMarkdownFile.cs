@@ -15,19 +15,16 @@ namespace MarkPad.DocumentSources
     public class WebMarkdownFile : MarkpadDocumentBase
     {
         Post post;
-        readonly IDialogService dialogService;
         readonly MetaWeblogSiteContext siteContext;
         readonly List<string> imagesToSaveOnPublish = new List<string>();
 
         public WebMarkdownFile(
             BlogSetting blog, Post post, 
-            IDialogService dialogService, 
             IDocumentFactory documentFactory,
             MetaWeblogSiteContext siteContext)
             : base(post.title, post.description, blog.BlogName, documentFactory)
         {
             this.post = post;
-            this.dialogService = dialogService;
             this.siteContext = siteContext;
         }
 
@@ -38,17 +35,30 @@ namespace MarkPad.DocumentSources
 
         public override Task<IMarkpadDocument> Publish()
         {
-            var save = new ButtonExtras(ButtonType.Custom, "Save", "Saves this modified post to your blog");
-            var saveAs = new ButtonExtras(ButtonType.Custom, "Save As", "Saves this blog post as a local markdown file");
-            var publish = new ButtonExtras(ButtonType.Custom, "Publish As", "Publishes this post to another blog, or as another post");
-            dialogService.ShowConfirmationWithCancel("Markpad", "What do you want to do?", "", save, saveAs, publish);
+            var save = new ButtonExtras(ButtonType.Yes, "Save", "Saves this modified post to your blog");
+            var saveAs = new ButtonExtras(ButtonType.No, "Save As", "Saves this blog post as a local markdown file");
+            var publish = new ButtonExtras(ButtonType.Retry, "Publish As", "Publishes this post to another blog, or as another post");
 
-            if (save.WasClicked)
-                return base.Publish();
-            if (saveAs.WasClicked)
-                return SaveAs();
-            if (publish.WasClicked)
-                return DocumentFactory.PublishDocument(this);
+
+            var service = new DialogMessageService(null)
+            {
+                Icon = DialogMessageIcon.Question,
+                Buttons = DialogMessageButtons.Yes | DialogMessageButtons.No | DialogMessageButtons.Retry | DialogMessageButtons.Cancel,
+                Title = "Markpad",
+                Text = string.Format("{0} has already been published, what do you want to do?", Title),
+                ButtonExtras = new[]{save, saveAs, publish}
+            };
+
+            var result = service.Show();
+            switch (result)
+            {
+                case DialogMessageResult.Yes:
+                    return Save();
+                case DialogMessageResult.No:
+                    return SaveAs();
+                case DialogMessageResult.Retry:
+                    return DocumentFactory.PublishDocument(null, this);
+            }
 
             return TaskEx.FromResult<IMarkpadDocument>(this);
         }
@@ -71,7 +81,7 @@ namespace MarkPad.DocumentSources
 
         public override Task<IMarkpadDocument> Save()
         {
-            return DocumentFactory.PublishDocument(this);
+            return DocumentFactory.PublishDocument((string)post.postid, this);
         }
     }
 }

@@ -8,9 +8,9 @@ using CookComputing.XmlRpc;
 using MarkPad.Document;
 using MarkPad.DocumentSources.MetaWeblog;
 using MarkPad.DocumentSources.MetaWeblog.Service;
+using MarkPad.Helpers;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Plugins;
-using MarkPad.Framework;
 using MarkPad.PreviewControl;
 using MarkPad.Settings.Models;
 
@@ -96,7 +96,7 @@ namespace MarkPad.DocumentSources
                 });
         }
 
-        public Task<IMarkpadDocument> PublishDocument(IMarkpadDocument document)
+        public Task<IMarkpadDocument> PublishDocument(string postId, IMarkpadDocument document)
         {
             var blogs = blogService.GetBlogs();
             if (blogs == null || blogs.Count == 0)
@@ -118,7 +118,7 @@ namespace MarkPad.DocumentSources
             {
                 var webLogItem = document as WebMarkdownFile;
                 var imagesToUpload = webLogItem == null ? new List<string>() : webLogItem.ImagesToSaveOnPublish;
-                return CreateNewWebMarkdownFile(null, pd.Title, pd.Categories, document.MarkdownContent, imagesToUpload, pd.Blog);
+                return CreateOrUpdateMetaWebLogPost(postId, pd.Title, pd.Categories, document.MarkdownContent, imagesToUpload, pd.Blog);
             });
         }
 
@@ -141,9 +141,8 @@ namespace MarkPad.DocumentSources
             if (result != true)
                 return TaskEx.FromResult<IMarkpadDocument>(null);
 
-            var metaWeblogSiteContext = new MetaWeblogSiteContext(openFromWeb.SelectedBlog, openFromWeb.SelectedPost,
-                                                                  getMetaWeblog, eventAggregator);
-            var webMarkdownFile = new WebMarkdownFile(openFromWeb.SelectedBlog, openFromWeb.SelectedPost, dialogService, this, metaWeblogSiteContext);
+            var metaWeblogSiteContext = new MetaWeblogSiteContext(openFromWeb.SelectedBlog, openFromWeb.SelectedPost, getMetaWeblog, eventAggregator);
+            var webMarkdownFile = new WebMarkdownFile(openFromWeb.SelectedBlog, openFromWeb.SelectedPost, this, metaWeblogSiteContext);
             return TaskEx.FromResult<IMarkpadDocument>(webMarkdownFile);
         }
 
@@ -157,7 +156,7 @@ namespace MarkPad.DocumentSources
             return NewMarkdownFile(path, document.MarkdownContent);
         }
 
-        IMarkpadDocument CreateNewWebMarkdownFile(
+        IMarkpadDocument CreateOrUpdateMetaWebLogPost(
             string postid, string postTitle, 
             string[] categories, string content, 
             List<string> imagesToUpload, 
@@ -226,7 +225,7 @@ namespace MarkPad.DocumentSources
             }
 
             var metaWeblogSiteContext = new MetaWeblogSiteContext(blog, newpost, getMetaWeblog, eventAggregator);
-            return new WebMarkdownFile(blog, newpost, dialogService, this, metaWeblogSiteContext);
+            return new WebMarkdownFile(blog, newpost, this, metaWeblogSiteContext);
         }
     }
 }

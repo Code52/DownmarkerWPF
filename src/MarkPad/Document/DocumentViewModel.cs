@@ -119,6 +119,8 @@ namespace MarkPad.Document
 
         public void Publish()
         {
+            MarkpadDocument.MarkdownContent = Document.Text;
+
             MarkpadDocument.Publish()
                 .ContinueWith(t =>
                 {

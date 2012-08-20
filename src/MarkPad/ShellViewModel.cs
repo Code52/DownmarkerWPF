@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -9,15 +8,10 @@ using System.Windows;
 using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.DocumentSources;
-using MarkPad.DocumentSources.MetaWeblog;
-using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Events;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.PreviewControl;
-using MarkPad.Settings;
-using MarkPad.Settings.Models;
 using MarkPad.Settings.UI;
-using Ookii.Dialogs.Wpf;
 using MarkPad.Updater;
 
 namespace MarkPad
@@ -27,30 +21,22 @@ namespace MarkPad
         private const string ShowSettingsState = "ShowSettings";
         private readonly IEventAggregator eventAggregator;
         private readonly IDialogService dialogService;
-        private readonly IWindowManager windowManager;
-        private readonly ISettingsProvider settingsService;
         private readonly Func<DocumentViewModel> documentViewModelFactory;
-        private readonly Func<OpenFromWebViewModel> openFromWebCreator;
 
         public ShellViewModel(
             IDialogService dialogService,
-            IWindowManager windowManager,
-            ISettingsProvider settingsService,
             IEventAggregator eventAggregator,
             MdiViewModel mdi,
             SettingsViewModel settingsViewModel,
             UpdaterViewModel updaterViewModel,
-            Func<DocumentViewModel> documentViewModelFactory,
-            Func<OpenFromWebViewModel> openFromWebCreator, IDocumentFactory documentFactory)
+            Func<DocumentViewModel> documentViewModelFactory, 
+            IDocumentFactory documentFactory)
         {
             this.eventAggregator = eventAggregator;
             this.dialogService = dialogService;
-            this.windowManager = windowManager;
-            this.settingsService = settingsService;
             MDI = mdi;
             Updater = updaterViewModel;
             this.documentViewModelFactory = documentViewModelFactory;
-            this.openFromWebCreator = openFromWebCreator;
             this.documentFactory = documentFactory;
 
             Settings = settingsViewModel;
@@ -276,10 +262,12 @@ namespace MarkPad
             documentFactory.OpenFromWeb()
                 .ContinueWith(t=>
                 {
+                    if (t.IsCanceled || t.Result == null) return;
+
                     var doc = documentViewModelFactory();
                     doc.Open(t.Result);
                     MDI.Open(doc);
-                });
+                }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         public void Handle(SettingsCloseEvent message)

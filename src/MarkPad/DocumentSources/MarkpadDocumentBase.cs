@@ -39,7 +39,7 @@ namespace MarkPad.DocumentSources
 
         public virtual Task<IMarkpadDocument> Publish()
         {
-            return documentFactory.PublishDocument(this);
+            return documentFactory.PublishDocument(null, this);
         }
 
         public abstract string SaveImage(Bitmap bitmap);

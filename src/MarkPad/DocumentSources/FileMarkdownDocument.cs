@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Caliburn.Micro;
 using MarkPad.Events;
 using MarkPad.Framework;
+using MarkPad.Helpers;
 using MarkPad.Plugins;
 
 namespace MarkPad.DocumentSources
@@ -76,8 +77,8 @@ namespace MarkPad.DocumentSources
 
         public override string ConvertToAbsolutePaths(string htmlDocument)
         {
-            return SiteContextHelper.ConvertToAbsolutePaths(
-                htmlDocument, GetImageDirectory(Path.GetDirectoryName(FileName), Title));
+            var imageDirectory = GetImageDirectory(Path.GetDirectoryName(FileName), Title);
+            return SiteContextHelper.ConvertToAbsolutePaths(htmlDocument, imageDirectory);
         }
 
         public void Handle(FileRenamedEvent message)

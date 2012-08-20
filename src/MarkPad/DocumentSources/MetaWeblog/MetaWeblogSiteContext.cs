@@ -16,7 +16,9 @@ namespace MarkPad.DocumentSources.MetaWeblog
         readonly string workingDirectory;
         readonly BlogSetting blog;
         readonly Post post;
+        readonly Func<string, IMetaWeblogService> getMetaWeblog;
         readonly IEventAggregator eventAggregator;
+        ObservableCollection<ISiteItem> items;
 
         public MetaWeblogSiteContext(
             BlogSetting blog, Post post,
@@ -25,24 +27,11 @@ namespace MarkPad.DocumentSources.MetaWeblog
         {
             this.blog = blog;
             this.post = post;
+            this.getMetaWeblog = getMetaWeblog;
             this.eventAggregator = eventAggregator;
-            Items = new ObservableCollection<ISiteItem>();
 
             workingDirectory = Path.Combine(Path.GetTempPath(), blog.BlogName);
             IsLoading = true;
-            getMetaWeblog(blog.WebAPI)
-                .GetRecentPostsAsync(blog, 100)
-                .ContinueWith(t =>
-                {
-                    if (t.IsFaulted)
-                    {
-                        return;
-                    }
-                    foreach (var otherPosts in t.Result)
-                    {
-                        Items.Add(new MetaWebLogItem(getMetaWeblog, eventAggregator, otherPosts, blog));
-                    }
-                }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         public string ConvertToAbsolutePaths(string htmlDocument)
@@ -50,7 +39,31 @@ namespace MarkPad.DocumentSources.MetaWeblog
             return SiteContextHelper.ConvertToAbsolutePaths(htmlDocument, workingDirectory);
         }
 
-        public ObservableCollection<ISiteItem> Items { get; private set; }
+        public ObservableCollection<ISiteItem> Items
+        {
+            get
+            {
+                if (items == null)
+                {
+                    items = new ObservableCollection<ISiteItem>();
+                    getMetaWeblog(blog.WebAPI)
+                        .GetRecentPostsAsync(blog, 100)
+                        .ContinueWith(t =>
+                        {
+                            if (t.IsFaulted)
+                            {
+                                return;
+                            }
+                            foreach (var otherPosts in t.Result)
+                            {
+                                Items.Add(new MetaWebLogItem(getMetaWeblog, eventAggregator, otherPosts, blog));
+                            }
+                        }, TaskScheduler.FromCurrentSynchronizationContext());
+                }
+                return items;
+            }
+        }
+
         public bool IsLoading { get; private set; }
 
         public string WorkingDirectory { get { return workingDirectory; } }
