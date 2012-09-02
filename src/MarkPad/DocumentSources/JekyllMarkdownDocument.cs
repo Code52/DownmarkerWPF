@@ -3,6 +3,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using Caliburn.Micro;
 using MarkPad.DocumentSources.FileSystem;
+using MarkPad.Infrastructure.DialogService;
 
 namespace MarkPad.DocumentSources
 {
@@ -10,8 +11,10 @@ namespace MarkPad.DocumentSources
     {
         readonly JekyllSiteContext siteContext;
 
-        public JekyllMarkdownDocument(string path, string markdownContent, JekyllSiteContext siteContext, IDocumentFactory documentFactory, IEventAggregator eventAggregator) :
-            base(path, markdownContent, siteContext, documentFactory, eventAggregator)
+        public JekyllMarkdownDocument(
+            string path, string markdownContent, JekyllSiteContext siteContext, 
+            IDocumentFactory documentFactory, IEventAggregator eventAggregator, IDialogService dialogService)
+            : base(path, markdownContent, siteContext, documentFactory, eventAggregator, dialogService)
         {
             this.siteContext = siteContext;
         }

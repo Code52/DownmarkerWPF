@@ -144,6 +144,9 @@ namespace MarkPad.Document
             return MarkpadDocument.Save()
                 .ContinueWith(t =>
                 {
+                    if (t.IsCanceled)
+                        return false;
+
                     if (t.IsFaulted)
                     {
                         var saveResult = (bool) dispatcher.Invoke(new Action(() =>
