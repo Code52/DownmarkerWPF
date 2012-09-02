@@ -74,7 +74,7 @@ namespace MarkPad.DocumentSources
 
                     var siteContext = siteContextGenerator.GetContext(path);
 
-                    return new FileMarkdownDocument(path, markdownContent, siteContext, this, eventAggregator);
+                    return new FileMarkdownDocument(path, markdownContent, siteContext, this, eventAggregator, dialogService);
                 });
         }
 
@@ -92,7 +92,7 @@ namespace MarkPad.DocumentSources
 
                     var siteContext = siteContextGenerator.GetContext(path);
 
-                    return new FileMarkdownDocument(path, t.Result, siteContext, this, eventAggregator);
+                    return new FileMarkdownDocument(path, t.Result, siteContext, this, eventAggregator, dialogService);
                 });
         }
 
