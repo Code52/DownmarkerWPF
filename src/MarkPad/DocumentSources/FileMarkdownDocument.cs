@@ -7,19 +7,23 @@ using Caliburn.Micro;
 using MarkPad.DocumentSources.FileSystem;
 using MarkPad.Events;
 using MarkPad.Helpers;
+using MarkPad.Infrastructure.DialogService;
 using MarkPad.Plugins;
+using Ookii.Dialogs.Wpf;
 
 namespace MarkPad.DocumentSources
 {
     public class FileMarkdownDocument : MarkpadDocumentBase, IHandle<FileRenamedEvent>, IDisposable
     {
         readonly IEventAggregator eventAggregator;
+        readonly IDialogService dialogService;
 
-        public FileMarkdownDocument(string path, string markdownContent, ISiteContext siteContext, IDocumentFactory documentFactory, IEventAggregator eventAggregator) : 
+        public FileMarkdownDocument(string path, string markdownContent, ISiteContext siteContext, IDocumentFactory documentFactory, IEventAggregator eventAggregator, IDialogService dialogService) : 
             base(Path.GetFileNameWithoutExtension(path), markdownContent, Path.GetDirectoryName(path), documentFactory)
         {
             FileName = path;
             this.eventAggregator = eventAggregator;
+            this.dialogService = dialogService;
             SiteContext = siteContext;
             eventAggregator.Subscribe(this);
         }
@@ -28,6 +32,29 @@ namespace MarkPad.DocumentSources
 
         public override Task<IMarkpadDocument> Save()
         {
+            var fileInfo = new FileInfo(FileName);
+            if (fileInfo.IsReadOnly)
+            {
+                var result = dialogService.ShowConfirmationWithCancel(
+                    "Markpad", string.Format("{0} is readonly, what do you want to do?", FileName),
+                    null,
+                    new ButtonExtras(ButtonType.Yes, "Make writable", "Marks the file as writable then saves"),
+                    new ButtonExtras(ButtonType.No, "Save As", "Saves the file as another name"));
+
+                //The dialog service returns null if cancelled, true is yes, false if no.... Go figure
+                if (result == null)
+                {
+                    var taskCompletionSource = new TaskCompletionSource<IMarkpadDocument>();
+                    taskCompletionSource.SetCanceled();
+                    return taskCompletionSource.Task;
+                }
+
+                if (result == true)
+                    fileInfo.IsReadOnly = false;
+                else
+                    return SaveAs();
+            }
+
             var streamWriter = new StreamWriter(FileName);
             return streamWriter
                 .WriteAsync(MarkdownContent)
