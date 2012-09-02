@@ -135,8 +135,11 @@ namespace MarkPad.Document
                 }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        public Task Save()
+        public Task<bool> Save()
         {
+            if (Document.Text == Original)
+                return TaskEx.FromResult(false);
+
             MarkpadDocument.MarkdownContent = Document.Text;
 
             //TODO async all the things
