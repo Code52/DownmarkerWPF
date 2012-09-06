@@ -25,9 +25,9 @@ namespace MarkPad.Document.EditorBehaviours
             {
                 var relativePath = e.ViewModel.MarkpadDocument.SaveImage(dataImage.Bitmap);
 
-                var imageMarkdown = string.Format("![{0}](/{1})",
+                var imageMarkdown = string.Format("![{0}]({1})",
                                 Path.GetFileNameWithoutExtension(relativePath),
-                                relativePath.Replace('\\', '/').TrimStart('/'));
+                                relativePath.Replace('\\', '/'));
                 sb.AppendLine(imageMarkdown);
             }
 

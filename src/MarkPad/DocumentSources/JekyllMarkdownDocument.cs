@@ -28,7 +28,7 @@ namespace MarkPad.DocumentSources
                 image.Save(stream, ImageFormat.Png);
             }
 
-            return SiteContextHelper.ToRelativePath(siteContext.SiteBasePath, FileName, imageFileName);
+            return "/" + SiteContextHelper.ToRelativePath(siteContext.SiteBasePath, FileName, imageFileName).TrimStart('\\', '/');
         }
     }
 }
