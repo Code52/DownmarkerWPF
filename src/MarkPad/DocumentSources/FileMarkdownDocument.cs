@@ -104,8 +104,7 @@ namespace MarkPad.DocumentSources
 
         public override string ConvertToAbsolutePaths(string htmlDocument)
         {
-            var imageDirectory = GetImageDirectory(Path.GetDirectoryName(FileName), Title);
-            return SiteContextHelper.ConvertToAbsolutePaths(htmlDocument, imageDirectory);
+            return SiteContextHelper.ConvertToAbsolutePaths(htmlDocument, Path.GetDirectoryName(FileName));
         }
 
         public override bool IsSameItem(ISiteItem siteItem)
