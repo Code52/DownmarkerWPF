@@ -4,14 +4,13 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
 using Caliburn.Micro;
-using MarkPad.DocumentSources.FileSystem;
 using MarkPad.Events;
 using MarkPad.Helpers;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Plugins;
 using Ookii.Dialogs.Wpf;
 
-namespace MarkPad.DocumentSources
+namespace MarkPad.DocumentSources.FileSystem
 {
     public class FileMarkdownDocument : MarkpadDocumentBase, IHandle<FileRenamedEvent>, IDisposable
     {

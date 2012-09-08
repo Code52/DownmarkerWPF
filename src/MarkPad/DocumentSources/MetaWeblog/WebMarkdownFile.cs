@@ -3,14 +3,13 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
-using MarkPad.DocumentSources.MetaWeblog;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Plugins;
 using MarkPad.Settings.Models;
 using Ookii.Dialogs.Wpf;
 
-namespace MarkPad.DocumentSources
+namespace MarkPad.DocumentSources.MetaWeblog
 {
     public class WebMarkdownFile : MarkpadDocumentBase
     {
@@ -46,7 +45,6 @@ namespace MarkPad.DocumentSources
             var save = new ButtonExtras(ButtonType.Yes, "Save", "Saves this modified post to your blog");
             var saveAs = new ButtonExtras(ButtonType.No, "Save As", "Saves this blog post as a local markdown file");
             var publish = new ButtonExtras(ButtonType.Retry, "Publish As", "Publishes this post to another blog, or as another post");
-
 
             var service = new DialogMessageService(null)
             {

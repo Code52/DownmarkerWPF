@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Caliburn.Micro;
+using MarkPad.DocumentSources.GitHub;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.DocumentSources.MetaWeblog.Service.Rsd;
 using MarkPad.Helpers;
@@ -53,6 +54,26 @@ namespace MarkPad.Settings.UI
 
         public BlogSetting CurrentBlog { get; set; }
 
+        public bool MetaWebLog
+        {
+            get { return CurrentBlog.WebSourceType == WebSourceType.MetaWebLog; }
+            set
+            {
+                if (value)
+                    CurrentBlog.WebSourceType = WebSourceType.MetaWebLog;
+            }
+        }
+
+        public bool GitHub
+        {
+            get { return CurrentBlog.WebSourceType == WebSourceType.GitHub; }
+            set
+            {
+                if (value)
+                    CurrentBlog.WebSourceType = WebSourceType.GitHub;
+            }
+        }
+
         public ObservableCollection<FetchedBlogInfo> APIBlogs { get; set; }
 
         public FetchedBlogInfo SelectedAPIBlog
@@ -100,16 +121,50 @@ namespace MarkPad.Settings.UI
         {
             SelectedAPIBlog = null;
 
-            var proxy = getMetaWeblog(CurrentBlog.WebAPI);
 
             APIBlogs = new ObservableCollection<FetchedBlogInfo>();
 
             IsFetching = true;
-            proxy
-                .GetUsersBlogsAsync(CurrentBlog)
+
+            var fetchingTask = CurrentBlog.WebSourceType == WebSourceType.MetaWebLog ? FetchMetaWeblogApi() : FetchGithubBranches();
+            fetchingTask
                 .ContinueWith(UpdateBlogList, TaskScheduler.FromCurrentSynchronizationContext())
                 .ContinueWith(HandleFetchError)
                 .ContinueWith(t=>IsFetching = false);
+        }
+
+        async Task<BlogInfo[]> FetchGithubBranches()
+        {
+            var githubApi = new GithubApi();
+            if (string.IsNullOrEmpty(CurrentBlog.Token))
+            {
+                var githubLogin = new GithubLogin();
+                githubLogin.ShowDialog();
+                CurrentBlog.Token = await githubApi.GetToken(githubLogin.Code);
+            }
+
+            return await githubApi.FetchBranches(CurrentBlog.Token, CurrentBlog.Username, CurrentBlog.WebAPI);
+        }
+
+        Task<BlogInfo[]> FetchMetaWeblogApi()
+        {
+            var proxy = getMetaWeblog(CurrentBlog.WebAPI);
+            var fetchingTask = proxy
+                .GetUsersBlogsAsync(CurrentBlog);
+                
+            return fetchingTask;
+        }
+
+        public bool Wiki
+        {
+            get { return CurrentBlog.WebAPI.EndsWith(".wiki"); }
+            set
+            {
+                if (value && !Wiki)
+                    CurrentBlog.WebAPI = CurrentBlog.WebAPI + ".wiki";
+                else if (!value && Wiki)
+                    CurrentBlog.WebAPI = CurrentBlog.WebAPI.Replace(".wiki", string.Empty);
+            }
         }
 
         private void UpdateBlogList(Task<BlogInfo[]> t)

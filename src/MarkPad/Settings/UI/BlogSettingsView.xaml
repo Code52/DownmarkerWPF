@@ -13,8 +13,8 @@
         SnapsToDevicePixels="True"
         WindowStartupLocation="CenterOwner" 
         mc:Ignorable="d" 
-        Width="300" 
-        Height="510" 
+        MinWidth="400" 
+        SizeToContent="WidthAndHeight"
         ResizeMode="NoResize" d:DataContext="{d:DesignInstance UI:BlogSettingsViewModel}">
     <i:Interaction.Behaviors>
         <Behaviours:BorderlessWindowBehavior ResizeWithGrip="False" />
@@ -47,7 +47,7 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		
-        <TextBlock Grid.Row="0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Segoe UI" FontWeight="Light" FontSize="29.333" Text="blog settings" />
+        <TextBlock Grid.Row="0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Segoe UI" FontWeight="Light" FontSize="29.333" Text="web source settings" />
 		<Button Grid.Row="0" x:Name="TryClose" Style="{DynamicResource ChromelessButtonStyle}" Content="r"
 			HorizontalAlignment="Right"
 			VerticalAlignment="Top"
@@ -63,39 +63,76 @@
                 <TextBlock HorizontalAlignment="Left" Text="BLOG NAME"  FontWeight="Bold" FontSize="10.667"/>
                 <TextBox x:Name="CurrentBlog_BlogName" />
 
-                <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="METAWEBLOG API ADDRESS"  FontWeight="Bold" FontSize="10.667"/>
-                <TextBox x:Name="CurrentBlog_WebAPI" HorizontalAlignment="Stretch" />
-
-                <ProgressBar Visibility="{Binding DiscoveringAddress, Converter={StaticResource BooleanToVisibilityConverter}}"
-                             IsIndeterminate="{Binding DiscoveringAddress}" />
-                <Button x:Name="DiscoverAddress">
-                    <Button.Style>
-                        <Style TargetType="Button">
+                <TextBlock HorizontalAlignment="Left" Text="SOURCE"  FontWeight="Bold" FontSize="10.667"/>
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton Margin="3" x:Name="MetaWebLog">metaweblog api</RadioButton>
+                    <RadioButton Margin="3" x:Name="GitHub">github</RadioButton>
+                </StackPanel>
+                <StackPanel>
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding DiscoveringAddress}">
-                                    <Setter Property="IsEnabled" Value="False" />
+                                <DataTrigger Binding="{Binding IsChecked, ElementName=MetaWebLog}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </Button.Style>
-                    <Button.Template>
-                        <ControlTemplate>
-                            <TextBlock><Hyperlink>discover</Hyperlink></TextBlock>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
+                    </StackPanel.Style>
+                    <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="METAWEBLOG API ADDRESS"  FontWeight="Bold" FontSize="10.667"/>
+                    <TextBox x:Name="CurrentBlog_WebAPI" HorizontalAlignment="Stretch" />
 
-                <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="USERNAME"  FontWeight="Bold" FontSize="10.667"/>
-				<TextBox HorizontalAlignment="Left" Width="150" x:Name="CurrentBlog_Username" />
+                    <ProgressBar Visibility="{Binding DiscoveringAddress, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             IsIndeterminate="{Binding DiscoveringAddress}" />
+                    <Button x:Name="DiscoverAddress">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DiscoveringAddress}">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <Button.Template>
+                            <ControlTemplate>
+                                <TextBlock><Hyperlink>discover</Hyperlink></TextBlock>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
 
-                <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="PASSWORD"  FontWeight="Bold" FontSize="10.667"/>
-                <PasswordBox HorizontalAlignment="Left" Width="150" x:Name="CurrentBlog_Password"
+                    <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="USERNAME"  FontWeight="Bold" FontSize="10.667"/>
+                    <TextBox HorizontalAlignment="Left" Width="150" x:Name="CurrentBlog_Username" />
+
+                    <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="PASSWORD"  FontWeight="Bold" FontSize="10.667"/>
+                    <PasswordBox HorizontalAlignment="Left" Width="150" x:Name="CurrentBlog_Password"
                              cal:Message.Attach="[Event PasswordChanged]=[Action SetCurrentBlogPassword($source.Password)]" />
- 
-                <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="RENDERING LANGUAGE"  FontWeight="Bold" FontSize="10.667"/>
-                <ComboBox x:Name="BlogLanguages" HorizontalAlignment="Left" Width="150" />
 
-                <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="BLOG NAME"  FontWeight="Bold" FontSize="10.667"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="RENDERING LANGUAGE"  FontWeight="Bold" FontSize="10.667"/>
+                    <ComboBox x:Name="BlogLanguages" HorizontalAlignment="Left" Width="150" />
+
+                    <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="BLOG NAME" FontWeight="Bold" FontSize="10.667"/>
+                </StackPanel>
+                <StackPanel>
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsChecked, ElementName=GitHub}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="REPOSITORY USER" FontWeight="Bold" FontSize="10.667"/>
+                    <TextBox HorizontalAlignment="Left" Width="150" Text="{Binding CurrentBlog.Username}" />
+
+                    <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="REPOSITORY NAME" FontWeight="Bold" FontSize="10.667"/>
+                    <TextBox HorizontalAlignment="Left" Width="150" Text="{Binding CurrentBlog.WebAPI}" />
+
+                    <CheckBox x:Name="Wiki" ToolTip="If selected, Markpad will edit the wiki for this repository" Margin="3">GitHub Wiki</CheckBox>
+
+                    <TextBlock HorizontalAlignment="Left" Margin="0 10 0 0" Text="BRANCH NAME" FontWeight="Bold" FontSize="10.667"/>
+                </StackPanel>
 				<Grid>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="6*"/>

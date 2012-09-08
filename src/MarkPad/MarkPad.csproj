@@ -131,6 +131,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\PropertyChanged.Fody.1.26.0.0\lib\NET40\PropertyChanged.dll</HintPath>
     </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\packages\RestSharp.104.1\lib\net4\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
@@ -139,9 +142,16 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\System.IO.Abstractions.1.4.0.32\lib\net35\System.IO.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.0.8.9.30-ALPHA\lib\net40\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -168,10 +178,11 @@
     <Compile Include="Converters\IsCurrentItemConverter.cs" />
     <Compile Include="Converters\EnumDisplayConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
-    <Compile Include="DocumentSources\JekyllMarkdownDocument.cs" />
+    <Compile Include="DocumentSources\FileSystem\JekyllMarkdownDocument.cs" />
+    <Compile Include="DocumentSources\GitHub\GithubApi.cs" />
     <Compile Include="DocumentSources\SiteContextHelper.cs" />
     <Compile Include="DocumentSources\DocumentFactory.cs" />
-    <Compile Include="DocumentSources\FileMarkdownDocument.cs" />
+    <Compile Include="DocumentSources\FileSystem\FileMarkdownDocument.cs" />
     <Compile Include="DocumentSources\FileSystem\FileSystemSiteItem.cs" />
     <Compile Include="DocumentSources\FileSystem\JekyllSiteContext.cs" />
     <Compile Include="DocumentSources\HelpDocument.cs" />
@@ -216,7 +227,7 @@
     <Compile Include="DocumentSources\MetaWeblog\Service\Source.cs" />
     <Compile Include="DocumentSources\MetaWeblog\Service\UserInfo.cs" />
     <Compile Include="DocumentSources\SiteContextGenerator.cs" />
-    <Compile Include="DocumentSources\WebMarkdownFile.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\WebMarkdownFile.cs" />
     <Compile Include="Document\Controls\FloatingToolBar.cs" />
     <Compile Include="Document\Controls\HyperlinkEditorView.xaml.cs">
       <DependentUpon>HyperlinkEditorView.xaml</DependentUpon>
@@ -280,6 +291,7 @@
     <Compile Include="Infrastructure\Plugins\IPluginManager.cs" />
     <Compile Include="Infrastructure\Plugins\PluginManager.cs" />
     <Compile Include="Infrastructure\Plugins\PluginSettingsProvider.cs" />
+    <Compile Include="Infrastructure\RestExtensions.cs" />
     <Compile Include="Infrastructure\ServicesModule.cs" />
     <Compile Include="Infrastructure\SingleInstance.cs" />
     <Compile Include="Events\SettingsChangedEvent.cs" />
@@ -310,6 +322,9 @@
     <Compile Include="Settings\Models\FetchedBlogInfo.cs" />
     <Compile Include="Settings\Models\IndentType.cs" />
     <Compile Include="Settings\Models\MarkPadSettings.cs" />
+    <Compile Include="Settings\UI\GithubLogin.xaml.cs">
+      <DependentUpon>GithubLogin.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Settings\UI\PluginViewModel.cs" />
     <Compile Include="Settings\UI\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
@@ -384,6 +399,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Settings\UI\BlogSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Settings\UI\GithubLogin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

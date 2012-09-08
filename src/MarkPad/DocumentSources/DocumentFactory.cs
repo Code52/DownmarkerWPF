@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using MarkPad.Document;
+using MarkPad.DocumentSources.FileSystem;
 using MarkPad.DocumentSources.MetaWeblog;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Helpers;
