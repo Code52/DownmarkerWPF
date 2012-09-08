@@ -157,7 +157,7 @@ namespace MarkPad.Settings.UI
 
         public bool Wiki
         {
-            get { return CurrentBlog.WebAPI.EndsWith(".wiki"); }
+            get { return CurrentBlog.WebAPI != null && CurrentBlog.WebAPI.EndsWith(".wiki"); }
             set
             {
                 if (value && !Wiki)

@@ -120,6 +120,9 @@
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Microsoft.Expression.Interactions.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.8\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="NHunspell">
       <HintPath>..\..\lib\Hunspell.0.9.6.0\lib\net20\NHunspell.dll</HintPath>
       <Private>True</Private>
@@ -180,6 +183,9 @@
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="DocumentSources\FileSystem\JekyllMarkdownDocument.cs" />
     <Compile Include="DocumentSources\GitHub\GithubApi.cs" />
+    <Compile Include="DocumentSources\GitHub\GithubFile.cs" />
+    <Compile Include="DocumentSources\GitHub\GithubSiteContext.cs" />
+    <Compile Include="DocumentSources\GitHub\IGithubApi.cs" />
     <Compile Include="DocumentSources\SiteContextHelper.cs" />
     <Compile Include="DocumentSources\DocumentFactory.cs" />
     <Compile Include="DocumentSources\FileSystem\FileMarkdownDocument.cs" />

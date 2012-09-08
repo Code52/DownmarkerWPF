@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using CookComputing.XmlRpc;
 using MarkPad.Document;
 using MarkPad.DocumentSources.FileSystem;
+using MarkPad.DocumentSources.GitHub;
 using MarkPad.DocumentSources.MetaWeblog;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Helpers;
@@ -26,6 +30,7 @@ namespace MarkPad.DocumentSources
         readonly IBlogService blogService;
         readonly Func<OpenFromWebViewModel> openFromWebViewModelFactory;
         readonly IWindowManager windowManager;
+        readonly IGithubApi github;
 
         public DocumentFactory(
             IDialogService dialogService, 
@@ -34,7 +39,7 @@ namespace MarkPad.DocumentSources
             ISiteContextGenerator siteContextGenerator, 
             IBlogService blogService, 
             Func<OpenFromWebViewModel> openFromWebViewModelFactory,
-            IWindowManager windowManager)
+            IWindowManager windowManager, IGithubApi github)
         {
             this.dialogService = dialogService;
             this.getMetaWeblog = getMetaWeblog;
@@ -43,6 +48,7 @@ namespace MarkPad.DocumentSources
             this.blogService = blogService;
             this.openFromWebViewModelFactory = openFromWebViewModelFactory;
             this.windowManager = windowManager;
+            this.github = github;
         }
 
         public IMarkpadDocument NewDocument()
@@ -115,24 +121,32 @@ namespace MarkPad.DocumentSources
             if (detailsResult != true)
                 return TaskEx.FromResult<IMarkpadDocument>(null);
 
-            return TaskEx.Run(() =>
+            if (pd.Blog.WebSourceType == WebSourceType.MetaWebLog)
             {
-                var webLogItem = document as WebMarkdownFile;
-                var imagesToUpload = webLogItem == null ? new List<string>() : webLogItem.ImagesToSaveOnPublish;
-                return CreateOrUpdateMetaWebLogPost(postId, pd.Title, pd.Categories, document.MarkdownContent, imagesToUpload, pd.Blog);
-            });
+                return TaskEx.Run(() =>
+                {
+                    var webLogItem = document as WebMarkdownFile;
+                    var imagesToUpload = webLogItem == null ? new List<string>() : webLogItem.ImagesToSaveOnPublish;
+                    return CreateOrUpdateMetaWebLogPost(postId, pd.Title, pd.Categories, document.MarkdownContent,
+                                                        imagesToUpload, pd.Blog);
+                });
+            }
+
+            var githubItem = document as GithubFile;
+            var imagesToUploadToGithub = githubItem == null ? new List<string>() : githubItem.ImagesToSaveOnPublish;
+            return CreateOrUpdateGithubBlob(pd.Title, document.MarkdownContent, imagesToUploadToGithub, blog: pd.Blog);
         }
 
-        public Task<IMarkpadDocument> OpenFromWeb()
+        public async Task<IMarkpadDocument> OpenFromWeb()
         {
             var blogs = blogService.GetBlogs();
             if (blogs == null || blogs.Count == 0)
             {
                 if (!blogService.ConfigureNewBlog("Open from web"))
-                    return TaskEx.FromResult<IMarkpadDocument>(null);
+                    return null;
                 blogs = blogService.GetBlogs();
                 if (blogs == null || blogs.Count == 0)
-                    return TaskEx.FromResult<IMarkpadDocument>(null);
+                    return null;
             }
 
             var openFromWeb = openFromWebViewModelFactory();
@@ -140,11 +154,18 @@ namespace MarkPad.DocumentSources
 
             var result = windowManager.ShowDialog(openFromWeb);
             if (result != true)
-                return TaskEx.FromResult<IMarkpadDocument>(null);
+                return null;
+
+            var selectedPost = openFromWeb.SelectedPost;
+            if (openFromWeb.SelectedBlog.WebSourceType == WebSourceType.GitHub)
+            {
+                selectedPost = await github.FetchFileContents(openFromWeb.SelectedBlog.Token, selectedPost);
+                var siteContext = new GithubSiteContext(openFromWeb.SelectedBlog);
+                return new GithubFile(openFromWeb.SelectedBlog, selectedPost, this, siteContext, github);
+            }
 
             var metaWeblogSiteContext = new MetaWeblogSiteContext(openFromWeb.SelectedBlog, getMetaWeblog, eventAggregator);
-            var webMarkdownFile = new WebMarkdownFile(openFromWeb.SelectedBlog, openFromWeb.SelectedPost, this, metaWeblogSiteContext);
-            return TaskEx.FromResult<IMarkpadDocument>(webMarkdownFile);
+            return new WebMarkdownFile(openFromWeb.SelectedBlog, selectedPost, this, metaWeblogSiteContext);
         }
 
         public Task<IMarkpadDocument> OpenBlogPost(BlogSetting blog, Post post)
@@ -164,6 +185,53 @@ namespace MarkPad.DocumentSources
             return NewMarkdownFile(path, document.MarkdownContent);
         }
 
+        async Task<IMarkpadDocument> CreateOrUpdateGithubBlob(string postTitle, string content, List<string> imagesToUpload, BlogSetting blog)
+        {
+            var treeToUpload = new GitTree();
+            if (imagesToUpload.Count > 0)
+            {
+                foreach (var imageToUpload in imagesToUpload)
+                {
+                    var imageContent = Convert.ToBase64String(File.ReadAllBytes(imageToUpload));
+                    var item = new GitFile
+                    {
+                        type = "tree",
+                        path = imageToUpload,
+                        mode = ((int) GitTreeMode.SubDirectory), 
+                        sha = GetSha1(imageContent), 
+                        content = imageContent
+                    };
+                    treeToUpload.tree.Add(item);
+                }
+            }
+
+            var gitFile = new GitFile
+            {
+                path = postTitle, content = content, sha = GetSha1(content), mode = (int) GitTreeMode.File, type = "blob"
+            };
+            treeToUpload.tree.Add(gitFile);
+
+            var newTree = await github.NewTree(blog.Token, blog.Username, blog.WebAPI, treeToUpload);
+            var uploadedFile = newTree.tree.Single(t => t.sha == gitFile.sha);
+            var post = new Post
+            {
+                postid = gitFile.sha,
+                title = postTitle,
+                description = content,
+                permalink = uploadedFile.url,
+            };
+
+            return new GithubFile(blog, post, this, new GithubSiteContext(blog), github);
+        }
+
+        public static string GetSha1(string value)
+        {
+            var data = Encoding.ASCII.GetBytes(value);
+            var hashData = new SHA1Managed().ComputeHash(data);
+
+            return hashData.Aggregate(string.Empty, (current, b) => current + b.ToString("X2"));
+        }
+
         IMarkpadDocument CreateOrUpdateMetaWebLogPost(
             string postid, string postTitle, 
             string[] categories, string content, 
@@ -174,21 +242,18 @@ namespace MarkPad.DocumentSources
 
             if (imagesToUpload.Count > 0)
             {
-                var metaWebLog = getMetaWeblog(blog.WebAPI);
-
                 foreach (var imageToUpload in imagesToUpload)
                 {
-                    var response = metaWebLog.NewMediaObject(blog, new MediaObject
+                    var response = proxy.NewMediaObject(blog, new MediaObject
                     {
                         name = imageToUpload,
                         type = "image/png",
                         bits = File.ReadAllBytes(imageToUpload)
                     });
 
-                    content = content.Replace("/" + imageToUpload, response.url);
+                    content = content.Replace(imageToUpload, response.url);
                 }
             }
-
 
             var newpost = new Post();
             try
@@ -235,5 +300,12 @@ namespace MarkPad.DocumentSources
             var metaWeblogSiteContext = new MetaWeblogSiteContext(blog, getMetaWeblog, eventAggregator);
             return new WebMarkdownFile(blog, newpost, this, metaWeblogSiteContext);
         }
+    }
+
+    public enum GitTreeMode
+    {
+        File = 100644,
+        Executable = 100755,
+        SubDirectory = 040000
     }
 }
