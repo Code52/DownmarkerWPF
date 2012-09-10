@@ -15,7 +15,6 @@ namespace MarkPad.DocumentSources.GitHub
     public class WebDocument : MarkpadDocumentBase
     {
         readonly BlogSetting blog;
-        string id;
         readonly IWebDocumentService webDocumentService;
         readonly WebSiteContext siteContext;
         readonly List<string> imagesToSaveOnPublish = new List<string>();
@@ -31,20 +30,17 @@ namespace MarkPad.DocumentSources.GitHub
             WebSiteContext siteContext) :
             base(title, content, blog.BlogName, documentFactory)
         {
+            Id = id;
             this.blog = blog;
-            this.id = id;
             this.webDocumentService = webDocumentService;
             this.siteContext = siteContext;
         }
 
-        public string Id
-        {
-            get { return id; }
-        }
+        public string Id { get; private set; }
 
         public override async Task<IMarkpadDocument> Save()
         {
-            id = await webDocumentService.SaveDocument(blog, this);
+            Id = await webDocumentService.SaveDocument(blog, this);
             return this;         
         }
 

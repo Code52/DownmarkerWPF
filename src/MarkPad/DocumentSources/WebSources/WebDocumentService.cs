@@ -117,8 +117,8 @@ namespace MarkPad.DocumentSources.WebSources
             };
             treeToUpload.tree.Add(gitFile);
 
-            var newTree = await githubApi.NewTree(blog.Token, blog.Username, blog.WebAPI, treeToUpload);
-            var uploadedFile = newTree.tree.Single(t => t.sha == gitFile.sha);
+            var newTree = await githubApi.NewTree(blog.Token, blog.Username, blog.WebAPI, blog.BlogInfo.blogid, treeToUpload);
+            var uploadedFile = newTree.Item1.tree.Single(t => t.path == gitFile.path);
             return uploadedFile.sha;
         }
 

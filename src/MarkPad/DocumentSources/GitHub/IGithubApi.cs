@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Settings.Models;
@@ -10,6 +11,6 @@ namespace MarkPad.DocumentSources.GitHub
         Task<BlogInfo[]> FetchBranches(string token, string user, string repositoryName);
         Task<Post[]> FetchFiles(string username, string repository, string branch, string token);
         Task<string> FetchFileContents(string token, string username, string repository, string sha);
-        Task<GitTree> NewTree(string token, string username, string repository, GitTree tree);
+        Task<Tuple<GitTree, GitCommit>> NewTree(string token, string username, string repository, string branch, GitTree tree);
     }
 }

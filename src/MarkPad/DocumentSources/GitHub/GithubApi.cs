@@ -95,19 +95,69 @@ namespace MarkPad.DocumentSources.GitHub
             return GetContent(result);
         }
 
-        public async Task<GitTree> NewTree(string token, string username, string repository, GitTree tree)
+        public async Task<Tuple<GitTree, GitCommit>> NewTree(string token, string username, string repository, string branch, GitTree tree)
         {
             var client = new RestClient(ApiBaseUrl);
-            var restRequest = new RestRequest(string.Format("/repos/{0}/{1}/git/trees", username, repository))
+            //Get base commit ref
+            var refRequest =
+                new RestRequest(string.Format("/repos/{0}/{1}/git/refs/heads/{2}?access_token={3}", username,
+                                              repository, branch, token));
+            var refResult = await client.ExecuteAwaitableAsync(refRequest);
+            string shaLatestCommit = GetDynamicContent(refResult).@object.sha;
+
+            var baseTreeRequest =
+                new RestRequest(string.Format("/repos/{0}/{1}/git/commits/{2}?access_token={3}", username,
+                                              repository, shaLatestCommit, token));
+            var baseTreeResult = await client.ExecuteAwaitableAsync(baseTreeRequest);
+            string shaBaseTree = GetDynamicContent(baseTreeResult).tree.sha;
+            tree.base_tree = shaBaseTree;
+ 
+            var restRequest = new RestRequest(string.Format("/repos/{0}/{1}/git/trees?access_token={2}", username, repository, token))
             {
                 Method = Method.POST,
                 RequestFormat = DataFormat.Json
             };
             restRequest.AddBody(tree);
-            restRequest.AddParameter("access_token", token, ParameterType.GetOrPost);
 
             var restResponse = await client.ExecuteAwaitableAsync<GitTree>(restRequest);
-            return GetData(restResponse);
+            var gitTree = GetData(restResponse);
+
+            restRequest = new RestRequest(string.Format("/repos/{0}/{1}/git/commits?access_token={2}", username, repository, token))
+            {
+                Method = Method.POST,
+                RequestFormat = DataFormat.Json
+            };
+            var gitCommit = new GitCommit
+            {
+                message = "Update from Markpad", 
+                parents = new[] {shaLatestCommit},
+                tree = gitTree.sha
+            };
+            restRequest.AddBody(gitCommit);
+            var commitRespose = await client.ExecuteAwaitableAsync<GitTree>(restRequest);
+            string shaNewCommit = GetDynamicContent(commitRespose).sha;
+            gitCommit.sha = shaNewCommit;
+
+            restRequest = new RestRequest(string.Format("/repos/{0}/{1}/git/refs/heads/{2}?access_token={3}",
+                username, repository, branch, token))
+            {
+                Method = Method.POST,
+                RequestFormat = DataFormat.Json
+            };
+            restRequest.AddBody(new{sha = shaNewCommit});
+            CheckResult(await client.ExecuteAwaitableAsync(restRequest));
+            
+            return Tuple.Create(gitTree, gitCommit);
+        }
+
+        void CheckResult(IRestResponse restResponse)
+        {
+            
+        }
+
+        static dynamic GetDynamicContent(IRestResponse baseTreeResult)
+        {
+            return JsonConvert.DeserializeObject<dynamic>(baseTreeResult.Content);
         }
 
         static T GetData<T>(IRestResponse<T> restResponse)
@@ -137,6 +187,14 @@ namespace MarkPad.DocumentSources.GitHub
         }
     }
 
+    public class GitCommit
+    {
+        public string[] parents { get; set; }
+        public string tree { get; set; }
+        public string message { get; set; }
+        public string sha { get; set; }
+    }
+
     public class GitTree
     {
         public GitTree()
@@ -145,6 +203,8 @@ namespace MarkPad.DocumentSources.GitHub
         }
 
         public List<GitFile> tree { get; set; }
+        public string sha { get; set; }
+        public string base_tree { get; set; }
     }
 
     public class GitFile
