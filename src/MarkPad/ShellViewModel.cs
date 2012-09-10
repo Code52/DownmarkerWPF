@@ -72,10 +72,7 @@ namespace MarkPad
                 currentState = value;
 
                 if (ActiveDocumentViewModel == null) return;
-                var shellView = (ShellView)GetView();
-                ((ShellViewModel)shellView.DataContext).MDI.HtmlPreview.Visibility = currentState == ShowSettingsState
-                                                          ? Visibility.Hidden
-                                                          : Visibility.Visible;
+                MDI.HtmlPreview.Visibility = (currentState == ShowSettingsState) ? Visibility.Hidden : Visibility.Visible;
             }
         }
 
@@ -219,8 +216,7 @@ namespace MarkPad
 
         public void PrintDocument()
         {
-            var shellView = (ShellViewModel)GetView();
-            shellView.MDI.HtmlPreview.Print();
+            MDI.HtmlPreview.Print();
         }
 
         public void ShowHelp()
