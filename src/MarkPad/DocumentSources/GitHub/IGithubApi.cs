@@ -9,7 +9,7 @@ namespace MarkPad.DocumentSources.GitHub
         Task<string> GetToken(string code);
         Task<BlogInfo[]> FetchBranches(string token, string user, string repositoryName);
         Task<Post[]> FetchFiles(string username, string repository, string branch, string token);
-        Task<Post> FetchFileContents(string token, Post selectedPost);
+        Task<string> FetchFileContents(string token, string username, string repository, string sha);
         Task<GitTree> NewTree(string token, string username, string repository, GitTree tree);
     }
 }

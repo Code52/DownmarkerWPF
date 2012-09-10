@@ -42,7 +42,7 @@ namespace MarkPad.DocumentSources.GitHub
             var restRequest = new RestRequest(string.Format("/repos/{0}/{1}/branches", user, repositoryName));
             var result = await client.ExecuteAwaitableAsync<List<GitBranch>>(restRequest);
 
-            return result.Data.Select(r => new BlogInfo {blogid = r.name, blogName = r.name}).ToArray();
+            return result.Data.Select(r => new BlogInfo { blogid = r.name, blogName = r.name }).ToArray();
         }
 
         public async Task<Post[]> FetchFiles(string user, string repositoryName, string branch, string token)
@@ -81,17 +81,13 @@ namespace MarkPad.DocumentSources.GitHub
             return treeUrl;
         }
 
-        public async Task<Post> FetchFileContents(string token, Post selectedPost)
+        public async Task<string> FetchFileContents(string token, string username, string repository, string sha)
         {
-            if (!string.IsNullOrEmpty(selectedPost.description)) return selectedPost;
-
-            var client = new RestClient();
-            var restRequest = new RestRequest(selectedPost.permalink);
+            var client = new RestClient(ApiBaseUrl);
+            var restRequest = new RestRequest(string.Format("/repos/{0}/{1}/git/blobs/{2}", username, repository, sha));
             var result = await client.ExecuteAwaitableAsync(restRequest);
 
-            selectedPost.description = GetContent(result);
-
-            return selectedPost;
+            return GetContent(result);
         }
 
         public async Task<GitTree> NewTree(string token, string username, string repository, GitTree tree)
@@ -115,7 +111,11 @@ namespace MarkPad.DocumentSources.GitHub
 
         static string GetContent(IRestResponse result)
         {
-            var content = JsonConvert.DeserializeObject<dynamic>(result.Content).content;
+            var deserializeObject = JsonConvert.DeserializeObject<dynamic>(result.Content);
+            if (deserializeObject.encoding == "utf-8")
+                return deserializeObject.content;
+
+            var content = deserializeObject.content;
             string encodedData = content;
             return DecodeFrom64(encodedData);
         }

@@ -1,37 +1,27 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using MarkPad.Plugins;
+﻿using System.Threading.Tasks;
+using Caliburn.Micro;
+using MarkPad.DocumentSources.MetaWeblog.Service;
+using MarkPad.DocumentSources.WebSources;
 using MarkPad.Settings.Models;
 
 namespace MarkPad.DocumentSources.GitHub
 {
-    public class GithubSiteContext : ISiteContext
+    public class GithubSiteContext : WebSiteContext
     {
-        readonly string workingDirectory;
+        readonly IGithubApi github;
 
-        public GithubSiteContext(BlogSetting blog)
+        public GithubSiteContext(BlogSetting blog, 
+            IWebDocumentService webDocumentService,
+            IGithubApi github,
+            IEventAggregator eventAggregator) :
+            base(blog, webDocumentService, eventAggregator)
         {
-            workingDirectory = Path.Combine(Path.GetTempPath(), blog.BlogName);
+            this.github = github;
         }
 
-        public ObservableCollection<ISiteItem> Items
+        protected override Task<Post[]> GetItems()
         {
-            get
-            {
-                return new ObservableCollection<ISiteItem>();
-            }
+            return github.FetchFiles(Blog.Username, Blog.WebAPI, Blog.BlogInfo.blogid, Blog.Token);
         }
-
-        public bool IsLoading { get; private set; }
-
-        public string WorkingDirectory { get { return workingDirectory; } }
-
-        public void OpenItem(ISiteItem selectedItem)
-        {
-            
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

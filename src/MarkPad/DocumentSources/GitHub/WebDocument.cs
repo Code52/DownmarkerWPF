@@ -1,30 +1,51 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
-using MarkPad.DocumentSources.MetaWeblog.Service;
+using MarkPad.DocumentSources.MetaWeblog;
+using MarkPad.DocumentSources.WebSources;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Plugins;
 using MarkPad.Settings.Models;
 using Ookii.Dialogs.Wpf;
 
-namespace MarkPad.DocumentSources.MetaWeblog
+namespace MarkPad.DocumentSources.GitHub
 {
-    public class WebMarkdownFile : MarkpadDocumentBase
+    public class WebDocument : MarkpadDocumentBase
     {
-        Post post;
-        readonly MetaWeblogSiteContext siteContext;
+        readonly BlogSetting blog;
+        string id;
+        readonly IWebDocumentService webDocumentService;
+        readonly WebSiteContext siteContext;
         readonly List<string> imagesToSaveOnPublish = new List<string>();
+        readonly List<string> categories = new List<string>();
 
-        public WebMarkdownFile(
-            BlogSetting blog, Post post, 
+        public WebDocument(
+            BlogSetting blog,
+            string id,
+            string title,
+            string content,
             IDocumentFactory documentFactory,
-            MetaWeblogSiteContext siteContext)
-            : base(post.title, post.description, blog.BlogName, documentFactory)
+            IWebDocumentService webDocumentService,
+            WebSiteContext siteContext) :
+            base(title, content, blog.BlogName, documentFactory)
         {
-            this.post = post;
+            this.blog = blog;
+            this.id = id;
+            this.webDocumentService = webDocumentService;
             this.siteContext = siteContext;
+        }
+
+        public string Id
+        {
+            get { return id; }
+        }
+
+        public override async Task<IMarkpadDocument> Save()
+        {
+            id = await webDocumentService.SaveDocument(blog, this);
+            return this;         
         }
 
         public override ISiteContext SiteContext
@@ -40,6 +61,11 @@ namespace MarkPad.DocumentSources.MetaWeblog
             get { return imagesToSaveOnPublish; }
         }
 
+        public List<string> Categories
+        {
+            get { return categories; }
+        }
+
         public override Task<IMarkpadDocument> Publish()
         {
             var save = new ButtonExtras(ButtonType.Yes, "Save", "Saves this modified post to your blog");
@@ -52,7 +78,7 @@ namespace MarkPad.DocumentSources.MetaWeblog
                 Buttons = DialogMessageButtons.Yes | DialogMessageButtons.No | DialogMessageButtons.Retry | DialogMessageButtons.Cancel,
                 Title = "Markpad",
                 Text = string.Format("{0} has already been published, what do you want to do?", Title),
-                ButtonExtras = new[]{save, saveAs, publish}
+                ButtonExtras = new[] { save, saveAs, publish }
             };
 
             var result = service.Show();
@@ -71,7 +97,7 @@ namespace MarkPad.DocumentSources.MetaWeblog
 
         public override string SaveImage(Bitmap image)
         {
-            var imageFileName = SiteContextHelper.GetFileName(post.title, siteContext.WorkingDirectory);
+            var imageFileName = SiteContextHelper.GetFileName(Title, siteContext.WorkingDirectory);
 
             image.Save(Path.Combine(siteContext.WorkingDirectory, imageFileName), ImageFormat.Png);
 
@@ -87,17 +113,11 @@ namespace MarkPad.DocumentSources.MetaWeblog
 
         public override bool IsSameItem(ISiteItem siteItem)
         {
-            var webItem = siteItem as MetaWebLogItem;
+            var webDocumentItem = siteItem as WebDocumentItem;
+            if (webDocumentItem != null)
+                return webDocumentItem.Id == Id;
 
-            if (webItem == null)
-                return false;
-
-            return webItem.Post.postid.Equals(post.postid);
-        }
-
-        public override Task<IMarkpadDocument> Save()
-        {
-            return DocumentFactory.PublishDocument((string)post.postid, this);
+            return false;
         }
     }
 }

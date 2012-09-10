@@ -15,5 +15,6 @@ namespace MarkPad.DocumentSources.MetaWeblog.Service
         Task<BlogInfo[]> GetUsersBlogsAsync(BlogSetting setting);
         Task<bool> DeletePostAsync(string postid, BlogSetting blog);
         Task<MediaObjectInfo> NewMediaObjectAsync(BlogSetting blog, MediaObject mediaObject);
+        Task EditPostAsync(string postid, BlogSetting blog, Post post, bool publish);
     }
 }

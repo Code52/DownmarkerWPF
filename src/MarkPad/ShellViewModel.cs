@@ -292,17 +292,17 @@ namespace MarkPad
 
         public void Handle(OpenFromWebEvent message)
         {
-            var finishedWork = DoingWork(string.Format("Opening {0}", message.Post.title));
+            var finishedWork = DoingWork(string.Format("Opening {0}", message.Name));
 
             var openedDocs = MDI.Items.Cast<DocumentViewModel>();
-            var metaWebLogItem = new MetaWebLogItem(null, eventAggregator, message.Post, message.Blog);
+            var metaWebLogItem = new WebDocumentItem(null, eventAggregator, message.Id, message.Name, message.Blog);
             var openedDoc = openedDocs.SingleOrDefault(d => d.MarkpadDocument.IsSameItem(metaWebLogItem));
 
             if (openedDoc != null)
                 MDI.ActivateItem(openedDoc);
             else
             {
-                documentFactory.OpenBlogPost(message.Blog, message.Post)
+                documentFactory.OpenBlogPost(message.Blog, message.Id, message.Name)
                     .ContinueWith(t =>
                     {
                         OpenDocumentResult(t);

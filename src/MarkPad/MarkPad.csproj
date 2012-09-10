@@ -183,9 +183,12 @@
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="DocumentSources\FileSystem\JekyllMarkdownDocument.cs" />
     <Compile Include="DocumentSources\GitHub\GithubApi.cs" />
-    <Compile Include="DocumentSources\GitHub\GithubFile.cs" />
+    <Compile Include="DocumentSources\GitHub\WebDocument.cs" />
     <Compile Include="DocumentSources\GitHub\GithubSiteContext.cs" />
     <Compile Include="DocumentSources\GitHub\IGithubApi.cs" />
+    <Compile Include="DocumentSources\GitTreeMode.cs" />
+    <Compile Include="DocumentSources\WebSources\IWebDocumentService.cs" />
+    <Compile Include="DocumentSources\WebSources\WebSiteContext.cs" />
     <Compile Include="DocumentSources\SiteContextHelper.cs" />
     <Compile Include="DocumentSources\DocumentFactory.cs" />
     <Compile Include="DocumentSources\FileSystem\FileMarkdownDocument.cs" />
@@ -197,7 +200,7 @@
     <Compile Include="DocumentSources\MarkpadDocumentBase.cs" />
     <Compile Include="DocumentSources\MetaWeblog\BlogService.cs" />
     <Compile Include="DocumentSources\MetaWeblog\MetaWeblogSiteContext.cs" />
-    <Compile Include="DocumentSources\MetaWeblog\MetaWebLogItem.cs" />
+    <Compile Include="DocumentSources\MetaWeblog\WebDocumentItem.cs" />
     <Compile Include="DocumentSources\MetaWeblog\IBlogService.cs" />
     <Compile Include="DocumentSources\NewMarkpadDocument.cs" />
     <Compile Include="DocumentSources\SiteItemBase.cs" />
@@ -233,7 +236,7 @@
     <Compile Include="DocumentSources\MetaWeblog\Service\Source.cs" />
     <Compile Include="DocumentSources\MetaWeblog\Service\UserInfo.cs" />
     <Compile Include="DocumentSources\SiteContextGenerator.cs" />
-    <Compile Include="DocumentSources\MetaWeblog\WebMarkdownFile.cs" />
+    <Compile Include="DocumentSources\WebSources\WebDocumentService.cs" />
     <Compile Include="Document\Controls\FloatingToolBar.cs" />
     <Compile Include="Document\Controls\HyperlinkEditorView.xaml.cs">
       <DependentUpon>HyperlinkEditorView.xaml</DependentUpon>
