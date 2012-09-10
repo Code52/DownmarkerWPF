@@ -102,7 +102,6 @@ namespace MarkPad.DocumentSources.WebSources
                         type = "tree",
                         path = imageToUpload,
                         mode = ((int)GitTreeMode.SubDirectory),
-                        sha = GetSha1(imageContent),
                         content = imageContent
                     };
                     treeToUpload.tree.Add(item);
@@ -113,7 +112,6 @@ namespace MarkPad.DocumentSources.WebSources
             {
                 path = postTitle,
                 content = content,
-                sha = GetSha1(content),
                 mode = (int)GitTreeMode.File,
                 type = "blob"
             };

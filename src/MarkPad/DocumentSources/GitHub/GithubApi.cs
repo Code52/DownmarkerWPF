@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Settings.Models;
 using Newtonsoft.Json;
@@ -32,8 +33,12 @@ namespace MarkPad.DocumentSources.GitHub
             var content = new FormUrlEncodedContent(data);
             var request = await c.PostAsync(Accesstokenuri, content);
             var result = await request.Content.ReadAsStringAsync();
+            return GetAccessCode(result);
+        }
 
-            return result;
+        static string GetAccessCode(string result)
+        {
+            return HttpUtility.ParseQueryString(result)["access_token"];
         }
 
         public async Task<BlogInfo[]> FetchBranches(string token, string user, string repositoryName)
@@ -95,10 +100,11 @@ namespace MarkPad.DocumentSources.GitHub
             var client = new RestClient(ApiBaseUrl);
             var restRequest = new RestRequest(string.Format("/repos/{0}/{1}/git/trees", username, repository))
             {
-                Method = Method.POST
+                Method = Method.POST,
+                RequestFormat = DataFormat.Json
             };
             restRequest.AddBody(tree);
-            restRequest.AddParameter("access_token", token, ParameterType.UrlSegment);
+            restRequest.AddParameter("access_token", token, ParameterType.GetOrPost);
 
             var restResponse = await client.ExecuteAwaitableAsync<GitTree>(restRequest);
             return GetData(restResponse);
