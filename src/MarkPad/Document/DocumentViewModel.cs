@@ -152,7 +152,7 @@ namespace MarkPad.Document
 
                     if (t.IsFaulted)
                     {
-                        var saveResult = (bool) dispatcher.Invoke(new Action(() =>
+                        var saveResult = (bool?) dispatcher.Invoke(new Action(() =>
                         {
                             dialogService.ShowConfirmation(
                                 "MarkPad", "Cannot save file",
@@ -161,7 +161,7 @@ namespace MarkPad.Document
                                 new ButtonExtras(ButtonType.No, "Cancel", ""));
                         }));
 
-                        return saveResult && SaveAs().Result;
+                        return saveResult == true && SaveAs().Result;
                     }
 
                     MarkpadDocument = t.Result;

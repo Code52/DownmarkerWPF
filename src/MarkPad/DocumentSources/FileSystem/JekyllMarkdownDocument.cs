@@ -2,10 +2,9 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using Caliburn.Micro;
-using MarkPad.DocumentSources.FileSystem;
 using MarkPad.Infrastructure.DialogService;
 
-namespace MarkPad.DocumentSources
+namespace MarkPad.DocumentSources.FileSystem
 {
     public class JekyllMarkdownDocument : FileMarkdownDocument
     {

@@ -1,0 +1,9 @@
+﻿<Controls:MetroWindow x:Class="MarkPad.Settings.UI.GithubLogin"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" Title="GithubLogin"
+                      WindowState="Maximized" ResizeMode="CanResizeWithGrip">
+    <Grid>
+        <WebBrowser x:Name="wbLogin" />
+    </Grid>
+</Controls:MetroWindow>

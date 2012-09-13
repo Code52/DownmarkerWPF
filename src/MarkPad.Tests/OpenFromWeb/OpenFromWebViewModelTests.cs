@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Caliburn.Micro;
+using MarkPad.DocumentSources.GitHub;
 using MarkPad.DocumentSources.MetaWeblog;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Infrastructure.Abstractions;
@@ -19,12 +20,13 @@ namespace MarkPad.Tests.OpenFromWeb
         readonly IMetaWeblogService metaWeblogService = Substitute.For<IMetaWeblogService>();
         readonly IDialogService dialogService = Substitute.For<IDialogService>();
         readonly ITaskSchedulerFactory taskScheduler = Substitute.For<ITaskSchedulerFactory>();
+        readonly IGithubApi github = Substitute.For<IGithubApi>();
 
         public OpenFromWebViewModelTests()
         {
             taskScheduler.FromCurrentSynchronisationContext().Returns(TaskScheduler.Default);
 
-            subject = new OpenFromWebViewModel(dialogService, s => metaWeblogService, taskScheduler);
+            subject = new OpenFromWebViewModel(dialogService, s => metaWeblogService, taskScheduler, github);
         }
 
         [Fact]

@@ -1,7 +1,9 @@
 using Autofac;
 using MarkPad.DocumentSources;
+using MarkPad.DocumentSources.GitHub;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.DocumentSources.MetaWeblog.Service.Rsd;
+using MarkPad.DocumentSources.WebSources;
 using MarkPad.Infrastructure.Abstractions;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Settings;
@@ -19,6 +21,8 @@ namespace MarkPad.Infrastructure
             builder.RegisterType<MetaWeblogService>().As<IMetaWeblogService>();
             builder.RegisterType<TaskSchedulerFactory>().As<ITaskSchedulerFactory>();
             builder.RegisterType<SettingsProvider>().As<ISettingsProvider>().SingleInstance();
+            builder.RegisterType<GithubApi>().As<IGithubApi>();
+            builder.RegisterType<WebDocumentService>().As<IWebDocumentService>();
         }
     }
 }

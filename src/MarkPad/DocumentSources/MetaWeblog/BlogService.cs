@@ -110,7 +110,8 @@ namespace MarkPad.DocumentSources.MetaWeblog
 
         static bool SameBlog(BlogSetting b1, BlogSetting b2)
         {
-            return b2.BlogInfo.blogName == b1.BlogInfo.blogName && b2.BlogInfo.blogid == b1.BlogInfo.blogid;
+            return b2.BlogInfo.blogName == b1.BlogInfo.blogName && b2.BlogInfo.blogid == b1.BlogInfo.blogid
+                && b2.BlogName == b1.BlogName && b2.WebAPI == b1.WebAPI;
         }
 
         public List<BlogSetting> GetBlogs()

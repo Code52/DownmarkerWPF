@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Plugins;
 using MarkPad.Settings.Models;
 
@@ -15,6 +14,6 @@ namespace MarkPad.DocumentSources
         Task<IMarkpadDocument> PublishDocument(string postId, IMarkpadDocument document);
         Task<IMarkpadDocument> OpenFromWeb();
         Task<IMarkpadDocument> SaveDocumentAs(IMarkpadDocument document);
-        Task<IMarkpadDocument> OpenBlogPost(BlogSetting blog, Post post);
+        Task<IMarkpadDocument> OpenBlogPost(BlogSetting blog, string id, string name);
     }
 }

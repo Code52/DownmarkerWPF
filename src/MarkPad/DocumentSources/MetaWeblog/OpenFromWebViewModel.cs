@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Caliburn.Micro;
+using MarkPad.DocumentSources.GitHub;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Helpers;
 using MarkPad.Infrastructure.Abstractions;
@@ -17,15 +18,17 @@ namespace MarkPad.DocumentSources.MetaWeblog
         private readonly IDialogService dialogService;
         private readonly Func<string, IMetaWeblogService> getMetaWeblog;
         private readonly ITaskSchedulerFactory taskScheduler;
+        readonly IGithubApi github;
 
         public OpenFromWebViewModel(
             IDialogService dialogService, 
             Func<string, IMetaWeblogService> getMetaWeblog,
-            ITaskSchedulerFactory taskScheduler )
+            ITaskSchedulerFactory taskScheduler, IGithubApi github)
         {
             this.dialogService = dialogService;
             this.getMetaWeblog = getMetaWeblog;
             this.taskScheduler = taskScheduler;
+            this.github = github;
         }
 
         public void InitializeBlogs(List<BlogSetting> blogs)
@@ -86,13 +89,23 @@ namespace MarkPad.DocumentSources.MetaWeblog
         {
             Posts = new ObservableCollection<Entry>();
 
-            var proxy = getMetaWeblog(SelectedBlog.WebAPI);
-
             IsFetching = true;
-            return proxy.GetRecentPostsAsync(SelectedBlog, 100)
-                .ContinueWith(UpdateBlogPosts, taskScheduler.FromCurrentSynchronisationContext())
-                .ContinueWith(HandleFetchError)
-                .ContinueWith(t=>IsFetching = false);
+            Task<Post[]> fetchingTask;
+            if (SelectedBlog.WebSourceType == WebSourceType.MetaWebLog)
+            {
+                var proxy = getMetaWeblog(SelectedBlog.WebAPI);
+
+                fetchingTask = proxy.GetRecentPostsAsync(SelectedBlog, 100);
+            }
+            else
+            {
+                fetchingTask = github.FetchFiles(SelectedBlog.Username, SelectedBlog.WebAPI, SelectedBlog.BlogInfo.blogid, SelectedBlog.Token);
+            }
+
+            return fetchingTask
+                    .ContinueWith(UpdateBlogPosts, taskScheduler.FromCurrentSynchronisationContext())
+                    .ContinueWith(HandleFetchError)
+                    .ContinueWith(t => IsFetching = false);
         }
 
         private void UpdateBlogPosts(Task<Post[]> t)
