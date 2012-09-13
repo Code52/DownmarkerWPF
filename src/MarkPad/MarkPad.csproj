@@ -120,8 +120,9 @@
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Microsoft.Expression.Interactions.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.4.5.8\lib\net40\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.4.5.9\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NHunspell">
       <HintPath>..\..\lib\Hunspell.0.9.6.0\lib\net20\NHunspell.dll</HintPath>
@@ -134,9 +135,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\PropertyChanged.Fody.1.26.0.0\lib\NET40\PropertyChanged.dll</HintPath>
     </Reference>
-    <Reference Include="RestSharp">
-      <HintPath>..\packages\RestSharp.104.1\lib\net4\RestSharp.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
@@ -147,6 +145,9 @@
     </Reference>
     <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.WebRequest, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
@@ -182,7 +183,11 @@
     <Compile Include="Converters\EnumDisplayConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="DocumentSources\FileSystem\JekyllMarkdownDocument.cs" />
+    <Compile Include="DocumentSources\GitHub\GitBranch.cs" />
+    <Compile Include="DocumentSources\GitHub\GitCommit.cs" />
+    <Compile Include="DocumentSources\GitHub\GitFile.cs" />
     <Compile Include="DocumentSources\GitHub\GithubApi.cs" />
+    <Compile Include="DocumentSources\GitHub\GitTree.cs" />
     <Compile Include="DocumentSources\GitHub\WebDocument.cs" />
     <Compile Include="DocumentSources\GitHub\GithubSiteContext.cs" />
     <Compile Include="DocumentSources\GitHub\IGithubApi.cs" />
@@ -300,7 +305,6 @@
     <Compile Include="Infrastructure\Plugins\IPluginManager.cs" />
     <Compile Include="Infrastructure\Plugins\PluginManager.cs" />
     <Compile Include="Infrastructure\Plugins\PluginSettingsProvider.cs" />
-    <Compile Include="Infrastructure\RestExtensions.cs" />
     <Compile Include="Infrastructure\ServicesModule.cs" />
     <Compile Include="Infrastructure\SingleInstance.cs" />
     <Compile Include="Events\SettingsChangedEvent.cs" />
@@ -316,6 +320,7 @@
       <DependentUpon>MdiView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MdiViewModel.cs" />
+    <Compile Include="Settings\Models\WebSourceType.cs" />
     <Compile Include="Settings\SettingsProvider.cs" />
     <Compile Include="Settings\UI\BlogSettingsView.xaml.cs">
       <DependentUpon>BlogSettingsView.xaml</DependentUpon>

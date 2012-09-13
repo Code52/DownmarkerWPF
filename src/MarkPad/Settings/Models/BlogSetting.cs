@@ -97,10 +97,4 @@ namespace MarkPad.Settings.Models
         public event PropertyChangedEventHandler PropertyChanged;
 #pragma warning restore 67
     }
-
-    public enum WebSourceType
-    {
-        MetaWebLog,
-        GitHub
-    }
 }

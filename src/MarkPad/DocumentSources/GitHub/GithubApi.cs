@@ -7,9 +7,6 @@ using System.Threading.Tasks;
 using System.Web;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Settings.Models;
-using Newtonsoft.Json;
-using RestSharp;
-using MarkPad.Infrastructure;
 
 namespace MarkPad.DocumentSources.GitHub
 {
@@ -43,31 +40,33 @@ namespace MarkPad.DocumentSources.GitHub
 
         public async Task<BlogInfo[]> FetchBranches(string token, string user, string repositoryName)
         {
-            var client = new RestClient(ApiBaseUrl);
-            var restRequest = new RestRequest(string.Format("/repos/{0}/{1}/branches", user, repositoryName));
-            var result = await client.ExecuteAwaitableAsync<List<GitBranch>>(restRequest);
+            var httpClient = new HttpClient();
+            var url = string.Format("/repos/{0}/{1}/branches", user, repositoryName);
+            var respose = await httpClient.GetAsync(GetUrl(url, token));
+            var result = await respose.Content.ReadAsAsync<List<GitBranch>>();
 
-            return result.Data.Select(r => new BlogInfo { blogid = r.name, blogName = r.name }).ToArray();
+            return result.Select(r => new BlogInfo { blogid = r.name, blogName = r.name }).ToArray();
         }
 
         public async Task<Post[]> FetchFiles(string user, string repositoryName, string branch, string token)
         {
-            var client = new RestClient(ApiBaseUrl);
-            var restRequest = new RestRequest(string.Format("/repos/{0}/{1}/branches/{2}", user, repositoryName, branch));
-            var result = await client.ExecuteAwaitableAsync(restRequest);
-            var deserializeObject = JsonConvert.DeserializeObject<dynamic>(result.Content);
+            var httpClient = new HttpClient();
+            var url = string.Format("/repos/{0}/{1}/branches/{2}", user, repositoryName, branch);
+            var respose = await httpClient.GetAsync(GetUrl(url, token));
+            var result = await respose.Content.ReadAsAsync<dynamic>();
 
-            var treeUrl = TreeUrl(deserializeObject);
+            var treeUrl = TreeUrl(result);
 
-            restRequest = new RestRequest(new Uri(treeUrl, UriKind.Absolute));
-            var tree = await client.ExecuteAwaitableAsync<GitTree>(restRequest);
+            respose = await httpClient.GetAsync(new Uri(treeUrl, UriKind.Absolute));
+            var tree = await respose.Content.ReadAsAsync<GitTree>();
 
             return ToPosts(tree);
         }
 
-        static Post[] ToPosts(IRestResponse<GitTree> tree)
+        static Post[] ToPosts(GitTree tree)
         {
-            return tree.Data.tree
+            return tree
+                .tree
                 .Where(i => i.type == "blob")
                 .Select(i => new Post
                 {
@@ -88,86 +87,86 @@ namespace MarkPad.DocumentSources.GitHub
 
         public async Task<string> FetchFileContents(string token, string username, string repository, string sha)
         {
-            var client = new RestClient(ApiBaseUrl);
-            var restRequest = new RestRequest(string.Format("/repos/{0}/{1}/git/blobs/{2}", username, repository, sha));
-            var result = await client.ExecuteAwaitableAsync(restRequest);
+            var client = new HttpClient();
+            var url = string.Format("/repos/{0}/{1}/git/blobs/{2}", username, repository, sha);
+            var restResponse = await client.GetAsync(GetUrl(url, token));
 
-            return GetContent(result);
+            return await GetContent(restResponse);
         }
 
         public async Task<Tuple<GitTree, GitCommit>> NewTree(string token, string username, string repository, string branch, GitTree tree)
         {
-            var client = new RestClient(ApiBaseUrl);
+            var client = new HttpClient();
             //Get base commit ref
-            var refRequest =
-                new RestRequest(string.Format("/repos/{0}/{1}/git/refs/heads/{2}?access_token={3}", username,
-                                              repository, branch, token));
-            var refResult = await client.ExecuteAwaitableAsync(refRequest);
-            string shaLatestCommit = GetDynamicContent(refResult).@object.sha;
+            var shaLatestCommit = await GetLatestCommitSha(token, username, repository, branch, client);
 
-            var baseTreeRequest =
-                new RestRequest(string.Format("/repos/{0}/{1}/git/commits/{2}?access_token={3}", username,
-                                              repository, shaLatestCommit, token));
-            var baseTreeResult = await client.ExecuteAwaitableAsync(baseTreeRequest);
-            string shaBaseTree = GetDynamicContent(baseTreeResult).tree.sha;
-            tree.base_tree = shaBaseTree;
- 
-            var restRequest = new RestRequest(string.Format("/repos/{0}/{1}/git/trees?access_token={2}", username, repository, token))
-            {
-                Method = Method.POST,
-                RequestFormat = DataFormat.Json
-            };
-            restRequest.AddBody(tree);
+            tree.base_tree = await GetBaseTreeSha(token, username, repository, shaLatestCommit, client);
 
-            var restResponse = await client.ExecuteAwaitableAsync<GitTree>(restRequest);
-            var gitTree = GetData(restResponse);
+            var gitTree = await GetGitTree(token, username, repository, tree, client);
 
-            restRequest = new RestRequest(string.Format("/repos/{0}/{1}/git/commits?access_token={2}", username, repository, token))
-            {
-                Method = Method.POST,
-                RequestFormat = DataFormat.Json
-            };
-            var gitCommit = new GitCommit
-            {
-                message = "Update from Markpad", 
-                parents = new[] {shaLatestCommit},
-                tree = gitTree.sha
-            };
-            restRequest.AddBody(gitCommit);
-            var commitRespose = await client.ExecuteAwaitableAsync<GitTree>(restRequest);
-            string shaNewCommit = GetDynamicContent(commitRespose).sha;
-            gitCommit.sha = shaNewCommit;
+            var gitCommit = await CreateGitCommit(token, username, repository, shaLatestCommit, gitTree, client);
 
-            restRequest = new RestRequest(string.Format("/repos/{0}/{1}/git/refs/heads/{2}?access_token={3}",
-                username, repository, branch, token))
-            {
-                Method = Method.POST,
-                RequestFormat = DataFormat.Json
-            };
-            restRequest.AddBody(new{sha = shaNewCommit});
-            CheckResult(await client.ExecuteAwaitableAsync(restRequest));
-            
+            LogResult(await FinaliseCommit(token, username, repository, branch, gitCommit.sha, client));
+
             return Tuple.Create(gitTree, gitCommit);
         }
 
-        void CheckResult(IRestResponse restResponse)
+        void LogResult(HttpResponseMessage httpResponseMessage)
         {
             
         }
 
-        static dynamic GetDynamicContent(IRestResponse baseTreeResult)
+        async Task<HttpResponseMessage> FinaliseCommit(string token, string username, string repository, string branch, string shaNewCommit,
+                                   HttpClient client)
         {
-            return JsonConvert.DeserializeObject<dynamic>(baseTreeResult.Content);
+            var url = string.Format("/repos/{0}/{1}/git/refs/heads/{2}", username, repository, branch);
+            return await client.PutAsJsonAsync(GetUrl(url, token), new { sha = shaNewCommit});
         }
 
-        static T GetData<T>(IRestResponse<T> restResponse)
+        static async Task<GitCommit> CreateGitCommit(string token, string username, string repository, string shaLatestCommit, GitTree gitTree,
+                                         HttpClient client)
         {
-            return restResponse.Data;
+            var gitCommit = new GitCommit
+            {
+                message = "Update from Markpad",
+                parents = new[] {shaLatestCommit},
+                tree = gitTree.sha
+            };
+            var url = string.Format("/repos/{0}/{1}/git/commits", username, repository);
+            var respose = await client.PostAsJsonAsync(GetUrl(url, token), gitCommit);
+
+            var content = await respose.Content.ReadAsAsync<dynamic>();
+            gitCommit.sha = content.sha;
+            return gitCommit;
         }
 
-        static string GetContent(IRestResponse result)
+        async Task<GitTree> GetGitTree(string token, string username, string repository, GitTree tree, HttpClient client)
         {
-            var deserializeObject = JsonConvert.DeserializeObject<dynamic>(result.Content);
+            var url = string.Format("/repos/{0}/{1}/git/trees", username, repository);
+            var respose = await client.PostAsJsonAsync(GetUrl(url, token), tree);
+
+            return await respose.Content.ReadAsAsync<GitTree>();
+        }
+
+        static async Task<string> GetBaseTreeSha(string token, string username, string repository, string shaLatestCommit, HttpClient client)
+        {
+            var url = string.Format("/repos/{0}/{1}/git/commits/{2}", username, repository, shaLatestCommit);
+            var result = await client.GetAsync(GetUrl(url, token));
+            var baseTreeResult = await result.Content.ReadAsAsync<dynamic>();
+            return baseTreeResult.tree.sha;
+        }
+
+        static async Task<string> GetLatestCommitSha(string token, string username, string repository, string branch, HttpClient client)
+        {
+            var url = string.Format("/repos/{0}/{1}/git/refs/heads/{2}", username, repository, branch);
+            var response = await client.GetAsync(GetUrl(url, token));
+            var refResult = await response.Content.ReadAsAsync<dynamic>();
+            return refResult.@object.sha;
+        }
+
+        static async Task<string> GetContent(HttpResponseMessage result)
+        {
+            var deserializeObject = await result.Content.ReadAsAsync<dynamic>();
             if (deserializeObject.encoding == "utf-8")
                 return deserializeObject.content;
 
@@ -183,42 +182,11 @@ namespace MarkPad.DocumentSources.GitHub
             var returnValue = Encoding.UTF8.GetString(encodedDataAsBytes);
 
             return returnValue;
-
         }
-    }
 
-    public class GitCommit
-    {
-        public string[] parents { get; set; }
-        public string tree { get; set; }
-        public string message { get; set; }
-        public string sha { get; set; }
-    }
-
-    public class GitTree
-    {
-        public GitTree()
+        private static string GetUrl(string path, string accessToken)
         {
-            tree = new List<GitFile>();
+            return string.Format("{0}/{1}?access_token={2}", ApiBaseUrl.TrimEnd('/'), path.TrimStart('/'), accessToken);
         }
-
-        public List<GitFile> tree { get; set; }
-        public string sha { get; set; }
-        public string base_tree { get; set; }
-    }
-
-    public class GitFile
-    {
-        public int mode { get; set; }
-        public string url { get; set; }
-        public string path { get; set; }
-        public string type { get; set; }
-        public string sha { get; set; }
-        public string content { get; set; }
-    }
-
-    public class GitBranch
-    {
-        public string name { get; set; }
     }
 }
