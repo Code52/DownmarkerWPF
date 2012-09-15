@@ -16,8 +16,6 @@ namespace MarkPad.Document.Search
 
         private readonly ISearchSettings searchSettings;
         private SearchType nextSearchType = SearchType.Normal;
-        private TextSegment lastHit;
-        private int lastCaretPosition;
 
         public IEnumerable<TextSegment> SearchHits { get; set; }
 
@@ -112,74 +110,43 @@ namespace MarkPad.Document.Search
 
             TextSegment newFoundHit = null;
             var caretOffset = view.Editor.CaretOffset;
-            bool dontSkipPreviousMatch = false;
 
-            if (lastHit == null || (lastCaretPosition != caretOffset && nextSearchType != SearchType.Normal))
+            var startLookingFrom = caretOffset;
+            if (!view.Editor.TextArea.Selection.IsEmpty && (nextSearchType == SearchType.Normal || nextSearchType == SearchType.Prev))
             {
-                lastHit = (from hit in SearchHits
-                            let fromCaret = hit.StartOffset - caretOffset
-                            where fromCaret < 0
-                            orderby fromCaret descending
-                            select hit)
-                            .FirstOrDefault();
-
-                dontSkipPreviousMatch = true;
+                startLookingFrom = view.Editor.SelectionStart;
             }
 
             switch (nextSearchType)
             {
                 case SearchType.Normal:
+                case SearchType.Next:
 
-                    var startLookingFrom = view.Editor.TextArea.Selection.IsEmpty
-                                               ? caretOffset
-                                               : view.Editor.SelectionStart;
-
-                    // search from startLookingFrom to eof, start from bof if no matches
                     newFoundHit = (from hit in SearchHits
                                    let fromCaret = hit.StartOffset - startLookingFrom
                                    where fromCaret >= 0
                                    orderby fromCaret
                                    select hit)
-                                      .FirstOrDefault() ?? SearchHits.FirstOrDefault();
-                    break;
-
-                case SearchType.Next:
-
-                    if (lastHit == null) // caret was moved, no matches before caret position
-                    {
-                        newFoundHit = SearchHits.FirstOrDefault();
-                    }
-                    else
-                    {
-                        // try to find first match, starting from the position of the last match
-                        newFoundHit = SearchHits.SkipWhile(segment => !segment.EqualsByValue(lastHit)).Skip(1).FirstOrDefault();
-
-                        // start from the bof downwards if no hits from last->eof
-                        if (newFoundHit == null)
-                        {
-                            newFoundHit = SearchHits.FirstOrDefault(segment => !segment.EqualsByValue(lastHit));
-                        }
-                    }
+                              .FirstOrDefault() ?? SearchHits.FirstOrDefault();
                     break;
 
                 case SearchType.Prev:
 
-                    if (lastHit == null) // caret was moved, no matches before caret position
+                    TextSegment lastHit = (from hit in SearchHits
+                                           let fromCaret = hit.StartOffset - startLookingFrom
+                                           where fromCaret < 0
+                                           orderby fromCaret descending
+                                           select hit)
+                                            .FirstOrDefault();
+
+                    if (lastHit == SearchHits.LastOrDefault())
                     {
-                        newFoundHit = SearchHits.Reverse().FirstOrDefault();
+                        newFoundHit = lastHit;
                     }
                     else
                     {
-                        // try to find first match, starting from the position of the last match
-                        // use lastHit value if it was refreshed due to caret move
-                        var fromLastHit = SearchHits.Reverse().SkipWhile(segment => !segment.EqualsByValue(lastHit));
-                        newFoundHit = dontSkipPreviousMatch ? fromLastHit.FirstOrDefault() : fromLastHit.Skip(1).FirstOrDefault();
-
-                        // start from the eof upwards if no hits from last->bof
-                        if (newFoundHit == null)
-                        {
-                            newFoundHit = SearchHits.Reverse().FirstOrDefault(segment => !segment.EqualsByValue(lastHit));
-                        }
+                        newFoundHit = SearchHits.Reverse().SkipWhile(segment => !segment.EqualsByValue(lastHit)).FirstOrDefault()
+                                        ?? SearchHits.Reverse().FirstOrDefault(segment => !segment.EqualsByValue(lastHit));
                     }
                     break;
             }
@@ -189,19 +156,12 @@ namespace MarkPad.Document.Search
             {
                 newFoundHit.ExecuteSafely(hit =>
                 {
-                    // special case: don't select or update lastHit when CTRL+F pressed with an old, existing search, just highlight
+                    // special case: don't select when CTRL+F pressed with an old, existing search, just highlight
                     if (selectSearch)
                     {
                         view.Editor.Select(hit.StartOffset, hit.Length);
                         view.Editor.ScrollToLine(view.Editor.Document.GetLineByOffset(view.Editor.SelectionStart).LineNumber);
-                        lastHit = hit;
                     }
-                    else
-                    {
-                        lastHit = null;
-                    }
-
-                    lastCaretPosition = view.Editor.CaretOffset;
                 });
             }
 
