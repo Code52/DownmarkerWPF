@@ -114,7 +114,7 @@ namespace MarkPad.Document.Search
             var caretOffset = view.Editor.CaretOffset;
             bool dontSkipPreviousMatch = false;
 
-            if (lastHit == null || lastCaretPosition != caretOffset && nextSearchType != SearchType.Normal)
+            if (lastHit == null || (lastCaretPosition != caretOffset && nextSearchType != SearchType.Normal))
             {
                 lastHit = (from hit in SearchHits
                             let fromCaret = hit.StartOffset - caretOffset
@@ -200,6 +200,8 @@ namespace MarkPad.Document.Search
                     {
                         lastHit = null;
                     }
+
+                    lastCaretPosition = view.Editor.CaretOffset;
                 });
             }
 
@@ -211,7 +213,6 @@ namespace MarkPad.Document.Search
 
             // don't select text on background searches when visual lines change
             nextSearchType = SearchType.NoSelect;
-            lastCaretPosition = view.Editor.CaretOffset;
         }
 
         private void ClearSearchHits()

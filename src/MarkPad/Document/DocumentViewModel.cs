@@ -376,13 +376,7 @@ namespace MarkPad.Document
         public void Handle(SearchEvent message)
         {
             if (SearchProvider == null) return;
-
             SearchProvider.DoSearch(message.SearchType, message.SelectSearch);
-
-            if(message.SearchType == SearchType.Normal)
-            {
-                message.SearchSettings.SelectSearch = true;
-            }
         }
     }
 }

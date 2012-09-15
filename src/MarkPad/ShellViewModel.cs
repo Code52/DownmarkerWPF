@@ -371,7 +371,9 @@ namespace MarkPad
                 selectSearch = true;
             }
 
-            ActiveDocumentViewModel.Handle(new SearchEvent(SearchSettings, searchType, selectSearch));
+            ActiveDocumentViewModel.Handle(new SearchEvent(searchType, selectSearch));
+            
+            SearchSettings.SelectSearch = true;
 
             if (searchType == SearchType.Normal)
             {
