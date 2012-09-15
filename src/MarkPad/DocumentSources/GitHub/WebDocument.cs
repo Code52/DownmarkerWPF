@@ -1,31 +1,47 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
 using MarkPad.DocumentSources.MetaWeblog;
-using MarkPad.DocumentSources.MetaWeblog.Service;
+using MarkPad.DocumentSources.WebSources;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Plugins;
 using MarkPad.Settings.Models;
 using Ookii.Dialogs.Wpf;
 
-namespace MarkPad.DocumentSources
+namespace MarkPad.DocumentSources.GitHub
 {
-    public class WebMarkdownFile : MarkpadDocumentBase
+    public class WebDocument : MarkpadDocumentBase
     {
-        Post post;
-        readonly MetaWeblogSiteContext siteContext;
+        readonly BlogSetting blog;
+        readonly IWebDocumentService webDocumentService;
+        readonly WebSiteContext siteContext;
         readonly List<string> imagesToSaveOnPublish = new List<string>();
+        readonly List<string> categories = new List<string>();
 
-        public WebMarkdownFile(
-            BlogSetting blog, Post post, 
+        public WebDocument(
+            BlogSetting blog,
+            string id,
+            string title,
+            string content,
             IDocumentFactory documentFactory,
-            MetaWeblogSiteContext siteContext)
-            : base(post.title, post.description, blog.BlogName, documentFactory)
+            IWebDocumentService webDocumentService,
+            WebSiteContext siteContext) :
+            base(title, content, blog.BlogName, documentFactory)
         {
-            this.post = post;
+            Id = id;
+            this.blog = blog;
+            this.webDocumentService = webDocumentService;
             this.siteContext = siteContext;
+        }
+
+        public string Id { get; private set; }
+
+        public override async Task<IMarkpadDocument> Save()
+        {
+            Id = await webDocumentService.SaveDocument(blog, this);
+            return this;         
         }
 
         public override ISiteContext SiteContext
@@ -41,12 +57,16 @@ namespace MarkPad.DocumentSources
             get { return imagesToSaveOnPublish; }
         }
 
+        public List<string> Categories
+        {
+            get { return categories; }
+        }
+
         public override Task<IMarkpadDocument> Publish()
         {
             var save = new ButtonExtras(ButtonType.Yes, "Save", "Saves this modified post to your blog");
             var saveAs = new ButtonExtras(ButtonType.No, "Save As", "Saves this blog post as a local markdown file");
             var publish = new ButtonExtras(ButtonType.Retry, "Publish As", "Publishes this post to another blog, or as another post");
-
 
             var service = new DialogMessageService(null)
             {
@@ -54,7 +74,7 @@ namespace MarkPad.DocumentSources
                 Buttons = DialogMessageButtons.Yes | DialogMessageButtons.No | DialogMessageButtons.Retry | DialogMessageButtons.Cancel,
                 Title = "Markpad",
                 Text = string.Format("{0} has already been published, what do you want to do?", Title),
-                ButtonExtras = new[]{save, saveAs, publish}
+                ButtonExtras = new[] { save, saveAs, publish }
             };
 
             var result = service.Show();
@@ -73,7 +93,7 @@ namespace MarkPad.DocumentSources
 
         public override string SaveImage(Bitmap image)
         {
-            var imageFileName = SiteContextHelper.GetFileName(post.title, siteContext.WorkingDirectory);
+            var imageFileName = SiteContextHelper.GetFileName(Title, siteContext.WorkingDirectory);
 
             image.Save(Path.Combine(siteContext.WorkingDirectory, imageFileName), ImageFormat.Png);
 
@@ -89,17 +109,11 @@ namespace MarkPad.DocumentSources
 
         public override bool IsSameItem(ISiteItem siteItem)
         {
-            var webItem = siteItem as MetaWebLogItem;
+            var webDocumentItem = siteItem as WebDocumentItem;
+            if (webDocumentItem != null)
+                return webDocumentItem.Id == Id;
 
-            if (webItem == null)
-                return false;
-
-            return webItem.Post.postid.Equals(post.postid);
-        }
-
-        public override Task<IMarkpadDocument> Save()
-        {
-            return DocumentFactory.PublishDocument((string)post.postid, this);
+            return false;
         }
     }
 }

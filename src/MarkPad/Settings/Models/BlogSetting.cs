@@ -22,15 +22,22 @@ namespace MarkPad.Settings.Models
         public string Password { get; set; }
 
         [DataMember]
+        public string Token { get; set; }
+
+        [DataMember]
+        public WebSourceType WebSourceType { get; set; }
+
+        [DataMember]
         public string Language { get; set; }
 
         public bool IsWebAPICompleted
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(WebAPI) ||
-                    string.IsNullOrWhiteSpace(Username) ||
-                    string.IsNullOrWhiteSpace(Password))
+                if (string.IsNullOrWhiteSpace(WebAPI))
+                    return false;
+                if (WebSourceType == WebSourceType.MetaWebLog &&
+                    (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password)))
                 {
                     return false;
                 }
@@ -43,9 +50,7 @@ namespace MarkPad.Settings.Models
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(WebAPI) ||
-                    string.IsNullOrWhiteSpace(Username) ||
-                    string.IsNullOrWhiteSpace(Password) ||
+                if (!IsWebAPICompleted ||
                     string.IsNullOrWhiteSpace(BlogName) ||
                     string.IsNullOrWhiteSpace(Language) ||
                     string.IsNullOrWhiteSpace(BlogInfo.blogid))

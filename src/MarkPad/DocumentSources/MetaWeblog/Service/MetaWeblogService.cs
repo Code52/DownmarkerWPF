@@ -61,5 +61,10 @@ namespace MarkPad.DocumentSources.MetaWeblog.Service
         {
             return proxy.NewMediaObjectAsync(blog.BlogInfo.blogid, blog.Username, blog.Password, mediaObject);
         }
+
+        public Task EditPostAsync(string postid, BlogSetting blog, Post post, bool publish)
+        {
+            return proxy.EditPostAsync(postid, blog.Username, blog.Password, post, publish);
+        }
     }
 }

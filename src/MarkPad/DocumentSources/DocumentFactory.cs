@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Threading.Tasks;
 using Caliburn.Micro;
-using CookComputing.XmlRpc;
-using MarkPad.Document;
+using MarkPad.DocumentSources.FileSystem;
+using MarkPad.DocumentSources.GitHub;
 using MarkPad.DocumentSources.MetaWeblog;
-using MarkPad.DocumentSources.MetaWeblog.Service;
+using MarkPad.DocumentSources.WebSources;
 using MarkPad.Helpers;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Plugins;
@@ -19,29 +18,29 @@ namespace MarkPad.DocumentSources
     public class DocumentFactory : IDocumentFactory
     {
         readonly IDialogService dialogService;
-        readonly Func<string, IMetaWeblogService> getMetaWeblog;
         readonly IEventAggregator eventAggregator;
         readonly ISiteContextGenerator siteContextGenerator;
         readonly IBlogService blogService;
         readonly Func<OpenFromWebViewModel> openFromWebViewModelFactory;
         readonly IWindowManager windowManager;
+        readonly Lazy<IWebDocumentService> webDocumentService;
 
         public DocumentFactory(
             IDialogService dialogService, 
-            Func<string, IMetaWeblogService> getMetaWeblog, 
             IEventAggregator eventAggregator,
             ISiteContextGenerator siteContextGenerator, 
             IBlogService blogService, 
             Func<OpenFromWebViewModel> openFromWebViewModelFactory,
-            IWindowManager windowManager)
+            IWindowManager windowManager, 
+            Lazy<IWebDocumentService> webDocumentService)
         {
             this.dialogService = dialogService;
-            this.getMetaWeblog = getMetaWeblog;
             this.eventAggregator = eventAggregator;
             this.siteContextGenerator = siteContextGenerator;
             this.blogService = blogService;
             this.openFromWebViewModelFactory = openFromWebViewModelFactory;
             this.windowManager = windowManager;
+            this.webDocumentService = webDocumentService;
         }
 
         public IMarkpadDocument NewDocument()
@@ -96,6 +95,12 @@ namespace MarkPad.DocumentSources
                 });
         }
 
+        /// <summary>
+        /// Publishes any document
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <param name="document"></param>
+        /// <returns></returns>
         public Task<IMarkpadDocument> PublishDocument(string postId, IMarkpadDocument document)
         {
             var blogs = blogService.GetBlogs();
@@ -108,30 +113,32 @@ namespace MarkPad.DocumentSources
                     return TaskEx.FromResult<IMarkpadDocument>(null);
             }
 
-            var post = new Post();
-            var pd = new Details { Title = document.Title, Categories = post.categories };
+            var categories = new List<string>();
+            var webDocument = document as WebDocument;
+            if (webDocument != null)
+                categories = webDocument.Categories;
+            var pd = new Details { Title = document.Title, Categories = categories.ToArray()};
             var detailsResult = windowManager.ShowDialog(new PublishDetailsViewModel(pd, blogs));
             if (detailsResult != true)
                 return TaskEx.FromResult<IMarkpadDocument>(null);
 
-            return TaskEx.Run(() =>
-            {
-                var webLogItem = document as WebMarkdownFile;
-                var imagesToUpload = webLogItem == null ? new List<string>() : webLogItem.ImagesToSaveOnPublish;
-                return CreateOrUpdateMetaWebLogPost(postId, pd.Title, pd.Categories, document.MarkdownContent, imagesToUpload, pd.Blog);
-            });
+            var newDocument = new WebDocument(pd.Blog, null, pd.Title, document.MarkdownContent, this,
+                                              webDocumentService.Value,
+                                              siteContextGenerator.GetWebContext(pd.Blog));
+
+            return newDocument.Save();
         }
 
-        public Task<IMarkpadDocument> OpenFromWeb()
+        public async Task<IMarkpadDocument> OpenFromWeb()
         {
             var blogs = blogService.GetBlogs();
             if (blogs == null || blogs.Count == 0)
             {
                 if (!blogService.ConfigureNewBlog("Open from web"))
-                    return TaskEx.FromResult<IMarkpadDocument>(null);
+                    return null;
                 blogs = blogService.GetBlogs();
                 if (blogs == null || blogs.Count == 0)
-                    return TaskEx.FromResult<IMarkpadDocument>(null);
+                    return null;
             }
 
             var openFromWeb = openFromWebViewModelFactory();
@@ -139,18 +146,27 @@ namespace MarkPad.DocumentSources
 
             var result = windowManager.ShowDialog(openFromWeb);
             if (result != true)
-                return TaskEx.FromResult<IMarkpadDocument>(null);
+                return null;
 
-            var metaWeblogSiteContext = new MetaWeblogSiteContext(openFromWeb.SelectedBlog, getMetaWeblog, eventAggregator);
-            var webMarkdownFile = new WebMarkdownFile(openFromWeb.SelectedBlog, openFromWeb.SelectedPost, this, metaWeblogSiteContext);
-            return TaskEx.FromResult<IMarkpadDocument>(webMarkdownFile);
+            var selectedPost = openFromWeb.SelectedPost;
+            var postid = (string) selectedPost.postid;
+            var title = selectedPost.title;
+            var blog = openFromWeb.SelectedBlog;
+            var documentService = webDocumentService.Value;
+            var content = await documentService.GetDocumentContent(blog, postid);
+            var webSiteContext = siteContextGenerator.GetWebContext(blog);
+            return new WebDocument(blog, postid, title, content, this, documentService, webSiteContext);
         }
 
-        public Task<IMarkpadDocument> OpenBlogPost(BlogSetting blog, Post post)
+        public async Task<IMarkpadDocument> OpenBlogPost(BlogSetting blog, string id, string name)
         {
-            var metaWeblogSiteContext = new MetaWeblogSiteContext(blog, getMetaWeblog, eventAggregator);
-            var webMarkdownFile = new WebMarkdownFile(blog, post, this, metaWeblogSiteContext);
-            return TaskEx.FromResult<IMarkpadDocument>(webMarkdownFile);
+            var metaWeblogSiteContext = siteContextGenerator.GetWebContext(blog);
+
+            var content = await webDocumentService.Value.GetDocumentContent(blog, id);
+
+            var webMarkdownFile = new WebDocument(blog, id, name, content, this, 
+                webDocumentService.Value, metaWeblogSiteContext);
+            return webMarkdownFile;
         }
 
         public Task<IMarkpadDocument> SaveDocumentAs(IMarkpadDocument document)
@@ -161,78 +177,6 @@ namespace MarkPad.DocumentSources
                 return TaskEx.FromResult(document);
 
             return NewMarkdownFile(path, document.MarkdownContent);
-        }
-
-        IMarkpadDocument CreateOrUpdateMetaWebLogPost(
-            string postid, string postTitle, 
-            string[] categories, string content, 
-            List<string> imagesToUpload, 
-            BlogSetting blog)
-        {
-            var proxy = getMetaWeblog(blog.WebAPI);
-
-            if (imagesToUpload.Count > 0)
-            {
-                var metaWebLog = getMetaWeblog(blog.WebAPI);
-
-                foreach (var imageToUpload in imagesToUpload)
-                {
-                    var response = metaWebLog.NewMediaObject(blog, new MediaObject
-                    {
-                        name = imageToUpload,
-                        type = "image/png",
-                        bits = File.ReadAllBytes(imageToUpload)
-                    });
-
-                    content = content.Replace("/" + imageToUpload, response.url);
-                }
-            }
-
-
-            var newpost = new Post();
-            try
-            {
-                if (string.IsNullOrWhiteSpace(postid))
-                {
-                    var permalink = postTitle;
-
-                    newpost = new Post
-                    {
-                        permalink = permalink,
-                        title = postTitle,
-                        dateCreated = DateTime.Now,
-                        description = blog.Language == "HTML" ? DocumentParser.GetBodyContents(content) : content,
-                        categories = categories,
-                        format = blog.Language
-                    };
-                    newpost.postid = proxy.NewPost(blog, newpost, true);
-                }
-                else
-                {
-                    newpost = proxy.GetPost(postid, blog);
-                    newpost.title = postTitle;
-                    newpost.description = blog.Language == "HTML" ? DocumentParser.GetBodyContents(content) : content;
-                    newpost.categories = categories;
-                    newpost.format = blog.Language;
-
-                    proxy.EditPost(postid, blog, newpost, true);
-                }
-            }
-            catch (WebException ex)
-            {
-                dialogService.ShowError("Error Publishing", ex.Message, "");
-            }
-            catch (XmlRpcException ex)
-            {
-                dialogService.ShowError("Error Publishing", ex.Message, "");
-            }
-            catch (XmlRpcFaultException ex)
-            {
-                dialogService.ShowError("Error Publishing", ex.Message, "");
-            }
-
-            var metaWeblogSiteContext = new MetaWeblogSiteContext(blog, getMetaWeblog, eventAggregator);
-            return new WebMarkdownFile(blog, newpost, this, metaWeblogSiteContext);
         }
     }
 }
