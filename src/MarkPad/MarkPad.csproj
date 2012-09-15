@@ -217,6 +217,7 @@
     <Compile Include="DocumentSources\MetaWeblog\Service\UserInfo.cs" />
     <Compile Include="DocumentSources\SiteContextGenerator.cs" />
     <Compile Include="DocumentSources\WebMarkdownFile.cs" />
+    <Compile Include="Document\Commands\ShellCommands.cs" />
     <Compile Include="Document\Controls\FloatingToolBar.cs" />
     <Compile Include="Document\Controls\HyperlinkEditorView.xaml.cs">
       <DependentUpon>HyperlinkEditorView.xaml</DependentUpon>
@@ -240,6 +241,13 @@
     <Compile Include="Document\Events\OpenFromWebEvent.cs" />
     <Compile Include="Document\MarkPadHyperlink.cs" />
     <Compile Include="Document\EditorBehaviours\OvertypeMode.cs" />
+    <Compile Include="Document\Search\Events\SearchEvent.cs" />
+    <Compile Include="Document\Search\ISearchProvider.cs" />
+    <Compile Include="Document\Search\ISearchSettings.cs" />
+    <Compile Include="Document\Search\SearchBackgroundRenderer.cs" />
+    <Compile Include="Document\Search\SearchProvider.cs" />
+    <Compile Include="Document\Search\SearchSettings.cs" />
+    <Compile Include="Document\Search\SearchType.cs" />
     <Compile Include="Document\SpellCheck\ISpellCheckProvider.cs" />
     <Compile Include="Document\SpellCheck\ISpellingService.cs" />
     <Compile Include="Document\SpellCheck\SpellingLanguages.cs" />
