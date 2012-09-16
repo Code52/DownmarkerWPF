@@ -507,9 +507,33 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </Button>
-                    <ToggleButton cm:Message.Attach="Search" IsChecked="{Binding SearchSettings.Regex, Mode=TwoWay}" Content=".*" Width="30" ToolTip="Regular expressions" />
-                    <ToggleButton cm:Message.Attach="Search" IsChecked="{Binding SearchSettings.CaseSensitive, Mode=TwoWay}" Content="A" Width="30" ToolTip="Case sensitive" />
-                    <ToggleButton cm:Message.Attach="Search" IsChecked="{Binding SearchSettings.WholeWord, Mode=TwoWay}" Content="&quot;&quot;" Width="30" ToolTip="Whole word" />
+                    <ToggleButton IsChecked="{Binding SearchSettings.Regex, Mode=TwoWay}" Content=".*" Width="30" ToolTip="Regular expressions">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <cm:ActionMessage MethodName="Search">
+                                    <cm:Parameter Value="{x:Static Search:SearchType.Normal}" />
+                                </cm:ActionMessage>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ToggleButton>
+                    <ToggleButton IsChecked="{Binding SearchSettings.CaseSensitive, Mode=TwoWay}" Content="A" Width="30" ToolTip="Case sensitive">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <cm:ActionMessage MethodName="Search">
+                                    <cm:Parameter Value="{x:Static Search:SearchType.Normal}" />
+                                </cm:ActionMessage>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ToggleButton>
+                    <ToggleButton IsChecked="{Binding SearchSettings.WholeWord, Mode=TwoWay}" Content="&quot;&quot;" Width="30" ToolTip="Whole word">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <cm:ActionMessage MethodName="Search">
+                                    <cm:Parameter Value="{x:Static Search:SearchType.Normal}" />
+                                </cm:ActionMessage>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ToggleButton>
                     <TextBox Name="searchTextBox"  Text="{Binding SearchSettings.CurrentSearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,0,0" VerticalContentAlignment="Center">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="TextChanged">
