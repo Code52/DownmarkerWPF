@@ -4,6 +4,7 @@
     {
         public SearchSettings()
         {
+            CurrentSearchTerm = string.Empty;
         }
 
         public string CurrentSearchTerm { get; set; }

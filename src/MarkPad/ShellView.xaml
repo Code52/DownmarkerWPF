@@ -534,14 +534,9 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ToggleButton>
-                    <TextBox Name="searchTextBox"  Text="{Binding SearchSettings.CurrentSearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,0,0" VerticalContentAlignment="Center">
+                    <TextBox Name="searchTextBox" Text="{Binding SearchSettings.CurrentSearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,0,0" VerticalContentAlignment="Center">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="TextChanged">
-                                <cm:ActionMessage MethodName="Search">
-                                    <cm:Parameter Value="{x:Static Search:SearchType.Normal}" />
-                                </cm:ActionMessage>
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="IsVisibleChanged">
                                 <cm:ActionMessage MethodName="Search">
                                     <cm:Parameter Value="{x:Static Search:SearchType.Normal}" />
                                 </cm:ActionMessage>
@@ -561,6 +556,36 @@
                            Visibility="{Binding MDI.ActiveItem, Converter={StaticResource NullToVisibilityConverter}}">
                     <Run Text="{Binding MDI.ActiveItem.WordCount, Mode=OneWay}" /> WORDS
                 </TextBlock>
+
+                <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center">
+                    <StackPanel.Style>
+                        <Style TargetType="{x:Type StackPanel}">
+                            <Setter Property="Visibility" Value="{Binding MDI.ActiveItem, Converter={StaticResource NullToVisibilityConverter}}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SearchingWithBar}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SearchSettings.CurrentSearchTerm}" Value="">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <TextBlock Foreground="White" Text="{Binding MDI.ActiveItem.SearchProvider.CurrentHitIndex, Mode=OneWay, StringFormat='{}{0} OF '}">
+                        <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding MDI.ActiveItem.SearchProvider.CurrentHitIndex}" Value="0">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <TextBlock Foreground="White" Text="{Binding MDI.ActiveItem.SearchProvider.NumberOfHits, Mode=OneWay, StringFormat='{}{0} MATCHES'}" />
+                </StackPanel>
             </StackPanel>
             
             <Slider Maximum="{Binding MDI.ActiveItem.MaxZoom}"

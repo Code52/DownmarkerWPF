@@ -1,4 +1,5 @@
-﻿using ICSharpCode.AvalonEdit.Document;
+﻿using System.ComponentModel;
+using ICSharpCode.AvalonEdit.Document;
 using MarkPad.Document.Events;
 using System;
 using System.Collections.Generic;
@@ -13,8 +14,11 @@ namespace MarkPad.Document.Search
 
         void Disconnect();
 
-        IEnumerable<TextSegment> SearchHits { get; set; }
+        IEnumerable<TextSegment> SearchHits { get; }
 
         void DoSearch(SearchType searchType, bool selectSearch = true);
+
+        int NumberOfHits { get; }
+        int CurrentHitIndex { get; }
     }
 }

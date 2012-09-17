@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
 using MarkPad.Document.Events;
@@ -9,7 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace MarkPad.Document.Search
 {
-    public class SearchProvider : ISearchProvider
+    public class SearchProvider : ISearchProvider, INotifyPropertyChanged
     {
         private readonly SearchBackgroundRenderer searchRenderer;
         private DocumentView view;
@@ -17,7 +18,11 @@ namespace MarkPad.Document.Search
         private readonly ISearchSettings searchSettings;
         private SearchType nextSearchType = SearchType.Normal;
 
-        public IEnumerable<TextSegment> SearchHits { get; set; }
+        public IEnumerable<TextSegment> SearchHits { get; private set; }
+        public int NumberOfHits { get; private set; }
+        public int CurrentHitIndex { get; private set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public SearchProvider(ISearchSettings searchSettings)
         {
@@ -51,9 +56,7 @@ namespace MarkPad.Document.Search
         public void DoSearch(SearchType searchType, bool selectSearch = true)
         {
             if (view == null) return;
-
             nextSearchType = searchType;
-
             DoSearchInternal(selectSearch);
         }
 
@@ -102,8 +105,7 @@ namespace MarkPad.Document.Search
                         searchRenderer.SearchHitsSegments.Add(textSegment);
                     }
                 }
-                // catch malformed regex
-                catch (ArgumentException)
+                catch (ArgumentException) // catch malformed regex
                 {
                 }
             }
@@ -165,13 +167,25 @@ namespace MarkPad.Document.Search
                 });
             }
 
+            NumberOfHits = searchRenderer.SearchHitsSegments.Count;
+
+            // get the index of the current match
+            if (newFoundHit != null)
+            {
+                CurrentHitIndex = SearchHits.Select((v, i) => new {hit = v, index = i}).First(arg => arg.hit.Equals(newFoundHit)).index + 1;
+            }
+            else if (!searchSettings.SearchingWithBar || !searchRenderer.SearchHitsSegments.Any())
+            {
+                CurrentHitIndex = 0;
+            }
+
             // don't highlight when using F3 or SHIFT+F3 without the search bar
             if (!searchSettings.SearchingWithBar)
             {
                 searchRenderer.SearchHitsSegments.Clear();
             }
 
-            // don't select text on background searches when visual lines change
+            // don't select text on background searches, when visual lines change
             nextSearchType = SearchType.NoSelect;
         }
 

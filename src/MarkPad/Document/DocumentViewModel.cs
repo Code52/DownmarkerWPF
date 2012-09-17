@@ -371,7 +371,7 @@ namespace MarkPad.Document
                 View.siteView.UndoRename();
         }
 
-        private ISearchProvider SearchProvider { get; set; }
+        public ISearchProvider SearchProvider { get; private set; }
 
         public void Handle(SearchEvent message)
         {
