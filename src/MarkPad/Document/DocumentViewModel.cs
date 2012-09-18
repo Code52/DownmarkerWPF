@@ -20,7 +20,7 @@ using Action = System.Action;
 
 namespace MarkPad.Document
 {
-    public class DocumentViewModel : Screen, IHandle<SettingsChangedEvent>, IHandle<SearchEvent>
+    public class DocumentViewModel : Screen, IHandle<SettingsChangedEvent>
     {
         static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
         const double ZoomDelta = 0.1;
@@ -371,11 +371,5 @@ namespace MarkPad.Document
         }
 
         public ISearchProvider SearchProvider { get; private set; }
-
-        public void Handle(SearchEvent message)
-        {
-            if (SearchProvider == null) return;
-            SearchProvider.DoSearch(message.SearchType, message.SelectSearch);
-        }
     }
 }

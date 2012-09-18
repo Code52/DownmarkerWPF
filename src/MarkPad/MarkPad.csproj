@@ -244,7 +244,6 @@
     <Compile Include="Document\Search\ISearchProvider.cs" />
     <Compile Include="Document\Search\ISearchSettings.cs" />
     <Compile Include="Document\Search\SearchBackgroundRenderer.cs" />
-    <Compile Include="Document\Search\SearchEvent.cs" />
     <Compile Include="Document\Search\SearchProvider.cs" />
     <Compile Include="Document\Search\SearchSettings.cs" />
     <Compile Include="Document\Search\SearchType.cs" />
