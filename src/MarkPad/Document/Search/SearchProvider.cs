@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
-using MarkPad.Document.Events;
 using MarkPad.Framework;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ namespace MarkPad.Document.Search
         private DocumentView view;
 
         private readonly ISearchSettings searchSettings;
-        private SearchType nextSearchType = SearchType.Normal;
+        int lastCaretPosition = -1;
 
         public IEnumerable<TextSegment> SearchHits { get; private set; }
         public int NumberOfHits { get; private set; }
@@ -36,6 +35,7 @@ namespace MarkPad.Document.Search
             view = documentView;
             view.TextView.BackgroundRenderers.Add(searchRenderer);
             view.TextView.VisualLinesChanged += TextViewVisualLinesChanged;
+            view.Editor.TextArea.SelectionChanged += TextAreaOnSelectionChanged;
             DoSearch(SearchType.Normal, false);
         }
 
@@ -45,27 +45,35 @@ namespace MarkPad.Document.Search
             ClearSearchHits();
             view.TextView.BackgroundRenderers.Remove(searchRenderer);
             view.TextView.VisualLinesChanged -= TextViewVisualLinesChanged;
+            view.Editor.TextArea.SelectionChanged -= TextAreaOnSelectionChanged;
             view = null;
         }
 
         private void TextViewVisualLinesChanged(object sender, EventArgs e)
         {
-            DoSearchInternal();
+            DoSearchInternal(SearchType.NoSelect, false);
+        }
+
+        void TextAreaOnSelectionChanged(object sender, EventArgs eventArgs)
+        {
+            if (view.Editor.CaretOffset != lastCaretPosition || view.Editor.TextArea.Selection.IsEmpty)
+            {
+                CurrentHitIndex = 0;
+            }
         }
 
         public void DoSearch(SearchType searchType, bool selectSearch = true)
         {
             if (view == null) return;
-            nextSearchType = searchType;
-            DoSearchInternal(selectSearch);
+            DoSearchInternal(searchType, selectSearch);
         }
 
-        private void DoSearchInternal(bool selectSearch = true)
+        private void DoSearchInternal(SearchType searchType, bool selectSearch)
         {
             if (view == null) return;
             if (!view.TextView.VisualLinesValid) return;
 
-            searchRenderer.SearchHitsSegments.Clear();
+            ClearSearchHits();
             if (searchSettings == null) return;
             if (string.IsNullOrEmpty(searchSettings.CurrentSearchTerm)) return;
 
@@ -105,29 +113,27 @@ namespace MarkPad.Document.Search
                         searchRenderer.SearchHitsSegments.Add(textSegment);
                     }
                 }
-                catch (ArgumentException) // catch malformed regex
-                {
-                }
+                catch (ArgumentException) {} // catch malformed regex
             }
 
             TextSegment newFoundHit = null;
             var caretOffset = view.Editor.CaretOffset;
 
             var startLookingFrom = caretOffset;
-            if (!view.Editor.TextArea.Selection.IsEmpty && (nextSearchType == SearchType.Normal || nextSearchType == SearchType.Prev))
+            if (!view.Editor.TextArea.Selection.IsEmpty && (searchType == SearchType.Normal || searchType == SearchType.Prev))
             {
                 startLookingFrom = view.Editor.SelectionStart;
             }
 
-            switch (nextSearchType)
+            switch (searchType)
             {
                 case SearchType.Normal:
                 case SearchType.Next:
 
                     newFoundHit = (from hit in SearchHits
-                                   let fromCaret = hit.StartOffset - startLookingFrom
-                                   where fromCaret >= 0
-                                   orderby fromCaret
+                                   let hitDistance = hit.StartOffset - startLookingFrom
+                                   where hitDistance >= 0
+                                   orderby hitDistance
                                    select hit)
                               .FirstOrDefault() ?? SearchHits.FirstOrDefault();
                     break;
@@ -135,9 +141,9 @@ namespace MarkPad.Document.Search
                 case SearchType.Prev:
 
                     TextSegment lastHit = (from hit in SearchHits
-                                           let fromCaret = hit.StartOffset - startLookingFrom
-                                           where fromCaret < 0
-                                           orderby fromCaret descending
+                                           let hitDistance = hit.StartOffset - startLookingFrom
+                                           where hitDistance < 0
+                                           orderby hitDistance descending
                                            select hit)
                                             .FirstOrDefault();
 
@@ -154,7 +160,7 @@ namespace MarkPad.Document.Search
             }
 
             // logic for explicit searches
-            if (nextSearchType != SearchType.NoSelect)
+            if (searchType != SearchType.NoSelect)
             {
                 newFoundHit.ExecuteSafely(hit =>
                 {
@@ -164,17 +170,23 @@ namespace MarkPad.Document.Search
                         view.Editor.Select(hit.StartOffset, hit.Length);
                         view.Editor.ScrollToLine(view.Editor.Document.GetLineByOffset(view.Editor.SelectionStart).LineNumber);
                     }
+
+                    lastCaretPosition = view.Editor.CaretOffset;
                 });
             }
 
             NumberOfHits = searchRenderer.SearchHitsSegments.Count;
 
             // get the index of the current match
+            // newFoundHit will be null if there are matches, but we are in a SearchType.NoSelect search
             if (newFoundHit != null)
             {
                 CurrentHitIndex = SearchHits.Select((v, i) => new {hit = v, index = i}).First(arg => arg.hit.Equals(newFoundHit)).index + 1;
             }
-            else if (!searchSettings.SearchingWithBar || !searchRenderer.SearchHitsSegments.Any())
+
+            // don't show index of a match if we're searching without a bar, if there are no matches, or if we're in a no-select search and there is no preselected old match in the editor
+            var selectedText = new TextSegment() { StartOffset = view.Editor.SelectionStart, Length = view.Editor.SelectionLength };
+            if (!searchSettings.SearchingWithBar || !searchRenderer.SearchHitsSegments.Any() || (!selectSearch && newFoundHit != null && !newFoundHit.EqualsByValue(selectedText)))
             {
                 CurrentHitIndex = 0;
             }
@@ -182,11 +194,8 @@ namespace MarkPad.Document.Search
             // don't highlight when using F3 or SHIFT+F3 without the search bar
             if (!searchSettings.SearchingWithBar)
             {
-                searchRenderer.SearchHitsSegments.Clear();
+                ClearSearchHits();
             }
-
-            // don't select text on background searches, when visual lines change
-            nextSearchType = SearchType.NoSelect;
         }
 
         private void ClearSearchHits()

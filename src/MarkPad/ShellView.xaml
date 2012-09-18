@@ -541,6 +541,14 @@
                                     <cm:Parameter Value="{x:Static Search:SearchType.Normal}" />
                                 </cm:ActionMessage>
                             </i:EventTrigger>
+                            <s:InputBindingTrigger>
+                                <s:InputBindingTrigger.InputBinding>
+                                    <KeyBinding Key="Enter" />
+                                </s:InputBindingTrigger.InputBinding>
+                                <cm:ActionMessage MethodName="Search">
+                                    <cm:Parameter Value="{x:Static Search:SearchType.Next}" />
+                                </cm:ActionMessage>
+                            </s:InputBindingTrigger>
                         </i:Interaction.Triggers>
                     </TextBox>
                 </DockPanel>
