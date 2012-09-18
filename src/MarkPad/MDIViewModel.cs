@@ -9,7 +9,7 @@ namespace MarkPad
 {
     internal class MdiViewModel : Conductor<IScreen>.Collection.OneActive
     {
-        public HtmlPreview HtmlPreview { get; private set; }
+        public HtmlPreview HtmlPreview;
 
         public void Open(IScreen screen)
         {
@@ -36,7 +36,7 @@ namespace MarkPad
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                 };
                 HtmlPreview.SetBinding(HtmlPreview.HtmlProperty, new Binding("CurrentDocument.Render"));
-                HtmlPreview.SetBinding(HtmlPreview.FileNameProperty, new Binding("HtmlPreview.FileName"));
+                HtmlPreview.SetBinding(HtmlPreview.FileNameProperty, new Binding("CurrentDocument.MarkpadDocument.Title"));
                 HtmlPreview.SetBinding(HtmlPreview.BrowserFontSizeProperty, new Binding("CurrentDocument.FontSize"));
                 HtmlPreview.SetBinding(HtmlPreview.ScrollPercentageProperty, new Binding("CurrentDocument.View.ScrollPercentage"));
 
