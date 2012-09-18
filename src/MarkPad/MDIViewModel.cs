@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.PreviewControl;
@@ -46,5 +47,13 @@ namespace MarkPad
         }
 
         public DocumentViewModel CurrentDocument { get; private set; }
+
+        public void TitleMouseDown(IScreen activeItem, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Pressed)
+            {
+                DeactivateItem(activeItem, true);
+            }
+        }
     }
 }

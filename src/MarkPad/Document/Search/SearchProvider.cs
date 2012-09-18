@@ -21,7 +21,9 @@ namespace MarkPad.Document.Search
         public int NumberOfHits { get; private set; }
         public int CurrentHitIndex { get; private set; }
 
+#pragma warning disable 67
         public event PropertyChangedEventHandler PropertyChanged;
+#pragma warning restore 67
 
         public SearchProvider(ISearchSettings searchSettings)
         {
@@ -179,7 +181,7 @@ namespace MarkPad.Document.Search
             }
 
             // don't show index of a match if we're searching without a bar, if there are no matches, or if we're in a no-select search and there is no preselected old match in the editor
-            var selectedText = new TextSegment() { StartOffset = view.Editor.SelectionStart, Length = view.Editor.SelectionLength };
+            var selectedText = new TextSegment { StartOffset = view.Editor.SelectionStart, Length = view.Editor.SelectionLength };
             if (!searchSettings.SearchingWithBar || !searchRenderer.SearchHitsSegments.Any() || (!selectSearch && newFoundHit != null && !newFoundHit.EqualsByValue(selectedText)))
             {
                 CurrentHitIndex = 0;
