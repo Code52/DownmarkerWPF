@@ -8,7 +8,6 @@ using ICSharpCode.AvalonEdit.Document;
 using MarkPad.Document.Controls;
 using MarkPad.Document.Events;
 using MarkPad.Document.Search;
-using MarkPad.Document.Search.Events;
 using MarkPad.Document.SpellCheck;
 using MarkPad.Events;
 using MarkPad.Infrastructure.DialogService;

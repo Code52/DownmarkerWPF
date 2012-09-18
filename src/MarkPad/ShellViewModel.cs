@@ -10,7 +10,6 @@ using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.Document.Events;
 using MarkPad.Document.Search;
-using MarkPad.Document.Search.Events;
 using MarkPad.DocumentSources;
 using MarkPad.DocumentSources.FileSystem;
 using MarkPad.DocumentSources.MetaWeblog;
@@ -337,7 +336,7 @@ namespace MarkPad
                     SearchSettings.CurrentSearchTerm = string.Empty;
                     if (ActiveDocumentViewModel != null)
                     {
-                        ActiveDocumentViewModel.View.markdownEditor.Editor.Focus();
+                        ActiveDocumentViewModel.View.Editor.Focus();
                     }
                 }
                 if (!_searching && value)

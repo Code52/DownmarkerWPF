@@ -1,4 +1,4 @@
-namespace MarkPad.Document.Search.Events
+namespace MarkPad.Document.Search
 {
     public class SearchEvent
     {

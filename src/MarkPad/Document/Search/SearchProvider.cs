@@ -51,7 +51,7 @@ namespace MarkPad.Document.Search
 
         private void TextViewVisualLinesChanged(object sender, EventArgs e)
         {
-            DoSearchInternal(SearchType.NoSelect, false);
+            DoSearch(SearchType.NoSelect, false);
         }
 
         void TextAreaOnSelectionChanged(object sender, EventArgs eventArgs)
@@ -62,13 +62,7 @@ namespace MarkPad.Document.Search
             }
         }
 
-        public void DoSearch(SearchType searchType, bool selectSearch = true)
-        {
-            if (view == null) return;
-            DoSearchInternal(searchType, selectSearch);
-        }
-
-        private void DoSearchInternal(SearchType searchType, bool selectSearch)
+        public void DoSearch(SearchType searchType, bool selectSearch)
         {
             if (view == null) return;
             if (!view.TextView.VisualLinesValid) return;

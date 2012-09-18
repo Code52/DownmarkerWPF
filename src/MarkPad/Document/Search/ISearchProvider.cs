@@ -16,7 +16,7 @@ namespace MarkPad.Document.Search
 
         IEnumerable<TextSegment> SearchHits { get; }
 
-        void DoSearch(SearchType searchType, bool selectSearch = true);
+        void DoSearch(SearchType searchType, bool selectSearch);
 
         int NumberOfHits { get; }
         int CurrentHitIndex { get; }
