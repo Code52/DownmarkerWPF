@@ -555,8 +555,21 @@
             </Border>
         </Grid>
 
-        <Grid Background="#FFbe0606" Grid.Row="3">
+        <Grid Grid.Row="3">
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Setter Property="Background" Value="#FFbe0606" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding MDI.ActiveItem.Overtype}" Value="True">
+                            <Setter Property="Background" Value="MediumBlue" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
             <StackPanel Orientation="Horizontal">
+                <TextBlock Text="OVERTYPE" Visibility="{Binding MDI.ActiveItem.Overtype, FallbackValue={x:Static Visibility.Collapsed}, Converter={StaticResource BooleanToVisibilityConverter}}"
+                           Foreground="White" VerticalAlignment="Center" Margin="20 0 0 0" />
+
                 <TextBlock Text="{Binding WorkingText,StringFormat='{}{0}...'}" Visibility="{Binding IsWorking, Converter={StaticResource BooleanToVisibilityConverter}}"
                            Foreground="White" VerticalAlignment="Center" Margin="20 0 0 0" />
 

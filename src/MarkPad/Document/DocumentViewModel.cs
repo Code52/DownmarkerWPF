@@ -371,5 +371,7 @@ namespace MarkPad.Document
         }
 
         public ISearchProvider SearchProvider { get; private set; }
+
+        public bool Overtype { get; set; }
     }
 }
