@@ -326,7 +326,7 @@ namespace MarkPad
         public bool SearchingWithBar
         {
             get { return _searching; }
-            private set
+            set
             {
                 var selectSearch = true;
 
