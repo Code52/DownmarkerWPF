@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Settings.Models;
+using Newtonsoft.Json;
 
 namespace MarkPad.DocumentSources.GitHub
 {
@@ -43,6 +45,9 @@ namespace MarkPad.DocumentSources.GitHub
             var httpClient = new HttpClient();
             var url = string.Format("/repos/{0}/{1}/branches", user, repositoryName);
             var respose = await httpClient.GetAsync(GetUrl(url, token));
+            if (respose.StatusCode != HttpStatusCode.OK)
+                throw new Exception(string.Format("Unable to fetch branches: {0}", respose.ReasonPhrase));
+
             var result = await respose.Content.ReadAsAsync<List<GitBranch>>();
 
             return result.Select(r => new BlogInfo { blogid = r.name, blogName = r.name }).ToArray();

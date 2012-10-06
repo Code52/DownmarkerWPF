@@ -48,7 +48,7 @@ namespace MarkPad.DocumentSources.WebSources
                             }
                             foreach (var otherPosts in t.Result)
                             {
-                                var postid = (string) otherPosts.postid;
+                                var postid = otherPosts.postid.ToString();
                                 var webDocumentItem = new WebDocumentItem(webDocumentService, eventAggregator, postid, otherPosts.title, Blog);
                                 Items.Add(webDocumentItem);
                             }

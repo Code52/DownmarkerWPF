@@ -187,7 +187,7 @@ namespace MarkPad.DocumentSources.WebSources
                 dialogService.ShowError("Error Publishing", ex.Message, "");
             }
 
-            return (string)newpost.postid;
+            return newpost.postid.ToString();
         }
 
         public static string GetSha1(string value)
