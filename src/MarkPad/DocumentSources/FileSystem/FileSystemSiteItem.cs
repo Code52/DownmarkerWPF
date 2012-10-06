@@ -79,6 +79,16 @@ namespace MarkPad.DocumentSources.FileSystem
 
         public void Handle(FileCreatedEvent message)
         {
+            //ignore changes to files in .git repository
+            //seems to happen if you are running github 4 windows and 
+            //looking at a repository while you edit a file from 
+            //that repository in markpad
+            if(message.FullPath.Contains(".git\\") ||
+               message.FullPath.Contains(".git/")) 
+            {
+                return;
+            }
+
             if (Path == System.IO.Path.GetDirectoryName(message.FullPath))
             {
                 var newItem = new FileSystemSiteItem(EventAggregator, fileSystem, message.FullPath);
