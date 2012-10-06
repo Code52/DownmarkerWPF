@@ -163,6 +163,9 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="UITextBlock">
+      <HintPath>..\packages\UITextBlock.1.0.0.0\lib\net40\UITextBlock.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -286,8 +289,6 @@
     <Compile Include="Infrastructure\Abstractions\TaskSchedulerFactory.cs" />
     <Compile Include="Infrastructure\Abstractions\WebRequestFactory.cs" />
     <Compile Include="Infrastructure\AppBootstrapper.cs" />
-    <Compile Include="Infrastructure\Controls\UITextBlock.cs" />
-    <Compile Include="Infrastructure\Controls\UITextBlockAutomationPeer.cs" />
     <Compile Include="Infrastructure\DelegateDisposable.cs" />
     <Compile Include="Infrastructure\DialogService\ButtonExtras.cs" />
     <Compile Include="Infrastructure\DialogService\DialogMessageService.cs" />
