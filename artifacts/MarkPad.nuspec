@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>MarkPad</id>
+    <version>$version$</version>
+    <title>MarkPad</title>
+    <authors>Code52</authors>
+    <owners>Code52</owners>
+    <licenseUrl>https://github.com/Code52/DownmarkerWPF/blob/master/Licence.md</licenseUrl>
+    <projectUrl>http://code52.org/DownmarkerWPF/</projectUrl>
+    <iconUrl>https://raw.github.com/Code52/DownmarkerWPF/master/src/MarkPad/icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A visual Markdown editor (inspired by the Downmarker project)</description>
+    <summary>A visual Markdown editor (inspired by the Downmarker project)</summary>
+    <language>en-AU</language>
+    <tags>MarkDown Editor</tags>
+  </metadata>
+  <files>
+    <file src="..\src\MarkPad\bin\$Configuration$\MarkPad.exe" target="lib\net40" />
+    <file src="..\src\MarkPad\bin\$Configuration$\MarkPad.exe.config" target="lib\net40" />
+    <file src="..\src\MarkPad\bin\$Configuration$\*.dll" target="lib\net40" />
+  </files>
+</package>
