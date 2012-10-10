@@ -105,3 +105,4 @@ packages
 
 # our output folder for build artifacts
 artifacts
+src/GlobalAssemblyInfo.cs
