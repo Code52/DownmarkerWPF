@@ -175,6 +175,7 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Behaviors\StateHelper.cs" />
+    <Compile Include="ModuleInitializer.cs" />
     <Compile Include="Converters\BoolToGridLengthConverter.cs" />
     <Compile Include="Converters\IsCurrentItemConverter.cs" />
     <Compile Include="Converters\EnumDisplayConverter.cs" />
@@ -536,16 +537,14 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
-  <!--<Import Project="$(SolutionDir)..\tools\EmbedAssemblies.targets" Condition="'$(Configuration)' != 'Testing' AND $(NCrunch) != '1'" />-->
+  <Import Project="$(SolutionDir)..\Tools\Fody\Fody.targets" />
+  <Import Project="$(SolutionDir)..\Tools\Embedding\EmbedAssemblies.targets" />
   <PropertyGroup>
     <PreBuildEvent>copy $(SolutionDir)..\lib\Awesomium* $(TargetDir)
 
 copy $(SolutionDir)..\lib\en-US.dll $(TargetDir)
 
 copy $(SolutionDir)..\lib\icudt42.dll $(TargetDir)</PreBuildEvent>
-  </PropertyGroup>
-  <Import Project="$(SolutionDir)..\Tools\Fody\Fody.targets" />
-  <PropertyGroup>
     <PostBuildEvent>xcopy /s /y "$(SolutionDir)packages\NHunspell.1.0.0\native\*.*" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
 </Project>
