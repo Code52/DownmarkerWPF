@@ -1,0 +1,61 @@
+<Project DefaultTargets="NuGet" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration>Debug</Configuration>
+    <DownloadNuGetExe>true</DownloadNuGetExe>
+  </PropertyGroup>
+
+  <Import Project="GenerateCommonAssemblyInfo.Targets" />
+
+  <Target Name="FullClean" DependsOnTargets="Clean">
+    <ItemGroup>
+      <OldFiles Include="..\src\GlobalAssemblyInfo.cs" />
+      <OldFiles Include="..\**\*.suo" />
+      <OldFiles Include="..\**\*.user" />
+      <OldFiles Include="..\**\*.cache" />
+      <OldFiles Include="..\**\*.dat" />
+
+      <ProjectFiles Include="..\**\*.*proj" />
+      <OldDirectories Include="@(ProjectFiles->'%(RootDir)%(Directory)bin')" />
+      <OldDirectories Include="@(ProjectFiles->'%(RootDir)%(Directory)obj')" />
+      <OldDirectories Include="..\src\packages\" />
+    </ItemGroup>
+
+    <Delete Files="@(OldFiles)" />
+    <RemoveDir Directories="@(OldDirectories)" />
+  </Target>
+
+  <Target Name="Clean">
+    <ItemGroup>
+      <OldArtifacts Include="..\artifacts\*.nupkg" />
+    </ItemGroup>
+
+    <Delete Files="@(OldArtifacts)" />
+  </Target>
+
+  <Target Name="Compile" DependsOnTargets="Clean">
+    <ItemGroup>
+      <Projects Include="..\src\MarkPad.sln" />
+    </ItemGroup>
+
+    <MSBuild Projects="@(Projects)" Targets="Rebuild" Properties="Configuration=$(Configuration)" />
+  </Target>
+
+  <Target Name="NuGet" DependsOnTargets="Compile">
+    <PropertyGroup>
+      <AssemblyConfig Condition=" '$(AssemblyConfig)' != '' ">-$(AssemblyConfig)</AssemblyConfig>
+      <BuildNumber Condition=" '$(BuildNumber)' == '0' "></BuildNumber>
+      <BuildNumber Condition=" '$(AssemblyConfig)' == '' And $(BuildNumber) != '' ">.$(BuildNumber)</BuildNumber>
+
+      <NuGet>..\src\.nuget\NuGet.exe</NuGet>
+      <OutputDirectory>-OutputDirectory "..\artifacts"</OutputDirectory>
+      <VersionArg>-Version $(CurrentVersion)$(AssemblyConfig)$(BuildNumber)</VersionArg>
+      <ConfigArg>-Prop Configuration=$(Configuration)</ConfigArg>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <NuSpec Include="..\artifacts\*.nuspec" />
+    </ItemGroup>
+
+    <Exec Command='$(NuGet) pack "%(NuSpec.Identity)" $(OutputDirectory) $(VersionArg) $(ConfigArg)' />
+  </Target>
+</Project>

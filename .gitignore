@@ -104,5 +104,5 @@ packages
 *.log
 
 # our output folder for build artifacts
-artifacts
+artifacts/*.nupkg
 src/GlobalAssemblyInfo.cs
