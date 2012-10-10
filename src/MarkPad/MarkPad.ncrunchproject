@@ -16,5 +16,6 @@
   <UseBuildConfiguration></UseBuildConfiguration>
   <ProxyProcessPath></ProxyProcessPath>
   <UseCPUArchitecture>AutoDetect</UseCPUArchitecture>
-  <AdditionalFilesToInclude>..\..\lib\Awesomium.dll;..\..\lib\en-US.dll;..\..\lib\icudt42.dll</AdditionalFilesToInclude>
+  <AdditionalFilesToInclude>..\..\lib\**.*</AdditionalFilesToInclude>
+  <HiddenWarnings>PreBuildEventDisabled;PostBuildEventDisabled</HiddenWarnings>
 </ProjectConfiguration>

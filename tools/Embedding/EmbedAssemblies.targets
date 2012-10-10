@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <ReferencesPath Condition=" '$(ReferencesPath)' == '' ">bin\References\</ReferencesPath>
+  </PropertyGroup>
+
+  <UsingTask AssemblyFile="Analects.Loader.BuildTasks.dll" TaskName="Analects.Loader.BuildTasks.Compress" />
+
+  <Target Name="AfterResolveReferences">
+    <PropertyGroup>
+      <Awesomium>Awesomium</Awesomium>
+    </PropertyGroup>
+
+    <Copy 
+        SourceFiles="@(ReferenceCopyLocalPaths)" 
+        DestinationFolder="$(IntermediateOutputPath)" 
+        Condition="('%(Extension)'=='.dll' or '$(Configuration)|%(Extension)'=='Debug|.pdb') 
+        and '%(Filename)' != 'MarkPad.PreviewControl' 
+        and !$([System.String]::new('%(Filename)').StartsWith($(Awesomium)))
+        and '%(Filename)' != 'en-US'
+        and '%(Filename)' != 'icudt42' "
+    >
+      <Output TaskParameter="DestinationFiles" ItemName="CompressedReferences" />
+    </Copy>
+
+    <Compress File="%(CompressedReferences.FullPath)" ZipFile="%(CompressedReferences.FullPath).cmp" />
+
+    <ItemGroup>
+      <EmbeddedResource Include="%(CompressedReferences.FullPath).cmp">
+        <LogicalName>$(RootNamespace).Libs.%(CompressedReferences.DestinationSubDirectory)%(CompressedReferences.Filename)%(CompressedReferences.Extension)</LogicalName>
+      </EmbeddedResource>
+    </ItemGroup>
+  </Target>
+
+  <!-- Copied from Microsoft.Common.Targets -->
+  <Target
+        Name="_CopyFilesMarkedCopyLocal"
+        Condition="'@(ReferenceCopyLocalPaths)' != ''"
+        >
+    <PropertyGroup>
+      <!-- By default we're not using Hard Links to copy to the output directory, and never when building in VS -->
+      <CreateHardLinksForCopyLocalIfPossible Condition="'$(BuildingInsideVisualStudio)' == 'true' or '$(CreateHardLinksForCopyLocalIfPossible)' == ''">false</CreateHardLinksForCopyLocalIfPossible>
+    </PropertyGroup>
+
+    <Copy
+        SourceFiles="@(ReferenceCopyLocalPaths)"
+        DestinationFiles="@(ReferenceCopyLocalPaths->'$(MSBuildProjectDirectory)\$(ReferencesPath)%(DestinationSubDirectory)%(Filename)%(Extension)')"
+        SkipUnchangedFiles="$(SkipCopyUnchangedFiles)"
+        OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
+        Retries="$(CopyRetryCount)"
+        RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+        UseHardlinksIfPossible="$(CreateHardLinksForCopyLocalIfPossible)"
+        Condition="'$(UseCommonOutputDirectory)' != 'true' and '%(Filename)' != 'MarkPad.PreviewControl'"
+    >
+      <Output TaskParameter="DestinationFiles" ItemName="FileWritesShareable"/>
+    </Copy>
+
+    <Copy
+        SourceFiles="@(ReferenceCopyLocalPaths)"
+        DestinationFiles="@(ReferenceCopyLocalPaths->'$(MSBuildProjectDirectory)\$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')"
+        SkipUnchangedFiles="$(SkipCopyUnchangedFiles)"
+        OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
+        Retries="$(CopyRetryCount)"
+        RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+        UseHardlinksIfPossible="$(CreateHardLinksForCopyLocalIfPossible)"
+        Condition="'$(UseCommonOutputDirectory)' != 'true' and '%(Filename)' == 'MarkPad.PreviewControl'"
+    >
+      <Output TaskParameter="DestinationFiles" ItemName="FileWritesShareable"/>
+    </Copy>
+
+  </Target>
+  
+</Project>
