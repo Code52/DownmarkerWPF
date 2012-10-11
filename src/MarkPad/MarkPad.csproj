@@ -564,5 +564,5 @@ copy $(SolutionDir)..\lib\en-US.dll $(TargetDir)
 copy $(SolutionDir)..\lib\icudt42.dll $(TargetDir)
 copy $(SolutionDir)..\lib\Hunspell.0.9.6.0\lib\Hunspellx86.dll $(TargetDir)</PreBuildEvent>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)..\Tools\Fody\Fody.targets" />
+  <Import Project="$(SolutionDir)\..\Tools\Fody\Fody.targets" />
 </Project>
