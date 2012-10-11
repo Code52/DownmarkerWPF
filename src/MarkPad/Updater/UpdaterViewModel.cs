@@ -1,7 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Reflection;
+using System.Windows.Threading;
 using Caliburn.Micro;
+using Shimmer.Client;
 using wyDay.Controls;
 
 namespace MarkPad.Updater
@@ -21,94 +25,56 @@ namespace MarkPad.Updater
             this.windowManager = windowManager;
             this.changesCreator = changesCreator;
 
-            au = new AutomaticUpdaterBackend
+            // XXX: Need to find a place for this
+            var updateManager = new UpdateManager(@"C:\Users\Paul\Documents\GitHub\DownmarkerWPF\src\Releases", "MarkPad", FrameworkVersion.Net40);
+            var theLock = updateManager.AcquireUpdateLock();
+
+            var update = updateManager.CheckForUpdate();
+
+            update.Where(x => x != null).Subscribe(updateInfo =>
             {
-                GUID = "code52-markpad",
-                UpdateType = UpdateType.CheckAndDownload
-            };
+                if (updateInfo != null)
+                {
+                    Dispatcher.CurrentDispatcher.BeginInvoke(new System.Action(() =>
+                    {
+                        UpdateState = UpdateState.Downloading;
+                        Background = true;
+                    }));
 
-            au.ProgressChanged += AuProgressChanged;
-            au.ReadyToBeInstalled += AuReadyToBeInstalled;
-            au.UpToDate += AuUpToDate;
-            au.UpdateAvailable += AuUpdateAvailable;
-            au.UpdateSuccessful += AuUpdateSuccessful;
+                    var progress = new Subject<int>();
+                    var applyResult = updateManager.DownloadReleases(updateInfo.ReleasesToApply, progress)
+                                                   .SelectMany(_ => updateManager.ApplyReleases(updateInfo));
 
-            au.Initialize();
-            au.AppLoaded();
-            SetUpdateFlag();
-        }
+                    progress.Subscribe(x =>
+                        Dispatcher.CurrentDispatcher.BeginInvoke(new System.Action(() => Progress = x)));
 
-        void AuUpdateAvailable(object sender, EventArgs e)
-        {
-            SetUpdateFlag();
-        }
+                    applyResult
+                        .Finally(() =>
+                        {
+                            Dispatcher.CurrentDispatcher.Invoke(new System.Action(() =>
+                            {
+                                Background = false;
+                                UpdateState = UpdateState.UpdatePending;
+                            }));
 
-        void AuUpToDate(object sender, SuccessArgs e)
-        {
-            SetUpdateFlag();
-        }
-
-        void AuProgressChanged(object sender, int progress)
-        {
-            Progress = progress;
-        }
-
-        private void AuUpdateSuccessful(object sender, SuccessArgs e)
-        {
-            SetUpdateFlag();
-        }
-
-        private void AuReadyToBeInstalled(object sender, EventArgs e)
-        {
-            SetUpdateFlag();
-        }
-
-        public void CheckForUpdate()
-        {
-            switch (au.UpdateStepOn)
+                            theLock.Dispose();
+                        })
+                        .Subscribe(_ => { }, ex =>
+                        {
+                            Dispatcher.CurrentDispatcher.Invoke(new System.Action(() => UpdateState = UpdateState.Error));
+                        });
+                }
+                else
+                {
+                    Dispatcher.CurrentDispatcher.BeginInvoke(new System.Action(() => UpdateState = UpdateState.UpToDate));
+                    theLock.Dispose();
+                }
+            },
+            ex =>
             {
-                case UpdateStepOn.UpdateReadyToInstall:
-                    var vm = changesCreator();
-                    vm.Message = au.Changes;
-                    windowManager.ShowDialog(vm);
-                    if (!vm.WasCancelled)
-                        au.InstallNow();
-                    break;
-
-                case UpdateStepOn.Nothing:
-                    Background = true;
-                    au.ForceCheckForUpdate();
-                    break;
-
-            }
-        }
-
-        private void SetUpdateFlag()
-        {
-            switch (au.UpdateStepOn)
-            {
-                case UpdateStepOn.ExtractingUpdate:
-                case UpdateStepOn.DownloadingUpdate:
-                    UpdateState = UpdateState.Downloading;
-                    Background = true;
-                    break;
-
-                case UpdateStepOn.UpdateDownloaded:
-                case UpdateStepOn.UpdateAvailable:
-                    Background = false;
-                    au.InstallNow();
-                    break;
-
-                case UpdateStepOn.UpdateReadyToInstall:
-                    UpdateState = UpdateState.UpdatePending;
-                    Background = false;
-                    break;
-
-                default:
-                    UpdateState = UpdateState.Unchecked;
-                    Background = false;
-                    break;
-            }
+                Dispatcher.CurrentDispatcher.Invoke(new System.Action(() => UpdateState = UpdateState.Error));
+                theLock.Dispose();
+            });
         }
     }
 }
