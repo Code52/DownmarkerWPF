@@ -102,14 +102,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\xmlrpcnet.3.0.0.266\lib\net20\CookComputing.XmlRpcV2.dll</HintPath>
     </Reference>
-    <Reference Include="Core">
-      <HintPath>..\packages\Shimmer.Core.0.5.0.1-beta\lib\net40\Core.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.AvalonEdit">
       <HintPath>..\packages\AvalonEdit.4.2.0.8783\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
-    </Reference>
-    <Reference Include="Ionic.Zip">
-      <HintPath>..\packages\Shimmer.Core.0.5.0.1-beta\lib\net40\Ionic.Zip.dll</HintPath>
     </Reference>
     <Reference Include="MahApps.Metro, Version=0.8.0.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -118,9 +112,6 @@
     <Reference Include="MarkdownDeep, Version=1.5.4615.26275, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MarkdownDeep.NET.1.5\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
-    </Reference>
-    <Reference Include="MarkdownSharp">
-      <HintPath>..\packages\MarkdownSharp.1.13.0.0\lib\35\MarkdownSharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CompilerServices.AsyncTargetingPack.Net4, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -137,9 +128,6 @@
       <HintPath>..\..\lib\Hunspell.0.9.6.0\lib\net20\NHunspell.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NuGetPackageExplorer.Types">
-      <HintPath>..\packages\Shimmer.Core.0.5.0.1-beta\lib\net40\NuGetPackageExplorer.Types.dll</HintPath>
-    </Reference>
     <Reference Include="Ookii.Dialogs.Wpf">
       <HintPath>..\packages\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
     </Reference>
@@ -147,14 +135,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\PropertyChanged.Fody.1.26.0.0\lib\NET40\PropertyChanged.dll</HintPath>
     </Reference>
-    <Reference Include="SharpBITS.Base">
-      <HintPath>..\packages\Shimmer.Core.0.5.0.1-beta\lib\net40\SharpBITS.Base.dll</HintPath>
+    <Reference Include="Shimmer.Client, Version=0.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Shimmer.Client.0.6.0.0-beta\lib\net40\Shimmer.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Shimmer.Client">
-      <HintPath>..\packages\Shimmer.Client.0.5.0.1-beta\lib\net40\Shimmer.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Shimmer.Core">
-      <HintPath>..\packages\Shimmer.Core.0.5.0.1-beta\lib\net40\Shimmer.Core.dll</HintPath>
+    <Reference Include="Shimmer.Core, Version=0.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Shimmer.Core.0.6.0.0-beta\lib\net40\Shimmer.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
