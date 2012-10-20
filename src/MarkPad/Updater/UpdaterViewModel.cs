@@ -3,10 +3,10 @@ using System.IO;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 using Caliburn.Micro;
 using Shimmer.Client;
-using wyDay.Controls;
 
 namespace MarkPad.Updater
 {
@@ -14,7 +14,6 @@ namespace MarkPad.Updater
     {
         private readonly IWindowManager windowManager;
         private readonly Func<UpdaterChangesViewModel> changesCreator;
-        static AutomaticUpdaterBackend au;
 
         public int Progress { get; private set; }
         public UpdateState UpdateState { get; set; }
@@ -25,56 +24,39 @@ namespace MarkPad.Updater
             this.windowManager = windowManager;
             this.changesCreator = changesCreator;
 
+            DoUpdate();
+        }
+
+        public async void DoUpdate()
+        {
             // XXX: Need to find a place for this
             var updateManager = new UpdateManager(@"C:\Users\Paul\Documents\GitHub\DownmarkerWPF\src\Releases", "MarkPad", FrameworkVersion.Net40);
-            var theLock = updateManager.AcquireUpdateLock();
 
-            var update = updateManager.CheckForUpdate();
-
-            update.Where(x => x != null).Subscribe(updateInfo =>
+            try 
             {
-                if (updateInfo != null)
+                var updateInfo = await updateManager.CheckForUpdateAsync(false, x => Progress += (x/3));
+                if (updateInfo == null) 
                 {
-                    Dispatcher.CurrentDispatcher.BeginInvoke(new System.Action(() =>
-                    {
-                        UpdateState = UpdateState.Downloading;
-                        Background = true;
-                    }));
-
-                    var progress = new Subject<int>();
-                    var applyResult = updateManager.DownloadReleases(updateInfo.ReleasesToApply, progress)
-                                                   .SelectMany(_ => updateManager.ApplyReleases(updateInfo));
-
-                    progress.Subscribe(x =>
-                        Dispatcher.CurrentDispatcher.BeginInvoke(new System.Action(() => Progress = x)));
-
-                    applyResult
-                        .Finally(() =>
-                        {
-                            Dispatcher.CurrentDispatcher.Invoke(new System.Action(() =>
-                            {
-                                Background = false;
-                                UpdateState = UpdateState.UpdatePending;
-                            }));
-
-                            theLock.Dispose();
-                        })
-                        .Subscribe(_ => { }, ex =>
-                        {
-                            Dispatcher.CurrentDispatcher.Invoke(new System.Action(() => UpdateState = UpdateState.Error));
-                        });
+                    UpdateState = UpdateState.UpToDate;
+                    return;
                 }
-                else
-                {
-                    Dispatcher.CurrentDispatcher.BeginInvoke(new System.Action(() => UpdateState = UpdateState.UpToDate));
-                    theLock.Dispose();
-                }
-            },
-            ex =>
+
+                UpdateState = UpdateState.Downloading;   Background = true;
+                await updateManager.DownloadReleasesAsync(updateInfo.ReleasesToApply, x => Progress += (x/3));
+                await updateManager.ApplyReleasesAsync(updateInfo, x => Progress += (x/3));
+
+                UpdateState = UpdateState.UpdatePending;
+            } 
+            catch (Exception) 
             {
-                Dispatcher.CurrentDispatcher.Invoke(new System.Action(() => UpdateState = UpdateState.Error));
-                theLock.Dispose();
-            });
+                // NB: Probably want to log this or something
+                UpdateState = UpdateState.Error;
+            } 
+            finally 
+            {
+                Background = false;
+                updateManager.Dispose();
+            }
         }
     }
 }
