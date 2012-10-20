@@ -14,11 +14,12 @@ namespace MarkPad.Document.Search
 
         void Disconnect();
 
-        IEnumerable<TextSegment> SearchHits { get; }
-
         void DoSearch(SearchType searchType, bool selectSearch);
 
+        IEnumerable<TextSegment> SearchHits { get; }
+
         int NumberOfHits { get; }
+
         int CurrentHitIndex { get; }
     }
 }

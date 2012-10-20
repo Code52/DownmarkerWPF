@@ -35,7 +35,7 @@ namespace MarkPad.Infrastructure
 				args.Instance.SetLanguage(settings.Language);
 			});
             builder.RegisterType<SearchProvider>().As<ISearchProvider>();
-            builder.RegisterType<SearchSettings>().As<ISearchSettings>().SingleInstance();
+            builder.RegisterType<SearchSettings>().SingleInstance();
 		}
 	}
 }

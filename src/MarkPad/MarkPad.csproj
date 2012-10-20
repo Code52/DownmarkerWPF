@@ -242,7 +242,6 @@
     <Compile Include="Document\MarkPadHyperlink.cs" />
     <Compile Include="Document\EditorBehaviours\OvertypeMode.cs" />
     <Compile Include="Document\Search\ISearchProvider.cs" />
-    <Compile Include="Document\Search\ISearchSettings.cs" />
     <Compile Include="Document\Search\SearchBackgroundRenderer.cs" />
     <Compile Include="Document\Search\SearchProvider.cs" />
     <Compile Include="Document\Search\SearchSettings.cs" />

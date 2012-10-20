@@ -534,7 +534,7 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ToggleButton>
-                    <TextBox Name="searchTextBox" Text="{Binding SearchSettings.CurrentSearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,0,0" VerticalContentAlignment="Center">
+                    <TextBox Name="searchTextBox" Text="{Binding SearchSettings.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,0,0" VerticalContentAlignment="Center">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="TextChanged">
                                 <cm:ActionMessage MethodName="Search">
@@ -586,7 +586,7 @@
                                 <DataTrigger Binding="{Binding SearchingWithBar}" Value="False">
                                     <Setter Property="Visibility" Value="Collapsed" />
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding SearchSettings.CurrentSearchTerm}" Value="">
+                                <DataTrigger Binding="{Binding SearchSettings.SearchTerm}" Value="">
                                     <Setter Property="Visibility" Value="Collapsed" />
                                 </DataTrigger>
                             </Style.Triggers>

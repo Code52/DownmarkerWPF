@@ -14,7 +14,7 @@ namespace MarkPad.Document.Search
         private readonly SearchBackgroundRenderer searchRenderer;
         private DocumentView view;
 
-        private readonly ISearchSettings searchSettings;
+        private readonly SearchSettings searchSettings;
         int lastCaretPosition = -1;
 
         public IEnumerable<TextSegment> SearchHits { get; private set; }
@@ -25,7 +25,7 @@ namespace MarkPad.Document.Search
         public event PropertyChangedEventHandler PropertyChanged;
 #pragma warning restore 67
 
-        public SearchProvider(ISearchSettings searchSettings)
+        public SearchProvider(SearchSettings searchSettings)
         {
             this.searchSettings = searchSettings;
             searchRenderer = new SearchBackgroundRenderer();
@@ -71,21 +71,21 @@ namespace MarkPad.Document.Search
 
             ClearSearchHits();
             if (searchSettings == null) return;
-            if (string.IsNullOrEmpty(searchSettings.CurrentSearchTerm)) return;
+            if (string.IsNullOrEmpty(searchSettings.SearchTerm)) return;
 
-            var term = searchSettings.CurrentSearchTerm;
+            var searchTerm = searchSettings.SearchTerm;
 
             if (!searchSettings.Regex)
             {
-                term = Regex.Escape(term);
+                searchTerm = Regex.Escape(searchTerm);
             }
             if (searchSettings.WholeWord)
             {
-                term = @"\b" + term + @"\b";
+                searchTerm = @"\b" + searchTerm + @"\b";
             }
             if (!searchSettings.CaseSensitive)
             {
-                term = @"(?i)" + term;
+                searchTerm = @"(?i)" + searchTerm;
             }
 
             foreach (DocumentLine currentDocLine in view.Document.Lines)
@@ -98,7 +98,7 @@ namespace MarkPad.Document.Search
 
                 try
                 {
-                    foreach (Match match in Regex.Matches(originalText, term))
+                    foreach (Match match in Regex.Matches(originalText, searchTerm))
                     {
                         var textSegment = new TextSegment
                         {
@@ -113,10 +113,9 @@ namespace MarkPad.Document.Search
             }
 
             TextSegment newFoundHit = null;
-            var caretOffset = view.Editor.CaretOffset;
-
-            var startLookingFrom = caretOffset;
-            if (!view.Editor.TextArea.Selection.IsEmpty && (searchType == SearchType.Normal || searchType == SearchType.Prev))
+            var startLookingFrom = view.Editor.CaretOffset;
+            // consider the already selected text when searching, skip it on SearchType.Next
+            if (!view.Editor.TextArea.Selection.IsEmpty && searchType != SearchType.Next)
             {
                 startLookingFrom = view.Editor.SelectionStart;
             }
@@ -136,22 +135,12 @@ namespace MarkPad.Document.Search
 
                 case SearchType.Prev:
 
-                    TextSegment lastHit = (from hit in SearchHits
-                                           let hitDistance = hit.StartOffset - startLookingFrom
-                                           where hitDistance < 0
-                                           orderby hitDistance descending
-                                           select hit)
-                                            .FirstOrDefault();
-
-                    if (lastHit == SearchHits.LastOrDefault())
-                    {
-                        newFoundHit = lastHit;
-                    }
-                    else
-                    {
-                        newFoundHit = SearchHits.Reverse().SkipWhile(segment => !segment.EqualsByValue(lastHit)).FirstOrDefault()
-                                        ?? SearchHits.Reverse().FirstOrDefault(segment => !segment.EqualsByValue(lastHit));
-                    }
+                    newFoundHit = (from hit in SearchHits
+                                   let hitDistance = hit.StartOffset - startLookingFrom
+                                   where hitDistance < 0
+                                   orderby hitDistance descending
+                                   select hit)
+                                    .FirstOrDefault() ?? SearchHits.Reverse().FirstOrDefault();
                     break;
             }
 
@@ -160,7 +149,7 @@ namespace MarkPad.Document.Search
             {
                 newFoundHit.ExecuteSafely(hit =>
                 {
-                    // special case: don't select when CTRL+F pressed with an old, existing search, just highlight
+                    // special case: don't select text when CTRL+F pressed with an old, existing search, just highlight
                     if (selectSearch)
                     {
                         view.Editor.Select(hit.StartOffset, hit.Length);
@@ -168,26 +157,20 @@ namespace MarkPad.Document.Search
                     }
 
                     lastCaretPosition = view.Editor.CaretOffset;
+                    CurrentHitIndex = SearchHits.Select((v, i) => new { hit = v, index = i }).First(arg => arg.hit.Equals(newFoundHit)).index + 1;
                 });
             }
 
             NumberOfHits = searchRenderer.SearchHitsSegments.Count;
 
-            // get the index of the current match
-            // newFoundHit will be null if there are matches, but we are in a SearchType.NoSelect search
-            if (newFoundHit != null)
-            {
-                CurrentHitIndex = SearchHits.Select((v, i) => new {hit = v, index = i}).First(arg => arg.hit.Equals(newFoundHit)).index + 1;
-            }
-
-            // don't show index of a match if we're searching without a bar, if there are no matches, or if we're in a no-select search and there is no preselected old match in the editor
+            // don't show index of a match if we're searching without a search bar, if there are no matches, or if we're in a NoSelect search and there isn't an already selected old match in the editor
             var selectedText = new TextSegment { StartOffset = view.Editor.SelectionStart, Length = view.Editor.SelectionLength };
             if (!searchSettings.SearchingWithBar || !searchRenderer.SearchHitsSegments.Any() || (!selectSearch && newFoundHit != null && !newFoundHit.EqualsByValue(selectedText)))
             {
                 CurrentHitIndex = 0;
             }
 
-            // don't highlight when using F3 or SHIFT+F3 without the search bar
+            // don't highlight matches when searching without the search bar
             if (!searchSettings.SearchingWithBar)
             {
                 ClearSearchHits();

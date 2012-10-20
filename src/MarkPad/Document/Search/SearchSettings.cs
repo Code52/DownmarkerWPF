@@ -1,15 +1,13 @@
 ﻿namespace MarkPad.Document.Search
 {
-    public class SearchSettings : ISearchSettings
+    public class SearchSettings
     {
         public SearchSettings()
         {
-            CurrentSearchTerm = string.Empty;
+            SearchTerm = string.Empty;
         }
 
-        public string CurrentSearchTerm { get; set; }
-
-        public string SavedSearchTerm { get; set; }
+        public string SearchTerm { get; set; }
 
         public bool Regex { get; set; }
 

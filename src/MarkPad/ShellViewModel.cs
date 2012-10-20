@@ -41,7 +41,7 @@ namespace MarkPad
             Func<DocumentViewModel> documentViewModelFactory, 
             IDocumentFactory documentFactory,
             IFileSystem fileSystem,
-            ISearchSettings searchSettings)
+            SearchSettings searchSettings)
         {
             this.eventAggregator = eventAggregator;
             this.dialogService = dialogService;
@@ -319,39 +319,29 @@ namespace MarkPad
             MDI.Open(doc);
         }
 
-        public ISearchSettings SearchSettings { get; private set; }
-
-        private bool _searching;
+        public SearchSettings SearchSettings { get; private set; }
 
         public bool SearchingWithBar
         {
-            get { return _searching; }
+            get { return SearchSettings.SearchingWithBar; }
             set
             {
-                var selectSearch = true;
+                if (SearchSettings.SearchingWithBar == value) return;
 
-                if (_searching && !value)
+                SearchSettings.SearchingWithBar = value;
+                if (!SearchSettings.SearchingWithBar)
                 {
-                    SearchSettings.SavedSearchTerm = SearchSettings.CurrentSearchTerm;
-                    SearchSettings.CurrentSearchTerm = string.Empty;
                     if (ActiveDocumentViewModel != null)
                     {
                         ActiveDocumentViewModel.View.Editor.Focus();
                     }
+                    SearchSettings.SelectSearch = true;
                 }
-                if (!_searching && value)
+                if (SearchSettings.SearchingWithBar)
                 {
-                    if (string.IsNullOrEmpty(SearchSettings.CurrentSearchTerm))
-                    {
-                        SearchSettings.CurrentSearchTerm = SearchSettings.SavedSearchTerm;
-                        SearchSettings.SavedSearchTerm = string.Empty;
-                    }
-                    selectSearch = false;
+                    SearchSettings.SelectSearch = false;
+                    Search(SearchType.Normal);
                 }
-                _searching = value;
-                SearchSettings.SelectSearch = selectSearch;
-                SearchSettings.SearchingWithBar = SearchingWithBar;
-                Search(SearchType.Normal);
             }
         }
 
@@ -362,11 +352,6 @@ namespace MarkPad
             var selectSearch = SearchSettings.SelectSearch;
             if (searchType == SearchType.Next || searchType == SearchType.Prev)
             {
-                if (string.IsNullOrEmpty(SearchSettings.CurrentSearchTerm))
-                {
-                    SearchSettings.CurrentSearchTerm = SearchSettings.SavedSearchTerm;
-                    SearchSettings.SavedSearchTerm = string.Empty;
-                }
                 selectSearch = true;
             }
 
@@ -376,7 +361,7 @@ namespace MarkPad
 
             if (searchType == SearchType.Normal)
             {
-                // call to update the search highlighting
+                // update the search highlighting
                 ActiveDocumentViewModel.View.Editor.TextArea.TextView.Redraw();
             }
         }
