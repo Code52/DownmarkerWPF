@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.PreviewControl;
@@ -35,7 +36,7 @@ namespace MarkPad
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                 };
                 HtmlPreview.SetBinding(HtmlPreview.HtmlProperty, new Binding("CurrentDocument.Render"));
-                HtmlPreview.SetBinding(HtmlPreview.FileNameProperty, new Binding("CurrentDocument.FileName"));
+                HtmlPreview.SetBinding(HtmlPreview.FileNameProperty, new Binding("CurrentDocument.MarkpadDocument.Title"));
                 HtmlPreview.SetBinding(HtmlPreview.BrowserFontSizeProperty, new Binding("CurrentDocument.FontSize"));
                 HtmlPreview.SetBinding(HtmlPreview.ScrollPercentageProperty, new Binding("CurrentDocument.View.ScrollPercentage"));
 
@@ -46,5 +47,13 @@ namespace MarkPad
         }
 
         public DocumentViewModel CurrentDocument { get; private set; }
+
+        public void TitleMouseDown(IScreen activeItem, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Pressed)
+            {
+                DeactivateItem(activeItem, true);
+            }
+        }
     }
 }

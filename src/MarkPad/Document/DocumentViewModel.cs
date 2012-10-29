@@ -6,6 +6,8 @@ using System.Windows.Threading;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit.Document;
 using MarkPad.Document.Controls;
+using MarkPad.Document.Events;
+using MarkPad.Document.Search;
 using MarkPad.Document.SpellCheck;
 using MarkPad.Events;
 using MarkPad.Infrastructure.DialogService;
@@ -41,6 +43,7 @@ namespace MarkPad.Document
             ISettingsProvider settingsProvider,
 			IDocumentParser documentParser,
             ISpellCheckProvider spellCheckProvider,
+            ISearchProvider searchProvider,
             IShell shell)
         {
             SpellCheckProvider = spellCheckProvider;
@@ -49,6 +52,7 @@ namespace MarkPad.Document
             this.settingsProvider = settingsProvider;
             this.documentParser = documentParser;
             this.shell = shell;
+            this.SearchProvider = searchProvider;
 
             FontSize = GetFontSize();
             IndentType = settingsProvider.GetSettings<MarkPadSettings>().IndentType;
@@ -355,6 +359,7 @@ namespace MarkPad.Document
         protected override void OnViewLoaded(object view)
         {
             SpellCheckProvider.Initialise((DocumentView)view);
+            SearchProvider.Initialise((DocumentView)view);
             base.OnViewLoaded(view);
             NotifyOfPropertyChange(()=>View);
         }
@@ -364,5 +369,9 @@ namespace MarkPad.Document
             if (View != null)
                 View.siteView.UndoRename();
         }
+
+        public ISearchProvider SearchProvider { get; private set; }
+
+        public bool Overtype { get; set; }
     }
 }

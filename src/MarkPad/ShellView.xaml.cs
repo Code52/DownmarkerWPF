@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using MarkPad.Document.Commands;
 using MarkPad.Framework;
 using MarkPad.Plugins;
 using MarkPad.PreviewControl;
@@ -20,6 +21,9 @@ namespace MarkPad
         {
             this.canCreateNewPagePlugins = canCreateNewPagePlugins.ToList();
             this.canSavePagePlugins = canSavePagePlugins.ToList();
+
+            CommandBindings.Add(new CommandBinding(ShellCommands.Esc, (x, y) => PressedEsc()));
+            CommandBindings.Add(new CommandBinding(ShellCommands.Search, (x, y) => Search()));
 
             InitializeComponent();
 
@@ -163,6 +167,25 @@ namespace MarkPad
             HtmlPreview htmlPreview = ((ShellViewModel) DataContext).MDI.HtmlPreview;
             if (htmlPreview != null)
                 htmlPreview.Close();
+        }
+
+        private void PressedEsc()
+        {
+            if (searchPanel.IsVisible)
+            {
+                searchPanel.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void Search()
+        {
+            if (!searchPanel.IsVisible)
+            {
+                searchPanel.Visibility = Visibility.Visible;
+            }
+
+            searchTextBox.Focus();
+            searchTextBox.SelectAll();
         }
     }
 }

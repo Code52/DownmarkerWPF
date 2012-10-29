@@ -16,7 +16,7 @@
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding DisplayName}" FontWeight="Light" TextTrimming="CharacterEllipsis" MaxWidth="400">
+                        <TextBlock cal:Message.Attach="[Event MouseDown] = [Action TitleMouseDown($dataContext, $eventArgs)]" Text="{Binding DisplayName}" FontWeight="Light" TextTrimming="CharacterEllipsis" MaxWidth="400">
                             <TextBlock.ToolTip>
                                 <ToolTip Content="{Binding DisplayName}" />
                             </TextBlock.ToolTip>

@@ -10,7 +10,9 @@
     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" xmlns:MarkPad="clr-namespace:MarkPad"
     xmlns:Behaviors="clr-namespace:MarkPad.Behaviors" xmlns:UI="clr-namespace:MarkPad.Settings.UI"
     xmlns:s="clr-namespace:MarkPad.Infrastructure" x:Class="MarkPad.ShellView"
-      xmlns:Converters="clr-namespace:MarkPad.Converters"
+    xmlns:Converters="clr-namespace:MarkPad.Converters"
+    xmlns:Commands="clr-namespace:MarkPad.Document.Commands"
+    xmlns:Search="clr-namespace:MarkPad.Document.Search"
     mc:Ignorable="d" 
     MouseLeftButtonDown="DragMoveWindow"
 	MouseMove="MouseMoveWindow"
@@ -102,7 +104,32 @@
             </s:InputBindingTrigger.InputBinding>
             <cm:ActionMessage MethodName="CloseDocument" />
         </s:InputBindingTrigger>
+
+        <s:InputBindingTrigger>
+            <s:InputBindingTrigger.InputBinding>
+                <KeyBinding Key="F3" />
+            </s:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="Search">
+                <cm:Parameter Value="{x:Static Search:SearchType.Next}" />
+            </cm:ActionMessage>
+        </s:InputBindingTrigger>
+        <s:InputBindingTrigger>
+            <s:InputBindingTrigger.InputBinding>
+                <KeyBinding Modifiers="Shift" Key="F3" />
+            </s:InputBindingTrigger.InputBinding>
+            <cm:ActionMessage MethodName="Search">
+                <cm:Parameter Value="{x:Static Search:SearchType.Prev}" />
+            </cm:ActionMessage>
+        </s:InputBindingTrigger>
     </i:Interaction.Triggers>
+
+    <Window.InputBindings>
+        <KeyBinding Key="Escape"
+                    Command="Commands:ShellCommands.Esc" />
+        <KeyBinding Key="F"
+                    Command="Commands:ShellCommands.Search"
+                    Modifiers="Control" />
+    </Window.InputBindings>
 
     <Window.Background>
         <LinearGradientBrush MappingMode="Absolute" StartPoint="0,0" EndPoint="0,150">
@@ -114,6 +141,7 @@
         <Grid.RowDefinitions>
     		<RowDefinition Height="Auto" MinHeight="58" />
     		<RowDefinition />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
         <VisualStateManager.VisualStateGroups>
@@ -453,9 +481,95 @@
         		</TransformGroup>
         	</UI:SettingsView.RenderTransform>
         </UI:SettingsView>
+        
+        <Grid x:Name="searchPanel" Grid.Row="2" Visibility="{Binding SearchingWithBar, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Border Background="#f0f0f0"
+                    BorderBrush="#999999"
+                    BorderThickness="1"
+                    CornerRadius="0"
+                    Padding="3,2,3,2" Margin="0">
+                <DockPanel Margin="2">
+                    <Button Content="Find prev" Width="75" DockPanel.Dock="Right" Margin="5,0,0,0" ToolTip="SHIFT + F3">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <cm:ActionMessage MethodName="Search">
+                                    <cm:Parameter Value="{x:Static Search:SearchType.Prev}" />
+                                </cm:ActionMessage>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                    <Button Content="Find" Width="75" DockPanel.Dock="Right" Margin="5,0,0,0" ToolTip="F3">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <cm:ActionMessage MethodName="Search">
+                                    <cm:Parameter Value="{x:Static Search:SearchType.Next}" />
+                                </cm:ActionMessage>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                    <ToggleButton IsChecked="{Binding SearchSettings.Regex, Mode=TwoWay}" Content=".*" Width="30" ToolTip="Regular expressions">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <cm:ActionMessage MethodName="Search">
+                                    <cm:Parameter Value="{x:Static Search:SearchType.Normal}" />
+                                </cm:ActionMessage>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ToggleButton>
+                    <ToggleButton IsChecked="{Binding SearchSettings.CaseSensitive, Mode=TwoWay}" Content="A" Width="30" ToolTip="Case sensitive">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <cm:ActionMessage MethodName="Search">
+                                    <cm:Parameter Value="{x:Static Search:SearchType.Normal}" />
+                                </cm:ActionMessage>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ToggleButton>
+                    <ToggleButton IsChecked="{Binding SearchSettings.WholeWord, Mode=TwoWay}" Content="&quot;&quot;" Width="30" ToolTip="Whole word">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <cm:ActionMessage MethodName="Search">
+                                    <cm:Parameter Value="{x:Static Search:SearchType.Normal}" />
+                                </cm:ActionMessage>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ToggleButton>
+                    <TextBox Name="searchTextBox" Text="{Binding SearchSettings.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,0,0" VerticalContentAlignment="Center">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="TextChanged">
+                                <cm:ActionMessage MethodName="Search">
+                                    <cm:Parameter Value="{x:Static Search:SearchType.Normal}" />
+                                </cm:ActionMessage>
+                            </i:EventTrigger>
+                            <s:InputBindingTrigger>
+                                <s:InputBindingTrigger.InputBinding>
+                                    <KeyBinding Key="Enter" />
+                                </s:InputBindingTrigger.InputBinding>
+                                <cm:ActionMessage MethodName="Search">
+                                    <cm:Parameter Value="{x:Static Search:SearchType.Next}" />
+                                </cm:ActionMessage>
+                            </s:InputBindingTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+                </DockPanel>
+            </Border>
+        </Grid>
 
-        <Grid Background="#FFbe0606" Grid.Row="2">
+        <Grid Grid.Row="3">
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Setter Property="Background" Value="#FFbe0606" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding MDI.ActiveItem.Overtype}" Value="True">
+                            <Setter Property="Background" Value="MediumBlue" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
             <StackPanel Orientation="Horizontal">
+                <TextBlock Text="OVERTYPE" Visibility="{Binding MDI.ActiveItem.Overtype, FallbackValue={x:Static Visibility.Collapsed}, Converter={StaticResource BooleanToVisibilityConverter}}"
+                           Foreground="White" VerticalAlignment="Center" Margin="20 0 0 0" />
+
                 <TextBlock Text="{Binding WorkingText,StringFormat='{}{0}...'}" Visibility="{Binding IsWorking, Converter={StaticResource BooleanToVisibilityConverter}}"
                            Foreground="White" VerticalAlignment="Center" Margin="20 0 0 0" />
 
@@ -463,6 +577,36 @@
                            Visibility="{Binding MDI.ActiveItem, Converter={StaticResource NullToVisibilityConverter}}">
                     <Run Text="{Binding MDI.ActiveItem.WordCount, Mode=OneWay}" /> WORDS
                 </TextBlock>
+
+                <StackPanel Orientation="Horizontal" Margin="20,0,0,0" VerticalAlignment="Center">
+                    <StackPanel.Style>
+                        <Style TargetType="{x:Type StackPanel}">
+                            <Setter Property="Visibility" Value="{Binding MDI.ActiveItem, Converter={StaticResource NullToVisibilityConverter}}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SearchingWithBar}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SearchSettings.SearchTerm}" Value="">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <TextBlock Foreground="White" Text="{Binding MDI.ActiveItem.SearchProvider.CurrentHitIndex, Mode=OneWay, StringFormat='{}{0} OF '}">
+                        <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding MDI.ActiveItem.SearchProvider.CurrentHitIndex}" Value="0">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <TextBlock Foreground="White" Text="{Binding MDI.ActiveItem.SearchProvider.NumberOfHits, Mode=OneWay, StringFormat='{}{0} MATCHES'}" />
+                </StackPanel>
             </StackPanel>
             
             <Slider Maximum="{Binding MDI.ActiveItem.MaxZoom}"

@@ -1,4 +1,5 @@
 using System.Linq;
+using ICSharpCode.AvalonEdit.Document;
 
 namespace MarkPad.Framework
 {
@@ -64,6 +65,19 @@ namespace MarkPad.Framework
 
             return inputString
                 .Substring(delimLength, length - (2 * delimLength));
+        }
+
+        // value equality for TextSegment
+        public static bool EqualsByValue(this TextSegment segment, TextSegment otherSegment)
+        {
+            if (otherSegment == null)
+            {
+                return false;
+            }
+
+            return segment.StartOffset == otherSegment.StartOffset
+                   && segment.EndOffset == otherSegment.EndOffset
+                   && segment.Length == otherSegment.Length;
         }
     }
 }
