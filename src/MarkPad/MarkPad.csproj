@@ -240,7 +240,6 @@
     <Compile Include="DocumentSources\MetaWeblog\Service\UserInfo.cs" />
     <Compile Include="DocumentSources\SiteContextGenerator.cs" />
     <Compile Include="DocumentSources\WebSources\WebDocumentService.cs" />
-    <Compile Include="DocumentSources\WebMarkdownFile.cs" />
     <Compile Include="Document\Commands\ShellCommands.cs" />
     <Compile Include="Document\Controls\FloatingToolBar.cs" />
     <Compile Include="Document\Controls\HyperlinkEditorView.xaml.cs">
