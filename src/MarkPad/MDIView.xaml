@@ -4,9 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:cal="http://www.caliburnproject.org"
-    xmlns:PreviewControl="clr-namespace:MarkPad.PreviewControl;assembly=MarkPad.PreviewControl"
-    xmlns:MarkPad="clr-namespace:MarkPad" mc:Ignorable="d" 
+    xmlns:cal="http://www.caliburnproject.org" xmlns:MarkPad="clr-namespace:MarkPad"
+    xmlns:UITextBlockControl="clr-namespace:UITextBlockControl;assembly=UITextBlock" mc:Ignorable="d" 
     d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance MarkPad:MdiViewModel}">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -16,20 +15,9 @@
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock cal:Message.Attach="[Event MouseDown] = [Action TitleMouseDown($dataContext, $eventArgs)]" Text="{Binding DisplayName}" FontWeight="Light" TextTrimming="CharacterEllipsis" MaxWidth="400">
-                            <TextBlock.ToolTip>
-                                <ToolTip Content="{Binding DisplayName}" />
-                            </TextBlock.ToolTip>
-                        </TextBlock>
+                        <UITextBlockControl:UITextBlock AutomationProperties.AutomationId="DocumentTitle" cal:Message.Attach="[Event MouseDown] = [Action TitleMouseDown($dataContext, $eventArgs)]" Text="{Binding DisplayName}" FontWeight="Light" TextTrimming="CharacterEllipsis" MaxWidth="400" />
                         <TextBlock Text="i" Margin="-5,0,0,0" FontFamily="Marlett" Visibility="{Binding HasChanges, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <Button 
-                        Style="{DynamicResource ChromelessButtonStyle}"
-                        Margin="5,0,15,0"
-                        FontFamily="Marlett"
-                        FontSize="12"
-                        Content="r"
-                        cal:Message.Attach="DeactivateItem($dataContext, true)"
-                    />
+                        <Button Style="{DynamicResource ChromelessButtonStyle}" Margin="5,0,15,0" FontFamily="Marlett" FontSize="12" Content="r" cal:Message.Attach="DeactivateItem($dataContext, true)" />
                     </StackPanel>
                 </DataTemplate>
             </TabControl.ItemTemplate>
