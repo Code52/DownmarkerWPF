@@ -15,16 +15,9 @@
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <UITextBlockControl:UITextBlock AutomationProperties.AutomationId="DocumentTitle" cal:Message.Attach="[Event MouseDown] = [Action TitleMouseDown($dataContext, $eventArgs)]" Text="{Binding DisplayName}" FontWeight="Light" TextTrimming="CharacterEllipsis" MaxWidth="400">
+                        <UITextBlockControl:UITextBlock AutomationProperties.AutomationId="DocumentTitle" cal:Message.Attach="[Event MouseDown] = [Action TitleMouseDown($dataContext, $eventArgs)]" Text="{Binding DisplayName}" FontWeight="Light" TextTrimming="CharacterEllipsis" MaxWidth="400" />
                         <TextBlock Text="i" Margin="-5,0,0,0" FontFamily="Marlett" Visibility="{Binding HasChanges, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <Button 
-                        Style="{DynamicResource ChromelessButtonStyle}"
-                        Margin="5,0,15,0"
-                        FontFamily="Marlett"
-                        FontSize="12"
-                        Content="r"
-                        cal:Message.Attach="DeactivateItem($dataContext, true)"
-                    />
+                        <Button Style="{DynamicResource ChromelessButtonStyle}" Margin="5,0,15,0" FontFamily="Marlett" FontSize="12" Content="r" cal:Message.Attach="DeactivateItem($dataContext, true)" />
                     </StackPanel>
                 </DataTemplate>
             </TabControl.ItemTemplate>

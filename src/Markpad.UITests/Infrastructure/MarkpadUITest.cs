@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Markpad.UITests.Infrastructure
 {
-    public class MarkpadUITest : IUseFixture<MarkpadFixture>, IDisposable
+    public class MarkpadUiTest : IUseFixture<MarkpadFixture>, IDisposable
     {
         public void SetFixture(MarkpadFixture data)
         {

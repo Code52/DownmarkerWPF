@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Markpad.UITests
 {
-    public class DocumentCreationFacts : MarkpadUITest
+    public class DocumentCreationFacts : MarkpadUiTest
     {
         [Fact]
         public void CanCreateANewDocument()

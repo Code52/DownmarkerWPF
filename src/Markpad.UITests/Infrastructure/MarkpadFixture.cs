@@ -10,7 +10,7 @@ namespace Markpad.UITests.Infrastructure
             get
             {
                 var directoryName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                return Path.Combine(directoryName, "../../../Markpad/bin/Debug/Markpad.exe");
+                return Path.Combine(directoryName, @"..\..\..\Markpad\bin\Debug\Markpad.exe");
             }
         }
 
