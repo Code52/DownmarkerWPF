@@ -95,6 +95,7 @@
     <Compile Include="DocumentSources\SiteContextHelperTests.cs" />
     <Compile Include="DocumentSources\SiteItemBaseTests.cs" />
     <Compile Include="DocumentSources\TestItem.cs" />
+    <Compile Include="Document\AutoContinueListsTests.cs" />
     <Compile Include="OpenFromWeb\OpenFromWebViewModelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\RsdServiceTests.cs" />

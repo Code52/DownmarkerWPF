@@ -1,6 +1,7 @@
 using System.IO.Abstractions;
 using Autofac;
 using MarkPad.Document;
+using MarkPad.Document.Search;
 using MarkPad.Document.SpellCheck;
 using MarkPad.DocumentSources;
 using MarkPad.DocumentSources.MetaWeblog;
@@ -33,6 +34,8 @@ namespace MarkPad.Infrastructure
 				var settings = settingsService.GetSettings<MarkPadSettings>();
 				args.Instance.SetLanguage(settings.Language);
 			});
+            builder.RegisterType<SearchProvider>().As<ISearchProvider>();
+            builder.RegisterType<SearchSettings>().SingleInstance();
 		}
 	}
 }

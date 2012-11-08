@@ -9,6 +9,7 @@ using System.Windows;
 using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.Document.Events;
+using MarkPad.Document.Search;
 using MarkPad.DocumentSources;
 using MarkPad.DocumentSources.FileSystem;
 using MarkPad.DocumentSources.MetaWeblog;
@@ -38,7 +39,9 @@ namespace MarkPad
             SettingsViewModel settingsViewModel,
             UpdaterViewModel updaterViewModel,
             Func<DocumentViewModel> documentViewModelFactory, 
-            IDocumentFactory documentFactory, IFileSystem fileSystem)
+            IDocumentFactory documentFactory,
+            IFileSystem fileSystem,
+            SearchSettings searchSettings)
         {
             this.eventAggregator = eventAggregator;
             this.dialogService = dialogService;
@@ -47,6 +50,7 @@ namespace MarkPad
             this.documentViewModelFactory = documentViewModelFactory;
             this.documentFactory = documentFactory;
             this.fileSystem = fileSystem;
+            SearchSettings = searchSettings;
 
             Settings = settingsViewModel;
             Settings.Initialize();
@@ -226,7 +230,7 @@ namespace MarkPad
             MDI.Open(documentViewModel);
 
             documentViewModel = documentViewModelFactory();
-            documentViewModel.Open(documentFactory.CreateHelpDocument("MarkPad Help", GetHelpText("MarkdownHelp")));
+            documentViewModel.Open(documentFactory.CreateHelpDocument("MarkPad Help", GetHelpText("MarkPadHelp")));
             MDI.Open(documentViewModel);
         }
 
@@ -313,6 +317,53 @@ namespace MarkPad
             var doc = documentViewModelFactory();
             doc.Open(t.Result);
             MDI.Open(doc);
+        }
+
+        public SearchSettings SearchSettings { get; private set; }
+
+        public bool SearchingWithBar
+        {
+            get { return SearchSettings.SearchingWithBar; }
+            set
+            {
+                if (SearchSettings.SearchingWithBar == value) return;
+
+                SearchSettings.SearchingWithBar = value;
+                if (!SearchSettings.SearchingWithBar)
+                {
+                    if (ActiveDocumentViewModel != null)
+                    {
+                        ActiveDocumentViewModel.View.Editor.Focus();
+                    }
+                    SearchSettings.SelectSearch = true;
+                }
+                if (SearchSettings.SearchingWithBar)
+                {
+                    SearchSettings.SelectSearch = false;
+                    Search(SearchType.Normal);
+                }
+            }
+        }
+
+        public void Search(SearchType searchType)
+        {
+            if (ActiveDocumentViewModel == null) return;
+
+            var selectSearch = SearchSettings.SelectSearch;
+            if (searchType == SearchType.Next || searchType == SearchType.Prev)
+            {
+                selectSearch = true;
+            }
+
+            ActiveDocumentViewModel.SearchProvider.DoSearch(searchType, selectSearch);
+            
+            SearchSettings.SelectSearch = true;
+
+            if (searchType == SearchType.Normal)
+            {
+                // update the search highlighting
+                ActiveDocumentViewModel.View.Editor.TextArea.TextView.Redraw();
+            }
         }
     }
 }
