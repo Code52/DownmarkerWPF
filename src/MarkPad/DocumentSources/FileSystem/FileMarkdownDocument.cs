@@ -1,11 +1,10 @@
 using System;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using MarkPad.Events;
-using MarkPad.Helpers;
+using MarkPad.Infrastructure;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Plugins;
 using Ookii.Dialogs.Wpf;
@@ -17,21 +16,22 @@ namespace MarkPad.DocumentSources.FileSystem
         readonly IEventAggregator eventAggregator;
         readonly IDialogService dialogService;
 
-        public FileMarkdownDocument(string path, string markdownContent, ISiteContext siteContext, IDocumentFactory documentFactory, IEventAggregator eventAggregator, IDialogService dialogService) : 
-            base(Path.GetFileNameWithoutExtension(path), markdownContent, Path.GetDirectoryName(path), documentFactory)
+        public FileMarkdownDocument(
+            string path, string markdownContent, ISiteContext siteContext, 
+            IDocumentFactory documentFactory, IEventAggregator eventAggregator, IDialogService dialogService, IFileSystem fileSystem) : 
+            base(Path.GetFileNameWithoutExtension(path), markdownContent, Path.GetDirectoryName(path), documentFactory, siteContext, fileSystem)
         {
             FileName = path;
             this.eventAggregator = eventAggregator;
             this.dialogService = dialogService;
-            SiteContext = siteContext;
             eventAggregator.Subscribe(this);
         }
 
         public string FileName { get; private set; }
 
-        public override Task<IMarkpadDocument> Save()
+        public override async Task<IMarkpadDocument> Save()
         {
-            var fileInfo = new FileInfo(FileName);
+            var fileInfo = FileSystem.FileInfo(FileName);
             if (fileInfo.IsReadOnly)
             {
                 var result = dialogService.ShowConfirmationWithCancel(
@@ -42,58 +42,35 @@ namespace MarkPad.DocumentSources.FileSystem
 
                 //The dialog service returns null if cancelled, true is yes, false if no.... Go figure
                 if (result == null)
-                {
-                    var taskCompletionSource = new TaskCompletionSource<IMarkpadDocument>();
-                    taskCompletionSource.SetCanceled();
-                    return taskCompletionSource.Task;
-                }
+                    throw new TaskCanceledException("Save cancelled");
 
                 if (result == true)
                     fileInfo.IsReadOnly = false;
                 else
-                    return SaveAs();
+                    return await SaveAs();
             }
 
-            var streamWriter = new StreamWriter(FileName);
-            return streamWriter
-                .WriteAsync(MarkdownContent)
-                .ContinueWith<IMarkpadDocument>(t =>
-                {
-                    streamWriter.Dispose();
+            await FileSystem.File.WriteAllTextAsync(FileName, MarkdownContent);
 
-                    t.PropagateExceptions();
-
-                    return this;
-                });
+            return this;
         }
 
-        public override Task<IMarkpadDocument> SaveAs()
-        {
-            return base.SaveAs()
-                .ContinueWith(t=>
-                {
-                    var markpadDocument = (FileMarkdownDocument)t.Result;
-                    markpadDocument.MoveImagesFolder(FileName, Title, markpadDocument.FileName);
-
-                    return t.Result;
-                });
-        }
-
-        public override string SaveImage(Bitmap image)
+        public override FileReference SaveImage(Bitmap image)
         {
             var directory = Path.GetDirectoryName(FileName);
             var absoluteImagePath = GetImageDirectory(directory, Title);
-            if (!Directory.Exists(absoluteImagePath))
-                Directory.CreateDirectory(absoluteImagePath);
 
-            var imageFileName = SiteContextHelper.GetFileName(Title, absoluteImagePath);
+            if (!FileSystem.Directory.Exists(absoluteImagePath))
+                FileSystem.Directory.CreateDirectory(absoluteImagePath);
 
-            using (var stream = new FileStream(imageFileName, FileMode.Create))
-            {
-                image.Save(stream, ImageFormat.Png);
-            }
+            var imageFileName = GetFileNameBasedOnTitle(Title, absoluteImagePath);
+            FileSystem.SaveImagePng(image, imageFileName);
 
-            return SiteContextHelper.ToRelativePath(directory, FileName, imageFileName);
+            var relativePath = ToRelativePath(directory, FileName, imageFileName);
+            var fileReference = new FileReference(imageFileName, relativePath, true);
+            AddFile(fileReference);
+
+            return fileReference;
         }
 
         string GetImageDirectory(string directory, string title)
@@ -103,7 +80,7 @@ namespace MarkPad.DocumentSources.FileSystem
 
         public override string ConvertToAbsolutePaths(string htmlDocument)
         {
-            return SiteContextHelper.ConvertToAbsolutePaths(htmlDocument, Path.GetDirectoryName(FileName));
+            return ConvertToAbsolutePaths(htmlDocument, Path.GetDirectoryName(FileName));
         }
 
         public override bool IsSameItem(ISiteItem siteItem)
@@ -124,53 +101,25 @@ namespace MarkPad.DocumentSources.FileSystem
             {
                 var oldTitle = Title;
                 FileName = newFileName;
-                Title = new FileInfo(FileName).Name;
+                Title = Path.GetFileNameWithoutExtension(FileName);
 
                 //Move any images
                 MoveImagesFolder(originalFileName, oldTitle, newFileName);
             }
         }
 
-        void MoveImagesFolder(string originalFileName, string oldTitle, string newFileName, bool copy = false)
+        void MoveImagesFolder(string originalFileName, string oldTitle, string newFileName)
         {
             var imageDirectory = GetImageDirectory(Path.GetDirectoryName(originalFileName), oldTitle);
             var newImageDirectory = GetImageDirectory(Path.GetDirectoryName(newFileName), Title);
-            if (Directory.Exists(imageDirectory))
+            if (FileSystem.Directory.Exists(imageDirectory))
             {
-                if (copy)
-                    CopyDirectory(imageDirectory, newImageDirectory);
-                else
-                    Directory.Move(imageDirectory, newImageDirectory);
+                FileSystem.Directory.Move(imageDirectory, newImageDirectory);
             }
 
-            var oldRelativePath = SiteContextHelper.ToRelativePath(Path.GetDirectoryName(originalFileName), originalFileName,
-                                                                   imageDirectory);
-            var newRelativePath = SiteContextHelper.ToRelativePath(Path.GetDirectoryName(newFileName), newFileName,
-                                                                   newImageDirectory);
-            MarkdownContent = MarkdownContent
-                .Replace(oldRelativePath, newRelativePath);
-        }
-
-        private static void CopyDirectory(string sourcePath, string destPath)
-        {
-            if (!Directory.Exists(destPath))
-                Directory.CreateDirectory(destPath);
-
-            foreach (var file in Directory.GetFiles(sourcePath))
-            {
-                var fileName = Path.GetFileName(file);
-                if (fileName == null) continue;
-                var dest = Path.Combine(destPath, fileName);
-                File.Copy(file, dest);
-            }
-
-            foreach (var folder in Directory.GetDirectories(sourcePath))
-            {
-                var fileName = Path.GetFileName(folder);
-                if (fileName == null) continue;
-                var dest = Path.Combine(destPath, fileName);
-                CopyDirectory(folder, dest);
-            }
+            var oldRelativePath = ToRelativePath(Path.GetDirectoryName(originalFileName), originalFileName, imageDirectory);
+            var newRelativePath = ToRelativePath(Path.GetDirectoryName(newFileName), newFileName, newImageDirectory);
+            MarkdownContent = MarkdownContent.Replace(oldRelativePath, newRelativePath);
         }
 
         public void Dispose()

@@ -6,8 +6,10 @@ using Caliburn.Micro;
 using MarkPad.DocumentSources.FileSystem;
 using MarkPad.DocumentSources.GitHub;
 using MarkPad.DocumentSources.MetaWeblog;
+using MarkPad.DocumentSources.NewDocument;
 using MarkPad.DocumentSources.WebSources;
 using MarkPad.Helpers;
+using MarkPad.Infrastructure;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Plugins;
 using MarkPad.PreviewControl;
@@ -21,60 +23,55 @@ namespace MarkPad.DocumentSources
         readonly IEventAggregator eventAggregator;
         readonly ISiteContextGenerator siteContextGenerator;
         readonly IBlogService blogService;
-        readonly Func<OpenFromWebViewModel> openFromWebViewModelFactory;
         readonly IWindowManager windowManager;
         readonly Lazy<IWebDocumentService> webDocumentService;
+        readonly IFileSystem fileSystem;
+        readonly IOpenDocumentFromWeb openDocumentFromWeb;
 
         public DocumentFactory(
             IDialogService dialogService, 
             IEventAggregator eventAggregator,
             ISiteContextGenerator siteContextGenerator, 
             IBlogService blogService, 
-            Func<OpenFromWebViewModel> openFromWebViewModelFactory,
             IWindowManager windowManager, 
-            Lazy<IWebDocumentService> webDocumentService)
+            Lazy<IWebDocumentService> webDocumentService, 
+            IFileSystem fileSystem, 
+            IOpenDocumentFromWeb openDocumentFromWeb)
         {
             this.dialogService = dialogService;
             this.eventAggregator = eventAggregator;
             this.siteContextGenerator = siteContextGenerator;
             this.blogService = blogService;
-            this.openFromWebViewModelFactory = openFromWebViewModelFactory;
             this.windowManager = windowManager;
             this.webDocumentService = webDocumentService;
+            this.fileSystem = fileSystem;
+            this.openDocumentFromWeb = openDocumentFromWeb;
         }
 
         public IMarkpadDocument NewDocument()
         {
-            return new NewMarkpadDocument(this, string.Empty);
+            return new NewMarkpadDocument(fileSystem, this, string.Empty);
         }
 
         public IMarkpadDocument NewDocument(string initalText)
         {
-            return new NewMarkpadDocument(this, initalText);
+            return new NewMarkpadDocument(fileSystem, this, initalText);
         }
 
         public IMarkpadDocument CreateHelpDocument(string title, string content)
         {
-            return new HelpDocument(title, content, this);
+            return new HelpDocument(title, content, this, fileSystem);
         }
 
-        public Task<IMarkpadDocument> NewMarkdownFile(string path, string markdownContent)
+        public async Task<IMarkpadDocument> NewMarkdownFile(string path, string markdownContent)
         {
-            //TODO async all the things
-            var streamWriter = new StreamWriter(path);
+            using (var streamWriter = fileSystem.NewStreamWriter(path))
+            {
+                await streamWriter.WriteAsync(markdownContent);
 
-            return streamWriter
-                .WriteAsync(markdownContent)
-                .ContinueWith<IMarkpadDocument>(t =>
-                {
-                    streamWriter.Dispose();
-
-                    t.PropagateExceptions();
-
-                    var siteContext = siteContextGenerator.GetContext(path);
-
-                    return new FileMarkdownDocument(path, markdownContent, siteContext, this, eventAggregator, dialogService);
-                });
+                var siteContext = siteContextGenerator.GetContext(path);
+                return new FileMarkdownDocument(path, markdownContent, siteContext, this, eventAggregator, dialogService, fileSystem);
+            }
         }
 
         public Task<IMarkpadDocument> OpenDocument(string path)
@@ -91,7 +88,7 @@ namespace MarkPad.DocumentSources
 
                     var siteContext = siteContextGenerator.GetContext(path);
 
-                    return new FileMarkdownDocument(path, t.Result, siteContext, this, eventAggregator, dialogService);
+                    return new FileMarkdownDocument(path, t.Result, siteContext, this, eventAggregator, dialogService, fileSystem);
                 });
         }
 
@@ -124,38 +121,32 @@ namespace MarkPad.DocumentSources
 
             var newDocument = new WebDocument(pd.Blog, null, pd.Title, document.MarkdownContent, this,
                                               webDocumentService.Value,
-                                              siteContextGenerator.GetWebContext(pd.Blog));
+                                              siteContextGenerator.GetWebContext(pd.Blog),
+                                              fileSystem);
+
+            foreach (var associatedFile in document.AssociatedFiles)
+            {
+                newDocument.AddFile(new FileReference(associatedFile.FullPath, associatedFile.RelativePath, false));
+            }
 
             return newDocument.Save();
         }
 
         public async Task<IMarkpadDocument> OpenFromWeb()
         {
-            var blogs = blogService.GetBlogs();
-            if (blogs == null || blogs.Count == 0)
-            {
-                if (!blogService.ConfigureNewBlog("Open from web"))
-                    return null;
-                blogs = blogService.GetBlogs();
-                if (blogs == null || blogs.Count == 0)
-                    return null;
-            }
-
-            var openFromWeb = openFromWebViewModelFactory();
-            openFromWeb.InitializeBlogs(blogs);
-
-            var result = windowManager.ShowDialog(openFromWeb);
-            if (result != true)
+            var result = await openDocumentFromWeb.Open();
+            if (result.Success != true)
                 return null;
 
-            var selectedPost = openFromWeb.SelectedPost;
-            var postid = (string) selectedPost.postid;
+            var selectedPost = result.SelectedPost;
+            var postid = selectedPost.postid != null ? selectedPost.postid.ToString() : null;
             var title = selectedPost.title;
-            var blog = openFromWeb.SelectedBlog;
+            var blog = result.SelectedBlog;
             var documentService = webDocumentService.Value;
             var content = await documentService.GetDocumentContent(blog, postid);
             var webSiteContext = siteContextGenerator.GetWebContext(blog);
-            return new WebDocument(blog, postid, title, content, this, documentService, webSiteContext);
+
+            return new WebDocument(blog, postid, title, content, this, documentService, webSiteContext, fileSystem);
         }
 
         public async Task<IMarkpadDocument> OpenBlogPost(BlogSetting blog, string id, string name)
@@ -164,19 +155,30 @@ namespace MarkPad.DocumentSources
 
             var content = await webDocumentService.Value.GetDocumentContent(blog, id);
 
-            var webMarkdownFile = new WebDocument(blog, id, name, content, this, 
-                webDocumentService.Value, metaWeblogSiteContext);
-            return webMarkdownFile;
+            return new WebDocument(blog, id, name, content, this, webDocumentService.Value, metaWeblogSiteContext, fileSystem);
         }
 
-        public Task<IMarkpadDocument> SaveDocumentAs(IMarkpadDocument document)
+        public async Task<IMarkpadDocument> SaveDocumentAs(IMarkpadDocument document)
         {
             var path = dialogService.GetFileSavePath("Save As", "*.md", Constants.ExtensionFilter + "|All Files (*.*)|*.*");
 
             if (string.IsNullOrEmpty(path))
-                return TaskEx.FromResult(document);
+                return document;
 
-            return NewMarkdownFile(path, document.MarkdownContent);
+            var newMarkdownFile = await NewMarkdownFile(path, document.MarkdownContent);
+            SaveAndRewriteImages(document, newMarkdownFile);
+
+            return newMarkdownFile;
+        }
+
+        void SaveAndRewriteImages(IMarkpadDocument document, IMarkpadDocument newMarkdownFile)
+        {
+            foreach (var associatedFile in document.AssociatedFiles)
+            {
+                var fileReference = newMarkdownFile.SaveImage(fileSystem.OpenBitmap(associatedFile.FullPath));
+                newMarkdownFile.MarkdownContent = newMarkdownFile.MarkdownContent.Replace(associatedFile.RelativePath,
+                                                                                          fileReference.RelativePath);
+            }
         }
     }
 }

@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using Caliburn.Micro;
@@ -11,7 +10,7 @@ using MarkPad.Settings.Models;
 
 namespace MarkPad.DocumentSources.WebSources
 {
-    public abstract class WebSiteContext : ISiteContext
+    public abstract class WebSiteContext : PropertyChangedBase, ISiteContext
     {
         readonly string workingDirectory;
         ObservableCollection<ISiteItem> items;
@@ -28,8 +27,6 @@ namespace MarkPad.DocumentSources.WebSources
         }
 
         public string WorkingDirectory { get { return workingDirectory; } }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public ObservableCollection<ISiteItem> Items
         {

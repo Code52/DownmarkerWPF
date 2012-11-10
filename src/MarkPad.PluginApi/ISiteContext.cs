@@ -8,5 +8,6 @@ namespace MarkPad.Plugins
         ObservableCollection<ISiteItem> Items { get; }
         bool IsLoading { get; }
         void OpenItem(ISiteItem selectedItem);
+        string WorkingDirectory { get; }
     }
 }

@@ -1,4 +1,3 @@
-using System.IO.Abstractions;
 using Autofac;
 using MarkPad.Document;
 using MarkPad.Document.Search;

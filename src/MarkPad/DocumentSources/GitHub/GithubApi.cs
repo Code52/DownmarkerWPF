@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Web;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Settings.Models;
-using Newtonsoft.Json;
 
 namespace MarkPad.DocumentSources.GitHub
 {
@@ -24,11 +23,11 @@ namespace MarkPad.DocumentSources.GitHub
         {
             var c = new HttpClient();
             var data = new Dictionary<string, string>
-                           {
-                               {"client_id", ClientId},
-                               {"client_secret", ClientSecret},
-                               {"code", code}
-                           };
+                       {
+                           {"client_id", ClientId},
+                           {"client_secret", ClientSecret},
+                           {"code", code}
+                       };
             var content = new FormUrlEncodedContent(data);
             var request = await c.PostAsync(Accesstokenuri, content);
             var result = await request.Content.ReadAsStringAsync();

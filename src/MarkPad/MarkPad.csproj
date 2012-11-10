@@ -136,10 +136,6 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Abstractions, Version=1.4.0.32, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\System.IO.Abstractions.1.4.0.32\lib\net35\System.IO.Abstractions.dll</HintPath>
-    </Reference>
     <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.dll</HintPath>
     </Reference>
@@ -178,6 +174,13 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Behaviors\StateHelper.cs" />
+    <Compile Include="DocumentSources\IOpenDocumentFromWeb.cs" />
+    <Compile Include="DocumentSources\NewDocument\NewDocumentContext.cs" />
+    <Compile Include="DocumentSources\OpenDocumentFromWeb.cs" />
+    <Compile Include="DocumentSources\OpenDocumentFromWebResult.cs" />
+    <Compile Include="DocumentSources\SingleFileContext.cs" />
+    <Compile Include="DocumentSources\WebSources\SaveResult.cs" />
+    <Compile Include="Infrastructure\IFileSystem.cs" />
     <Compile Include="ModuleInitializer.cs" />
     <Compile Include="Converters\BoolToGridLengthConverter.cs" />
     <Compile Include="Converters\IsCurrentItemConverter.cs" />
@@ -195,7 +198,6 @@
     <Compile Include="DocumentSources\GitTreeMode.cs" />
     <Compile Include="DocumentSources\WebSources\IWebDocumentService.cs" />
     <Compile Include="DocumentSources\WebSources\WebSiteContext.cs" />
-    <Compile Include="DocumentSources\SiteContextHelper.cs" />
     <Compile Include="DocumentSources\DocumentFactory.cs" />
     <Compile Include="DocumentSources\FileSystem\FileMarkdownDocument.cs" />
     <Compile Include="DocumentSources\FileSystem\FileSystemSiteItem.cs" />
@@ -208,7 +210,7 @@
     <Compile Include="DocumentSources\MetaWeblog\MetaWeblogSiteContext.cs" />
     <Compile Include="DocumentSources\MetaWeblog\WebDocumentItem.cs" />
     <Compile Include="DocumentSources\MetaWeblog\IBlogService.cs" />
-    <Compile Include="DocumentSources\NewMarkpadDocument.cs" />
+    <Compile Include="DocumentSources\NewDocument\NewMarkpadDocument.cs" />
     <Compile Include="DocumentSources\SiteItemBase.cs" />
     <Compile Include="DocumentSources\MetaWeblog\Entry.cs" />
     <Compile Include="DocumentSources\MetaWeblog\OpenFromWebView.xaml.cs">

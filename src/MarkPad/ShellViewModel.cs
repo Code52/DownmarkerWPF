@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -244,15 +243,14 @@ namespace MarkPad
             }
         }
 
-        public void PublishDocument()
+        public async void PublishDocument()
         {
             var doc = MDI.ActiveItem as DocumentViewModel;
 
-            if (doc != null)
+            if (doc == null) return;
+            using (DoingWork(string.Format("Publishing {0}", doc.MarkpadDocument.Title)))
             {
-                var finishedWork = DoingWork(string.Format("Publishing {0}", doc.MarkpadDocument.Title));
-                doc.Publish()
-                    .ContinueWith(t => finishedWork.Dispose(), TaskScheduler.FromCurrentSynchronizationContext());
+                await doc.Publish();
             }
         }
 
@@ -267,7 +265,7 @@ namespace MarkPad
             CurrentState = "HideSettings";
         }
 
-        public void Handle(FileOpenEvent message)
+        public async void Handle(FileOpenEvent message)
         {
             if (!fileSystem.File.Exists(message.Path)) return;
 
@@ -279,40 +277,40 @@ namespace MarkPad
                 MDI.ActivateItem(openedDoc);
             else
             {
-                var finishedLoading = DoingWork(string.Format("Opening {0}", message.Path));
-                documentFactory
-                    .OpenDocument(message.Path)
-                    .ContinueWith(t =>
-                    {
-                        OpenDocumentResult(t);
-                        finishedLoading.Dispose();
-                    }, TaskScheduler.FromCurrentSynchronizationContext());
+                using (DoingWork(string.Format("Opening {0}", message.Path)))
+                {
+                    await documentFactory.OpenDocument(message.Path).ContinueWith(OpenDocumentResult, TaskScheduler.FromCurrentSynchronizationContext());
+                }
             }
         }
 
-        public void Handle(OpenFromWebEvent message)
+        public async void Handle(OpenFromWebEvent message)
         {
-            var finishedWork = DoingWork(string.Format("Opening {0}", message.Name));
-
-            var openedDocs = MDI.Items.Cast<DocumentViewModel>();
-            var metaWebLogItem = new WebDocumentItem(null, eventAggregator, message.Id, message.Name, message.Blog);
-            var openedDoc = openedDocs.SingleOrDefault(d => d.MarkpadDocument.IsSameItem(metaWebLogItem));
-
-            if (openedDoc != null)
-                MDI.ActivateItem(openedDoc);
-            else
+            using (DoingWork(string.Format("Opening {0}", message.Name)))
             {
-                documentFactory.OpenBlogPost(message.Blog, message.Id, message.Name)
-                    .ContinueWith(t =>
-                    {
-                        OpenDocumentResult(t);
-                        finishedWork.Dispose();
-                    }, TaskScheduler.FromCurrentSynchronizationContext());
+                var openedDocs = MDI.Items.Cast<DocumentViewModel>();
+                var metaWebLogItem = new WebDocumentItem(null, eventAggregator, message.Id, message.Name, message.Blog);
+                var openedDoc = openedDocs.SingleOrDefault(d => d.MarkpadDocument.IsSameItem(metaWebLogItem));
+
+                if (openedDoc != null)
+                    MDI.ActivateItem(openedDoc);
+                else
+                {
+                    await documentFactory
+                        .OpenBlogPost(message.Blog, message.Id, message.Name)
+                        .ContinueWith(OpenDocumentResult, TaskScheduler.FromCurrentSynchronizationContext());
+                }
             }
         }
 
         void OpenDocumentResult(Task<IMarkpadDocument> t)
         {
+            if (t.IsFaulted && t.Exception != null)
+            {
+                var aggregateException = t.Exception;
+                dialogService.ShowError("Failed to open document", aggregateException.InnerException.Message, null);
+                return;
+            }
             if (t.IsCanceled || t.Result == null) return;
             var doc = documentViewModelFactory();
             doc.Open(t.Result);
@@ -349,11 +347,7 @@ namespace MarkPad
         {
             if (ActiveDocumentViewModel == null) return;
 
-            var selectSearch = SearchSettings.SelectSearch;
-            if (searchType == SearchType.Next || searchType == SearchType.Prev)
-            {
-                selectSearch = true;
-            }
+            var selectSearch = SearchSettings.SelectSearch || (searchType == SearchType.Next || searchType == SearchType.Prev);
 
             ActiveDocumentViewModel.SearchProvider.DoSearch(searchType, selectSearch);
             

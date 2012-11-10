@@ -23,11 +23,10 @@ namespace MarkPad.Document.EditorBehaviours
 
             foreach (var dataImage in images)
             {
-                var relativePath = e.ViewModel.MarkpadDocument.SaveImage(dataImage.Bitmap);
+                var fileReference = e.ViewModel.MarkpadDocument.SaveImage(dataImage.Bitmap);
 
-                var imageMarkdown = string.Format("![{0}]({1})",
-                                Path.GetFileNameWithoutExtension(relativePath),
-                                relativePath.Replace('\\', '/'));
+                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileReference.RelativePath);
+                var imageMarkdown = string.Format("![{0}]({1})", fileNameWithoutExtension, fileReference.RelativePath);
                 sb.AppendLine(imageMarkdown);
             }
 

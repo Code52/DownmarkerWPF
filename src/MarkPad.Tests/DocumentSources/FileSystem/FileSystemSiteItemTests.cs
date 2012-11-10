@@ -1,7 +1,7 @@
-﻿using System.IO.Abstractions;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using MarkPad.DocumentSources.FileSystem;
 using MarkPad.Events;
+using MarkPad.Infrastructure;
 using NSubstitute;
 using Xunit;
 
@@ -19,7 +19,6 @@ namespace MarkPad.Tests.DocumentSources.FileSystem
         [Fact]
         public void renames_self_when_receives_filerenamed_event()
         {
-            // arrange
             // arrange
             var eventAggregator = Substitute.For<IEventAggregator>();
             const string oldFileName = @"c:\OldFile.txt";

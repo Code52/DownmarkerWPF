@@ -2,10 +2,10 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using Caliburn.Micro;
 using MarkPad.Events;
+using MarkPad.Infrastructure;
 using MarkPad.Infrastructure.Abstractions;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Plugins;
@@ -82,11 +82,6 @@ namespace MarkPad.DocumentSources.FileSystem
             eventAggregator.Publish(new FileCreatedEvent(fileSystemEventArgs.FullPath));
         }
 
-        public string ConvertToAbsolutePaths(string htmlDocument)
-        {
-            return SiteContextHelper.ConvertToAbsolutePaths(htmlDocument, SiteBasePath);
-        }
-
         public ObservableCollection<ISiteItem> Items
         {
             get { return items ?? (items = new FileSystemSiteItem(eventAggregator, fileSystem, SiteBasePath).Children); }
@@ -120,6 +115,8 @@ namespace MarkPad.DocumentSources.FileSystem
                 }
             }
         }
+
+        public string WorkingDirectory { get { return siteBasePath; } }
 
         public void Dispose()
         {

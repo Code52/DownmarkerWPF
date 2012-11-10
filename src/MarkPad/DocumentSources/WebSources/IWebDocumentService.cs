@@ -8,7 +8,7 @@ namespace MarkPad.DocumentSources.WebSources
     public interface IWebDocumentService
     {
         Task DeleteDocument(BlogSetting blog, Post post);
-        Task<string> SaveDocument(BlogSetting blog, WebDocument document);
+        Task<SaveResult> SaveDocument(BlogSetting blog, WebDocument document);
         Task<string> GetDocumentContent(BlogSetting blog, string id);
     }
 }
