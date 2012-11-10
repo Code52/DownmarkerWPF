@@ -163,7 +163,7 @@ namespace MarkPad.DocumentSources
             var path = dialogService.GetFileSavePath("Save As", "*.md", Constants.ExtensionFilter + "|All Files (*.*)|*.*");
 
             if (string.IsNullOrEmpty(path))
-                return document;
+                throw new TaskCanceledException("Save As Cancelled");
 
             var newMarkdownFile = await NewMarkdownFile(path, document.MarkdownContent);
             SaveAndRewriteImages(document, newMarkdownFile);

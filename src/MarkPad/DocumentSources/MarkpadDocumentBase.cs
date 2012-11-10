@@ -53,9 +53,9 @@ namespace MarkPad.DocumentSources
 
         public abstract Task<IMarkpadDocument> Save();
 
-        public virtual async Task<IMarkpadDocument> SaveAs()
+        public virtual Task<IMarkpadDocument> SaveAs()
         {
-            return await documentFactory.SaveDocumentAs(this);
+            return documentFactory.SaveDocumentAs(this);
         }
 
         public virtual Task<IMarkpadDocument> Publish()
