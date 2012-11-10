@@ -51,7 +51,7 @@ namespace MarkPad.Document
             this.settingsProvider = settingsProvider;
             this.documentParser = documentParser;
             this.shell = shell;
-            this.SearchProvider = searchProvider;
+            SearchProvider = searchProvider;
 
             FontSize = GetFontSize();
             IndentType = settingsProvider.GetSettings<MarkPadSettings>().IndentType;
@@ -90,11 +90,11 @@ namespace MarkPad.Document
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        public void Open(IMarkpadDocument document)
+        public void Open(IMarkpadDocument document, bool isNew = false)
         {
             MarkpadDocument = document;
-            Document.Text = document.MarkdownContent;
-            Original = document.MarkdownContent;
+            Document.Text = document.MarkdownContent ?? string.Empty;
+            Original = null;
 
             Update();
         }

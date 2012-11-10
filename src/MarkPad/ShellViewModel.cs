@@ -119,7 +119,7 @@ namespace MarkPad
 			if (text == "text") text = "";
 
 			var documentViewModel = documentViewModelFactory();
-            documentViewModel.Open(documentFactory.NewDocument(text));
+            documentViewModel.Open(documentFactory.NewDocument(text), isNew: true);
 			MDI.Open(documentViewModel);			
 			documentViewModel.Update();
 		}
