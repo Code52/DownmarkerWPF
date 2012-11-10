@@ -1,5 +1,6 @@
 using White.Core;
 using White.Core.UIItems;
+using White.Core.UIItems.Finders;
 using White.Core.UIItems.WindowItems;
 
 namespace Markpad.UITests.Infrastructure
@@ -8,9 +9,7 @@ namespace Markpad.UITests.Infrastructure
     {
         public MarkpadWindow(Application application, Window whiteWindow)
             :base(application, whiteWindow)
-        {
-            
-        }
+        { }
 
         public MarkpadWindow NewDocument()
         {
@@ -26,6 +25,23 @@ namespace Markpad.UITests.Infrastructure
             {
                 return new MarkpadDocument(this);
             }
+        }
+
+        public void Save()
+        {
+            WhiteWindow.Get<Button>("ShowSave").Click();
+            WhiteWindow.Get<Button>("SaveDocument").Click();
+        }
+
+        public void SaveAs(string path)
+        {
+            WhiteWindow.Get<Button>("ShowSave").Click();
+            WhiteWindow.Get<Button>("SaveAsDocument").Click();
+
+            var modalWindow = WhiteWindow.ModalWindow("Save As");
+            modalWindow.Get<TextBox>(SearchCriteria.ByAutomationId("1001")).Text = path;
+            modalWindow.Get<Button>(SearchCriteria.ByAutomationId("1")).Click();
+            WhiteWindow.WaitWhileBusy();
         }
     }
 }

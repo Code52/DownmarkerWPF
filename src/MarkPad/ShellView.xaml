@@ -414,7 +414,7 @@
     					<TranslateTransform X="-50"/>
     				</TransformGroup>
     			</WrapPanel.RenderTransform>
-    			<Button x:Name="SaveDocument" Content="SAVE" />
+    			<Button AutomationProperties.AutomationId="SaveDocument" Content="SAVE" Command="{Binding SaveDocumentCommand}" />
                 <Button x:Name="SaveAsDocument" Content="SAVE AS" />
     			<Button x:Name="SaveAllDocuments" Content="SAVE ALL" />
 				<WrapPanel x:Name="SavePageHook" Margin="0,0,0,0"/>

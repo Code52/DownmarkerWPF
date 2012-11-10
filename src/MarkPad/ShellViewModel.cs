@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Input;
 using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.Document.Events;
@@ -19,6 +22,7 @@ using MarkPad.Plugins;
 using MarkPad.PreviewControl;
 using MarkPad.Settings.UI;
 using MarkPad.Updater;
+using Action = System.Action;
 
 namespace MarkPad
 {
@@ -53,6 +57,7 @@ namespace MarkPad
 
             Settings = settingsViewModel;
             Settings.Initialize();
+            SaveDocumentCommand = new DelegateCommand<object>(o=>SaveDocument(), o=> CanSaveDocument);
 
             ActivateItem(mdi);
         }
@@ -66,6 +71,7 @@ namespace MarkPad
         private string currentState;
         readonly IDocumentFactory documentFactory;
         readonly object workLock = new object();
+        bool isWorking;
 
         public string CurrentState
         {
@@ -85,7 +91,15 @@ namespace MarkPad
 		public DocumentViewModel ActiveDocumentViewModel { get { return MDI.ActiveItem as DocumentViewModel; } }
 
         public string WorkingText { get; private set; }
-        public bool IsWorking { get; private set; }
+        public bool IsWorking
+        {
+            get { return isWorking; }
+            private set
+            {
+                isWorking = value;
+                ((DelegateCommand<object>)SaveDocumentCommand).RaiseCanExecuteChanged();
+            }
+        }
 
         public IDisposable DoingWork(string work)
         {
@@ -94,15 +108,25 @@ namespace MarkPad
                 IsWorking = true;
                 loadingMessages.Add(work);
                 WorkingText = work;
+                var view = (DependencyObject)GetView();
+                AutomationProperties.SetHelpText(view, "Busy");
 
                 return new DelegateDisposable(() =>
                 {
                     lock (workLock)
                     {
                         loadingMessages.Remove(work);
-                        IsWorking = loadingMessages.Count > 0;
                         if (loadingMessages.Count > 0)
+                        {
+                            IsWorking = true;
                             WorkingText = loadingMessages.Last();
+                        }
+                        else
+                        {
+                            IsWorking = false;
+                            WorkingText = null;
+                            AutomationProperties.SetHelpText(view, string.Empty);
+                        }
                     }
                 });
             }
@@ -140,6 +164,7 @@ namespace MarkPad
 
         public void OpenDocument()
         {
+            if (IsWorking) return;
             var path = dialogService.GetFileOpenPath("Open a markdown document.", Constants.ExtensionFilter + "|Any File (*.*)|*.*");
             if (path == null)
                 return;
@@ -149,6 +174,7 @@ namespace MarkPad
 
         public void OpenDocument(IEnumerable<string> filenames)
         {
+            if (IsWorking) return;
             if (filenames == null) return;
 
             foreach (var fn in filenames)
@@ -157,36 +183,48 @@ namespace MarkPad
             }
         }
 
-        public void SaveDocument()
+        public async void SaveDocument()
         {
+            if (IsWorking) return;
             var doc = MDI.ActiveItem as DocumentViewModel;
             if (doc != null)
             {
-                var finishedLoading = DoingWork(string.Format("Saving {0}", doc.MarkpadDocument.Title));
-                doc.Save()
-                    .ContinueWith(t=>finishedLoading.Dispose(), TaskScheduler.FromCurrentSynchronizationContext());
+                using (DoingWork(string.Format("Saving {0}", doc.MarkpadDocument.Title)))
+                {
+                    await doc.Save();
+                    await TaskEx.Delay(10000);
+                }
             }
         }
 
-        public void SaveAsDocument()
+        public async void SaveAsDocument()
         {
+            if (IsWorking) return;
             var doc = MDI.ActiveItem as DocumentViewModel;
             if (doc != null)
             {
-                doc.SaveAs();
+                using (DoingWork(string.Format("Saving {0}", doc.MarkpadDocument.Title)))
+                {
+                    await doc.SaveAs();
+                }
             }
         }
 
         public void SaveAllDocuments()
         {
-            foreach (DocumentViewModel doc in MDI.Items)
+            if (IsWorking) return;
+            using (DoingWork(string.Format("Saving all documents")))
             {
-                doc.Save();
+                foreach (DocumentViewModel doc in MDI.Items)
+                {
+                    doc.Save();
+                }
             }
         }
 
         public void CloseDocument()
         {
+            if (IsWorking) return;
             if (CurrentState == ShowSettingsState)
             {
                 Handle(new SettingsCloseEvent());
@@ -343,6 +381,8 @@ namespace MarkPad
             }
         }
 
+        public ICommand SaveDocumentCommand { get; private set; }
+
         public void Search(SearchType searchType)
         {
             if (ActiveDocumentViewModel == null) return;
@@ -358,6 +398,82 @@ namespace MarkPad
                 // update the search highlighting
                 ActiveDocumentViewModel.View.Editor.TextArea.TextView.Redraw();
             }
+        }
+    }
+
+    /// <summary>
+    /// A command that calls the specified delegate when the command is executed.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class DelegateCommand<T> : ICommand
+    {
+        private readonly Func<T, bool> _canExecuteMethod;
+        private readonly Action<T> _executeMethod;
+        private bool _isExecuting;
+
+        public DelegateCommand(Action<T> executeMethod)
+            : this(executeMethod, null)
+        {
+        }
+
+        public DelegateCommand(Action<T> executeMethod, Func<T, bool> canExecuteMethod)
+        {
+            if ((executeMethod == null) && (canExecuteMethod == null))
+            {
+                throw new ArgumentNullException("executeMethod", @"Execute Method cannot be null");
+            }
+            _executeMethod = executeMethod;
+            _canExecuteMethod = canExecuteMethod;
+        }
+
+        public event EventHandler CanExecuteChanged
+        {
+            add
+            {
+                CommandManager.RequerySuggested += value;
+            }
+            remove
+            {
+                CommandManager.RequerySuggested -= value;
+            }
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            CommandManager.InvalidateRequerySuggested();
+        }
+
+        bool ICommand.CanExecute(object parameter)
+        {
+            return !_isExecuting && CanExecute((T)parameter);
+        }
+
+        void ICommand.Execute(object parameter)
+        {
+            _isExecuting = true;
+            try
+            {
+                RaiseCanExecuteChanged();
+                Execute((T)parameter);
+            }
+            finally
+            {
+                _isExecuting = false;
+                RaiseCanExecuteChanged();
+            }
+        }
+
+        public bool CanExecute(T parameter)
+        {
+            if (_canExecuteMethod == null)
+                return true;
+
+            return _canExecuteMethod(parameter);
+        }
+
+        public void Execute(T parameter)
+        {
+            _executeMethod(parameter);
         }
     }
 }
