@@ -197,6 +197,11 @@ namespace MarkPad
             }
         }
 
+        private bool CanSaveDocument
+        {
+            get { return !IsWorking; }
+        }
+
         public async void SaveAsDocument()
         {
             if (IsWorking) return;
