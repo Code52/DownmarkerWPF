@@ -38,6 +38,7 @@ namespace MarkPad.Infrastructure
         byte[] ReadAllBytes(string path);
         Task WriteAllTextAsync(string fileName, string markdownContent);
         Task<string> ReadAllTextAsync(string path);
+        void Copy(string sourceFileName, string destFileName);
     }
 
     public class FileSystem : IFileSystem
@@ -151,15 +152,22 @@ namespace MarkPad.Infrastructure
         public async Task WriteAllTextAsync(string fileName, string markdownContent)
         {
             using (var streamWriter = new StreamWriter(fileName))
+            {
                 await streamWriter.WriteAsync(markdownContent);
+            }
         }
 
-        public Task<string> ReadAllTextAsync(string path)
+        public async Task<string> ReadAllTextAsync(string path)
         {
             using (var streamWriter = new StreamReader(path))
             {
-                return streamWriter.ReadToEndAsync();
+                return await streamWriter.ReadToEndAsync();
             }
+        }
+
+        public void Copy(string sourceFileName, string destFileName)
+        {
+            File.Copy(sourceFileName, destFileName);
         }
     }
 }

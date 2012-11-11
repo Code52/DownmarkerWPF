@@ -148,20 +148,28 @@ namespace MarkPad.DocumentSources
             await fileSystem.File.WriteAllTextAsync(path, document.MarkdownContent);
 
             var siteContext = siteContextGenerator.GetContext(path);
-            var newMarkdownFile = new FileMarkdownDocument(path, document.MarkdownContent, siteContext, new FileReference[0],  this, eventAggregator, dialogService, fileSystem);
 
-            SaveAndRewriteImages(document, newMarkdownFile);
+            var newDocumentAssociatedFiles = new List<FileReference>();
+            var newFileDirectory = Path.GetDirectoryName(path);
 
-            return newMarkdownFile;
-        }
-
-        void SaveAndRewriteImages(IMarkpadDocument document, IMarkpadDocument newMarkdownFile)
-        {
             foreach (var associatedFile in document.AssociatedFiles)
             {
-                var fileReference = newMarkdownFile.SaveImage(fileSystem.OpenBitmap(associatedFile.FullPath));
-                newMarkdownFile.MarkdownContent = newMarkdownFile.MarkdownContent.Replace(associatedFile.RelativePath, fileReference.RelativePath);
+                var newAbsolutePath = Path.Combine(newFileDirectory, associatedFile.RelativePath);
+                var newRelativePath = associatedFile.RelativePath;
+
+                newAbsolutePath = newAbsolutePath.Replace(document.Title + "_images", Path.GetFileNameWithoutExtension(path) + "_images");
+                newRelativePath = newRelativePath.Replace(document.Title + "_images", Path.GetFileNameWithoutExtension(path) + "_images");
+
+                if (associatedFile.FullPath != newAbsolutePath)
+                {
+                    fileSystem.File.Copy(associatedFile.FullPath, newAbsolutePath);
+                }
+                newDocumentAssociatedFiles.Add(new FileReference(newAbsolutePath, newRelativePath, true));
             }
+
+            var newMarkdownFile = new FileMarkdownDocument(path, document.MarkdownContent, siteContext, newDocumentAssociatedFiles, this, eventAggregator, dialogService, fileSystem);
+
+            return newMarkdownFile;
         }
     }
 }

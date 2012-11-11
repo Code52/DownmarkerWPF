@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
 using MarkPad.Infrastructure;
@@ -11,6 +12,7 @@ namespace MarkPad.DocumentSources.NewDocument
     public class NewMarkpadDocument : MarkpadDocumentBase
     {
         readonly IFileSystem fileSystem;
+        readonly List<FileReference> imagesToSave = new List<FileReference>();
 
         public NewMarkpadDocument(IFileSystem fileSystem, IDocumentFactory documentFactory, string content) : 
             base("New Document", content, null, new FileReference[0], documentFactory, new NewDocumentContext(fileSystem), fileSystem)
@@ -29,6 +31,17 @@ namespace MarkPad.DocumentSources.NewDocument
             return SaveAs();
         }
 
+        public override async Task<IMarkpadDocument> SaveAs()
+        {
+            var newDocument = await base.SaveAs();
+            foreach (var fileReference in imagesToSave)
+            {
+                newDocument.SaveImage(FileSystem.OpenBitmap(fileReference.FullPath));
+            }
+
+            return newDocument;
+        }
+
         public override FileReference SaveImage(Bitmap image)
         {
             var imageFileName = GetFileNameBasedOnTitle(Title, SiteContext.WorkingDirectory);
@@ -37,7 +50,7 @@ namespace MarkPad.DocumentSources.NewDocument
 
             var relativePath = ToRelativePath(SiteContext.WorkingDirectory, SiteContext.WorkingDirectory, imageFileName);
             var fileReference = new FileReference(imageFileName, relativePath, false);
-            AddFile(fileReference);
+            imagesToSave.Add(fileReference);
 
             return fileReference;
         }

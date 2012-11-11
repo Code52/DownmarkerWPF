@@ -1,22 +1,32 @@
+using System;
 using System.IO;
 using System.Reflection;
+using White.Core;
 
 namespace Markpad.UITests.Infrastructure
 {
-    public class MarkpadFixture
+    public class MarkpadFixture : IDisposable
     {
-        public string MarkpadLocation
+        public MarkpadFixture()
         {
-            get
-            {
-                var directoryName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                return Path.Combine(directoryName, @"..\..\..\Markpad\bin\Debug\Markpad.exe");
-            }
+            var directoryName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var markpadLocation = Path.Combine(directoryName, @"..\..\..\Markpad\bin\Debug\Markpad.exe");
+            Application = Application.Launch(markpadLocation);
+            MainWindow = new MarkpadWindow(Application, Application.GetWindow("MarkPad"));
+            TemporaryTestFilesDirectory = Path.Combine(Path.GetTempPath(), "MarkpadTest");
+
+            if (!Directory.Exists(TemporaryTestFilesDirectory))
+                Directory.CreateDirectory(TemporaryTestFilesDirectory);
         }
 
-        public string MarkpadTitle
+        public Application Application { get; private set; }
+        public MarkpadWindow MainWindow { get; private set; }
+        public string TemporaryTestFilesDirectory { get; private set; }
+
+        public void Dispose()
         {
-            get { return "MarkPad"; }
+            Application.Dispose();
+            Directory.Delete(TemporaryTestFilesDirectory, true);
         }
     }
 }

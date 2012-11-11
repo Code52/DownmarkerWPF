@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
-using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using MarkPad.DocumentSources;
 using MarkPad.DocumentSources.NewDocument;
 using MarkPad.Infrastructure;
+using MarkPad.Plugins;
 using NSubstitute;
 using Xunit;
 
@@ -52,17 +53,22 @@ namespace MarkPad.Tests.DocumentSources.NewDocument
         }
 
         [Fact]
-        public void SaveImageKeepsSavedFileReferenced()
+        public async Task SaveAsSavesImages()
         {
             // arrange
+            var bitmap = new Bitmap(1, 1);
             fileSystem.GetTempPath().Returns(@"c:\Temp");
+            fileSystem.OpenBitmap(Arg.Any<string>()).Returns(bitmap);
             var doc = new NewMarkpadDocument(fileSystem, documentFactory, "Title", "Content");
+            var markpadDocument = Substitute.For<IMarkpadDocument>();
+            documentFactory.SaveDocumentAs(doc).Returns(TaskEx.FromResult(markpadDocument));
+            doc.SaveImage(bitmap);
 
             // act
-            doc.SaveImage(new Bitmap(1, 1));
+            await doc.Save();
 
             // assert
-            Assert.Equal(1, doc.AssociatedFiles.Count());
+            markpadDocument.Received().SaveImage(bitmap);
         }
     }
 }

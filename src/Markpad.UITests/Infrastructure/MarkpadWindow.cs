@@ -1,7 +1,10 @@
+using System;
+using System.Windows.Automation;
 using White.Core;
 using White.Core.UIItems;
 using White.Core.UIItems.Finders;
 using White.Core.UIItems.WindowItems;
+using White.Core.Utility;
 
 namespace Markpad.UITests.Infrastructure
 {
@@ -11,12 +14,28 @@ namespace Markpad.UITests.Infrastructure
             :base(application, whiteWindow)
         { }
 
-        public MarkpadWindow NewDocument()
+        public MarkpadDocument NewDocument()
         {
             WhiteWindow.Get<Button>("ShowNew").Click();
             WhiteWindow.Get<Button>("NewDocument").Click();
 
-            return this;
+            Retry.For(() => "New Document" == CurrentDocument.Title, 5);
+            WaitWhileBusy();
+
+            return new MarkpadDocument(this);
+        }
+
+        public MarkpadDocument OpenDocument(string existingDoc)
+        {
+            WhiteWindow.Get<Button>("ShowOpen").Click();
+            WhiteWindow.Get<Button>("OpenDocument").Click();
+
+            var openDocumentWindow = WhiteWindow.ModalWindow("Open a markdown document.");
+            openDocumentWindow.Get<TextBox>(SearchCriteria.ByAutomationId("1148")).Text = existingDoc;
+            openDocumentWindow.Get<Button>(SearchCriteria.ByAutomationId("1")).Click();
+
+            WaitWhileBusy();
+            return new MarkpadDocument(this);
         }
 
         public MarkpadDocument CurrentDocument
@@ -27,21 +46,15 @@ namespace Markpad.UITests.Infrastructure
             }
         }
 
-        public void Save()
+        public void WaitWhileBusy()
         {
-            WhiteWindow.Get<Button>("ShowSave").Click();
-            WhiteWindow.Get<Button>("SaveDocument").Click();
+            Retry.For(ShellIsBusy, isBusy => isBusy, (int)TimeSpan.FromSeconds(30).TotalMilliseconds);
         }
 
-        public void SaveAs(string path)
+        bool ShellIsBusy()
         {
-            WhiteWindow.Get<Button>("ShowSave").Click();
-            WhiteWindow.Get<Button>("SaveAsDocument").Click();
-
-            var modalWindow = WhiteWindow.ModalWindow("Save As");
-            modalWindow.Get<TextBox>(SearchCriteria.ByAutomationId("1001")).Text = path;
-            modalWindow.Get<Button>(SearchCriteria.ByAutomationId("1")).Click();
-            WhiteWindow.WaitWhileBusy();
+            var currentPropertyValue = WhiteWindow.AutomationElement.GetCurrentPropertyValue(AutomationElement.HelpTextProperty);
+            return currentPropertyValue != null && ((string)currentPropertyValue).Contains("Busy");
         }
     }
 }

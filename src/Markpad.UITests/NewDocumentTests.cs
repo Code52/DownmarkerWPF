@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Windows.Forms;
 using Markpad.UITests.Infrastructure;
 using Xunit;
 
@@ -23,9 +24,21 @@ namespace Markpad.UITests
                 .NewDocument()
                 .SaveAs(newDoc);
 
-            WaitWhileBusy();
-
             Assert.True(File.Exists(newDoc));
+        }
+
+        [Fact]
+        public void CanSaveNewDocumentWithPastedImage()
+        {
+            var newDoc = Path.Combine(TemporaryTestFilesDirectory, "CanSaveNewDocWithPastedImage.md");
+            Clipboard.SetImage(Properties.Resources.icon);
+
+            MainWindow
+                .NewDocument()
+                .PasteClipboard()
+                .SaveAs(newDoc);
+
+            Assert.True(File.Exists(Path.Combine(TemporaryTestFilesDirectory, @"CanSaveNewDocWithPastedImage_images\CanSaveNewDocWithPastedImage.png")));
         }
     }
 }
