@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Threading.Tasks;
 using MarkPad.DocumentSources;
 using MarkPad.Infrastructure;
@@ -8,9 +9,9 @@ namespace MarkPad.Tests
 {
     public class TestMarkpadDocumentBase : MarkpadDocumentBase
     {
-        public TestMarkpadDocumentBase(string title, string content, string saveLocation,
+        public TestMarkpadDocumentBase(string title, string content, string saveLocation, IEnumerable<FileReference> associatedFiles,
             IDocumentFactory documentFactory, ISiteContext siteContext, IFileSystem fileSystem) :
-            base(title, content, saveLocation, documentFactory, siteContext, fileSystem)
+            base(title, content, saveLocation, associatedFiles, documentFactory, siteContext, fileSystem)
         {
         }
 

@@ -3,7 +3,7 @@ using System.IO;
 using Caliburn.Micro;
 using MarkPad.Plugins;
 
-namespace MarkPad.DocumentSources
+namespace MarkPad.DocumentSources.FileSystem
 {
     public class SingleFileContext : PropertyChangedBase, ISiteContext
     {

@@ -7,11 +7,9 @@ namespace MarkPad.Infrastructure
 {
     public interface IFileSystem
     {
-        Stream NewFileStream(string filename, FileMode create);
         string GetTempPath();
         IFile File { get; }
         IDirectory Directory { get; }
-        StreamWriter NewStreamWriter(string path);
         Bitmap OpenBitmap(string fullPath);
         void SaveImagePng(Bitmap image, string imageFileName);
         IFileInfo FileInfo(string fileName);
@@ -39,6 +37,7 @@ namespace MarkPad.Infrastructure
         void Delete(string path);
         byte[] ReadAllBytes(string path);
         Task WriteAllTextAsync(string fileName, string markdownContent);
+        Task<string> ReadAllTextAsync(string path);
     }
 
     public class FileSystem : IFileSystem
@@ -47,11 +46,6 @@ namespace MarkPad.Infrastructure
         {
             File = new FileOperations();
             Directory = new DirectoryOperations();
-        }
-
-        public Stream NewFileStream(string filename, FileMode create)
-        {
-            return new FileStream(filename, create);
         }
 
         public string GetTempPath()
@@ -74,7 +68,7 @@ namespace MarkPad.Infrastructure
 
         public void SaveImagePng(Bitmap image, string imageFileName)
         {
-            using (var stream = NewFileStream(imageFileName, FileMode.Create))
+            using (var stream = new FileStream(imageFileName, FileMode.Create))
             {
                 image.Save(stream, ImageFormat.Png);
             }
@@ -158,6 +152,14 @@ namespace MarkPad.Infrastructure
         {
             using (var streamWriter = new StreamWriter(fileName))
                 await streamWriter.WriteAsync(markdownContent);
+        }
+
+        public Task<string> ReadAllTextAsync(string path)
+        {
+            using (var streamWriter = new StreamReader(path))
+            {
+                return streamWriter.ReadToEndAsync();
+            }
         }
     }
 }

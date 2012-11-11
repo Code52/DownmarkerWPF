@@ -178,7 +178,7 @@
     <Compile Include="DocumentSources\NewDocument\NewDocumentContext.cs" />
     <Compile Include="DocumentSources\OpenDocumentFromWeb.cs" />
     <Compile Include="DocumentSources\OpenDocumentFromWebResult.cs" />
-    <Compile Include="DocumentSources\SingleFileContext.cs" />
+    <Compile Include="DocumentSources\FileSystem\SingleFileContext.cs" />
     <Compile Include="DocumentSources\WebSources\SaveResult.cs" />
     <Compile Include="Infrastructure\AwaitableDelegateCommand.cs" />
     <Compile Include="Infrastructure\AwaitableDelegateCommand`1.cs" />
@@ -202,7 +202,7 @@
     <Compile Include="DocumentSources\GitHub\WebDocument.cs" />
     <Compile Include="DocumentSources\GitHub\GithubSiteContext.cs" />
     <Compile Include="DocumentSources\GitHub\IGithubApi.cs" />
-    <Compile Include="DocumentSources\GitTreeMode.cs" />
+    <Compile Include="DocumentSources\GitHub\GitTreeMode.cs" />
     <Compile Include="DocumentSources\WebSources\IWebDocumentService.cs" />
     <Compile Include="DocumentSources\WebSources\WebSiteContext.cs" />
     <Compile Include="DocumentSources\DocumentFactory.cs" />

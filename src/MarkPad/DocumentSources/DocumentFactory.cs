@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using MarkPad.DocumentSources.FileSystem;
@@ -8,7 +9,6 @@ using MarkPad.DocumentSources.GitHub;
 using MarkPad.DocumentSources.MetaWeblog;
 using MarkPad.DocumentSources.NewDocument;
 using MarkPad.DocumentSources.WebSources;
-using MarkPad.Helpers;
 using MarkPad.Infrastructure;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Plugins;
@@ -59,34 +59,36 @@ namespace MarkPad.DocumentSources
         {
             return new HelpDocument(title, content, this, fileSystem);
         }
-
-        public async Task<IMarkpadDocument> NewMarkdownFile(string path, string markdownContent)
+        
+        public async Task<IMarkpadDocument> OpenDocument(string path)
         {
-            using (var streamWriter = fileSystem.NewStreamWriter(path))
-            {
-                await streamWriter.WriteAsync(markdownContent);
+            var contents = await fileSystem.File.ReadAllTextAsync(path);
+            var siteContext = siteContextGenerator.GetContext(path);
 
-                var siteContext = siteContextGenerator.GetContext(path);
-                return new FileMarkdownDocument(path, markdownContent, siteContext, this, eventAggregator, dialogService, fileSystem);
-            }
+            var associatedImages = GetAssociatedImages(contents, siteContext);
+
+            return new FileMarkdownDocument(path, contents, siteContext, associatedImages, this, eventAggregator, dialogService, fileSystem);
         }
 
-        public Task<IMarkpadDocument> OpenDocument(string path)
+        IEnumerable<FileReference> GetAssociatedImages(string markdownFileContents, ISiteContext siteContext)
         {
-            var streamWriter = new StreamReader(path);
+            const string imageRegex = @"!\[(?<AltText>.*?)\]\((?<Link>.*?)\)";
+            var images = Regex.Matches(markdownFileContents, imageRegex);
+            var associatedImages = new List<FileReference>();
 
-            return streamWriter
-                .ReadToEndAsync()
-                .ContinueWith<IMarkpadDocument>(t =>
+            foreach (Match image in images)
+            {
+                var imageLink = image.Groups["Link"].Value;
+                if (Path.IsPathRooted(imageLink) && fileSystem.File.Exists(imageLink))
+                    associatedImages.Add(new FileReference(image.Value, image.Value, true));
+                else
                 {
-                    streamWriter.Dispose();
-
-                    t.PropagateExceptions();
-
-                    var siteContext = siteContextGenerator.GetContext(path);
-
-                    return new FileMarkdownDocument(path, t.Result, siteContext, this, eventAggregator, dialogService, fileSystem);
-                });
+                    var fullPath = Path.Combine(siteContext.WorkingDirectory, imageLink);
+                    if (fileSystem.File.Exists(fullPath))
+                        associatedImages.Add(new FileReference(fullPath, imageLink, true));
+                }
+            }
+            return associatedImages;
         }
 
         /// <summary>
@@ -116,10 +118,8 @@ namespace MarkPad.DocumentSources
             if (detailsResult != true)
                 return TaskEx.FromResult<IMarkpadDocument>(null);
 
-            var newDocument = new WebDocument(pd.Blog, null, pd.Title, document.MarkdownContent, this,
-                                              webDocumentService.Value,
-                                              siteContextGenerator.GetWebContext(pd.Blog),
-                                              fileSystem);
+            var newDocument = new WebDocument(pd.Blog, null, pd.Title, document.MarkdownContent, new FileReference[0], this,
+                                              webDocumentService.Value, siteContextGenerator.GetWebContext(pd.Blog), fileSystem);
 
             foreach (var associatedFile in document.AssociatedFiles)
             {
@@ -135,7 +135,7 @@ namespace MarkPad.DocumentSources
 
             var content = await webDocumentService.Value.GetDocumentContent(blog, id);
 
-            return new WebDocument(blog, id, name, content, this, webDocumentService.Value, metaWeblogSiteContext, fileSystem);
+            return new WebDocument(blog, id, name, content, new FileReference[0], this, webDocumentService.Value, metaWeblogSiteContext, fileSystem);
         }
 
         public async Task<IMarkpadDocument> SaveDocumentAs(IMarkpadDocument document)
@@ -145,7 +145,11 @@ namespace MarkPad.DocumentSources
             if (string.IsNullOrEmpty(path))
                 throw new TaskCanceledException("Save As Cancelled");
 
-            var newMarkdownFile = await NewMarkdownFile(path, document.MarkdownContent);
+            await fileSystem.File.WriteAllTextAsync(path, document.MarkdownContent);
+
+            var siteContext = siteContextGenerator.GetContext(path);
+            var newMarkdownFile = new FileMarkdownDocument(path, document.MarkdownContent, siteContext, new FileReference[0],  this, eventAggregator, dialogService, fileSystem);
+
             SaveAndRewriteImages(document, newMarkdownFile);
 
             return newMarkdownFile;
@@ -156,8 +160,7 @@ namespace MarkPad.DocumentSources
             foreach (var associatedFile in document.AssociatedFiles)
             {
                 var fileReference = newMarkdownFile.SaveImage(fileSystem.OpenBitmap(associatedFile.FullPath));
-                newMarkdownFile.MarkdownContent = newMarkdownFile.MarkdownContent.Replace(associatedFile.RelativePath,
-                                                                                          fileReference.RelativePath);
+                newMarkdownFile.MarkdownContent = newMarkdownFile.MarkdownContent.Replace(associatedFile.RelativePath, fileReference.RelativePath);
             }
         }
     }

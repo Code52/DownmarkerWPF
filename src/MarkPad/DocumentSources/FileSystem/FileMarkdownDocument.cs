@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
@@ -17,9 +18,9 @@ namespace MarkPad.DocumentSources.FileSystem
         readonly IDialogService dialogService;
 
         public FileMarkdownDocument(
-            string path, string markdownContent, ISiteContext siteContext, 
+            string path, string markdownContent, ISiteContext siteContext, IEnumerable<FileReference> associatedFiles,
             IDocumentFactory documentFactory, IEventAggregator eventAggregator, IDialogService dialogService, IFileSystem fileSystem) : 
-            base(Path.GetFileNameWithoutExtension(path), markdownContent, Path.GetDirectoryName(path), documentFactory, siteContext, fileSystem)
+            base(Path.GetFileNameWithoutExtension(path), markdownContent, Path.GetDirectoryName(path), associatedFiles, documentFactory, siteContext, fileSystem)
         {
             FileName = path;
             this.eventAggregator = eventAggregator;

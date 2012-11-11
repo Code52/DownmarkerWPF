@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -13,9 +14,9 @@ namespace MarkPad.DocumentSources.FileSystem
         readonly JekyllSiteContext siteContext;
 
         public JekyllMarkdownDocument(
-            string path, string markdownContent, JekyllSiteContext siteContext, 
+            string path, string markdownContent, JekyllSiteContext siteContext,  IEnumerable<FileReference> associatedFiles,
             IDocumentFactory documentFactory, IEventAggregator eventAggregator, IDialogService dialogService, IFileSystem fileSystem)
-            : base(path, markdownContent, siteContext, documentFactory, eventAggregator, dialogService, fileSystem)
+            : base(path, markdownContent, siteContext, associatedFiles, documentFactory, eventAggregator, dialogService, fileSystem)
         {
             this.siteContext = siteContext;
         }

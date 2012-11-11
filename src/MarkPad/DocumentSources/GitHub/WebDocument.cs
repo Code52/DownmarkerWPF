@@ -24,11 +24,12 @@ namespace MarkPad.DocumentSources.GitHub
             string id,
             string title,
             string content,
+            IEnumerable<FileReference> associatedFiles,
             IDocumentFactory documentFactory,
             IWebDocumentService webDocumentService,
             WebSiteContext siteContext,
             IFileSystem fileSystem) :
-            base(title, content, blog.BlogName, documentFactory, siteContext, fileSystem)
+            base(title, content, blog.BlogName, associatedFiles, documentFactory, siteContext, fileSystem)
         {
             Id = id;
             this.blog = blog;

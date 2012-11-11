@@ -13,13 +13,13 @@ namespace MarkPad.DocumentSources.NewDocument
         readonly IFileSystem fileSystem;
 
         public NewMarkpadDocument(IFileSystem fileSystem, IDocumentFactory documentFactory, string content) : 
-            base("New Document", content, null, documentFactory, new NewDocumentContext(fileSystem), fileSystem)
+            base("New Document", content, null, new FileReference[0], documentFactory, new NewDocumentContext(fileSystem), fileSystem)
         {
             this.fileSystem = fileSystem;
         }
 
         public NewMarkpadDocument(IFileSystem fileSystem, IDocumentFactory documentFactory, string title, string content) :
-            base(title, content, null, documentFactory, new NewDocumentContext(fileSystem), fileSystem)
+            base(title, content, null, new FileReference[0], documentFactory, new NewDocumentContext(fileSystem), fileSystem)
         {
             this.fileSystem = fileSystem;
         }

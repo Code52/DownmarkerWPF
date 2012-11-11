@@ -20,6 +20,7 @@ namespace MarkPad.DocumentSources
         protected MarkpadDocumentBase(
             string title, string content, 
             string saveLocation,
+            IEnumerable<FileReference> associatedFiles,
             IDocumentFactory documentFactory,
             ISiteContext siteContext, 
             IFileSystem fileSystem)
@@ -34,6 +35,7 @@ namespace MarkPad.DocumentSources
             SiteContext = siteContext;
             FileSystem = fileSystem;
             this.documentFactory = documentFactory;
+            this.associatedFiles.AddRange(associatedFiles);
         }
 
         public string Title { get; protected set; }

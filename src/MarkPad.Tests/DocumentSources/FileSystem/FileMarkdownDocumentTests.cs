@@ -145,7 +145,7 @@ namespace MarkPad.Tests.DocumentSources.FileSystem
         FileMarkdownDocument CreateFileMarkdownDocument(string filename, string content)
         {
             return new FileMarkdownDocument(
-                filename, content, siteContext, documentFactory,
+                filename, content, siteContext, new FileReference[0], documentFactory,
                 eventAggregator, dialogService, fileSystem);
         }
     }

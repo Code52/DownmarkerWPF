@@ -39,7 +39,6 @@ namespace MarkPad.Tests.DocumentSources.NewDocument
             // arrange
             fileSystem.GetTempPath().Returns(@"c:\Temp");
             var doc = new NewMarkpadDocument(fileSystem, documentFactory, "Title", "Content");
-            fileSystem.NewFileStream(Arg.Any<string>(), FileMode.Create).Returns(new MemoryStream());
             var bitmap = new Bitmap(1, 1);
 
             // act
@@ -58,7 +57,6 @@ namespace MarkPad.Tests.DocumentSources.NewDocument
             // arrange
             fileSystem.GetTempPath().Returns(@"c:\Temp");
             var doc = new NewMarkpadDocument(fileSystem, documentFactory, "Title", "Content");
-            fileSystem.NewFileStream(Arg.Any<string>(), FileMode.Create).Returns(new MemoryStream());
 
             // act
             doc.SaveImage(new Bitmap(1, 1));
