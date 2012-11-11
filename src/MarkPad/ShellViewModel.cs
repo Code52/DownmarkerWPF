@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -22,18 +21,20 @@ using MarkPad.Plugins;
 using MarkPad.PreviewControl;
 using MarkPad.Settings.UI;
 using MarkPad.Updater;
-using Action = System.Action;
 
 namespace MarkPad
 {
-    internal class ShellViewModel : Conductor<IScreen>, IShell, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>, IHandle<OpenFromWebEvent>
+    public class ShellViewModel : Conductor<IScreen>, IShell, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>, IHandle<OpenFromWebEvent>
     {
         const string ShowSettingsState = "ShowSettings";
         readonly IEventAggregator eventAggregator;
         readonly IDialogService dialogService;
+        readonly IOpenDocumentFromWeb openDocumentFromWeb;
         readonly Func<DocumentViewModel> documentViewModelFactory;
         readonly List<string> loadingMessages = new List<string>();
         readonly IFileSystem fileSystem;
+        readonly IDocumentFactory documentFactory;
+        readonly object workLock = new object();
 
         public ShellViewModel(
             IDialogService dialogService,
@@ -41,10 +42,10 @@ namespace MarkPad
             MdiViewModel mdi,
             SettingsViewModel settingsViewModel,
             UpdaterViewModel updaterViewModel,
-            Func<DocumentViewModel> documentViewModelFactory, 
+            Func<DocumentViewModel> documentViewModelFactory,
             IDocumentFactory documentFactory,
             IFileSystem fileSystem,
-            SearchSettings searchSettings)
+            SearchSettings searchSettings, IOpenDocumentFromWeb openDocumentFromWeb)
         {
             this.eventAggregator = eventAggregator;
             this.dialogService = dialogService;
@@ -54,10 +55,19 @@ namespace MarkPad
             this.documentFactory = documentFactory;
             this.fileSystem = fileSystem;
             SearchSettings = searchSettings;
+            this.openDocumentFromWeb = openDocumentFromWeb;
 
             Settings = settingsViewModel;
             Settings.Initialize();
-            SaveDocumentCommand = new DelegateCommand<object>(o=>SaveDocument(), o=> CanSaveDocument);
+            NewDocumentCommand = new DelegateCommand(() => NewDocument());
+            NewJekyllDocumentCommand = new DelegateCommand(() => NewDocument(CreateJekyllHeader()));
+            SaveDocumentCommand = new AwaitableDelegateCommand(SaveDocument, () => !IsWorking);
+            SaveDocumentAsCommand = new AwaitableDelegateCommand(SaveDocumentAs, () => !IsWorking);
+            SaveAllDocumentsCommand = new AwaitableDelegateCommand(SaveAllDocuments, () => !IsWorking);
+            PublishDocumentCommand = new AwaitableDelegateCommand(PublishDocument, () => !IsWorking);
+            OpenDocumentCommand = new DelegateCommand(OpenDocument);
+            OpenFromWebCommand = new AwaitableDelegateCommand(OpenFromWeb);
+            CloseDocumentCommand = new DelegateCommand(CloseDocument, () => ActiveDocumentViewModel != null);
 
             ActivateItem(mdi);
         }
@@ -68,10 +78,17 @@ namespace MarkPad
             set { }
         }
 
+        public ICommand NewDocumentCommand { get; private set; }
+        public ICommand NewJekyllDocumentCommand { get; private set; }
+        public IAsyncCommand SaveDocumentCommand { get; private set; }
+        public IAsyncCommand SaveDocumentAsCommand { get; private set; }
+        public IAsyncCommand SaveAllDocumentsCommand { get; private set; }
+        public IAsyncCommand PublishDocumentCommand { get; private set; }
+        public ICommand OpenDocumentCommand { get; private set; }
+        public ICommand OpenFromWebCommand { get; private set; }
+        public ICommand CloseDocumentCommand { get; private set; }
+
         private string currentState;
-        readonly IDocumentFactory documentFactory;
-        readonly object workLock = new object();
-        bool isWorking;
 
         public string CurrentState
         {
@@ -88,18 +105,10 @@ namespace MarkPad
         public MdiViewModel MDI { get; private set; }
         public SettingsViewModel Settings { get; private set; }
         public UpdaterViewModel Updater { get; set; }
-		public DocumentViewModel ActiveDocumentViewModel { get { return MDI.ActiveItem as DocumentViewModel; } }
+        public DocumentViewModel ActiveDocumentViewModel { get { return MDI.ActiveItem as DocumentViewModel; } }
 
         public string WorkingText { get; private set; }
-        public bool IsWorking
-        {
-            get { return isWorking; }
-            private set
-            {
-                isWorking = value;
-                ((DelegateCommand<object>)SaveDocumentCommand).RaiseCanExecuteChanged();
-            }
-        }
+        public bool IsWorking { get; private set; }
 
         public IDisposable DoingWork(string work)
         {
@@ -137,20 +146,15 @@ namespace MarkPad
             TryClose();
         }
 
-		public void NewDocument(string text = "")
-		{
-            // C.M passes in "text"...?
-			if (text == "text") text = "";
-
-			var documentViewModel = documentViewModelFactory();
-            documentViewModel.Open(documentFactory.NewDocument(text), isNew: true);
-			MDI.Open(documentViewModel);			
-			documentViewModel.Update();
-		}
-
-        public void NewJekyllDocument()
+        public void NewDocument(string text = "")
         {
-			NewDocument(CreateJekyllHeader());
+            // C.M passes in "text"...?
+            if (text == "text") text = "";
+
+            var documentViewModel = documentViewModelFactory();
+            documentViewModel.Open(documentFactory.NewDocument(text), isNew: true);
+            MDI.Open(documentViewModel);
+            documentViewModel.Update();
         }
 
         private static string CreateJekyllHeader()
@@ -183,7 +187,7 @@ namespace MarkPad
             }
         }
 
-        public async void SaveDocument()
+        private async Task SaveDocument()
         {
             if (IsWorking) return;
             var doc = MDI.ActiveItem as DocumentViewModel;
@@ -192,17 +196,11 @@ namespace MarkPad
                 using (DoingWork(string.Format("Saving {0}", doc.MarkpadDocument.Title)))
                 {
                     await doc.Save();
-                    await TaskEx.Delay(10000);
                 }
             }
         }
 
-        private bool CanSaveDocument
-        {
-            get { return !IsWorking; }
-        }
-
-        public async void SaveAsDocument()
+        private async Task SaveDocumentAs()
         {
             if (IsWorking) return;
             var doc = MDI.ActiveItem as DocumentViewModel;
@@ -215,14 +213,14 @@ namespace MarkPad
             }
         }
 
-        public void SaveAllDocuments()
+        public async Task SaveAllDocuments()
         {
             if (IsWorking) return;
             using (DoingWork(string.Format("Saving all documents")))
             {
                 foreach (DocumentViewModel doc in MDI.Items)
                 {
-                    doc.Save();
+                    await doc.Save();
                 }
             }
         }
@@ -286,7 +284,7 @@ namespace MarkPad
             }
         }
 
-        public async void PublishDocument()
+        private async Task PublishDocument()
         {
             var doc = MDI.ActiveItem as DocumentViewModel;
 
@@ -297,10 +295,18 @@ namespace MarkPad
             }
         }
 
-        public void OpenFromWeb()
+        private async Task OpenFromWeb()
         {
-            documentFactory.OpenFromWeb()
-                .ContinueWith(OpenDocumentResult, TaskScheduler.FromCurrentSynchronizationContext());
+            var result = await openDocumentFromWeb.Open();
+            if (result.Success != true)
+                return;
+
+            var postId = result.SelectedPost.postid != null ? result.SelectedPost.postid.ToString() : null;
+            var title = result.SelectedPost.title;
+
+            var metaWebLogItem = new WebDocumentItem(null, eventAggregator, postId, title, result.SelectedBlog);
+
+            await OpenDocument(metaWebLogItem, title, () => documentFactory.OpenBlogPost(result.SelectedBlog, postId, title));
         }
 
         public void Handle(SettingsCloseEvent message)
@@ -311,53 +317,52 @@ namespace MarkPad
         public async void Handle(FileOpenEvent message)
         {
             if (!fileSystem.File.Exists(message.Path)) return;
-
-            var openedDocs = MDI.Items.Cast<DocumentViewModel>();
             var fileSystemSiteItem = new FileSystemSiteItem(eventAggregator, fileSystem, message.Path);
-            var openedDoc = openedDocs.SingleOrDefault(d => d.MarkpadDocument.IsSameItem(fileSystemSiteItem));
 
-            if (openedDoc != null)
-                MDI.ActivateItem(openedDoc);
-            else
-            {
-                using (DoingWork(string.Format("Opening {0}", message.Path)))
-                {
-                    await documentFactory.OpenDocument(message.Path).ContinueWith(OpenDocumentResult, TaskScheduler.FromCurrentSynchronizationContext());
-                }
-            }
+            await OpenDocument(fileSystemSiteItem, message.Path, () => documentFactory.OpenDocument(message.Path));
         }
 
         public async void Handle(OpenFromWebEvent message)
         {
-            using (DoingWork(string.Format("Opening {0}", message.Name)))
+            var metaWebLogItem = new WebDocumentItem(null, eventAggregator, message.Id, message.Name, message.Blog);
+
+            await OpenDocument(metaWebLogItem, message.Name, () => documentFactory.OpenBlogPost(message.Blog, message.Id, message.Name));
+        }
+
+        async Task OpenDocument(ISiteItem siteItem, string documentName, Func<Task<IMarkpadDocument>> openDocument)
+        {
+            try
             {
                 var openedDocs = MDI.Items.Cast<DocumentViewModel>();
-                var metaWebLogItem = new WebDocumentItem(null, eventAggregator, message.Id, message.Name, message.Blog);
-                var openedDoc = openedDocs.SingleOrDefault(d => d.MarkpadDocument.IsSameItem(metaWebLogItem));
+                var openedDoc = openedDocs.SingleOrDefault(d => d.MarkpadDocument.IsSameItem(siteItem));
 
                 if (openedDoc != null)
                     MDI.ActivateItem(openedDoc);
                 else
                 {
-                    await documentFactory
-                        .OpenBlogPost(message.Blog, message.Id, message.Name)
-                        .ContinueWith(OpenDocumentResult, TaskScheduler.FromCurrentSynchronizationContext());
+                    using (DoingWork(string.Format("Opening {0}", documentName)))
+                    {
+                        var document = await openDocument();
+
+                        var doc = documentViewModelFactory();
+                        doc.Open(document);
+                        MDI.Open(doc);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                DoDefaultErrorHandling(ex, string.Format("Open {0}", documentName));
             }
         }
 
-        void OpenDocumentResult(Task<IMarkpadDocument> t)
+        private void DoDefaultErrorHandling(Exception e, string operation)
         {
-            if (t.IsFaulted && t.Exception != null)
-            {
-                var aggregateException = t.Exception;
-                dialogService.ShowError("Failed to open document", aggregateException.InnerException.Message, null);
+            // We don't care about cancelled exceptions
+            if (e is TaskCanceledException)
                 return;
-            }
-            if (t.IsCanceled || t.Result == null) return;
-            var doc = documentViewModelFactory();
-            doc.Open(t.Result);
-            MDI.Open(doc);
+
+            dialogService.ShowError((string.IsNullOrEmpty(operation) ? "Error occured" : string.Format("Failed to {0}", operation)), e.Message, null);            
         }
 
         public SearchSettings SearchSettings { get; private set; }
@@ -386,8 +391,6 @@ namespace MarkPad
             }
         }
 
-        public ICommand SaveDocumentCommand { get; private set; }
-
         public void Search(SearchType searchType)
         {
             if (ActiveDocumentViewModel == null) return;
@@ -395,7 +398,7 @@ namespace MarkPad
             var selectSearch = SearchSettings.SelectSearch || (searchType == SearchType.Next || searchType == SearchType.Prev);
 
             ActiveDocumentViewModel.SearchProvider.DoSearch(searchType, selectSearch);
-            
+
             SearchSettings.SelectSearch = true;
 
             if (searchType == SearchType.Normal)
@@ -403,82 +406,6 @@ namespace MarkPad
                 // update the search highlighting
                 ActiveDocumentViewModel.View.Editor.TextArea.TextView.Redraw();
             }
-        }
-    }
-
-    /// <summary>
-    /// A command that calls the specified delegate when the command is executed.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class DelegateCommand<T> : ICommand
-    {
-        private readonly Func<T, bool> _canExecuteMethod;
-        private readonly Action<T> _executeMethod;
-        private bool _isExecuting;
-
-        public DelegateCommand(Action<T> executeMethod)
-            : this(executeMethod, null)
-        {
-        }
-
-        public DelegateCommand(Action<T> executeMethod, Func<T, bool> canExecuteMethod)
-        {
-            if ((executeMethod == null) && (canExecuteMethod == null))
-            {
-                throw new ArgumentNullException("executeMethod", @"Execute Method cannot be null");
-            }
-            _executeMethod = executeMethod;
-            _canExecuteMethod = canExecuteMethod;
-        }
-
-        public event EventHandler CanExecuteChanged
-        {
-            add
-            {
-                CommandManager.RequerySuggested += value;
-            }
-            remove
-            {
-                CommandManager.RequerySuggested -= value;
-            }
-        }
-
-        public void RaiseCanExecuteChanged()
-        {
-            CommandManager.InvalidateRequerySuggested();
-        }
-
-        bool ICommand.CanExecute(object parameter)
-        {
-            return !_isExecuting && CanExecute((T)parameter);
-        }
-
-        void ICommand.Execute(object parameter)
-        {
-            _isExecuting = true;
-            try
-            {
-                RaiseCanExecuteChanged();
-                Execute((T)parameter);
-            }
-            finally
-            {
-                _isExecuting = false;
-                RaiseCanExecuteChanged();
-            }
-        }
-
-        public bool CanExecute(T parameter)
-        {
-            if (_canExecuteMethod == null)
-                return true;
-
-            return _canExecuteMethod(parameter);
-        }
-
-        public void Execute(T parameter)
-        {
-            _executeMethod(parameter);
         }
     }
 }

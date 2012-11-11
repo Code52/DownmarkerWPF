@@ -180,7 +180,14 @@
     <Compile Include="DocumentSources\OpenDocumentFromWebResult.cs" />
     <Compile Include="DocumentSources\SingleFileContext.cs" />
     <Compile Include="DocumentSources\WebSources\SaveResult.cs" />
+    <Compile Include="Infrastructure\AwaitableDelegateCommand.cs" />
+    <Compile Include="Infrastructure\AwaitableDelegateCommand`1.cs" />
+    <Compile Include="Infrastructure\DelegateCommand.cs" />
+    <Compile Include="Infrastructure\DelegateCommand`1.cs" />
+    <Compile Include="Infrastructure\IAsyncCommand.cs" />
+    <Compile Include="Infrastructure\IAsyncCommand`1.cs" />
     <Compile Include="Infrastructure\IFileSystem.cs" />
+    <Compile Include="Infrastructure\IRaiseCanExecuteChanged.cs" />
     <Compile Include="ModuleInitializer.cs" />
     <Compile Include="Converters\BoolToGridLengthConverter.cs" />
     <Compile Include="Converters\IsCurrentItemConverter.cs" />

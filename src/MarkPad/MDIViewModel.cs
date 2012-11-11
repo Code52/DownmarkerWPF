@@ -7,7 +7,7 @@ using MarkPad.PreviewControl;
 
 namespace MarkPad
 {
-    internal class MdiViewModel : Conductor<IScreen>.Collection.OneActive
+    public class MdiViewModel : Conductor<IScreen>.Collection.OneActive
     {
         public HtmlPreview HtmlPreview;
 

@@ -12,7 +12,6 @@ namespace MarkPad.DocumentSources
         Task<IMarkpadDocument> NewMarkdownFile(string path, string markdownContent);
         Task<IMarkpadDocument> OpenDocument(string path);
         Task<IMarkpadDocument> PublishDocument(string postId, IMarkpadDocument document);
-        Task<IMarkpadDocument> OpenFromWeb();
         Task<IMarkpadDocument> SaveDocumentAs(IMarkpadDocument document);
         Task<IMarkpadDocument> OpenBlogPost(BlogSetting blog, string id, string name);
     }

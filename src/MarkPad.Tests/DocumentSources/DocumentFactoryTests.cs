@@ -25,7 +25,6 @@ namespace MarkPad.Tests.DocumentSources
         readonly IWindowManager windowManager;
         readonly Lazy<IWebDocumentService> webDocumentService;
         readonly IFileSystem fileSystem;
-        readonly IOpenDocumentFromWeb openDocumentFromWeb;
 
         public DocumentFactoryTests()
         {
@@ -36,11 +35,10 @@ namespace MarkPad.Tests.DocumentSources
             windowManager = Substitute.For<IWindowManager>();
             webDocumentService = new Lazy<IWebDocumentService>(() => Substitute.For<IWebDocumentService>());
             fileSystem = TestObjectMother.GetFileSystem();
-            openDocumentFromWeb = Substitute.For<IOpenDocumentFromWeb>();
 
             
             documentFactory = new DocumentFactory(dialogService, eventAggregator, siteContextGenerator, blogService, windowManager, webDocumentService,
-                                                  fileSystem, openDocumentFromWeb);
+                                                  fileSystem);
         }
 
         [Fact]

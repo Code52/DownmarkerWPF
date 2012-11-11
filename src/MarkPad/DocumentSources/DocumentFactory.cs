@@ -26,7 +26,6 @@ namespace MarkPad.DocumentSources
         readonly IWindowManager windowManager;
         readonly Lazy<IWebDocumentService> webDocumentService;
         readonly IFileSystem fileSystem;
-        readonly IOpenDocumentFromWeb openDocumentFromWeb;
 
         public DocumentFactory(
             IDialogService dialogService, 
@@ -35,8 +34,7 @@ namespace MarkPad.DocumentSources
             IBlogService blogService, 
             IWindowManager windowManager, 
             Lazy<IWebDocumentService> webDocumentService, 
-            IFileSystem fileSystem, 
-            IOpenDocumentFromWeb openDocumentFromWeb)
+            IFileSystem fileSystem)
         {
             this.dialogService = dialogService;
             this.eventAggregator = eventAggregator;
@@ -45,7 +43,6 @@ namespace MarkPad.DocumentSources
             this.windowManager = windowManager;
             this.webDocumentService = webDocumentService;
             this.fileSystem = fileSystem;
-            this.openDocumentFromWeb = openDocumentFromWeb;
         }
 
         public IMarkpadDocument NewDocument()
@@ -130,23 +127,6 @@ namespace MarkPad.DocumentSources
             }
 
             return newDocument.Save();
-        }
-
-        public async Task<IMarkpadDocument> OpenFromWeb()
-        {
-            var result = await openDocumentFromWeb.Open();
-            if (result.Success != true)
-                return null;
-
-            var selectedPost = result.SelectedPost;
-            var postid = selectedPost.postid != null ? selectedPost.postid.ToString() : null;
-            var title = selectedPost.title;
-            var blog = result.SelectedBlog;
-            var documentService = webDocumentService.Value;
-            var content = await documentService.GetDocumentContent(blog, postid);
-            var webSiteContext = siteContextGenerator.GetWebContext(blog);
-
-            return new WebDocument(blog, postid, title, content, this, documentService, webSiteContext, fileSystem);
         }
 
         public async Task<IMarkpadDocument> OpenBlogPost(BlogSetting blog, string id, string name)
