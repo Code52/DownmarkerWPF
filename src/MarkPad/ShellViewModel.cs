@@ -65,8 +65,8 @@ namespace MarkPad
             SaveDocumentAsCommand = new AwaitableDelegateCommand(SaveDocumentAs, () => !IsWorking);
             SaveAllDocumentsCommand = new AwaitableDelegateCommand(SaveAllDocuments, () => !IsWorking);
             PublishDocumentCommand = new AwaitableDelegateCommand(PublishDocument, () => !IsWorking);
-            OpenDocumentCommand = new DelegateCommand(OpenDocument);
-            OpenFromWebCommand = new AwaitableDelegateCommand(OpenFromWeb);
+            OpenDocumentCommand = new DelegateCommand(OpenDocument, () => !IsWorking);
+            OpenFromWebCommand = new AwaitableDelegateCommand(OpenFromWeb, () => !IsWorking);
             CloseDocumentCommand = new DelegateCommand(CloseDocument, () => ActiveDocumentViewModel != null);
 
             ActivateItem(mdi);
@@ -196,6 +196,7 @@ namespace MarkPad
                 using (DoingWork(string.Format("Saving {0}", doc.MarkpadDocument.Title)))
                 {
                     await doc.Save();
+                    await TaskEx.Delay(10000);
                 }
             }
         }

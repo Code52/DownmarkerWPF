@@ -62,8 +62,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OpenDocumentTests.cs" />
-    <Compile Include="NewDocumentTests.cs" />
+    <Compile Include="DocumentEditorFacts.cs" />
+    <Compile Include="DocumentFacts.cs" />
+    <Compile Include="Infrastructure\MarkdownEditor.cs" />
     <Compile Include="Infrastructure\MarkpadDocument.cs" />
     <Compile Include="Infrastructure\MarkpadFixture.cs" />
     <Compile Include="Infrastructure\MarkpadUITest.cs" />

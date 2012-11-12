@@ -1,5 +1,4 @@
 using System.IO;
-using System.Windows.Automation;
 using White.Core.UIItems;
 using White.Core.UIItems.Finders;
 using White.Core.UIItems.TabItems;
@@ -20,20 +19,6 @@ namespace Markpad.UITests.Infrastructure
                                                  .SelectedTab
                                                  .GetElement(SearchCriteria.ByAutomationId("DocumentTitle"))
                                                  .Current.Name;
-            }
-        }
-
-        public string MarkdownText
-        {
-            get
-            {
-                var valuePattern = (ValuePattern)Editor().AutomationElement.GetCurrentPattern(ValuePattern.Pattern);
-                return valuePattern.Current.Value;
-            }
-            set
-            {
-                var valuePattern = (ValuePattern)Editor().AutomationElement.GetCurrentPattern(ValuePattern.Pattern);
-                valuePattern.SetValue(value);
             }
         }
 
@@ -66,7 +51,7 @@ namespace Markpad.UITests.Infrastructure
 
         public MarkpadDocument PasteClipboard()
         {
-            Editor().Focus();
+            Editor().EditorUIItem.Focus();
             ParentScreen.WhiteWindow.Keyboard.HoldKey(KeyboardInput.SpecialKeys.CONTROL);
             ParentScreen.WhiteWindow.Keyboard.Enter("v");
             ParentScreen.WhiteWindow.Keyboard.LeaveKey(KeyboardInput.SpecialKeys.CONTROL);
@@ -74,9 +59,11 @@ namespace Markpad.UITests.Infrastructure
             return this;
         }
 
-        IUIItem Editor()
+        public MarkdownEditor Editor()
         {
-            return ParentScreen.WhiteWindow.Get(SearchCriteria.ByAutomationId("Editor"));
+            var editorControl = ParentScreen.WhiteWindow.Get(SearchCriteria.ByAutomationId("Editor"));
+            editorControl.Focus();
+            return new MarkdownEditor(ParentScreen, editorControl);
         }
     }
 }
