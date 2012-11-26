@@ -22,6 +22,15 @@ namespace Markpad.UITests.Infrastructure
             }
         }
 
+        public int Index
+        {
+            get
+            {
+                var tab = ParentScreen.WhiteWindow.Get<Tab>("Items");
+                return tab.Pages.IndexOf(tab.SelectedTab);
+            }
+        }
+
         public MarkpadDocument Save()
         {
             ParentScreen.WhiteWindow.Get<Button>("ShowSave").Click();
@@ -62,7 +71,6 @@ namespace Markpad.UITests.Infrastructure
         public MarkdownEditor Editor()
         {
             var editorControl = ParentScreen.WhiteWindow.Get(SearchCriteria.ByAutomationId("Editor"));
-            editorControl.Focus();
             return new MarkdownEditor(ParentScreen, editorControl);
         }
     }

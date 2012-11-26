@@ -1,5 +1,6 @@
 ﻿using White.Core;
 using Xunit;
+using log4net.Config;
 
 namespace Markpad.UITests.Infrastructure
 {

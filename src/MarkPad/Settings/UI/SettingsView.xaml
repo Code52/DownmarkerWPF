@@ -21,7 +21,9 @@
     </UserControl.Resources>
     <Grid  Background="Black">
         <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="settings" VerticalAlignment="Top" Foreground="White" FontSize="48" Margin="70,-14.668,0,0" FontWeight="Light"/>
-        <Button Content="➔" Style="{StaticResource MetroCircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="58" Foreground="White" Height="58" RenderTransformOrigin="0.5,0.5" FontSize="40" Margin="-7.625,-8,0,0" Padding="1,-5,1,1" Clip="M50.333,8 L-1.667,8 L-1.667,59.843 L50.333,59.843 z" IsCancel="true">
+        <Button Content="➔" Style="{StaticResource MetroCircleButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="58" 
+                Foreground="White" Height="58" RenderTransformOrigin="0.5,0.5" FontSize="40" Margin="-7.625,-8,0,0" Padding="1,-5,1,1" 
+                Clip="M50.333,8 L-1.667,8 L-1.667,59.843 L50.333,59.843 z" IsCancel="true" AutomationProperties.AutomationId="CloseSettings">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="1" ScaleX="-1"/>
@@ -83,10 +85,8 @@
                   </Grid.ColumnDefinitions>
                   <TextBlock Text="indent "
                              FontFamily="Segoe UI Semibold" FontSize="14.667"/>
-                  <ComboBox ItemsSource="{Binding IndentTypes}"
-                          SelectedItem="{Binding IndentType}"
-                          HorizontalAlignment="Right"
-                          Grid.Column="1">
+                  <ComboBox ItemsSource="{Binding IndentTypes}" SelectedItem="{Binding IndentType}"
+                          HorizontalAlignment="Right" Grid.Column="1" AutomationProperties.AutomationId="IndentType">
                     <ComboBox.ItemTemplate>
                       <DataTemplate>
                         <TextBlock Text="{Binding Converter={Converters:EnumDisplayConverter}}" />

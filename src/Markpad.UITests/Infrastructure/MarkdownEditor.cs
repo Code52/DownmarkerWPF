@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Windows.Automation;
 using White.Core.UIItems;
 using White.Core.WindowsAPI;
@@ -38,6 +39,7 @@ namespace Markpad.UITests.Infrastructure
         public void PressKey(KeyboardInput.SpecialKeys @return)
         {
             ParentScreen.WhiteWindow.Keyboard.PressSpecialKey(@return);
+            Thread.Sleep(50);
         }
 
         public void MoveCursorToEndOfEditor()

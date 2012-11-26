@@ -403,7 +403,7 @@
             </WrapPanel>
             <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Orientation="Horizontal">
                 <ContentControl x:Name="Updater" />
-                <Button Content="SETTINGS" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" FontWeight="Bold">
+                <Button Content="SETTINGS" Style="{DynamicResource ChromelessButtonStyle}" FontSize="10.667" FontWeight="Bold" AutomationProperties.AutomationId="MarkpadSettings">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
                             <cm:ActionMessage MethodName="ShowSettings" />

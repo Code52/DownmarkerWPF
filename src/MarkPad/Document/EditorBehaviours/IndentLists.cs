@@ -1,13 +1,17 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using System.Windows.Input;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit;
 using MarkPad.Document.Events;
+using MarkPad.Settings.Models;
 
 namespace MarkPad.Document.EditorBehaviours
 {
     public class IndentLists : IHandle<EditorPreviewKeyDownEvent>
     {
+        readonly Func<IndentType> indentTypeSetting;
+
         // [\s]*    zero or more whitespace chars
         // [-\*]    one of '-' or '*'
         // [\s]+    one or more whitespace chars
@@ -18,6 +22,11 @@ namespace MarkPad.Document.EditorBehaviours
         // [.]      a single period
         // [\s]+    one or more whitespace chars
         readonly Regex orderedListRegex = new Regex(@"[\s]*[0-9]+[.][\s]+", RegexOptions.Compiled);
+
+        public IndentLists(Func<IndentType> indentTypeSetting)
+        {
+            this.indentTypeSetting = indentTypeSetting;
+        }
 
         public void Handle(EditorPreviewKeyDownEvent e)
         {
@@ -49,12 +58,13 @@ namespace MarkPad.Document.EditorBehaviours
             return true;
         }
 
-        private static void InsertIndent(TextEditor editor)
+        private void InsertIndent(TextEditor editor)
         {
             var currentOffset = editor.CaretOffset;
             editor.CaretOffset = editor.GetCurrentLine().Offset;
-            editor.TextArea.Selection.ReplaceSelectionWithText("\t");
-            editor.CaretOffset = currentOffset + 1;
+            var tabCharacter = indentTypeSetting() == IndentType.Tabs ? "\t" : "    ";
+            editor.TextArea.Selection.ReplaceSelectionWithText(tabCharacter);
+            editor.CaretOffset = currentOffset + tabCharacter.Length;
         }
     }
 }

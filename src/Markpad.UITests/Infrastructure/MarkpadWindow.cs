@@ -2,6 +2,8 @@ using System;
 using System.Windows.Automation;
 using White.Core;
 using White.Core.UIItems;
+using White.Core.UIItems.Actions;
+using White.Core.UIItems.Custom;
 using White.Core.UIItems.Finders;
 using White.Core.UIItems.WindowItems;
 using White.Core.Utility;
@@ -16,10 +18,12 @@ namespace Markpad.UITests.Infrastructure
 
         public MarkpadDocument NewDocument()
         {
+            var index = CurrentDocument == null ? -1 : CurrentDocument.Index;
             WhiteWindow.Get<Button>("ShowNew").Click();
-            WhiteWindow.Get<Button>("NewDocument").Click();
+            var button = WhiteWindow.Get<Button>("NewDocument");
+            button.Click();
 
-            Retry.For(() => "New Document" == CurrentDocument.Title, 5);
+            Retry.For(() => index != CurrentDocument.Index, TimeSpan.FromSeconds(5));
             WaitWhileBusy();
 
             return new MarkpadDocument(this);
@@ -48,13 +52,22 @@ namespace Markpad.UITests.Infrastructure
 
         public void WaitWhileBusy()
         {
-            Retry.For(ShellIsBusy, isBusy => isBusy, (int)TimeSpan.FromSeconds(30).TotalMilliseconds);
+            Retry.For(ShellIsBusy, isBusy => isBusy, TimeSpan.FromSeconds(30));
         }
 
         bool ShellIsBusy()
         {
             var currentPropertyValue = WhiteWindow.AutomationElement.GetCurrentPropertyValue(AutomationElement.HelpTextProperty);
             return currentPropertyValue != null && ((string)currentPropertyValue).Contains("Busy");
+        }
+
+        public SettingsWindow Settings()
+        {
+            WhiteWindow.Get<Button>("MarkpadSettings").Click();
+            var automationElement = WhiteWindow.GetElement(SearchCriteria.ByAutomationId("SettingsControl"));
+            var settingsControl = new UIItemContainer(automationElement, new ProcessActionListener(automationElement));
+
+            return new SettingsWindow(Application, WhiteWindow, settingsControl);
         }
     }
 }
