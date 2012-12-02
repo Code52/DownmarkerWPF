@@ -116,7 +116,7 @@ namespace MarkPad.Settings.UI
 
         private static bool Enabled(string s, RegistryKey key, RegistryKey openSubKey)
         {
-            object defaultNameValue = openSubKey.GetValue(null);
+            object defaultNameValue = openSubKey == null? null : openSubKey.GetValue(null);
             string defaultNameValueAsString = defaultNameValue == null ? null : defaultNameValue.ToString();
             return openSubKey != null &&
                    (key.GetSubKeyNames().Contains(s) &&
