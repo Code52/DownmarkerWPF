@@ -116,9 +116,11 @@ namespace MarkPad.Settings.UI
 
         private static bool Enabled(string s, RegistryKey key, RegistryKey openSubKey)
         {
+            object defaultNameValue = openSubKey.GetValue(null);
+            string defaultNameValueAsString = defaultNameValue == null ? null : defaultNameValue.ToString();
             return openSubKey != null &&
                    (key.GetSubKeyNames().Contains(s) &&
-                    !string.IsNullOrEmpty(openSubKey.GetValue("").ToString()));
+                    !string.IsNullOrEmpty(defaultNameValueAsString));
         }
 
         private BlogSetting currentBlog;
