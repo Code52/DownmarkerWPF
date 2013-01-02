@@ -1,10 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using Caliburn.Micro;
 using MarkPad.Events;
+using MarkPad.Infrastructure;
 using MarkPad.Plugins;
 
 namespace MarkPad.DocumentSources.FileSystem

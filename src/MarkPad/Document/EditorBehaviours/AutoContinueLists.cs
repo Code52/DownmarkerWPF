@@ -4,7 +4,6 @@ using System.Windows.Input;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit;
 using MarkPad.Document.Events;
-using MarkPad.Events;
 
 namespace MarkPad.Document.EditorBehaviours
 {
@@ -13,18 +12,18 @@ namespace MarkPad.Document.EditorBehaviours
         // [\s]*    zero or more whitespace chars
         // [-\*]    one of '-' or '*'
         // [\s]+    one or more whitespace chars
-        readonly Regex _unorderedListRegex = new Regex(@"^[\s]*[-\*][\s]+", RegexOptions.Compiled);
+        readonly Regex unorderedListRegex = new Regex(@"^[\s]*[-\*][\s]+", RegexOptions.Compiled);
 
         // [\s]*    zero or more whitespace chars
         // [0-9]+   one or more of 0-9
         // [.]      a single period
         // [\s]+    one or more whitespace chars
-        readonly Regex _orderedListRegex = new Regex(@"^[\s]*[0-9]+[.][\s]+", RegexOptions.Compiled);
+        readonly Regex orderedListRegex = new Regex(@"^[\s]*[0-9]+[.][\s]+", RegexOptions.Compiled);
 
         // [\s]*    zero or more whitespace chars
         // [>]      a single raquo
         // [\s]*    zero or more whitespace chars
-        readonly Regex _blockquoteRegex = new Regex(@"[\s]*[>][\s]*", RegexOptions.Compiled);
+        readonly Regex blockquoteRegex = new Regex(@"[\s]*[>][\s]*", RegexOptions.Compiled);
 
         public void Handle(EditorPreviewKeyDownEvent e)
         {
@@ -35,11 +34,7 @@ namespace MarkPad.Document.EditorBehaviours
 
             //if (!e.Editor.IsCaratAtEndOfLine()) return;
 
-            var handled = false;
-
-            handled = handled || HandleUnorderedList(e.Editor);
-            handled = handled || HandleOrderedList(e.Editor);
-            handled = handled || HandleBlockquote(e.Editor);
+            var handled = HandleUnorderedList(e.Editor) || HandleOrderedList(e.Editor) || HandleBlockquote(e.Editor);
 
             e.Args.Handled = handled;
         }
@@ -57,7 +52,7 @@ namespace MarkPad.Document.EditorBehaviours
 
         public Match MatchUnorderedList(string text)
         {
-            var match = _unorderedListRegex.Match(text);
+            var match = unorderedListRegex.Match(text);
             return match;
         }
 
@@ -72,11 +67,11 @@ namespace MarkPad.Document.EditorBehaviours
             }
             else
             {
-                var index = 1;
+                int index;
                 var indexText = match.Value.Replace(".", "").Trim();
                 var canParse = int.TryParse(indexText, out index);
                 var nextLine = match.Value;
-                if (canParse) nextLine = match.Value.Replace(indexText, (index+1).ToString());
+                if (canParse) nextLine = match.Value.Replace(indexText, index == 1 ? "1" : (index + 1).ToString());
 
                 editor.TextArea.Selection.ReplaceSelectionWithText(Environment.NewLine + nextLine);
             }
@@ -86,7 +81,7 @@ namespace MarkPad.Document.EditorBehaviours
 
         public Match MatchOrderedList(string text)
         {
-            var match = _orderedListRegex.Match(text);
+            var match = orderedListRegex.Match(text);
             return match;
         }
 
@@ -103,7 +98,7 @@ namespace MarkPad.Document.EditorBehaviours
 
         public Match MatchBlockQuote(string text)
         {
-            var match = _blockquoteRegex.Match(text);
+            var match = blockquoteRegex.Match(text);
             return match;
         }
 
@@ -114,7 +109,5 @@ namespace MarkPad.Document.EditorBehaviours
             editor.SelectionLength = currentPosition - editor.GetCurrentLine().Offset;
             editor.TextArea.Selection.ReplaceSelectionWithText(Environment.NewLine);
         }
-
-
     }
 }

@@ -11,6 +11,7 @@ using MarkPad.Document;
 using MarkPad.DocumentSources.GitHub;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.Infrastructure.DialogService;
+using MarkPad.Plugins;
 using MarkPad.Settings.Models;
 
 namespace MarkPad.DocumentSources.WebSources
@@ -46,23 +47,22 @@ namespace MarkPad.DocumentSources.WebSources
             throw new ArgumentException(string.Format("Unsupported WebSourceType ({0})", blog.WebSourceType));
         }
 
-        public Task<string> SaveDocument(BlogSetting blog, WebDocument document)
+        public Task<SaveResult> SaveDocument(BlogSetting blog, WebDocument document)
         {
             if (blog.WebSourceType == WebSourceType.MetaWebLog)
             {
                 return TaskEx.Run(() =>
                 {
                     var categories = document.Categories.ToArray();
-                    return CreateOrUpdateMetaWebLogPost(document.Id, document.Title, categories, document.MarkdownContent,
-                                                 document.ImagesToSaveOnPublish, blog);
+                    return CreateOrUpdateMetaWebLogPost(document, categories, blog);
                 });
             }
             if (blog.WebSourceType == WebSourceType.GitHub)
             {
-                return CreateOrUpdateGithubPost(document.Title, document.MarkdownContent, document.ImagesToSaveOnPublish, blog);   
+                return CreateOrUpdateGithubPost(document.Title, document.MarkdownContent, document.AssociatedFiles, blog);   
             }
 
-            return TaskEx.Run(new Func<string>(() =>
+            return TaskEx.Run(new Func<SaveResult>(() =>
             {
                 throw BadWebSourceTypeException(blog);
             }));
@@ -88,22 +88,23 @@ namespace MarkPad.DocumentSources.WebSources
             throw BadWebSourceTypeException(blog);            
         }
 
-        async Task<string> CreateOrUpdateGithubPost(string postTitle, string content, 
-            ICollection<string> imagesToUpload, BlogSetting blog)
+        async Task<SaveResult> CreateOrUpdateGithubPost(string postTitle, string content, IEnumerable<FileReference> referencedFiles, BlogSetting blog)
         {
             var treeToUpload = new GitTree();
+            var imagesToUpload = referencedFiles.Where(f=>!f.Saved).ToList();
             if (imagesToUpload.Count > 0)
             {
                 foreach (var imageToUpload in imagesToUpload)
                 {
-                    var imageContent = Convert.ToBase64String(File.ReadAllBytes(imageToUpload));
+                    var imageContent = Convert.ToBase64String(File.ReadAllBytes(imageToUpload.FullPath));
                     var item = new GitFile
                     {
                         type = "tree",
-                        path = imageToUpload,
+                        path = imageToUpload.FullPath,
                         mode = ((int)GitTreeMode.SubDirectory),
                         content = imageContent
                     };
+
                     treeToUpload.tree.Add(item);
                 }
             }
@@ -119,45 +120,52 @@ namespace MarkPad.DocumentSources.WebSources
 
             var newTree = await githubApi.NewTree(blog.Token, blog.Username, blog.WebAPI, blog.BlogInfo.blogid, treeToUpload);
             var uploadedFile = newTree.Item1.tree.Single(t => t.path == gitFile.path);
-            return uploadedFile.sha;
+            foreach (var fileReference in imagesToUpload)
+            {
+                fileReference.Saved = true;
+            }
+
+            return new SaveResult
+                   {
+                       Id = uploadedFile.sha,
+                       NewDocumentContent = content
+                   };
         }
 
-        string CreateOrUpdateMetaWebLogPost(
-            string postid, string postTitle,
-            string[] categories, string content,
-            ICollection<string> imagesToUpload,
-            BlogSetting blog)
+        SaveResult CreateOrUpdateMetaWebLogPost(WebDocument document, string[] categories, BlogSetting blog)
         {
+            var newContent = document.MarkdownContent;
             var proxy = getMetaWeblog(blog.WebAPI);
 
-            if (imagesToUpload.Count > 0)
+            if (document.AssociatedFiles.Count(f=>!f.Saved) > 0)
             {
-                foreach (var imageToUpload in imagesToUpload)
+                foreach (var imageToUpload in document.AssociatedFiles.Where(f=>!f.Saved))
                 {
                     var response = proxy.NewMediaObject(blog, new MediaObject
                     {
-                        name = imageToUpload,
+                        name = imageToUpload.FullPath,
                         type = "image/png",
-                        bits = File.ReadAllBytes(imageToUpload)
+                        bits = File.ReadAllBytes(imageToUpload.FullPath)
                     });
 
-                    content = content.Replace(imageToUpload, response.url);
+                    newContent = newContent.Replace(imageToUpload.RelativePath, response.url);
+                    imageToUpload.Saved = true;
                 }
             }
 
             var newpost = new Post();
             try
             {
-                if (string.IsNullOrWhiteSpace(postid))
+                if (string.IsNullOrWhiteSpace(document.Id))
                 {
-                    var permalink = postTitle;
+                    var permalink = document.Title;
 
                     newpost = new Post
                     {
                         permalink = permalink,
-                        title = postTitle,
+                        title = document.Title,
                         dateCreated = DateTime.Now,
-                        description = blog.Language == "HTML" ? DocumentParser.GetBodyContents(content) : content,
+                        description = blog.Language == "HTML" ? DocumentParser.GetBodyContents(newContent) : newContent,
                         categories = categories,
                         format = blog.Language
                     };
@@ -165,13 +173,13 @@ namespace MarkPad.DocumentSources.WebSources
                 }
                 else
                 {
-                    newpost = proxy.GetPost(postid, blog);
-                    newpost.title = postTitle;
-                    newpost.description = blog.Language == "HTML" ? DocumentParser.GetBodyContents(content) : content;
+                    newpost = proxy.GetPost(document.Id, blog);
+                    newpost.title = document.Title;
+                    newpost.description = blog.Language == "HTML" ? DocumentParser.GetBodyContents(newContent) : newContent;
                     newpost.categories = categories;
                     newpost.format = blog.Language;
 
-                    proxy.EditPost(postid, blog, newpost, true);
+                    proxy.EditPost(document.Id, blog, newpost, true);
                 }
             }
             catch (WebException ex)
@@ -187,7 +195,11 @@ namespace MarkPad.DocumentSources.WebSources
                 dialogService.ShowError("Error Publishing", ex.Message, "");
             }
 
-            return newpost.postid.ToString();
+            return new SaveResult
+                   {
+                       Id = newpost.postid.ToString(),
+                       NewDocumentContent = newContent
+                   };
         }
 
         public static string GetSha1(string value)

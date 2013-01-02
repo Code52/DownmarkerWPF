@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Threading.Tasks;
 
@@ -19,9 +20,12 @@ namespace MarkPad.Plugins
         /// </summary>
         /// <param name="image"></param>
         /// <returns>The relative path to the image</returns>
-        string SaveImage(Bitmap image);
+        FileReference SaveImage(Bitmap image);
+
+        IEnumerable<FileReference> AssociatedFiles { get; }
 
         string ConvertToAbsolutePaths(string htmlDocument);
 	    bool IsSameItem(ISiteItem siteItem);
+	    void AddFile(FileReference fileReference);
 	}
 }

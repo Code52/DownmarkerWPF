@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using MarkPad.DocumentSources.MetaWeblog;
 using MarkPad.DocumentSources.WebSources;
+using MarkPad.Infrastructure;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Plugins;
 using MarkPad.Settings.Models;
@@ -16,8 +17,6 @@ namespace MarkPad.DocumentSources.GitHub
     {
         readonly BlogSetting blog;
         readonly IWebDocumentService webDocumentService;
-        readonly WebSiteContext siteContext;
-        readonly List<string> imagesToSaveOnPublish = new List<string>();
         readonly List<string> categories = new List<string>();
 
         public WebDocument(
@@ -25,36 +24,29 @@ namespace MarkPad.DocumentSources.GitHub
             string id,
             string title,
             string content,
+            IEnumerable<FileReference> associatedFiles,
             IDocumentFactory documentFactory,
             IWebDocumentService webDocumentService,
-            WebSiteContext siteContext) :
-            base(title, content, blog.BlogName, documentFactory)
+            WebSiteContext siteContext,
+            IFileSystem fileSystem) :
+            base(title, content, blog.BlogName, associatedFiles, documentFactory, siteContext, fileSystem)
         {
             Id = id;
             this.blog = blog;
             this.webDocumentService = webDocumentService;
-            this.siteContext = siteContext;
         }
 
         public string Id { get; private set; }
 
         public override async Task<IMarkpadDocument> Save()
         {
-            Id = await webDocumentService.SaveDocument(blog, this);
-            return this;         
-        }
+            var result = await webDocumentService.SaveDocument(blog, this);
 
-        public override ISiteContext SiteContext
-        {
-            get
-            {
-                return siteContext;
-            }
-        }
+            Id = result.Id;
+            if (!string.IsNullOrEmpty(result.NewDocumentContent))
+                MarkdownContent = result.NewDocumentContent;
 
-        public List<string> ImagesToSaveOnPublish
-        {
-            get { return imagesToSaveOnPublish; }
+            return this;
         }
 
         public List<string> Categories
@@ -91,20 +83,23 @@ namespace MarkPad.DocumentSources.GitHub
             return TaskEx.FromResult<IMarkpadDocument>(this);
         }
 
-        public override string SaveImage(Bitmap image)
+        public override FileReference SaveImage(Bitmap image)
         {
-            var imageFileName = SiteContextHelper.GetFileName(Title, siteContext.WorkingDirectory);
+            var workingDirectory = SiteContext.WorkingDirectory;
+            var imageFileName = GetFileNameBasedOnTitle(Title, workingDirectory);
 
-            image.Save(Path.Combine(siteContext.WorkingDirectory, imageFileName), ImageFormat.Png);
+            image.Save(Path.Combine(workingDirectory, imageFileName), ImageFormat.Png);
 
-            ImagesToSaveOnPublish.Add(imageFileName);
+            var relativePath = ToRelativePath(workingDirectory, workingDirectory, imageFileName);
+            var fileReference = new FileReference(imageFileName, relativePath, false);
+            AddFile(fileReference);
 
-            return imageFileName;
+            return fileReference;
         }
 
         public override string ConvertToAbsolutePaths(string htmlDocument)
         {
-            return SiteContextHelper.ConvertToAbsolutePaths(htmlDocument, siteContext.WorkingDirectory);
+            return ConvertToAbsolutePaths(htmlDocument, SiteContext.WorkingDirectory);
         }
 
         public override bool IsSameItem(ISiteItem siteItem)

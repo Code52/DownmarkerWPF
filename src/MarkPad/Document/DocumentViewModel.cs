@@ -6,7 +6,6 @@ using System.Windows.Threading;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit.Document;
 using MarkPad.Document.Controls;
-using MarkPad.Document.Events;
 using MarkPad.Document.Search;
 using MarkPad.Document.SpellCheck;
 using MarkPad.Events;
@@ -52,7 +51,7 @@ namespace MarkPad.Document
             this.settingsProvider = settingsProvider;
             this.documentParser = documentParser;
             this.shell = shell;
-            this.SearchProvider = searchProvider;
+            SearchProvider = searchProvider;
 
             FontSize = GetFontSize();
             IndentType = settingsProvider.GetSettings<MarkPadSettings>().IndentType;
@@ -91,11 +90,11 @@ namespace MarkPad.Document
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        public void Open(IMarkpadDocument document)
+        public void Open(IMarkpadDocument document, bool isNew = false)
         {
             MarkpadDocument = document;
-            Document.Text = document.MarkdownContent;
-            Original = document.MarkdownContent;
+            Document.Text = document.MarkdownContent ?? string.Empty;
+            Original = isNew ? null : document.MarkdownContent;
 
             Update();
         }
@@ -119,7 +118,8 @@ namespace MarkPad.Document
                         return false;
 
                     MarkpadDocument = t.Result;
-                    Original = Document.Text;
+                    Original = MarkpadDocument.MarkdownContent;
+                    Document.Text = MarkpadDocument.MarkdownContent;
                     return true;
                 }, TaskScheduler.FromCurrentSynchronizationContext());
         }
@@ -135,6 +135,7 @@ namespace MarkPad.Document
                     {
                         MarkpadDocument = t.Result;
                         Original = MarkpadDocument.MarkdownContent;
+                        Document.Text = MarkpadDocument.MarkdownContent;
                     }
                 }, TaskScheduler.FromCurrentSynchronizationContext());
         }
@@ -168,8 +169,12 @@ namespace MarkPad.Document
                         return saveResult == true && SaveAs().Result;
                     }
 
-                    MarkpadDocument = t.Result;
-                    Original = MarkpadDocument.MarkdownContent;
+                    dispatcher.Invoke(new Action(() =>
+                    {
+                        MarkpadDocument = t.Result;
+                        Original = MarkpadDocument.MarkdownContent;
+                        Document.Text = MarkpadDocument.MarkdownContent;
+                    }));
                     return true;
                 });
         }

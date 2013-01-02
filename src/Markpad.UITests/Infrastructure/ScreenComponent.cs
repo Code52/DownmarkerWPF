@@ -2,16 +2,16 @@ namespace Markpad.UITests.Infrastructure
 {
     public class ScreenComponent<T> where T : Screen
     {
-        readonly T screen;
+        readonly T parentScreen;
 
-        public ScreenComponent(T screen)
+        public ScreenComponent(T parentScreen)
         {
-            this.screen = screen;
+            this.parentScreen = parentScreen;
         }
 
-        public T Screen
+        public T ParentScreen
         {
-            get { return screen; }
+            get { return parentScreen; }
         }
     }
 }

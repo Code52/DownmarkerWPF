@@ -1,6 +1,6 @@
 namespace MarkPad.Events
 {
-    internal class SettingsCloseEvent
+    public class SettingsCloseEvent
     {
     }
 }

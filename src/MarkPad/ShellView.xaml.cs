@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+    using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -66,7 +66,7 @@ namespace MarkPad
             if (e.MiddleButton == MouseButtonState.Pressed) return;
             if (e.RightButton == MouseButtonState.Pressed) return;
             if (e.LeftButton != MouseButtonState.Pressed) return;
-            if (DocumentIsOpen && !header.IsMouseOver) return;
+            if (DocumentIsOpen && !Header.IsMouseOver) return;
 
             if (WindowState == WindowState.Maximized && e.ClickCount != 2) return;
 
@@ -93,7 +93,7 @@ namespace MarkPad
             if (e.MiddleButton == MouseButtonState.Pressed) return;
             if (e.RightButton == MouseButtonState.Pressed) return;
             if (e.LeftButton != MouseButtonState.Pressed) return;
-            if (!header.IsMouseOver) return;
+            if (!Header.IsMouseOver) return;
 
             // Calculate correct left coordinate for multi-screen system
             var mouseX = PointToScreen(Mouse.GetPosition(this)).X;
@@ -121,7 +121,7 @@ namespace MarkPad
         void ShellViewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            if (DocumentIsOpen && !header.IsMouseOver) return;
+            if (DocumentIsOpen && !Header.IsMouseOver) return;
             ToggleMaximized();
         }
 
@@ -145,13 +145,13 @@ namespace MarkPad
         {
             if (WindowState == WindowState.Normal)
             {
-                maxRestore.Content = "1";
-                maxRestore.SetResourceReference(ToolTipProperty, "WindowCommandsMaximiseToolTip");
+                MaxRestore.Content = "1";
+                MaxRestore.SetResourceReference(ToolTipProperty, "WindowCommandsMaximiseToolTip");
             }
             else
             {
-                maxRestore.Content = "2";
-                maxRestore.SetResourceReference(ToolTipProperty, "WindowCommandsRestoreToolTip");
+                MaxRestore.Content = "2";
+                MaxRestore.SetResourceReference(ToolTipProperty, "WindowCommandsRestoreToolTip");
             }
         }
 
@@ -171,21 +171,21 @@ namespace MarkPad
 
         private void PressedEsc()
         {
-            if (searchPanel.IsVisible)
+            if (SearchPanel.IsVisible)
             {
-                searchPanel.Visibility = Visibility.Collapsed;
+                SearchPanel.Visibility = Visibility.Collapsed;
             }
         }
 
         private void Search()
         {
-            if (!searchPanel.IsVisible)
+            if (!SearchPanel.IsVisible)
             {
-                searchPanel.Visibility = Visibility.Visible;
+                SearchPanel.Visibility = Visibility.Visible;
             }
 
-            searchTextBox.Focus();
-            searchTextBox.SelectAll();
+            SearchTextBox.Focus();
+            SearchTextBox.SelectAll();
         }
     }
 }
