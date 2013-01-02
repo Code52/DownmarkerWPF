@@ -94,7 +94,7 @@ namespace MarkPad.Document
         {
             MarkpadDocument = document;
             Document.Text = document.MarkdownContent ?? string.Empty;
-            Original = null;
+            Original = isNew ? null : document.MarkdownContent;
 
             Update();
         }
