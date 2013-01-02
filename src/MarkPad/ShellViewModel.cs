@@ -196,7 +196,6 @@ namespace MarkPad
                 using (DoingWork(string.Format("Saving {0}", doc.MarkpadDocument.Title)))
                 {
                     await doc.Save();
-                    await TaskEx.Delay(10000);
                 }
             }
         }
