@@ -23,6 +23,7 @@ namespace MarkPad.Infrastructure
             builder.RegisterType<SettingsProvider>().As<ISettingsProvider>().SingleInstance();
             builder.RegisterType<GithubApi>().As<IGithubApi>();
             builder.RegisterType<WebDocumentService>().As<IWebDocumentService>();
+            builder.RegisterType<OpenDocumentFromWeb>().As<IOpenDocumentFromWeb>();
         }
     }
 }

@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Input;
 using Caliburn.Micro;
 using MarkPad.Document;
 using MarkPad.Document.Events;
@@ -23,14 +24,17 @@ using MarkPad.Updater;
 
 namespace MarkPad
 {
-    internal class ShellViewModel : Conductor<IScreen>, IShell, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>, IHandle<OpenFromWebEvent>
+    public class ShellViewModel : Conductor<IScreen>, IShell, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>, IHandle<OpenFromWebEvent>
     {
         const string ShowSettingsState = "ShowSettings";
         readonly IEventAggregator eventAggregator;
         readonly IDialogService dialogService;
+        readonly IOpenDocumentFromWeb openDocumentFromWeb;
         readonly Func<DocumentViewModel> documentViewModelFactory;
         readonly List<string> loadingMessages = new List<string>();
         readonly IFileSystem fileSystem;
+        readonly IDocumentFactory documentFactory;
+        readonly object workLock = new object();
 
         public ShellViewModel(
             IDialogService dialogService,
@@ -38,10 +42,10 @@ namespace MarkPad
             MdiViewModel mdi,
             SettingsViewModel settingsViewModel,
             UpdaterViewModel updaterViewModel,
-            Func<DocumentViewModel> documentViewModelFactory, 
+            Func<DocumentViewModel> documentViewModelFactory,
             IDocumentFactory documentFactory,
             IFileSystem fileSystem,
-            SearchSettings searchSettings)
+            SearchSettings searchSettings, IOpenDocumentFromWeb openDocumentFromWeb)
         {
             this.eventAggregator = eventAggregator;
             this.dialogService = dialogService;
@@ -51,9 +55,19 @@ namespace MarkPad
             this.documentFactory = documentFactory;
             this.fileSystem = fileSystem;
             SearchSettings = searchSettings;
+            this.openDocumentFromWeb = openDocumentFromWeb;
 
             Settings = settingsViewModel;
             Settings.Initialize();
+            NewDocumentCommand = new DelegateCommand(() => NewDocument());
+            NewJekyllDocumentCommand = new DelegateCommand(() => NewDocument(CreateJekyllHeader()));
+            SaveDocumentCommand = new AwaitableDelegateCommand(SaveDocument, () => !IsWorking);
+            SaveDocumentAsCommand = new AwaitableDelegateCommand(SaveDocumentAs, () => !IsWorking);
+            SaveAllDocumentsCommand = new AwaitableDelegateCommand(SaveAllDocuments, () => !IsWorking);
+            PublishDocumentCommand = new AwaitableDelegateCommand(PublishDocument, () => !IsWorking);
+            OpenDocumentCommand = new DelegateCommand(OpenDocument, () => !IsWorking);
+            OpenFromWebCommand = new AwaitableDelegateCommand(OpenFromWeb, () => !IsWorking);
+            CloseDocumentCommand = new DelegateCommand(CloseDocument, () => ActiveDocumentViewModel != null);
 
             ActivateItem(mdi);
         }
@@ -64,9 +78,17 @@ namespace MarkPad
             set { }
         }
 
+        public ICommand NewDocumentCommand { get; private set; }
+        public ICommand NewJekyllDocumentCommand { get; private set; }
+        public IAsyncCommand SaveDocumentCommand { get; private set; }
+        public IAsyncCommand SaveDocumentAsCommand { get; private set; }
+        public IAsyncCommand SaveAllDocumentsCommand { get; private set; }
+        public IAsyncCommand PublishDocumentCommand { get; private set; }
+        public ICommand OpenDocumentCommand { get; private set; }
+        public ICommand OpenFromWebCommand { get; private set; }
+        public ICommand CloseDocumentCommand { get; private set; }
+
         private string currentState;
-        readonly IDocumentFactory documentFactory;
-        readonly object workLock = new object();
 
         public string CurrentState
         {
@@ -83,7 +105,7 @@ namespace MarkPad
         public MdiViewModel MDI { get; private set; }
         public SettingsViewModel Settings { get; private set; }
         public UpdaterViewModel Updater { get; set; }
-		public DocumentViewModel ActiveDocumentViewModel { get { return MDI.ActiveItem as DocumentViewModel; } }
+        public DocumentViewModel ActiveDocumentViewModel { get { return MDI.ActiveItem as DocumentViewModel; } }
 
         public string WorkingText { get; private set; }
         public bool IsWorking { get; private set; }
@@ -95,15 +117,25 @@ namespace MarkPad
                 IsWorking = true;
                 loadingMessages.Add(work);
                 WorkingText = work;
+                var view = (DependencyObject)GetView();
+                AutomationProperties.SetHelpText(view, "Busy");
 
                 return new DelegateDisposable(() =>
                 {
                     lock (workLock)
                     {
                         loadingMessages.Remove(work);
-                        IsWorking = loadingMessages.Count > 0;
                         if (loadingMessages.Count > 0)
+                        {
+                            IsWorking = true;
                             WorkingText = loadingMessages.Last();
+                        }
+                        else
+                        {
+                            IsWorking = false;
+                            WorkingText = null;
+                            AutomationProperties.SetHelpText(view, string.Empty);
+                        }
                     }
                 });
             }
@@ -114,20 +146,15 @@ namespace MarkPad
             TryClose();
         }
 
-		public void NewDocument(string text = "")
-		{
-            // C.M passes in "text"...?
-			if (text == "text") text = "";
-
-			var documentViewModel = documentViewModelFactory();
-            documentViewModel.Open(documentFactory.NewDocument(text));
-			MDI.Open(documentViewModel);			
-			documentViewModel.Update();
-		}
-
-        public void NewJekyllDocument()
+        public void NewDocument(string text = "")
         {
-			NewDocument(CreateJekyllHeader());
+            // C.M passes in "text"...?
+            if (text == "text") text = "";
+
+            var documentViewModel = documentViewModelFactory();
+            documentViewModel.Open(documentFactory.NewDocument(text), isNew: true);
+            MDI.Open(documentViewModel);
+            documentViewModel.Update();
         }
 
         private static string CreateJekyllHeader()
@@ -141,6 +168,7 @@ namespace MarkPad
 
         public void OpenDocument()
         {
+            if (IsWorking) return;
             var path = dialogService.GetFileOpenPath("Open a markdown document.", Constants.ExtensionFilter + "|Any File (*.*)|*.*");
             if (path == null)
                 return;
@@ -150,6 +178,7 @@ namespace MarkPad
 
         public void OpenDocument(IEnumerable<string> filenames)
         {
+            if (IsWorking) return;
             if (filenames == null) return;
 
             foreach (var fn in filenames)
@@ -158,36 +187,47 @@ namespace MarkPad
             }
         }
 
-        public void SaveDocument()
+        private async Task SaveDocument()
         {
+            if (IsWorking) return;
             var doc = MDI.ActiveItem as DocumentViewModel;
             if (doc != null)
             {
-                var finishedLoading = DoingWork(string.Format("Saving {0}", doc.MarkpadDocument.Title));
-                doc.Save()
-                    .ContinueWith(t=>finishedLoading.Dispose(), TaskScheduler.FromCurrentSynchronizationContext());
+                using (DoingWork(string.Format("Saving {0}", doc.MarkpadDocument.Title)))
+                {
+                    await doc.Save();
+                }
             }
         }
 
-        public void SaveAsDocument()
+        private async Task SaveDocumentAs()
         {
+            if (IsWorking) return;
             var doc = MDI.ActiveItem as DocumentViewModel;
             if (doc != null)
             {
-                doc.SaveAs();
+                using (DoingWork(string.Format("Saving {0}", doc.MarkpadDocument.Title)))
+                {
+                    await doc.SaveAs();
+                }
             }
         }
 
-        public void SaveAllDocuments()
+        public async Task SaveAllDocuments()
         {
-            foreach (DocumentViewModel doc in MDI.Items)
+            if (IsWorking) return;
+            using (DoingWork(string.Format("Saving all documents")))
             {
-                doc.Save();
+                foreach (DocumentViewModel doc in MDI.Items)
+                {
+                    await doc.Save();
+                }
             }
         }
 
         public void CloseDocument()
         {
+            if (IsWorking) return;
             if (CurrentState == ShowSettingsState)
             {
                 Handle(new SettingsCloseEvent());
@@ -244,22 +284,29 @@ namespace MarkPad
             }
         }
 
-        public void PublishDocument()
+        private async Task PublishDocument()
         {
             var doc = MDI.ActiveItem as DocumentViewModel;
 
-            if (doc != null)
+            if (doc == null) return;
+            using (DoingWork(string.Format("Publishing {0}", doc.MarkpadDocument.Title)))
             {
-                var finishedWork = DoingWork(string.Format("Publishing {0}", doc.MarkpadDocument.Title));
-                doc.Publish()
-                    .ContinueWith(t => finishedWork.Dispose(), TaskScheduler.FromCurrentSynchronizationContext());
+                await doc.Publish();
             }
         }
 
-        public void OpenFromWeb()
+        private async Task OpenFromWeb()
         {
-            documentFactory.OpenFromWeb()
-                .ContinueWith(OpenDocumentResult, TaskScheduler.FromCurrentSynchronizationContext());
+            var result = await openDocumentFromWeb.Open();
+            if (result.Success != true)
+                return;
+
+            var postId = result.SelectedPost.postid != null ? result.SelectedPost.postid.ToString() : null;
+            var title = result.SelectedPost.title;
+
+            var metaWebLogItem = new WebDocumentItem(null, eventAggregator, postId, title, result.SelectedBlog);
+
+            await OpenDocument(metaWebLogItem, title, () => documentFactory.OpenBlogPost(result.SelectedBlog, postId, title));
         }
 
         public void Handle(SettingsCloseEvent message)
@@ -267,56 +314,55 @@ namespace MarkPad
             CurrentState = "HideSettings";
         }
 
-        public void Handle(FileOpenEvent message)
+        public async void Handle(FileOpenEvent message)
         {
             if (!fileSystem.File.Exists(message.Path)) return;
-
-            var openedDocs = MDI.Items.Cast<DocumentViewModel>();
             var fileSystemSiteItem = new FileSystemSiteItem(eventAggregator, fileSystem, message.Path);
-            var openedDoc = openedDocs.SingleOrDefault(d => d.MarkpadDocument.IsSameItem(fileSystemSiteItem));
 
-            if (openedDoc != null)
-                MDI.ActivateItem(openedDoc);
-            else
-            {
-                var finishedLoading = DoingWork(string.Format("Opening {0}", message.Path));
-                documentFactory
-                    .OpenDocument(message.Path)
-                    .ContinueWith(t =>
-                    {
-                        OpenDocumentResult(t);
-                        finishedLoading.Dispose();
-                    }, TaskScheduler.FromCurrentSynchronizationContext());
-            }
+            await OpenDocument(fileSystemSiteItem, message.Path, () => documentFactory.OpenDocument(message.Path));
         }
 
-        public void Handle(OpenFromWebEvent message)
+        public async void Handle(OpenFromWebEvent message)
         {
-            var finishedWork = DoingWork(string.Format("Opening {0}", message.Name));
-
-            var openedDocs = MDI.Items.Cast<DocumentViewModel>();
             var metaWebLogItem = new WebDocumentItem(null, eventAggregator, message.Id, message.Name, message.Blog);
-            var openedDoc = openedDocs.SingleOrDefault(d => d.MarkpadDocument.IsSameItem(metaWebLogItem));
 
-            if (openedDoc != null)
-                MDI.ActivateItem(openedDoc);
-            else
+            await OpenDocument(metaWebLogItem, message.Name, () => documentFactory.OpenBlogPost(message.Blog, message.Id, message.Name));
+        }
+
+        async Task OpenDocument(ISiteItem siteItem, string documentName, Func<Task<IMarkpadDocument>> openDocument)
+        {
+            try
             {
-                documentFactory.OpenBlogPost(message.Blog, message.Id, message.Name)
-                    .ContinueWith(t =>
+                var openedDocs = MDI.Items.Cast<DocumentViewModel>();
+                var openedDoc = openedDocs.SingleOrDefault(d => d.MarkpadDocument.IsSameItem(siteItem));
+
+                if (openedDoc != null)
+                    MDI.ActivateItem(openedDoc);
+                else
+                {
+                    using (DoingWork(string.Format("Opening {0}", documentName)))
                     {
-                        OpenDocumentResult(t);
-                        finishedWork.Dispose();
-                    }, TaskScheduler.FromCurrentSynchronizationContext());
+                        var document = await openDocument();
+
+                        var doc = documentViewModelFactory();
+                        doc.Open(document);
+                        MDI.Open(doc);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                DoDefaultErrorHandling(ex, string.Format("Open {0}", documentName));
             }
         }
 
-        void OpenDocumentResult(Task<IMarkpadDocument> t)
+        private void DoDefaultErrorHandling(Exception e, string operation)
         {
-            if (t.IsCanceled || t.Result == null) return;
-            var doc = documentViewModelFactory();
-            doc.Open(t.Result);
-            MDI.Open(doc);
+            // We don't care about cancelled exceptions
+            if (e is TaskCanceledException)
+                return;
+
+            dialogService.ShowError((string.IsNullOrEmpty(operation) ? "Error occured" : string.Format("Failed to {0}", operation)), e.Message, null);            
         }
 
         public SearchSettings SearchSettings { get; private set; }
@@ -349,14 +395,10 @@ namespace MarkPad
         {
             if (ActiveDocumentViewModel == null) return;
 
-            var selectSearch = SearchSettings.SelectSearch;
-            if (searchType == SearchType.Next || searchType == SearchType.Prev)
-            {
-                selectSearch = true;
-            }
+            var selectSearch = SearchSettings.SelectSearch || (searchType == SearchType.Next || searchType == SearchType.Prev);
 
             ActiveDocumentViewModel.SearchProvider.DoSearch(searchType, selectSearch);
-            
+
             SearchSettings.SelectSearch = true;
 
             if (searchType == SearchType.Normal)

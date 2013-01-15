@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using Caliburn.Micro;
 using MarkPad.DocumentSources.FileSystem;
@@ -8,6 +7,7 @@ using MarkPad.DocumentSources.GitHub;
 using MarkPad.DocumentSources.MetaWeblog;
 using MarkPad.DocumentSources.MetaWeblog.Service;
 using MarkPad.DocumentSources.WebSources;
+using MarkPad.Infrastructure;
 using MarkPad.Infrastructure.Abstractions;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Plugins;
@@ -56,7 +56,7 @@ namespace MarkPad.DocumentSources
                     fileSystemWatcherFactory, jekyllSiteBaseDirectory);
             }
 
-            return null;
+            return new SingleFileContext(fileName);
         }
 
         public WebSiteContext GetWebContext(BlogSetting blog)

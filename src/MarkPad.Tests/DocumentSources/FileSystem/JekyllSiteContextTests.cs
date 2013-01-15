@@ -1,8 +1,8 @@
 ﻿using System.IO;
-using System.IO.Abstractions;
 using Caliburn.Micro;
 using MarkPad.DocumentSources.FileSystem;
 using MarkPad.Events;
+using MarkPad.Infrastructure;
 using MarkPad.Infrastructure.Abstractions;
 using MarkPad.Infrastructure.DialogService;
 using NSubstitute;

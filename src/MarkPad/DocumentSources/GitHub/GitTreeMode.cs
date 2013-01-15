@@ -1,4 +1,4 @@
-namespace MarkPad.DocumentSources
+namespace MarkPad.DocumentSources.GitHub
 {
     public enum GitTreeMode
     {

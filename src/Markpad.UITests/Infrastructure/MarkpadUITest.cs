@@ -1,23 +1,20 @@
-﻿using System;
-using White.Core;
+﻿using White.Core;
 using Xunit;
+using log4net.Config;
 
 namespace Markpad.UITests.Infrastructure
 {
-    public class MarkpadUiTest : IUseFixture<MarkpadFixture>, IDisposable
+    public class MarkpadUiTest : IUseFixture<MarkpadFixture>
     {
+        MarkpadFixture markpadFixture;
+
         public void SetFixture(MarkpadFixture data)
         {
-            Application = Application.Launch(data.MarkpadLocation);
-            MainWindow = new MarkpadWindow(Application, Application.GetWindow(data.MarkpadTitle));
+            markpadFixture = data;
         }
 
-        public void Dispose()
-        {
-            Application.Dispose();
-        }
-
-        protected Application Application { get; private set; }
-        protected MarkpadWindow MainWindow { get; private set; }
+        protected Application Application { get { return markpadFixture.Application; } }
+        protected MarkpadWindow MainWindow { get { return markpadFixture.MainWindow; } }
+        protected string TemporaryTestFilesDirectory { get { return markpadFixture.TemporaryTestFilesDirectory; } }
     }
 }

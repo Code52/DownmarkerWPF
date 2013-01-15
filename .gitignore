@@ -106,3 +106,5 @@ packages
 # our output folder for build artifacts
 artifacts/*.nupkg
 src/GlobalAssemblyInfo.cs
+
+Thumbs.db
