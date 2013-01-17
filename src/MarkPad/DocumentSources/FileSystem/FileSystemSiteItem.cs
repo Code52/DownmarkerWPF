@@ -26,14 +26,25 @@ namespace MarkPad.DocumentSources.FileSystem
                 Children = new ObservableCollection<ISiteItem>();
             else
             {
-                var siteItems = fileSystem.Directory.GetDirectories(filePath)
-                    .Select(d => new FileSystemSiteItem(eventAggregator, fileSystem, d))
-                    .OrderBy(i => i.Name)
-                    .Concat(fileSystem.Directory.GetFiles(filePath) //TODO Restrict to markdown files only?
-                                .Select(d => new FileSystemSiteItem(eventAggregator, fileSystem, d))
-                                .OrderBy(i => i.Name));
+                try
+                {
+                    var siteItems = fileSystem.Directory.GetDirectories(filePath)
+                                              .Select(d => new FileSystemSiteItem(eventAggregator, fileSystem, d))
+                                              .OrderBy(i => i.Name)
+                                              .Concat(fileSystem.Directory.GetFiles(filePath)
+                                                          //TODO Restrict to markdown files only?
+                                                                .Select(
+                                                                    d =>
+                                                                    new FileSystemSiteItem(eventAggregator, fileSystem,
+                                                                                           d))
+                                                                .OrderBy(i => i.Name));
 
-                Children = new ObservableCollection<ISiteItem>(siteItems);
+                    Children = new ObservableCollection<ISiteItem>(siteItems);
+                }
+                catch (IOException)
+                {
+                    Children = new ObservableCollection<ISiteItem>();
+                }
             }
         }
 
