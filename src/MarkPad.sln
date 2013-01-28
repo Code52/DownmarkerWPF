@@ -3,12 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad", "MarkPad\MarkPad.csproj", "{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{6F8AB8C3-0DD5-4067-AF67-60086386308B}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.Tests", "MarkPad.Tests\MarkPad.Tests.csproj", "{EFB6EB25-63DB-4B8B-ADFA-9F2752CEBFFB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{930C63A3-C919-4AA1-9292-DB3C4B81F4DA}"
@@ -24,6 +18,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaWebLogSite", "MetaWebLogSite\MetaWebLogSite.csproj", "{08CA3FA4-A510-4279-A2B1-ECD5CD5A2CB3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Markpad.UITests", "Markpad.UITests\Markpad.UITests.csproj", "{3F6B0B72-DC75-4B4E-8361-8AB257F4048E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{2897F15B-32D7-4706-8575-5E82E70A4262}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
