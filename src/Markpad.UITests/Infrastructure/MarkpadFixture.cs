@@ -10,7 +10,8 @@ namespace Markpad.UITests.Infrastructure
         public MarkpadFixture()
         {
             var directoryName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var markpadLocation = Path.Combine(directoryName, @"..\..\..\Markpad\bin\Debug\Markpad.exe");
+            var environmentLocation = Environment.GetEnvironmentVariable("MarkpadLocation");
+            var markpadLocation = environmentLocation ?? Path.Combine(directoryName, @"..\..\..\Markpad\bin\Debug\Markpad.exe");
             Application = Application.Launch(markpadLocation);
             MainWindow = new MarkpadWindow(Application, Application.GetWindow("MarkPad"));
             TemporaryTestFilesDirectory = Path.Combine(Path.GetTempPath(), "MarkpadTest");
