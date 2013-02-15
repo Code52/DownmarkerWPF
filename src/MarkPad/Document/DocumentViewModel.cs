@@ -114,7 +114,7 @@ namespace MarkPad.Document
                 .SaveAs()
                 .ContinueWith(t=>
                 {
-                    if (t.IsFaulted)
+                    if (t.IsFaulted || t.IsCanceled)
                         return false;
 
                     MarkpadDocument = t.Result;
