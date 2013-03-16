@@ -336,7 +336,7 @@
                     </i:Interaction.Triggers>
                 </Button>
                 <Button x:Name="PrintDocument" Content="print" Style="{StaticResource OpenDocumentsOnly}" />
-                <Button x:Name="PublishDocument" Content="publish" Style="{StaticResource OpenDocumentsOnly}" />
+                <Button x:Name="PublishDocument" Content="publish" Style="{StaticResource OpenDocumentsOnly}" Command="{Binding PublishDocumentCommand}" />
             </WrapPanel>
             <WrapPanel x:Name="NewItems" Margin="30,0,0,0" Opacity="0.995" VerticalAlignment="Bottom" Height="20" RenderTransformOrigin="0.5,0.5"
                        d:LayoutOverrides="VerticalAlignment, GridBox">
