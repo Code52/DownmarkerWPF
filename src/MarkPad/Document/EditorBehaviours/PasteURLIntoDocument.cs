@@ -25,7 +25,7 @@ namespace MarkPad.Document.EditorBehaviours
             var match = URLInTextRegex.Match(pastedText);
             if (!match.Success) return;
 
-            if ((e.Editor.SelectionStart + e.Editor.SelectionLength) != e.Editor.Document.TextLength) // check if at end of document
+            if (e.Editor.SelectionStart != 0 && (e.Editor.SelectionStart + e.Editor.SelectionLength) != e.Editor.Document.TextLength) // check if at beginning or end of document
             {
                 if (e.Editor.Document.GetCharAt(e.Editor.SelectionStart - 1) == '[' && e.Editor.Document.GetCharAt(e.Editor.SelectionStart + e.Editor.SelectionLength) == ']')
                 {
