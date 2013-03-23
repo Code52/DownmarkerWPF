@@ -1,4 +1,5 @@
-﻿using Markpad.UITests.Infrastructure;
+﻿using System.Windows.Forms;
+using Markpad.UITests.Infrastructure;
 using White.Core.WindowsAPI;
 using Xunit;
 
@@ -98,6 +99,53 @@ namespace Markpad.UITests
 	1. Continued";
 
                 Assert.Equal(listContinued, editor.MarkdownText);
+            }
+
+            [Fact]
+            public void CreateLinkFromPastedURL()
+            {
+                const string textToPaste = "http://www.google.com";
+                var document = MainWindow.NewDocument();
+                var editor = document.Editor();
+
+                Clipboard.SetText(textToPaste);
+                document.PasteClipboard();
+
+                Assert.Equal("[http://www.google.com](http://www.google.com)", editor.MarkdownText);
+
+                // test caret position and text selection by pressing backspace
+                editor.PressKey(KeyboardInput.SpecialKeys.BACKSPACE);
+                Assert.Equal("[](http://www.google.com)", editor.MarkdownText);
+            }
+
+            [Fact]
+            public void DontCreateLinkWhenPastingURLInsideExistingLink()
+            {
+                const string textToPaste = "http://www.google.com";
+                var document = MainWindow.NewDocument();
+                var editor = document.Editor();
+                editor.MarkdownText = "[](http://www.google.com)";
+
+                editor.PressKey(KeyboardInput.SpecialKeys.RIGHT);
+                Clipboard.SetText(textToPaste);
+                document.PasteClipboard();
+
+                Assert.Equal("[http://www.google.com](http://www.google.com)", editor.MarkdownText);
+            }
+
+            [Fact]
+            public void DontCreateLinkWhenPastingURLInsideQuotationMarks()
+            {
+                const string textToPaste = "http://www.google.com";
+                var document = MainWindow.NewDocument();
+                var editor = document.Editor();
+                editor.MarkdownText = "\"\"";
+
+                editor.PressKey(KeyboardInput.SpecialKeys.RIGHT);
+                Clipboard.SetText(textToPaste);
+                document.PasteClipboard();
+
+                Assert.Equal("\"http://www.google.com\"", editor.MarkdownText);
             }
         }
     }
