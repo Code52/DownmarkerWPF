@@ -7,6 +7,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("ExportToHtmlPlugin")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyProduct("ExportToHtmlPlugin")]
+[assembly: AssemblyCompany("Code52")]
+[assembly: AssemblyCopyright("Copyright © Code52 2013")]
+[assembly: AssemblyVersion("0.0.0.0")]
+[assembly: AssemblyFileVersion("0.0.0.0")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from

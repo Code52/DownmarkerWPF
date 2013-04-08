@@ -1,10 +1,7 @@
 <Project DefaultTargets="NuGet" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration>Debug</Configuration>
-    <DownloadNuGetExe>true</DownloadNuGetExe>
   </PropertyGroup>
-
-  <Import Project="GenerateCommonAssemblyInfo.Targets" />
 
   <Target Name="FullClean" DependsOnTargets="Clean">
     <ItemGroup>
