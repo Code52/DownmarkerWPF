@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Windows.Automation;
 using White.Core.UIItems;
+using White.Core.Utility;
 using White.Core.WindowsAPI;
 
 namespace Markpad.UITests.Infrastructure
@@ -34,12 +35,12 @@ namespace Markpad.UITests.Infrastructure
                 EditorUIItem.Focus();
 
             ParentScreen.WhiteWindow.Keyboard.Enter(list);
+            Retry.ForDefault(() => MarkdownText, s => !s.Contains(list));
         }
 
         public void PressKey(KeyboardInput.SpecialKeys @return)
         {
             ParentScreen.WhiteWindow.Keyboard.PressSpecialKey(@return);
-            Thread.Sleep(50);
         }
 
         public void MoveCursorToEndOfEditor()

@@ -19,8 +19,7 @@ namespace Markpad.UITests
                 editor.PressKey(KeyboardInput.SpecialKeys.RETURN);
                 editor.TypeText("Continued");
 
-                const string listContinued = @" - List
- - Continued";
+                const string listContinued = " - List\r\n - Continued";
 
                 Assert.Equal(listContinued, editor.MarkdownText);
             }
@@ -35,8 +34,7 @@ namespace Markpad.UITests
                 editor.PressKey(KeyboardInput.SpecialKeys.RETURN);
                 editor.TypeText("Continued");
 
-                const string listContinued = @"1. List
-1. Continued";
+                const string listContinued = "1. List\r\n1. Continued";
 
                 Assert.Equal(listContinued, editor.MarkdownText);
             }
@@ -47,15 +45,12 @@ namespace Markpad.UITests
                 var document = MainWindow.NewDocument();
 
                 var editor = document.Editor();
-                editor.MarkdownText = @"1. List
-2. Continued";
+                editor.MarkdownText = "1. List\r\n2. Continued";
                 editor.MoveCursorToEndOfEditor();
                 editor.PressKey(KeyboardInput.SpecialKeys.RETURN);
                 editor.TypeText("With count");
 
-                const string listContinued = @"1. List
-2. Continued
-3. With count";
+                const string listContinued = "1. List\r\n2. Continued\r\n3. With count";
 
                 Assert.Equal(listContinued, editor.MarkdownText);
             }
@@ -74,8 +69,7 @@ namespace Markpad.UITests
                 editor.PressKey(KeyboardInput.SpecialKeys.TAB);
                 editor.TypeText("Continued");
 
-                const string listContinued = @"1. List
-    1. Continued";
+                const string listContinued = "1. List\r\n    1. Continued";
 
                 Assert.Equal(listContinued, editor.MarkdownText);
             }
@@ -95,8 +89,7 @@ namespace Markpad.UITests
                 editor.PressKey(KeyboardInput.SpecialKeys.TAB);
                 editor.TypeText("Continued");
 
-                const string listContinued = @"1. List
-	1. Continued";
+                const string listContinued = "1. List\r\n\t1. Continued";
 
                 Assert.Equal(listContinued, editor.MarkdownText);
             }
