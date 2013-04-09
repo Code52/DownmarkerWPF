@@ -27,6 +27,7 @@
       <ClickOnceFolder>$(Root)artifacts\ClickOnce\</ClickOnceFolder>
       <ClickOnceFiles>$(ClickOnceFolder)$(Version)\</ClickOnceFiles>
       <Mage>$(Root)tools\mage.exe</Mage>
+      <ProviderUrlArg Condition="$(ProviderUrl)!=''">-ProviderURL $(ProviderUrl)</ProviderUrlArg>
     </PropertyGroup>
     <ItemGroup>
       <XmlFiles Include="$(Root)src\Markpad\bin\$(Configuration)\*.xml" />
@@ -44,7 +45,7 @@
     <Exec Command="$(Mage) -New Application -ToFile $(ClickOnceFiles)Markpad.exe.manifest -Processor x86 -name &quot;Markpad&quot; -Version $(VERSION) -FromDirectory $(ClickOnceFiles) -IconFile markpad.ico" />
     <Exec Command="powershell.exe -ExecutionPolicy RemoteSigned -NoProfile $(Root)tools\UpdateManifest.ps1 -ManifestFile $(ClickOnceFiles)Markpad.exe.manifest" />
 
-    <Exec Command="$(Mage) -New Deployment -ToFile $(ClickOnceFolder)Markpad.application -Processor x86 -Install true -Version $(Version) -Publisher &quot;Code52&quot; -AppManifest $(ClickOnceFiles)Markpad.exe.manifest" />
+    <Exec Command="$(Mage) -New Deployment -ToFile $(ClickOnceFolder)Markpad.application -Processor x86 -Install true -Version $(Version) -Publisher &quot;Code52&quot; -AppManifest $(ClickOnceFiles)Markpad.exe.manifest $(ProviderUrlArg)" />
     
     <Exec Command="powershell.exe -ExecutionPolicy RemoteSigned -NoProfile $(Root)tools\UpdateApplicationManifest.ps1 -ManifestFile $(ClickOnceFolder)Markpad.Application" />
 
