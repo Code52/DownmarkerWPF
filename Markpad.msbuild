@@ -10,7 +10,6 @@
     <ItemGroup>
       <ProjectFiles Include="..\**\*.*proj" />
       <OldDirectories Include="@(ProjectFiles->'%(RootDir)%(Directory)bin')" />
-      <OldDirectories Include="@(ProjectFiles->'%(RootDir)%(Directory)bin')" />
       <OldDirectories Include="@(ProjectFiles->'%(RootDir)%(Directory)obj')" />
     </ItemGroup>
 
@@ -27,6 +26,7 @@
     <PropertyGroup>
       <ClickOnceFolder>$(Root)artifacts\ClickOnce\</ClickOnceFolder>
       <ClickOnceFiles>$(ClickOnceFolder)$(Version)\</ClickOnceFiles>
+      <Mage>$(Root)tools\mage.exe</Mage>
     </PropertyGroup>
     <ItemGroup>
       <XmlFiles Include="$(Root)src\Markpad\bin\$(Configuration)\*.xml" />
@@ -38,19 +38,13 @@
 
     <ItemGroup>
       <SourceFiles Include="$(Root)src\Markpad\bin\$(Configuration)\**\*.*" />
-	  <!--Exclude="
-                   $(Root)src\Markpad\bin\$(Configuration)\*.xml;
-                   $(Root)src\Markpad\bin\$(Configuration)\en-US.dll;
-                   $(Root)src\Markpad\bin\$(Configuration)\AwesomiumProcess;
-                   $(Root)src\Markpad\bin\$(Configuration)\Awesomium.dll;
-                   $(Root)src\Markpad\bin\$(Configuration)\icudt42.dll"-->
     </ItemGroup>
     <Copy SourceFiles="@(SourceFiles)" DestinationFolder="$(ClickOnceFiles)%(SourceFiles.RecursiveDir)"/>
 
-    <Exec Command="mage -New Application -ToFile $(ClickOnceFiles)Markpad.exe.manifest -Processor x86 -name &quot;Markpad&quot; -Version $(VERSION) -FromDirectory $(ClickOnceFiles) -IconFile markpad.ico" />
+    <Exec Command="$(Mage) -New Application -ToFile $(ClickOnceFiles)Markpad.exe.manifest -Processor x86 -name &quot;Markpad&quot; -Version $(VERSION) -FromDirectory $(ClickOnceFiles) -IconFile markpad.ico" />
     <Exec Command="powershell.exe -ExecutionPolicy RemoteSigned -NoProfile $(Root)tools\UpdateManifest.ps1 -ManifestFile $(ClickOnceFiles)Markpad.exe.manifest" />
 
-    <Exec Command="mage -New Deployment -ToFile $(ClickOnceFolder)Markpad.application -Processor x86 -Install true -Version $(Version) -Publisher &quot;Code52&quot; -AppManifest $(ClickOnceFiles)Markpad.exe.manifest" />
+    <Exec Command="$(Mage) -New Deployment -ToFile $(ClickOnceFolder)Markpad.application -Processor x86 -Install true -Version $(Version) -Publisher &quot;Code52&quot; -AppManifest $(ClickOnceFiles)Markpad.exe.manifest" />
     
     <Exec Command="powershell.exe -ExecutionPolicy RemoteSigned -NoProfile $(Root)tools\UpdateApplicationManifest.ps1 -ManifestFile $(ClickOnceFolder)Markpad.Application" />
 
@@ -59,25 +53,6 @@
     </ItemGroup>
     
     <Move SourceFiles="@(DeploymentFiles)" DestinationFiles="@(DeploymentFiles->'%(RootDir)%(Directory)%(FileName)%(Extension).deploy')" />
-    <!--<Copy SourceFiles="$(Root)src\Markpad\bin\$(Configuration)\Awesomium.Windows.Controls.XML"
-          DestinationFiles="$(ClickOnceFiles)\Awesomium.Windows.Controls.XML.deploy" />
-    <Copy SourceFiles="$(Root)src\Markpad\bin\$(Configuration)\Awesomium.Core.XML"
-          DestinationFiles="$(ClickOnceFiles)\Awesomium.Core.XML.deploy" />
-    <Copy SourceFiles="$(Root)src\Markpad\bin\$(Configuration)\en-US.dll"
-          DestinationFiles="$(ClickOnceFiles)\en-US.dll.deploy" />
-    <Copy SourceFiles="$(Root)src\Markpad\bin\$(Configuration)\AwesomiumProcess"
-          DestinationFiles="$(ClickOnceFiles)\AwesomiumProcess.deploy" />
-    <Copy SourceFiles="$(Root)src\Markpad\bin\$(Configuration)\Awesomium.dll"
-          DestinationFiles="$(ClickOnceFiles)\Awesomium.dll.deploy" />
-    <Copy SourceFiles="$(Root)src\Markpad\bin\$(Configuration)\icudt42.dll"
-          DestinationFiles="$(ClickOnceFiles)\icudt42.dll.deploy" />-->
-	
-    <!--<MSBuild Projects="$(Root)src\MarkPad\Markpad.csproj" Targets="Publish" Properties="Configuration=$(Configuration);Platform=x86;SolutionDir=$(Root)src\" />-->
-    <!--<ItemGroup>
-      <ClickOnceFiles Include="$(Root)src\MarkPad\bin\$(Configuration)\app.publish\**\*.*"/>
-    </ItemGroup>
-
-    <Copy SourceFiles="@(ClickOnceFiles)" DestinationFolder="$(Root)Artifacts\ClickOnce\%(ClickOnceFiles.RecursiveDir)"/>-->
   </Target>
 
   <Target Name="Chocolatey" DependsOnTargets="Build">
