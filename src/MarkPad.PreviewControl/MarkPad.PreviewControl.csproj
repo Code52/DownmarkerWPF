@@ -36,7 +36,8 @@
     <Reference Include="Awesomium.Core">
       <HintPath>..\..\lib\Awesomium.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Awesomium.Windows.Controls">
+    <Reference Include="Awesomium.Windows.Controls, Version=1.7.0.5, Culture=neutral, PublicKeyToken=7a34e179b8b61c39, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Awesomium.Windows.Controls.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CompilerServices.AsyncTargetingPack.Net4, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
