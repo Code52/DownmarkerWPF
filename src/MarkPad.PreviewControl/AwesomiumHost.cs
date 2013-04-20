@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Security.Permissions;
 using System.Threading;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Media;
 using Awesomium.Core;
@@ -28,7 +27,15 @@ namespace MarkPad.PreviewControl
         public AwesomiumHost(string filename, string baseDirectory)
         {
             if (Application.Current == null)
+            {
                 app = new Application();
+                app.DispatcherUnhandledException += (sender, args) =>
+                {
+                    // If the preview dies, it is not the end of the world, 
+                    // but most exceptions shouldn't actually cause the preview to stop
+                    args.Handled = true;
+                };
+            }
             FileName = filename;
             this.baseDirectory = baseDirectory;
 

@@ -51,6 +51,7 @@ namespace MarkPad.PreviewControl
 
         public static void ShowCreatedWebView(object sender, ShowCreatedWebViewEventArgs e)
         {
+            if (e.TargetURL == null) return;
             var file = e.TargetURL.ToString();
             if (file.StartsWith(LocalRequestUrlBase))
             {
