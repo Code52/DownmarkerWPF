@@ -6,12 +6,8 @@ using System.Windows.Input;
 
 namespace MarkPad.Infrastructure
 {
-    /// <summary>
-    /// Interaction logic for ExceptionDialog.xaml
-    /// </summary>
-    public partial class ExceptionDialog : Window
+    public partial class ExceptionDialog
     {
-        private System.Exception exception;
         private string details;
         private string message;
 
@@ -47,20 +43,16 @@ namespace MarkPad.Infrastructure
             }
         }
 
-        public System.Exception Exception
-        {
-            get { return exception; }
-            set { exception = value; }
-        }
+        public Exception Exception { get; set; }
 
         private void TryClose(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void CopyToClipboard(object sender, RoutedEventArgs e)
         {
-            SetData(DataFormats.Text, this.Details);
+            SetData(DataFormats.Text, Details);
         }
 
         // Implementation taken from the WinForms clipboard class.
@@ -77,7 +69,7 @@ namespace MarkPad.Infrastructure
             {
                 try
                 {
-                    System.Windows.Clipboard.SetData(format, data);
+                    Clipboard.SetData(format, data);
                     succeeded = true;
                 }
                 catch (Exception e)
