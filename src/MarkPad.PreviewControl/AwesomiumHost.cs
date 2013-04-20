@@ -1,11 +1,16 @@
 using System;
+using System.Diagnostics;
 using System.Security.Permissions;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
+using Awesomium.Core;
 using Awesomium.Windows.Controls;
+using Application = System.Windows.Application;
+using HorizontalAlignment = System.Windows.HorizontalAlignment;
+using MessageBox = System.Windows.MessageBox;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace MarkPad.PreviewControl
 {
@@ -22,7 +27,15 @@ namespace MarkPad.PreviewControl
         public AwesomiumHost(string filename, string baseDirectory)
         {
             if (Application.Current == null)
+            {
                 app = new Application();
+                app.DispatcherUnhandledException += (sender, args) =>
+                {
+                    // If the preview dies, it is not the end of the world, 
+                    // but most exceptions shouldn't actually cause the preview to stop
+                    args.Handled = true;
+                };
+            }
             FileName = filename;
             this.baseDirectory = baseDirectory;
 
@@ -41,8 +54,17 @@ namespace MarkPad.PreviewControl
         {
             control.Loaded -= ControlLoaded;
 
+            var session = WebCore.CreateWebSession(baseDirectory, new WebPreferences(true)
+            {
+                CustomCSS = @"body { font-family: Segoe UI, sans-serif; font-size:0.8em;}
+                              ::-webkit-scrollbar { width: 12px; height: 12px; }
+                              ::-webkit-scrollbar-track { background-color: white; }
+                              ::-webkit-scrollbar-thumb { background-color: #B9B9B9; }
+                              ::-webkit-scrollbar-thumb:hover { background-color: #000000; }"
+            });
             wb = new WebControl
             {
+                WebSession = session,
                 UseLayoutRounding = true,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
@@ -50,8 +72,8 @@ namespace MarkPad.PreviewControl
 
             wb.Loaded += WbLoaded;
             AwesomiumResourceHandler.Host = this;
-            wb.OpenExternalLink += AwesomiumResourceHandler.WebControlLinkClicked;
-            wb.ResourceRequest += AwesomiumResourceHandler.WebControlResourceRequest;
+            WebCore.ResourceInterceptor = AwesomiumResourceHandler.ResourceInterceptor;
+            wb.ShowCreatedWebView += AwesomiumResourceHandler.ShowCreatedWebView;
             wb.LoadHTML(Html);
 
             control.Content = wb;
@@ -97,19 +119,19 @@ namespace MarkPad.PreviewControl
             parameters.WindowStyle &= ~WS_VISIBLE;
 
             var intPtr = new HwndSource(parameters)
-                {
-                    RootVisual = frameworkElement
-                }.Handle;
+            {
+                RootVisual = frameworkElement
+            }.Handle;
             return intPtr.ToInt64();
         }
 
         public void SetZoom(int getZoomLevel)
         {
             app.Dispatcher.BeginInvoke(new Action(() =>
-                                                      {
-                                                          if (wb == null) return;
-                                                          wb.Zoom = getZoomLevel;
-                                                      }));
+            {
+                if (wb == null || !awesomiumInitialised) return;
+                wb.Zoom = getZoomLevel;
+            }));
         }
 
         public void SetHtml(string content)
@@ -117,34 +139,22 @@ namespace MarkPad.PreviewControl
             if (Application.Current == null) return;
             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
-                if (!awesomiumInitialised)
-                {
-                    var c = new Awesomium.Core.WebCoreConfig
-                    {
-                        CustomCSS = @"body { font-family: Segoe UI, sans-serif; font-size:0.8em;}
-                              ::-webkit-scrollbar { width: 12px; height: 12px; }
-                              ::-webkit-scrollbar-track { background-color: white; }
-                              ::-webkit-scrollbar-thumb { background-color: #B9B9B9; }
-                              ::-webkit-scrollbar-thumb:hover { background-color: #000000; }",
-                    };
-
-                    Awesomium.Core.WebCore.Initialize(c, true);
-                    Awesomium.Core.WebCore.BaseDirectory = baseDirectory;
-                    awesomiumInitialised = true;
-                }
-
                 Html = content;
                 if (wb == null) return;
 
                 wb.CacheMode = new BitmapCache();
-                EventHandler webControlOnLoadCompleted = null;
+                FrameEventHandler webControlOnLoadCompleted = null;
                 webControlOnLoadCompleted = (sender, args) =>
                 {
-                    wb.LoadCompleted -= webControlOnLoadCompleted;
-                    WbProcentualZoom();
-                    wb.CacheMode = null;
+                    if (args.IsMainFrame)
+                    {
+                        wb.LoadingFrameComplete -= webControlOnLoadCompleted;
+                        WbProcentualZoom();
+                        wb.CacheMode = null;
+                        awesomiumInitialised = true;
+                    }
                 };
-                wb.LoadCompleted += webControlOnLoadCompleted;
+                wb.LoadingFrameComplete += webControlOnLoadCompleted;
                 wb.LoadHTML(content);
             }));
         }
@@ -157,9 +167,18 @@ namespace MarkPad.PreviewControl
                 return;
             }
 
-            if (wb == null) return;
-            var javascript = string.Format("window.scrollTo(0,{0} * (document.body.scrollHeight - document.body.clientHeight));", ScrollPercentage);
-            wb.ExecuteJavascript(javascript);
+            if (wb == null || !awesomiumInitialised) return;
+            var javascript =
+                string.Format("window.scrollTo(0,{0} * (document.body.scrollHeight - document.body.clientHeight));",
+                              ScrollPercentage);
+            try
+            {
+                wb.ExecuteJavascript(javascript);
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(string.Format("Failed to scroll: {0}", ex));
+            }
         }
 
         public void Dispose()
@@ -169,14 +188,15 @@ namespace MarkPad.PreviewControl
                 app.Shutdown();
                 if (wb != null)
                 {
-                    wb.Close();
+                    wb.Dispose();
                 }
             }));
         }
 
         public void Print()
         {
-            app.Dispatcher.BeginInvoke(new Action(() => wb.Print()));
+            app.Dispatcher.BeginInvoke(new Action(() => MessageBox.Show(
+                "Printing is currently disabled due to Awesomium no longer supporting printing. We will try to restore this functionality asap")));
         }
 
         public void Run()

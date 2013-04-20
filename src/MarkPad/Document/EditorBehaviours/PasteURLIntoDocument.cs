@@ -1,13 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using Caliburn.Micro;
 using MarkPad.Document.Events;
-using MarkPad.Helpers;
 
 namespace MarkPad.Document.EditorBehaviours
 {

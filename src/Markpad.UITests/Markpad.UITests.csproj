@@ -51,9 +51,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="TestStack.White, Version=0.10.2.112, Culture=neutral, PublicKeyToken=2672efbf3e161801, processorArchitecture=x86">
+    <Reference Include="TestStack.White, Version=0.10.3.118, Culture=neutral, PublicKeyToken=2672efbf3e161801, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\TestStack.White.0.10.2.112\lib\net40\TestStack.White.dll</HintPath>
+      <HintPath>..\packages\TestStack.White.0.10.3.118\lib\net40\TestStack.White.dll</HintPath>
     </Reference>
     <Reference Include="UIAutomationClient" />
     <Reference Include="UIAutomationTypes" />
