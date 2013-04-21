@@ -173,7 +173,11 @@ namespace MarkPad.DocumentSources.MetaWeblog.Service.Rsd
                         .Elements(XName.Get("api"));
                 }
 
-                return apiElements.SingleOrDefault(e => e.Attribute("name").Value.ToLower() == "metaweblog");
+                return apiElements.SingleOrDefault(e =>
+                {
+                    var apiName = e.Attribute("name").Value.ToLower();
+                    return apiName == "metaweblog" || apiName == "blogger";
+                });
             }
             catch (NullReferenceException)
             {
