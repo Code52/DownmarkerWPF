@@ -1,4 +1,4 @@
-    using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -87,7 +87,7 @@ namespace MarkPad
                 ignoreNextMouseMove = false;
                 return;
             }
-
+            
             if (WindowState != WindowState.Maximized) return;
 
             if (e.MiddleButton == MouseButtonState.Pressed) return;
@@ -123,6 +123,7 @@ namespace MarkPad
             e.Handled = true;
             if (DocumentIsOpen && !Header.IsMouseOver) return;
             ToggleMaximized();
+            ignoreNextMouseMove = true;
         }
 
         void ButtonMinimiseOnClick(object sender, RoutedEventArgs e)
