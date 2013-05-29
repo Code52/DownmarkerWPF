@@ -8,6 +8,7 @@ namespace MarkPad.DocumentSources
     {
         IMarkpadDocument NewDocument();
         IMarkpadDocument NewDocument(string initalText);
+        IMarkpadDocument NewDocument(string initalText, string title);
         IMarkpadDocument CreateHelpDocument(string title, string content);
         Task<IMarkpadDocument> OpenDocument(string path);
         Task<IMarkpadDocument> PublishDocument(string postId, IMarkpadDocument document);
