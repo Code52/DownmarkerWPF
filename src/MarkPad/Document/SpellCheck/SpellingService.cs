@@ -18,6 +18,7 @@ namespace MarkPad.Document.SpellCheck
                 {SpellingLanguages.Australian, "en_AU"},
                 {SpellingLanguages.Canadian, "en_CA"},
                 {SpellingLanguages.UnitedStates, "en_US"},
+                {SpellingLanguages.UnitedKingdom, "en_GB"},
                 {SpellingLanguages.Spain, "es_ES"}
             };
         }

@@ -172,6 +172,8 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\en_GB.aff" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\en_GB.dic" />
     <None Include="Fody.targets" />
     <None Include="FodyWeavers.xml">
       <SubType>Designer</SubType>

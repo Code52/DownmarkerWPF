@@ -10,6 +10,8 @@ namespace MarkPad.Document.SpellCheck
         Canadian,
         [Description("English (United States)")]
         UnitedStates,
+        [Description("English (United Kingdom)")]
+        UnitedKingdom,
         [Description("Spanish (Spain)")]
         Spain
     }
