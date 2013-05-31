@@ -363,6 +363,7 @@
       <DependentUpon>GithubLogin.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\UI\PluginViewModel.cs" />
+    <Compile Include="Settings\MarkpadRegistryEditor.cs" />
     <Compile Include="Settings\UI\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
       <SubType>Code</SubType>
