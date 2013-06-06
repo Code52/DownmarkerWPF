@@ -27,6 +27,7 @@ namespace MarkPad
     public class ShellViewModel : Conductor<IScreen>, IShell, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>, IHandle<OpenFromWebEvent>
     {
         const string ShowSettingsState = "ShowSettings";
+        const string NewDocumentDefaultName = "New Document";
         readonly IEventAggregator eventAggregator;
         readonly IDialogService dialogService;
         readonly IOpenDocumentFromWeb openDocumentFromWeb;
@@ -35,6 +36,8 @@ namespace MarkPad
         readonly IFileSystem fileSystem;
         readonly IDocumentFactory documentFactory;
         readonly object workLock = new object();
+
+        private int numberOfNewDocuments;
 
         public ShellViewModel(
             IDialogService dialogService,
@@ -152,9 +155,18 @@ namespace MarkPad
             if (text == "text") text = "";
 
             var documentViewModel = documentViewModelFactory();
-            documentViewModel.Open(documentFactory.NewDocument(text), isNew: true);
+            var newDocumentName = BuildNewDocumentName();
+            documentViewModel.Open(documentFactory.NewDocument(text, newDocumentName), isNew: true);
             MDI.Open(documentViewModel);
             documentViewModel.Update();
+        }
+
+        private string BuildNewDocumentName()
+        {
+            var newDocumentName = NewDocumentDefaultName;
+            var newItemNo = ++numberOfNewDocuments;
+            newDocumentName += newItemNo != 1 ? " (" + newItemNo + ")" : "";
+            return newDocumentName;
         }
 
         private static string CreateJekyllHeader()

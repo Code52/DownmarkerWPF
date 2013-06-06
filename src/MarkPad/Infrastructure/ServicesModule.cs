@@ -24,6 +24,7 @@ namespace MarkPad.Infrastructure
             builder.RegisterType<GithubApi>().As<IGithubApi>();
             builder.RegisterType<WebDocumentService>().As<IWebDocumentService>();
             builder.RegisterType<OpenDocumentFromWeb>().As<IOpenDocumentFromWeb>();
+            builder.RegisterType<MarkpadRegistryEditor>().As<IMarkpadRegistryEditor>();
         }
     }
 }
