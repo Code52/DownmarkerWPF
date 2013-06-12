@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Media;
 using Caliburn.Micro;
 using MarkPad.Document.SpellCheck;
@@ -13,7 +11,6 @@ using MarkPad.Framework;
 using MarkPad.Plugins;
 using MarkPad.PreviewControl;
 using MarkPad.Settings.Models;
-using Microsoft.Win32;
 
 namespace MarkPad.Settings.UI
 {
@@ -21,12 +18,16 @@ namespace MarkPad.Settings.UI
     {
         public const string FontSizeSettingsKey = "Font";
         public const string FontFamilySettingsKey = "FontFamily";
-        private const string MarkpadKeyName = "markpad.md";
 
-        private readonly ISettingsProvider settingsService;
+
+        private readonly ISettingsProvider settingsProvider;
         private readonly IEventAggregator eventAggregator;
         private readonly Func<IPlugin, PluginViewModel> pluginViewModelCreator;
         private readonly ISpellingService spellingService;
+        private readonly IList<IPlugin> plugins;
+        private readonly IBlogService blogService;
+        private readonly IMarkpadRegistryEditor markpadRegistryEditor;
+        private BlogSetting currentBlog;
 
         public IEnumerable<ExtensionViewModel> Extensions { get; set; }
         public IEnumerable<FontSizes> FontSizes { get; set; }
@@ -40,92 +41,8 @@ namespace MarkPad.Settings.UI
         public PluginViewModel SelectedPlugin { get; set; }
         public IEnumerable<PluginViewModel> Plugins { get; private set; }
         public IndentType IndentType { get; set; }
-
-        readonly IList<IPlugin> plugins;
-
-        public SettingsViewModel(
-            ISettingsProvider settingsService,
-            IEventAggregator eventAggregator,
-            Func<IPlugin, PluginViewModel> pluginViewModelCreator,
-            ISpellingService spellingService, 
-            IEnumerable<IPlugin> plugins, 
-            IBlogService blogService)
-        {
-            this.settingsService = settingsService;
-            this.eventAggregator = eventAggregator;
-            this.pluginViewModelCreator = pluginViewModelCreator;
-            this.spellingService = spellingService;
-            this.blogService = blogService;
-            this.plugins = plugins.ToList();
-        }
-
-        public void Initialize()
-        {
-            InitialiseExtensions();
-
-            var settings = settingsService.GetSettings<MarkPadSettings>();
-            var blogs = blogService.GetBlogs();
-
-            Blogs = new ObservableCollection<BlogSetting>(blogs);
-
-            Languages = Enum.GetValues(typeof(SpellingLanguages)).OfType<SpellingLanguages>().ToArray();
-            FontSizes = Enum.GetValues(typeof(FontSizes)).OfType<FontSizes>().ToArray();
-            FontFamilies = Fonts.SystemFontFamilies.OrderBy(f => f.Source);
-
-            SelectedLanguage = settings.Language;
-
-            var fontFamily = settings.FontFamily;
-            SelectedFontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == fontFamily);
-            SelectedFontSize = settings.FontSize;
-
-            if (SelectedFontFamily == null)
-            {
-                SelectedFontFamily = FontHelpers.TryGetFontFamilyFromStack(Constants.DEFAULT_EDITOR_FONT_FAMILY);
-                SelectedFontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
-            }
-            EnableFloatingToolBar = settings.FloatingToolBarEnabled;
-
-            Plugins = plugins
-                .Where(plugin => !plugin.IsHidden)
-                .Select(plugin => pluginViewModelCreator(plugin));
-        }
-
-        private void InitialiseExtensions()
-        {
-            var softwareKey = Registry.CurrentUser.OpenSubKey("Software");
-            if (softwareKey == null) return;
-            using (var key = softwareKey.OpenSubKey("Classes"))
-            {
-                if (key == null)
-                {
-                    Extensions = new ExtensionViewModel[0];
-                    return;
-                }
-
-                Extensions = Constants.DefaultExtensions
-                    .Select(s =>
-                    {
-                        
-                        var openSubKey = key.OpenSubKey(s);
-                        return new ExtensionViewModel(s, Enabled(s, key, openSubKey));
-                    })
-                    .Where(e => e != null)
-                    .ToArray();
-            }
-        }
-
-        private static bool Enabled(string s, RegistryKey key, RegistryKey openSubKey)
-        {
-            object defaultNameValue = openSubKey == null? null : openSubKey.GetValue(null);
-            string defaultNameValueAsString = defaultNameValue == null ? null : defaultNameValue.ToString();
-            return openSubKey != null &&
-                   (key.GetSubKeyNames().Contains(s) &&
-                    !string.IsNullOrEmpty(defaultNameValueAsString));
-        }
-
-        private BlogSetting currentBlog;
-        readonly IBlogService blogService;
-
+        public bool CanEditBlog { get { return currentBlog != null; } }
+        public bool CanRemoveBlog { get { return currentBlog != null; } }
         public BlogSetting CurrentBlog
         {
             get { return currentBlog; }
@@ -162,6 +79,63 @@ namespace MarkPad.Settings.UI
             set { }
         }
 
+        public ObservableCollection<IndentType> IndentTypes
+        {
+            get { return new ObservableCollection<IndentType> { IndentType.Tabs, IndentType.Spaces }; }
+        }
+        
+
+        public SettingsViewModel(
+            ISettingsProvider settingsProvider,
+            IEventAggregator eventAggregator,
+            Func<IPlugin, PluginViewModel> pluginViewModelCreator,
+            ISpellingService spellingService, 
+            IEnumerable<IPlugin> plugins, 
+            IBlogService blogService,
+            IMarkpadRegistryEditor markpadRegistryEditor)
+        {
+            this.settingsProvider = settingsProvider;
+            this.eventAggregator = eventAggregator;
+            this.pluginViewModelCreator = pluginViewModelCreator;
+            this.spellingService = spellingService;
+            this.blogService = blogService;
+            this.plugins = plugins.ToList();
+            this.markpadRegistryEditor = markpadRegistryEditor;
+        }
+
+
+        public void Initialize()
+        {
+            Extensions = markpadRegistryEditor.GetExtensionsFromRegistry();
+
+            var settings = settingsProvider.GetSettings<MarkPadSettings>();
+            var blogs = blogService.GetBlogs();
+
+            Blogs = new ObservableCollection<BlogSetting>(blogs);
+
+            Languages = Enum.GetValues(typeof(SpellingLanguages)).OfType<SpellingLanguages>().ToArray();
+            FontSizes = Enum.GetValues(typeof(FontSizes)).OfType<FontSizes>().ToArray();
+            FontFamilies = Fonts.SystemFontFamilies.OrderBy(f => f.Source);
+
+            SelectedLanguage = settings.Language;
+
+            var fontFamily = settings.FontFamily;
+            SelectedFontFamily = Fonts.SystemFontFamilies.FirstOrDefault(f => f.Source == fontFamily);
+            SelectedFontSize = settings.FontSize;
+
+            if (SelectedFontFamily == null)
+            {
+                SelectedFontFamily = FontHelpers.TryGetFontFamilyFromStack(Constants.DEFAULT_EDITOR_FONT_FAMILY);
+                SelectedFontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
+            }
+            EnableFloatingToolBar = settings.FloatingToolBarEnabled;
+
+            Plugins = plugins
+                .Where(plugin => !plugin.IsHidden)
+                .Select(plugin => pluginViewModelCreator(plugin));
+        }
+        
+
         public bool AddBlog()
         {
             var blog = blogService.AddBlog();
@@ -175,7 +149,6 @@ namespace MarkPad.Settings.UI
             return false;
         }
 
-        public bool CanEditBlog { get { return currentBlog != null; } }
 
         public void EditBlog()
         {
@@ -184,12 +157,6 @@ namespace MarkPad.Settings.UI
             blogService.EditBlog(CurrentBlog);
         }
 
-        public bool CanRemoveBlog { get { return currentBlog != null; } }
-
-        public ObservableCollection<IndentType> IndentTypes
-        {
-            get { return new ObservableCollection<IndentType> { IndentType.Tabs, IndentType.Spaces }; }
-        }
 
         public void RemoveBlog()
         {
@@ -208,22 +175,15 @@ namespace MarkPad.Settings.UI
 
         public void Accept()
         {
-            UpdateExtensionRegistryKeys();
+            markpadRegistryEditor.UpdateExtensionRegistryKeys(Extensions);
 
             spellingService.SetLanguage(SelectedLanguage);
 
-            var settings = settingsService.GetSettings<MarkPadSettings>();
-
-            settings.FontSize = SelectedFontSize;
-            settings.FontFamily = SelectedFontFamily.Source;
-            settings.FloatingToolBarEnabled = EnableFloatingToolBar;
-            settings.IndentType = IndentType;
-            settings.Language = SelectedLanguage;
-
-            settingsService.SaveSettings(settings);
+            UpdateMarkpadSettings();
 
             eventAggregator.Publish(new SettingsChangedEvent());
         }
+
 
         public void HideSettings()
         {
@@ -231,47 +191,17 @@ namespace MarkPad.Settings.UI
             Accept();
         }
 
-        private void UpdateExtensionRegistryKeys()
+        private void UpdateMarkpadSettings()
         {
-            var exePath = Assembly.GetEntryAssembly().Location;
+            var settings = settingsProvider.GetSettings<MarkPadSettings>();
 
-            var software = Registry.CurrentUser.OpenSubKey("Software");
-            if (software == null) return;
-            using (var classesKey = software.OpenSubKey("Classes", true))
-            {
-                if (classesKey == null) return;
-                foreach (var ext in Extensions)
-                {
-                    using (var extensionKey = classesKey.CreateSubKey(ext.Extension))
-                    {
-                        if (extensionKey != null)
-                            extensionKey.SetValue("", ext.Enabled ? MarkpadKeyName : "");
-                    }
-                }
+            settings.FontSize = SelectedFontSize;
+            settings.FontFamily = SelectedFontFamily.Source;
+            settings.FloatingToolBarEnabled = EnableFloatingToolBar;
+            settings.IndentType = IndentType;
+            settings.Language = SelectedLanguage;
 
-                using (var markpadKey = classesKey.CreateSubKey(MarkpadKeyName))
-                {
-                    if (markpadKey == null) return;
-                    using (var defaultIconKey = markpadKey.CreateSubKey("DefaultIcon"))
-                    {
-                        if (defaultIconKey != null)
-                            defaultIconKey.SetValue("", Path.Combine(Constants.IconDir, Constants.Icons[0]));
-                    }
-
-                    using (var shellKey = markpadKey.CreateSubKey("shell"))
-                    {
-                        if (shellKey == null) return;
-                        using (var openKey = shellKey.CreateSubKey("open"))
-                        {
-                            if (openKey == null) return;
-                            using (var commandKey = openKey.CreateSubKey("command"))
-                            {
-                                if (commandKey != null) commandKey.SetValue("", "\"" + exePath + "\" \"%1\"");
-                            }
-                        }
-                    }
-                }
-            }
+            settingsProvider.SaveSettings(settings);
         }
     }
 }

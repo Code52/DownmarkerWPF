@@ -55,6 +55,11 @@ namespace MarkPad.DocumentSources
             return new NewMarkpadDocument(fileSystem, this, initalText);
         }
 
+        public IMarkpadDocument NewDocument(string initalText, string title)
+        {
+            return new NewMarkpadDocument(fileSystem, this, title, initalText);
+        }
+
         public IMarkpadDocument CreateHelpDocument(string title, string content)
         {
             return new HelpDocument(title, content, this, fileSystem);

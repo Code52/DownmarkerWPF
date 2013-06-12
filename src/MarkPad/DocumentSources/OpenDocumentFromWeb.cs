@@ -24,10 +24,10 @@ namespace MarkPad.DocumentSources
             if (blogs == null || blogs.Count == 0)
             {
                 if (!blogService.ConfigureNewBlog("Open from web"))
-                    return null;
+                    return TaskEx.FromResult(new OpenDocumentFromWebResult(){Success =  false});
                 blogs = blogService.GetBlogs();
                 if (blogs == null || blogs.Count == 0)
-                    return null;
+                    return TaskEx.FromResult(new OpenDocumentFromWebResult() { Success = false });
             }
 
             var openFromWeb = openFromWebViewModelFactory();

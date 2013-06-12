@@ -8,9 +8,15 @@ namespace MarkPad.Document.SpellCheck
         Australian,
         [Description("English (Canada)")]
         Canadian,
+        [Description("English (United Kingdom)")]
+        UnitedKingdom,
         [Description("English (United States)")]
         UnitedStates,
+        [Description("German (Germany)")]
+        Germany,
         [Description("Spanish (Spain)")]
-        Spain
+        Spain,
+        [Description("Turkish (Turkey)")]
+        Turkish
     }
 }
