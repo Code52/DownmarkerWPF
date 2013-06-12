@@ -277,13 +277,23 @@ namespace MarkPad
 
         public void ShowHelp()
         {
-            var documentViewModel = documentViewModelFactory();
-            documentViewModel.Open(documentFactory.CreateHelpDocument("Markdown Help", GetHelpText("MarkdownHelp")));
-            MDI.Open(documentViewModel);
+            OpenHelpDocument("Markdown Help", "MarkdownHelp");
+            OpenHelpDocument("MarkPad Help", "MarkPadHelp");
+        }
 
-            documentViewModel = documentViewModelFactory();
-            documentViewModel.Open(documentFactory.CreateHelpDocument("MarkPad Help", GetHelpText("MarkPadHelp")));
-            MDI.Open(documentViewModel);
+        private void OpenHelpDocument(string title, string content)
+        {
+            if (!IsDocumentAlreadyOpen(title))
+            {
+                var documentViewModel = documentViewModelFactory();
+                documentViewModel.Open(documentFactory.CreateHelpDocument(title, GetHelpText(content)));
+                MDI.Open(documentViewModel);
+            }
+        }
+
+        private bool IsDocumentAlreadyOpen(string screenName)
+        {
+            return MDI.Items.Any(item => item.DisplayName == screenName);
         }
 
         private static string GetHelpText(string file)
