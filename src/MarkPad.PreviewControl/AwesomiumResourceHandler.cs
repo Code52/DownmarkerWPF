@@ -39,8 +39,14 @@ namespace MarkPad.PreviewControl
                 IntPtr unmanagedPointer = Marshal.AllocHGlobal(bytes.Length);
                 Marshal.Copy(bytes, 0, unmanagedPointer, bytes.Length);
                 // Call unmanaged code
-                Marshal.FreeHGlobal(unmanagedPointer);
-                return ResourceResponse.Create((uint)bytes.Length, unmanagedPointer, "text/html");
+                try
+                {
+                    return ResourceResponse.Create((uint)bytes.Length, unmanagedPointer, "text/html");
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(unmanagedPointer);
+                }
             }
 
             var resourceFileName = GetResourceFileName(url);
@@ -91,7 +97,8 @@ namespace MarkPad.PreviewControl
 
         public bool OnFilterNavigation(NavigationRequest request)
         {
-            return !request.Url.ToString().StartsWith(LocalRequestUrlBase);
+            var s = request.Url.ToString();
+            return !s.StartsWith(LocalRequestUrlBase) && !s.StartsWith("asset://markpad");
         }
     }
 }
