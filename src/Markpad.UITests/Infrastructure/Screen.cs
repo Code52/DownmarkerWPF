@@ -1,7 +1,7 @@
 using White.Core;
 using White.Core.UIItems.WindowItems;
 
-namespace Markpad.UITests.Infrastructure
+namespace MarkPad.UITests.Infrastructure
 {
     public class Screen
     {

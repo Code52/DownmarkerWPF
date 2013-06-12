@@ -7,7 +7,7 @@ using White.Core.UIItems.ListBoxItems;
 using White.Core.UIItems.WPFUIItems;
 using White.Core.UIItems.WindowItems;
 
-namespace Markpad.UITests.Infrastructure
+namespace MarkPad.UITests.Infrastructure
 {
     public class SettingsWindow : Screen
     {

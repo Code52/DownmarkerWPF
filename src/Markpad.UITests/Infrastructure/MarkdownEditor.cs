@@ -4,7 +4,7 @@ using White.Core.UIItems;
 using White.Core.Utility;
 using White.Core.WindowsAPI;
 
-namespace Markpad.UITests.Infrastructure
+namespace MarkPad.UITests.Infrastructure
 {
     public class MarkdownEditor : ScreenComponent<MarkpadWindow>
     {

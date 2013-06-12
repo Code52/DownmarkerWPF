@@ -20,8 +20,7 @@ namespace MarkPad.Document.SpellCheck
                 {SpellingLanguages.UnitedStates, "en_US"},
                 {SpellingLanguages.UnitedKingdom, "en_GB"},
                 {SpellingLanguages.Spain, "es_ES"},
-                {SpellingLanguages.Germany, "de_DE"},
-                {SpellingLanguages.Turkish, "tr"}
+                {SpellingLanguages.Germany, "de_DE"}
             };
         }
 

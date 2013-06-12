@@ -4,11 +4,13 @@
     <Root>$(MSBuildProjectDirectory)\</Root>
     <Version Condition="$(BUILD_NUMBER)!=''">$(BUILD_NUMBER)</Version>
     <Version Condition="$(Version)==''">0.0.0.0</Version>
+    <ClickOnceFolder>$(Root)artifacts\ClickOnce\</ClickOnceFolder>
+    <ProviderUrl Condition="$(ProviderUrl)=='' AND $(BlobTargetUrl) !=''">$(BlobTargetUrl)MarkPad.application</ProviderUrl>
   </PropertyGroup>
   
   <Target Name="Clean">
     <ItemGroup>
-      <ProjectFiles Include="..\**\*.*proj" />
+      <ProjectFiles Include="$(Root)**\*.*proj" />
       <OldDirectories Include="@(ProjectFiles->'%(RootDir)%(Directory)bin')" />
       <OldDirectories Include="@(ProjectFiles->'%(RootDir)%(Directory)obj')" />
     </ItemGroup>
@@ -21,16 +23,19 @@
   <Target Name="Build" DependsOnTargets="Clean">
     <MSBuild Projects="$(Root)src\MarkPad.sln" Targets="Rebuild" Properties="Configuration=$(Configuration);Platform=x86" />
   </Target>
+
+  <Target Name="Test" DependsOnTargets="Build">
+    <Exec Command="$(Root)tools\xunit\xunit.console.clr4.x86.exe $(Root)src\MarkPad.Tests\bin\$(Configuration)\MarkPad.Tests.dll" />
+  </Target>
   
-  <Target Name="Publish" DependsOnTargets="Build">
+  <Target Name="Publish" DependsOnTargets="Test">
     <PropertyGroup>
-      <ClickOnceFolder>$(Root)artifacts\ClickOnce\</ClickOnceFolder>
       <ClickOnceFiles>$(ClickOnceFolder)$(Version)\</ClickOnceFiles>
       <Mage>$(Root)tools\mage.exe</Mage>
       <ProviderUrlArg Condition="$(ProviderUrl)!=''">-ProviderURL $(ProviderUrl)</ProviderUrlArg>
     </PropertyGroup>
     <ItemGroup>
-      <XmlFiles Include="$(Root)src\Markpad\bin\$(Configuration)\*.xml" />
+      <XmlFiles Include="$(Root)src\MarkPad\bin\$(Configuration)\*.xml" />
       <ClickOnceFilesToDelete Include="$(ClickOnceFolder)\**\*.*" />
     </ItemGroup>
     
@@ -38,22 +43,29 @@
     <RemoveDir Directories="@(ClickOnceFolder)" />
 
     <ItemGroup>
-      <SourceFiles Include="$(Root)src\Markpad\bin\$(Configuration)\**\*.*" />
+      <SourceFiles Include="$(Root)src\MarkPad\bin\$(Configuration)\**\*.*" />
     </ItemGroup>
     <Copy SourceFiles="@(SourceFiles)" DestinationFolder="$(ClickOnceFiles)%(SourceFiles.RecursiveDir)"/>
 
-    <Exec Command="$(Mage) -New Application -ToFile $(ClickOnceFiles)Markpad.exe.manifest -Processor x86 -name &quot;Markpad&quot; -Version $(VERSION) -FromDirectory $(ClickOnceFiles) -IconFile markpad.ico" />
-    <Exec Command="powershell.exe -ExecutionPolicy RemoteSigned -NoProfile $(Root)tools\UpdateManifest.ps1 -ManifestFile $(ClickOnceFiles)Markpad.exe.manifest" />
+    <Exec Command="$(Mage) -New Application -ToFile $(ClickOnceFiles)MarkPad.exe.manifest -Processor x86 -name &quot;MarkPad&quot; -Version $(VERSION) -FromDirectory $(ClickOnceFiles) -IconFile markpad.ico" />
+    <Exec Command="powershell.exe -ExecutionPolicy RemoteSigned -NoProfile $(Root)tools\UpdateManifest.ps1 -ManifestFile $(ClickOnceFiles)MarkPad.exe.manifest" />
 
-    <Exec Command="$(Mage) -New Deployment -ToFile $(ClickOnceFolder)Markpad.application -Processor x86 -Install true -Version $(Version) -Publisher &quot;Code52&quot; -AppManifest $(ClickOnceFiles)Markpad.exe.manifest $(ProviderUrlArg)" />
+    <Exec Command="$(Mage) -New Deployment -ToFile $(ClickOnceFolder)MarkPad.application -Processor x86 -Install true -Version $(Version) -Publisher &quot;Code52&quot; -AppManifest $(ClickOnceFiles)MarkPad.exe.manifest $(ProviderUrlArg)" />
     
-    <Exec Command="powershell.exe -ExecutionPolicy RemoteSigned -NoProfile $(Root)tools\UpdateApplicationManifest.ps1 -ManifestFile $(ClickOnceFolder)Markpad.Application" />
+    <Exec Command="powershell.exe -ExecutionPolicy RemoteSigned -NoProfile $(Root)tools\UpdateApplicationManifest.ps1 -ManifestFile $(ClickOnceFolder)MarkPad.application" />
 
 	  <ItemGroup>
-      <DeploymentFiles Include="$(ClickOnceFiles)**\*.*" Exclude="$(ClickOnceFiles)Markpad.exe.manifest" />
+      <DeploymentFiles Include="$(ClickOnceFiles)**\*.*" Exclude="$(ClickOnceFiles)MarkPad.exe.manifest" />
     </ItemGroup>
     
     <Move SourceFiles="@(DeploymentFiles)" DestinationFiles="@(DeploymentFiles->'%(RootDir)%(Directory)%(FileName)%(Extension).deploy')" />
+  </Target>
+
+  <Target Name="PublishInstallToAzure" DependsOnTargets="Publish">
+    
+    <!--To build and publish to azure: msbuild MarkPad.msbuild /p:BlobTargetUrl=https://myaccount.blob.core.windows.net/mycontainer/ /p:BlobTargetKey=key-->
+    <!--$(BlobTargetUrl) = https://myaccount.blob.core.windows.net/mycontainer/ -->
+    <Exec Command="$(Root)tools\AzCopy.exe $(ClickOnceFolder) $(BlobTargetUrl) /destkey:$(BlobTargetKey) /S /V" />
   </Target>
 
   <Target Name="Chocolatey" DependsOnTargets="Build">

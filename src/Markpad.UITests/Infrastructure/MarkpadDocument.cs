@@ -4,7 +4,7 @@ using White.Core.UIItems.Finders;
 using White.Core.UIItems.TabItems;
 using White.Core.WindowsAPI;
 
-namespace Markpad.UITests.Infrastructure
+namespace MarkPad.UITests.Infrastructure
 {
     public class MarkpadDocument : ScreenComponent<MarkpadWindow>
     {

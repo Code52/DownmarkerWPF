@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using White.Core;
 
-namespace Markpad.UITests.Infrastructure
+namespace MarkPad.UITests.Infrastructure
 {
     public class MarkpadFixture : IDisposable
     {

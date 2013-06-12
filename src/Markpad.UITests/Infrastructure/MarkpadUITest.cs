@@ -2,7 +2,7 @@
 using Xunit;
 using log4net.Config;
 
-namespace Markpad.UITests.Infrastructure
+namespace MarkPad.UITests.Infrastructure
 {
     public class MarkpadUiTest : IUseFixture<MarkpadFixture>
     {
