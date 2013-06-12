@@ -77,8 +77,9 @@
               </StackPanel>
               <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,20,20,0" Width="250">
                 <TextBlock TextWrapping="Wrap" FontSize="26.667" FontWeight="Light" Text="features"/>
-                <Controls:ToggleSwitch Margin="-10,5,0,0" IsChecked="{Binding EnableFloatingToolBar, Mode=TwoWay}" Content="floating toolbar"/>
-                <Grid Margin="0,5,0,0">
+                                <Controls:ToggleSwitch Margin="-10,5,0,0" IsChecked="{Binding EnableFloatingToolBar, Mode=TwoWay}" Content="floating toolbar"/>
+                                <Controls:ToggleSwitch Margin="-10,5,0,0" IsChecked="{Binding EnableMarkdownExtra, Mode=TwoWay}" Content="markdown extra"/>
+                                <Grid Margin="0,5,0,0">
                   <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />

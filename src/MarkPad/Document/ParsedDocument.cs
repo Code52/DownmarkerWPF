@@ -3,7 +3,9 @@ using System.IO;
 using System.Text.RegularExpressions;
 using MarkPad.Plugins;
 using MarkPad.PreviewControl;
+using MarkPad.Settings.Models;
 using MarkdownDeep;
+using MarkPad.Settings;
 
 namespace MarkPad.Document
 {
@@ -16,8 +18,18 @@ namespace MarkPad.Document
             Markdown.NewWindowForExternalLinks = true;
         }
 
+        private readonly ISettingsProvider settingsProvider;
+
+        public DocumentParser(ISettingsProvider settingsProvider)
+        {
+            this.settingsProvider = settingsProvider;
+        }
+
 		public string Parse(string source)
 		{
+		    var settings = settingsProvider.GetSettings<MarkPadSettings>();
+		    Markdown.ExtraMode = settings.MarkdownExtraEnabled;
+
 			string header;
 			string contents;
 			SplitHeaderAndContents(source, out header, out contents);

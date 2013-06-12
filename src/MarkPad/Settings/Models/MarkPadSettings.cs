@@ -27,5 +27,8 @@ namespace MarkPad.Settings.Models
 
         [DefaultValue(SpellingLanguages.Australian)]
         public SpellingLanguages Language { get; set; }
+
+        [DefaultValue(false)]
+        public bool MarkdownExtraEnabled { get; set; }
     }
 }
