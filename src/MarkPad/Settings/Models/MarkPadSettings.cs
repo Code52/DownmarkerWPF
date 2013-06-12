@@ -27,5 +27,7 @@ namespace MarkPad.Settings.Models
 
         [DefaultValue(SpellingLanguages.Australian)]
         public SpellingLanguages Language { get; set; }
+
+        public bool IsEditorColorsInverted { get; set; }
     }
 }

@@ -54,6 +54,7 @@ namespace MarkPad.Document
             SearchProvider = searchProvider;
 
             FontSize = GetFontSize();
+            IsColorsInverted = GetIsColorsInverted();
             IndentType = settingsProvider.GetSettings<MarkPadSettings>().IndentType;
             
             Original = "";
@@ -263,6 +264,8 @@ namespace MarkPad.Document
 
         public double FontSize { get; private set; }
 
+        public bool IsColorsInverted { get; set; }
+
         public double ZoomLevel
         {
             get { return zoomLevel; }
@@ -292,6 +295,11 @@ namespace MarkPad.Document
         private int GetFontSize()
         {
             return Constants.FONT_SIZE_ENUM_ADJUSTMENT + (int)settingsProvider.GetSettings<MarkPadSettings>().FontSize;
+        }
+
+        private bool GetIsColorsInverted()
+        {
+            return settingsProvider.GetSettings<MarkPadSettings>().IsEditorColorsInverted;
         }
 
         public void ZoomIn()
@@ -347,6 +355,11 @@ namespace MarkPad.Document
         public void RefreshFont()
         {
             FontSize = GetFontSize()*ZoomLevel;
+        }
+
+        public void RefreshColors()
+        {
+            IsColorsInverted = GetIsColorsInverted();
         }
 
         public void Handle(SettingsChangedEvent message)

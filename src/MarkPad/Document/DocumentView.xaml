@@ -60,7 +60,9 @@
                                  IndentType="{Binding IndentType}"
                                  EditorFontSize="{Binding FontSize}"
                                  Document="{Binding Document}"
-                                 SpellCheckProvider="{Binding SpellCheckProvider}"/>
+                                 SpellCheckProvider="{Binding SpellCheckProvider}"
+                                 IsColorsInverted="{Binding IsColorsInverted}"
+                                 />
         
         <Border Grid.Column="2" 
                 SizeChanged="PlaceHolderSizeChanged"

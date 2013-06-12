@@ -134,6 +134,7 @@ namespace MarkPad.Document
             ApplyFont();
             markdownEditor.Editor.TextArea.TextView.Redraw();
             ViewModel.ExecuteSafely(vm => vm.RefreshFont());
+            ViewModel.ExecuteSafely(vm => vm.RefreshColors());
         }
 
         void PlaceHolderSizeChanged(object sender, SizeChangedEventArgs e)
