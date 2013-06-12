@@ -65,7 +65,7 @@
     
     <!--To build and publish to azure: msbuild MarkPad.msbuild /p:BlobTargetUrl=https://myaccount.blob.core.windows.net/mycontainer/ /p:BlobTargetKey=key-->
     <!--$(BlobTargetUrl) = https://myaccount.blob.core.windows.net/mycontainer/ -->
-    <Exec Command="$(Root)tools\AzCopy.exe $(ClickOnceFolder) $(BlobTargetUrl) /destkey:$(BlobTargetKey) /S /V" />
+    <Exec Command="$(Root)tools\AzCopy.exe $(ClickOnceFolder) $(BlobTargetUrl) /destkey:$(BlobTargetKey) /S /V /Y" />
   </Target>
 
   <Target Name="Chocolatey" DependsOnTargets="Build">
