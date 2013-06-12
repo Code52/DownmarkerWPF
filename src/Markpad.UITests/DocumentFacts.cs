@@ -1,9 +1,9 @@
 ﻿using System.IO;
 using System.Windows.Forms;
-using Markpad.UITests.Infrastructure;
+using MarkPad.UITests.Infrastructure;
 using Xunit;
 
-namespace Markpad.UITests
+namespace MarkPad.UITests
 {
     public class DocumentFacts : MarkpadUiTest
     {

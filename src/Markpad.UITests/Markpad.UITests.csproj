@@ -7,8 +7,8 @@
     <ProjectGuid>{3F6B0B72-DC75-4B4E-8361-8AB257F4048E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Markpad.UITests</RootNamespace>
-    <AssemblyName>Markpad.UITests</AssemblyName>
+    <RootNamespace>MarkPad.UITests</RootNamespace>
+    <AssemblyName>MarkPad.UITests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>

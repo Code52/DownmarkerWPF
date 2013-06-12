@@ -8,7 +8,7 @@ using White.Core.UIItems.Finders;
 using White.Core.UIItems.WindowItems;
 using White.Core.Utility;
 
-namespace Markpad.UITests.Infrastructure
+namespace MarkPad.UITests.Infrastructure
 {
     public class MarkpadWindow : Screen
     {

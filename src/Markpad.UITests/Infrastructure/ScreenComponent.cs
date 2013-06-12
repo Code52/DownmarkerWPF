@@ -1,4 +1,4 @@
-namespace Markpad.UITests.Infrastructure
+namespace MarkPad.UITests.Infrastructure
 {
     public class ScreenComponent<T> where T : Screen
     {
