@@ -1,11 +1,14 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
+using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using Awesomium.Core;
+using Awesomium.Core.Data;
 using Awesomium.Windows.Controls;
 using Application = System.Windows.Application;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
@@ -22,7 +25,7 @@ namespace MarkPad.PreviewControl
         readonly UserControl control;
         readonly ManualResetEvent loadedWaitHandle;
         readonly string baseDirectory;
-        static bool awesomiumInitialised;
+        MarkpadDataSource markpadDataSource;
 
         public AwesomiumHost(string filename, string baseDirectory)
         {
@@ -56,27 +59,38 @@ namespace MarkPad.PreviewControl
 
             var session = WebCore.CreateWebSession(baseDirectory, new WebPreferences(true)
             {
+                WebGL = true,
+                EnableGPUAcceleration = true,
+                SmoothScrolling = true,
                 CustomCSS = @"body { font-family: Segoe UI, sans-serif; font-size:0.8em;}
                               ::-webkit-scrollbar { width: 12px; height: 12px; }
                               ::-webkit-scrollbar-track { background-color: white; }
                               ::-webkit-scrollbar-thumb { background-color: #B9B9B9; }
                               ::-webkit-scrollbar-thumb:hover { background-color: #000000; }"
             });
+            markpadDataSource = new MarkpadDataSource();
+            session.AddDataSource("markpad", markpadDataSource);
             wb = new WebControl
             {
                 WebSession = session,
                 UseLayoutRounding = true,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
+                Source = new Uri("asset://markpad/MarkpadPreviewRender.html"),
             };
-
             wb.Loaded += WbLoaded;
             AwesomiumResourceHandler.Host = this;
             WebCore.ResourceInterceptor = AwesomiumResourceHandler.ResourceInterceptor;
             wb.ShowCreatedWebView += AwesomiumResourceHandler.ShowCreatedWebView;
-            wb.LoadHTML(Html);
+            LoadHtml(Html);
 
             control.Content = wb;
+        }
+
+        void LoadHtml(string html)
+        {
+            markpadDataSource.Render = html;
+            wb.Reload(true);
         }
 
         void WbLoaded(object sender, RoutedEventArgs e)
@@ -129,7 +143,7 @@ namespace MarkPad.PreviewControl
         {
             app.Dispatcher.BeginInvoke(new Action(() =>
             {
-                if (wb == null || !awesomiumInitialised) return;
+                if (wb == null || !wb.IsDocumentReady) return;
                 wb.Zoom = getZoomLevel;
             }));
         }
@@ -141,21 +155,7 @@ namespace MarkPad.PreviewControl
             {
                 Html = content;
                 if (wb == null) return;
-
-                wb.CacheMode = new BitmapCache();
-                FrameEventHandler webControlOnLoadCompleted = null;
-                webControlOnLoadCompleted = (sender, args) =>
-                {
-                    if (args.IsMainFrame)
-                    {
-                        wb.LoadingFrameComplete -= webControlOnLoadCompleted;
-                        WbProcentualZoom();
-                        wb.CacheMode = null;
-                        awesomiumInitialised = true;
-                    }
-                };
-                wb.LoadingFrameComplete += webControlOnLoadCompleted;
-                wb.LoadHTML(content);
+                LoadHtml(content);
             }));
         }
 
@@ -167,7 +167,7 @@ namespace MarkPad.PreviewControl
                 return;
             }
 
-            if (wb == null || !awesomiumInitialised) return;
+            if (wb == null || !wb.IsDocumentReady) return;
             var javascript =
                 string.Format("window.scrollTo(0,{0} * (document.body.scrollHeight - document.body.clientHeight));",
                               ScrollPercentage);
@@ -209,6 +209,33 @@ namespace MarkPad.PreviewControl
         public override object InitializeLifetimeService()
         {
             return null;
+        }
+    }
+
+    class MarkpadDataSource : DataSource
+    {
+        public string Render { get; set; }
+
+        protected override void OnRequest(DataSourceRequest request)
+        {
+            var encoding = new UTF8Encoding();
+            var bytes = encoding.GetBytes(Render);
+            IntPtr unmanagedPointer = Marshal.AllocHGlobal(bytes.Length);
+            Marshal.Copy(bytes, 0, unmanagedPointer, bytes.Length);
+            try
+            {
+                SendResponse(request, new DataSourceResponse
+                {
+                    MimeType = "text/html",
+                    Size = (uint)bytes.Length,
+                    Buffer = unmanagedPointer
+                });
+            }
+            finally
+            {
+                // Call unmanaged code
+                Marshal.FreeHGlobal(unmanagedPointer);
+            }
         }
     }
 }
