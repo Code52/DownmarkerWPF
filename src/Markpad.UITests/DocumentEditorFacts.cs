@@ -1,9 +1,9 @@
 ﻿using System.Windows.Forms;
-using Markpad.UITests.Infrastructure;
+using MarkPad.UITests.Infrastructure;
 using White.Core.WindowsAPI;
 using Xunit;
 
-namespace Markpad.UITests
+namespace MarkPad.UITests
 {
     public class DocumentEditorTests
     {

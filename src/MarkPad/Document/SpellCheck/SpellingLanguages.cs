@@ -15,8 +15,6 @@ namespace MarkPad.Document.SpellCheck
         [Description("German (Germany)")]
         Germany,
         [Description("Spanish (Spain)")]
-        Spain,
-        [Description("Turkish (Turkey)")]
-        Turkish
+        Spain
     }
 }

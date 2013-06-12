@@ -1,4 +1,4 @@
-﻿namespace Markpad.UITests
+﻿namespace MarkPad.UITests
 {
     public class Indent
     {
