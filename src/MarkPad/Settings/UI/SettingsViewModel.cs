@@ -184,7 +184,6 @@ namespace MarkPad.Settings.UI
 
             UpdateMarkpadSettings();
 
-            settings.MarkdownExtraEnabled = EnableMarkdownExtra;
             eventAggregator.Publish(new SettingsChangedEvent());
         }
 
@@ -204,6 +203,7 @@ namespace MarkPad.Settings.UI
             settings.FloatingToolBarEnabled = EnableFloatingToolBar;
             settings.IndentType = IndentType;
             settings.Language = SelectedLanguage;
+            settings.MarkdownExtraEnabled = EnableMarkdownExtra;
 
             settingsProvider.SaveSettings(settings);
         }
