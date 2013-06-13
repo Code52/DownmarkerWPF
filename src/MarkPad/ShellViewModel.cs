@@ -24,11 +24,6 @@ using MarkPad.Updater;
 
 namespace MarkPad
 {
-    public interface IDoWorkAsyncronously
-    {
-        IDisposable DoingWork(string work);
-    }
-
     public class ShellViewModel : Conductor<IScreen>, IShell, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>, IHandle<OpenFromWebEvent>, IDoWorkAsyncronously
     {
         const string ShowSettingsState = "ShowSettings";
@@ -148,6 +143,12 @@ namespace MarkPad
                     }
                 });
             }
+        }
+
+        public void UpdateMessage(string newMessage, IDisposable workDisposible)
+        {
+            DoingWork(newMessage);
+            workDisposible.Dispose();
         }
 
         public void Exit()

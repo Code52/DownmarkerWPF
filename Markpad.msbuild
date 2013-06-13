@@ -64,7 +64,7 @@
 
   <Target Name="PublishInstallToAzure" DependsOnTargets="Publish">
     
-    <!--To build and publish to azure: msbuild MarkPad.msbuild /p:BlobTargetUrl=https://myaccount.blob.core.windows.net/mycontainer/ /p:BlobTargetKey=key-->
+    <!--To build and publish to azure: msbuild MarkPad.msbuild /p:BlobTargetUrl=https://myaccount.blob.core.windows.net/mycontainer/ /p:BlobTargetKey=key /target:PublishInstallToAzure-->
     <!--$(BlobTargetUrl) = https://myaccount.blob.core.windows.net/mycontainer/ -->
     <Exec Command="$(Root)tools\AzCopy.exe $(ClickOnceFolder) $(BlobTargetUrl) /destkey:$(BlobTargetKey) /S /V /Y" />
   </Target>

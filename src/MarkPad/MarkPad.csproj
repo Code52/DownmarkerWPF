@@ -193,6 +193,7 @@
     <Compile Include="DocumentSources\FileSystem\SingleFileContext.cs" />
     <Compile Include="DocumentSources\WebSources\SaveResult.cs" />
     <Compile Include="Document\EditorBehaviours\PasteURLIntoDocument.cs" />
+    <Compile Include="IDoWorkAsyncronously.cs" />
     <Compile Include="Infrastructure\AwaitableDelegateCommand.cs" />
     <Compile Include="Infrastructure\AwaitableDelegateCommand`1.cs" />
     <Compile Include="Infrastructure\DelegateCommand.cs" />

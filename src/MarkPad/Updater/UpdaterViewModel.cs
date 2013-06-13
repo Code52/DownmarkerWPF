@@ -26,6 +26,7 @@ namespace MarkPad.Updater
                 ApplicationDeployment.CurrentDeployment.UpdateProgressChanged += (sender, args) =>
                 {
                     Progress = args.ProgressPercentage;
+                    asyncWork.UpdateMessage(string.Format("Downloading update ({0}%)", args.ProgressPercentage), updateDownloading);
                 };
                 ApplicationDeployment.CurrentDeployment.CheckForUpdateCompleted += (sender, args) =>
                 {
@@ -35,7 +36,8 @@ namespace MarkPad.Updater
                 };
 
                 UpdateState = UpdateState.Downloading;
-                updateDownloading = asyncWork.DoingWork("Downloading update...");
+                Background = false;
+                updateDownloading = asyncWork.DoingWork("Downloading update");
                 ApplicationDeployment.CurrentDeployment.UpdateAsync();
             }
             else if (UpdateState == UpdateState.Unchecked)
