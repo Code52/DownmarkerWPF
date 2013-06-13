@@ -364,5 +364,14 @@ namespace MarkPad.Document.Controls
             get { return (ISpellCheckProvider) GetValue(SpellcheckProviderProperty); }
             set { SetValue(SpellcheckProviderProperty, value); }
         }
+
+        public static readonly DependencyProperty IsColorsInvertedProperty =
+            DependencyProperty.Register("IsColorsInverted", typeof(bool), typeof(MarkdownEditor));
+
+        public bool IsColorsInverted
+        {
+            get { return (bool) GetValue(IsColorsInvertedProperty); } 
+            set { SetValue(IsColorsInvertedProperty, value);}
+        }
     }
 }

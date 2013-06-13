@@ -17,6 +17,8 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MarkPad;component/Styles/MarkPad.Accents.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <Converters:BoolToPreviewForegroundConverter x:Key="BoolToPreviewForegroundConverter"/>
+            <Converters:BoolToPreviewBackgroundConverter x:Key="BoolToPreviewBackgroundConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid  Background="Black">
@@ -179,23 +181,26 @@
                             </ComboBox>
 
                             <TextBlock Text="PREVIEW"  FontWeight="SemiBold"  FontSize="12" Margin="0,5,0,0"/>
-                            <Border BorderBrush="{x:Null}" Background="#4D4D4D" Height="83">
+                            <Border BorderBrush="{x:Null}" Background="{Binding IsColorsInverted, Converter={StaticResource BoolToPreviewBackgroundConverter}}" Height="83">
                                 <TextBlock TextWrapping="Wrap"							   
                                             TextAlignment="Center"
                                             VerticalAlignment="Center"
-                                            Foreground="White"
                                             FontFamily="{Binding SelectedFontFamily}"
                                             FontSize="{Binding SelectedActualFontSize}"
+                                            Foreground="{Binding IsColorsInverted, Converter={StaticResource BoolToPreviewForegroundConverter}}"
                                             Text="MarkPad is an editor for Markdown"/>
                             </Border>
                         </StackPanel>
-                        <Button Width="75" x:Name="ResetFont" Content="Reset" Style="{DynamicResource SquareButtonStyle}"  HorizontalAlignment="Right" Grid.Row="2" Grid.ColumnSpan="2" Margin="0 10 0 0">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="Click">
-                                    <cal:ActionMessage MethodName="ResetFont" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </Button>
+                        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <CheckBox Content="Invert Colors" HorizontalAlignment="Right" HorizontalContentAlignment="Right" VerticalAlignment="Bottom"  Margin="10 10 10 10" IsChecked="{Binding IsColorsInverted}" />
+                            <Button Width="75" x:Name="ResetFont" Content="Reset" Style="{DynamicResource SquareButtonStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10 10 10 10">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <cal:ActionMessage MethodName="ResetFont" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
+                        </StackPanel>
                     </Grid>
 				</StackPanel>
             </TabItem>

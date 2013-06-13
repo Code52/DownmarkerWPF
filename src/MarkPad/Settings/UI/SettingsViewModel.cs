@@ -44,6 +44,7 @@ namespace MarkPad.Settings.UI
         public bool EnableMarkdownExtra { get; set; }
         public bool CanEditBlog { get { return currentBlog != null; } }
         public bool CanRemoveBlog { get { return currentBlog != null; } }
+        public bool IsColorsInverted { get; set; }
         public BlogSetting CurrentBlog
         {
             get { return currentBlog; }
@@ -130,6 +131,7 @@ namespace MarkPad.Settings.UI
                 SelectedFontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
             }
             EnableFloatingToolBar = settings.FloatingToolBarEnabled;
+            IsColorsInverted = settings.IsEditorColorsInverted;
 
             Plugins = plugins
                 .Where(plugin => !plugin.IsHidden)
@@ -174,6 +176,7 @@ namespace MarkPad.Settings.UI
         {
             SelectedFontFamily = FontHelpers.TryGetFontFamilyFromStack(Constants.DEFAULT_EDITOR_FONT_FAMILY);
             SelectedFontSize = Constants.DEFAULT_EDITOR_FONT_SIZE;
+            IsColorsInverted = false;
         }
 
         public void Accept()
@@ -201,6 +204,7 @@ namespace MarkPad.Settings.UI
             settings.FontSize = SelectedFontSize;
             settings.FontFamily = SelectedFontFamily.Source;
             settings.FloatingToolBarEnabled = EnableFloatingToolBar;
+            settings.IsEditorColorsInverted = IsColorsInverted;
             settings.IndentType = IndentType;
             settings.Language = SelectedLanguage;
             settings.MarkdownExtraEnabled = EnableMarkdownExtra;

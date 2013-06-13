@@ -183,6 +183,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\StateHelper.cs" />
+    <Compile Include="Converters\BoolToPreviewBackgroundConverter.cs" />
+    <Compile Include="Converters\BoolToPreviewForegroundConverter.cs" />
     <Compile Include="DocumentSources\IOpenDocumentFromWeb.cs" />
     <Compile Include="DocumentSources\NewDocument\NewDocumentContext.cs" />
     <Compile Include="DocumentSources\OpenDocumentFromWeb.cs" />
