@@ -580,7 +580,10 @@
       copy $(SolutionDir)..\lib\libGLESv2.dll $(TargetDir)
 
       copy $(SolutionDir)..\lib\icudt.dll $(TargetDir)</PreBuildEvent>
-    <PostBuildEvent>xcopy /s /y "$(SolutionDir)packages\NHunspell.1.1.0\native\*.*" "$(TargetDir)"</PostBuildEvent>
+    <PostBuildEvent>
+      xcopy /s /y "$(SolutionDir)packages\NHunspell.1.1.0\native\*.*" "$(TargetDir)"
+      copy $(SolutionDir)MarkPad\markpad.ico $(TargetDir)
+    </PostBuildEvent>
   </PropertyGroup>
   <Import Project="Fody.targets" />
 </Project>
