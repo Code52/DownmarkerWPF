@@ -12,7 +12,7 @@ namespace MarkPad.UITests
         {
             MainWindow.NewDocument();
 
-            Assert.Equal("New Document", MainWindow.CurrentDocument.Title);
+            Assert.Contains("New Document", MainWindow.CurrentDocument.Title);
         }
 
         [Fact]
