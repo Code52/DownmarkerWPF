@@ -68,9 +68,9 @@
     <!--$(BlobTargetUrl) = https://myaccount.blob.core.windows.net/mycontainer/ -->
 
     <!--Upload everything except the application manifest as it should be done last (once everything else is uploaded)-->
-    <Move SourceFiles="$(ClickOnceFolder)MarkPad.application" DestinationFolder="$(ClickOnceFolder).." />
+    <Move SourceFiles="$(ClickOnceFolder)MarkPad.application" DestinationFolder="$(ClickOnceFolder)ClickOnceApplicationFile\" />
     <Exec Command="$(Root)tools\AzCopy.exe $(ClickOnceFolder) $(BlobTargetUrl) /destkey:$(BlobTargetKey) /S /V /Y" />
-    <Exec Command="$(Root)tools\AzCopy.exe $(ClickOnceFolder)..\MarkPad.application $(BlobTargetUrl) /destkey:$(BlobTargetKey) /S /V /Y" />
+    <Exec Command="$(Root)tools\AzCopy.exe $(ClickOnceFolder)ClickOnceApplicationFile\ $(BlobTargetUrl) /destkey:$(BlobTargetKey) /S /V /Y" />
   </Target>
 
   <Target Name="Chocolatey" DependsOnTargets="Build">
