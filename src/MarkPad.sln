@@ -30,6 +30,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		..\Markpad.msbuild = ..\Markpad.msbuild
 		..\README.md = ..\README.md
+		..\tools\UpdateApplicationManifest.ps1 = ..\tools\UpdateApplicationManifest.ps1
+		..\tools\UpdateManifest.ps1 = ..\tools\UpdateManifest.ps1
 	EndProjectSection
 EndProject
 Global
@@ -77,8 +79,5 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{B780B8AD-169E-4300-A29F-713471EF3056} = {930C63A3-C919-4AA1-9292-DB3C4B81F4DA}
 		{F5EF3169-748F-4C96-A4A1-F33381572619} = {930C63A3-C919-4AA1-9292-DB3C4B81F4DA}
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

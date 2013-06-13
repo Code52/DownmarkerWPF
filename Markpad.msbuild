@@ -47,7 +47,7 @@
     </ItemGroup>
     <Copy SourceFiles="@(SourceFiles)" DestinationFolder="$(ClickOnceFiles)%(SourceFiles.RecursiveDir)"/>
 
-    <Exec Command="$(Mage) -New Application -ToFile $(ClickOnceFiles)MarkPad.exe.manifest -Processor x86 -name &quot;MarkPad&quot; -Version $(VERSION) -FromDirectory $(ClickOnceFiles) -IconFile markpad.ico" />
+    <Exec Command="$(Mage) -New Application -ToFile $(ClickOnceFiles)MarkPad.exe.manifest -Processor x86 -name &quot;MarkPad&quot; -Version $(VERSION) -FromDirectory $(ClickOnceFiles) -IconFile $(Root)src\MarkPad\markpad.ico" />
     <Exec Command="powershell.exe -ExecutionPolicy RemoteSigned -NoProfile $(Root)tools\UpdateManifest.ps1 -ManifestFile $(ClickOnceFiles)MarkPad.exe.manifest" />
 
     <Exec Command="$(Mage) -New Deployment -ToFile $(ClickOnceFolder)MarkPad.application -Processor x86 -Install true -Version $(Version) -Publisher &quot;Code52&quot; -AppManifest $(ClickOnceFiles)MarkPad.exe.manifest $(ProviderUrlArg)" />

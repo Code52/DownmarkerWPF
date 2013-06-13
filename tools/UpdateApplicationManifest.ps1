@@ -7,11 +7,9 @@ write-host $ManifestFile
 $xml.assembly.deployment.SetAttribute("trustURLParameters", "true")
 $xml.assembly.deployment.SetAttribute("mapFileExtensions", "true")
 
-$xml.assembly.deployment.subscription.update.RemoveAll()
-$updateNode = $xml.CreateElement("beforeApplicationStartup", "urn:schemas-microsoft-com:asm.v2")
-$xml.assembly.deployment.subscription.Item("update").AppendChild($updateNode)
-
-$updateNode = $xml.CreateElement("beforeApplicationStartup", "urn:schemas-microsoft-com:asm.v2")
+#$xml.assembly.deployment.subscription.update.RemoveAll()
+#$updateNode = $xml.CreateElement("beforeApplicationStartup", "urn:schemas-microsoft-com:asm.v2")
+#$xml.assembly.deployment.subscription.Item("update").AppendChild($updateNode)
 
 $xml.Save($ManifestFile)
 
