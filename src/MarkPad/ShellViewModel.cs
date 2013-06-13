@@ -145,10 +145,11 @@ namespace MarkPad
             }
         }
 
-        public void UpdateMessage(string newMessage, IDisposable workDisposible)
+        public IDisposable UpdateMessage(string newMessage, IDisposable workDisposible)
         {
-            DoingWork(newMessage);
+            var newDisposable = DoingWork(newMessage);
             workDisposible.Dispose();
+            return newDisposable;
         }
 
         public void Exit()

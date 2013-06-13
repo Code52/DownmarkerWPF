@@ -32,7 +32,8 @@ namespace MarkPad.Updater
                 ApplicationDeployment.CurrentDeployment.UpdateProgressChanged += (sender, args) => Execute.OnUIThread(() =>
                 {
                     Progress = args.ProgressPercentage;
-                    asyncWork.UpdateMessage(string.Format("Downloading update - {1:D}k of {2:D}k downloaded ({0}%)", args.ProgressPercentage, args.BytesCompleted / 1024, args.BytesTotal / 1024),
+                    updateDownloading = asyncWork.UpdateMessage(string.Format(
+                        "Downloading update - {1:D}k of {2:D}k ({0}%)", args.ProgressPercentage, args.BytesCompleted / 1024, args.BytesTotal / 1024),
                         updateDownloading);
                 });
 
