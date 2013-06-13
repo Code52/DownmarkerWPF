@@ -57,6 +57,10 @@
                                 <StopStoryboard BeginStoryboardName="rotatestart" />
                             </DataTrigger.ExitActions>
                         </DataTrigger>
+                        <DataTrigger Binding="{Binding UpdateState}" Value="Error">
+                            <Setter Property="Button.Content" Value="X" />
+                            <Setter Property="Button.ToolTip" Value="{Binding ErrorToolip}" />
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding UpdateState}" Value="UpToDate">
                             <Setter Property="Button.Content" Value="W" />
                             <Setter Property="Button.ToolTip" Value="{DynamicResource UpToDateTooltip}" />
