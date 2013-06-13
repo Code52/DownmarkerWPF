@@ -23,17 +23,18 @@ namespace MarkPad.Updater
             if (UpdateState == UpdateState.UpdatePending)
             {
                 Background = true;
-                ApplicationDeployment.CurrentDeployment.UpdateProgressChanged += (sender, args) =>
+                ApplicationDeployment.CurrentDeployment.UpdateProgressChanged += (sender, args) => Execute.OnUIThread(() =>
                 {
                     Progress = args.ProgressPercentage;
-                    asyncWork.UpdateMessage(string.Format("Downloading update ({0}%)", args.ProgressPercentage), updateDownloading);
-                };
-                ApplicationDeployment.CurrentDeployment.CheckForUpdateCompleted += (sender, args) =>
+                    asyncWork.UpdateMessage(string.Format("Downloading update ({0}%)", args.ProgressPercentage),
+                        updateDownloading);
+                });
+                ApplicationDeployment.CurrentDeployment.CheckForUpdateCompleted += (sender, args) => Execute.OnUIThread(() =>
                 {
                     UpdateState = UpdateState.RestartNeeded;
                     updateDownloading.Dispose();
                     Background = false;
-                };
+                });
 
                 UpdateState = UpdateState.Downloading;
                 Background = false;
