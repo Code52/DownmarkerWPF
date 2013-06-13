@@ -8,6 +8,11 @@ MarkPad (formerly known as DownmarkerWPF) is an editor for [Markdown](http://dar
 
 Our aim is to create a useably, stylish new version of the project utilising Microsoft's WPF technology to provide a fresh UI for creating files that we can use to create blog posts for this, and other blogs using Markdown.
 
+## Install
+[Nightly](http://ginnivan.blob.core.windows.net/markpadnightly/MarkPad.application) | [Stable](http://ginnivan.blob.core.windows.net/markpadrelease/MarkPad.application)
+
+Updates will be installed directly through MarkPad
+
 ## Dependencies
 
  - Windows 7 (please provide feedback if you encounter issues with Vista, XP or Windows 8)
