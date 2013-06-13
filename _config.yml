@@ -5,12 +5,12 @@ reponame: DownmarkerWPF
 accent: ff3333
 darkaccent: d41c1c
 description: A WPF Markdown editor inspired by <a href="https://bitbucket.org/wcoenen/downmarker">Downmarker</a>. Read the original brief on <a href="http://code52.org">Code52</a>
-downloadurl: https://github.com/downloads/Code52/DownmarkerWPF/MarkPad.v0.9.0.1.msi
+downloadurl: http://ginnivan.blob.core.windows.net/markpadrelease/MarkPad.application
 
 feature1title: 'Side-by-side Preview'
-feature2title: 'Single exe, portable'
+feature2title: 'Feature Rich'
 feature3title: 'Spellchecker'
 
 feature1desc: 'Markdown is easy to grok, but how do you know its going to turn out perfect? A side-by-side preview, rendered in real time, thats how!'
-feature2desc: 'Portable, right out of the box. Everything is in a single executable.'
+feature2desc: 'Feature Rich, open and save directly to your blog, github and more, paste images from the clipboard into Markdown, Jekyll Site and Open from folder support plus much more!'
 feature3desc: 'Markdown can be done in any text editor, but why must the experience degrade to Notepad? No more. MarkPad has spellchecker and a floating syntax tool bar'
