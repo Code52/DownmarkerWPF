@@ -28,7 +28,7 @@ namespace MarkPad.Updater
                     UpdateState = UpdateState.UpToDate;
                     Background = false;
                 };
-                ApplicationDeployment.CurrentDeployment.CheckForUpdateAsync();
+                ApplicationDeployment.CurrentDeployment.UpdateAsync();
             }
             else
             {
