@@ -19,10 +19,10 @@ namespace MarkPad.Updater
         public void CheckForUpdate()
         {
             if (Background) return;
-            Background = true;
 
             if (UpdateState == UpdateState.UpdatePending)
             {
+                Background = true;
                 ApplicationDeployment.CurrentDeployment.UpdateProgressChanged += (sender, args) =>
                 {
                     Progress = args.ProgressPercentage;
@@ -40,6 +40,7 @@ namespace MarkPad.Updater
             }
             else if (UpdateState == UpdateState.Unchecked)
             {
+                Background = true;
                 CheckForUpdatesInBackground();                
             }
         }
