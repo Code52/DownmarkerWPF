@@ -6,6 +6,7 @@ namespace MarkPad.Updater
         UpToDate,
         UpdatePending,
         Error,
-        Downloading
+        Downloading,
+        RestartNeeded
     }
 }

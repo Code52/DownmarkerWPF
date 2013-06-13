@@ -1,4 +1,5 @@
-﻿using System.Deployment.Application;
+﻿using System;
+using System.Deployment.Application;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 
@@ -6,6 +7,9 @@ namespace MarkPad.Updater
 {
     public class UpdaterViewModel : PropertyChangedBase
     {
+        IDoWorkAsyncronously asyncWork;
+        IDisposable updateDownloading;
+
         public UpdaterViewModel()
         {
             UpdateState = UpdateState.Unchecked;
@@ -25,12 +29,16 @@ namespace MarkPad.Updater
                 };
                 ApplicationDeployment.CurrentDeployment.CheckForUpdateCompleted += (sender, args) =>
                 {
-                    UpdateState = UpdateState.UpToDate;
+                    UpdateState = UpdateState.RestartNeeded;
+                    updateDownloading.Dispose();
                     Background = false;
                 };
+
+                UpdateState = UpdateState.Downloading;
+                updateDownloading = asyncWork.DoingWork("Downloading update...");
                 ApplicationDeployment.CurrentDeployment.UpdateAsync();
             }
-            else
+            else if (UpdateState == UpdateState.Unchecked)
             {
                 CheckForUpdatesInBackground();                
             }
@@ -77,5 +85,10 @@ namespace MarkPad.Updater
         public bool Background { get; set; }
 
         public string ErrorToolip { get; set; }
+
+        public void Initialise(IDoWorkAsyncronously asyncWorkNotifier)
+        {
+            asyncWork = asyncWorkNotifier;
+        }
     }
 }

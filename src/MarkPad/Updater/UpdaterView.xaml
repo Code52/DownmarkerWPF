@@ -14,6 +14,7 @@
             <sys:String x:Key="CheckingForUpdatesTooltip">Checking for updates, please hold..</sys:String>
             <sys:String x:Key="UpdatePendingTooltip">There is an update waiting!</sys:String>
             <sys:String x:Key="UpToDateTooltip">Up to date</sys:String>
+            <sys:String x:Key="RestartNeededTooltip">Update Installed, please restart MarkPad</sys:String>
             <Storyboard x:Key="rotate">
                 <DoubleAnimationUsingKeyFrames RepeatBehavior="Forever" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)">
                     <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="364"/>
@@ -68,6 +69,10 @@
                         <DataTrigger Binding="{Binding UpdateState}" Value="UpdatePending">
                             <Setter Property="Button.Content" Value="?" />
                             <Setter Property="Button.ToolTip" Value="{DynamicResource UpdatePendingTooltip}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding UpdateState}" Value="RestartNeeded">
+                            <Setter Property="Button.Content" Value="8" />
+                            <Setter Property="Button.ToolTip" Value="{DynamicResource RestartNeededTooltip}" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding UpdateState}" Value="Downloading">
                             <Setter Property="Button.Content" Value="x" />

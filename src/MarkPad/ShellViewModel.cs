@@ -24,7 +24,12 @@ using MarkPad.Updater;
 
 namespace MarkPad
 {
-    public class ShellViewModel : Conductor<IScreen>, IShell, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>, IHandle<OpenFromWebEvent>
+    public interface IDoWorkAsyncronously
+    {
+        IDisposable DoingWork(string work);
+    }
+
+    public class ShellViewModel : Conductor<IScreen>, IShell, IHandle<FileOpenEvent>, IHandle<SettingsCloseEvent>, IHandle<OpenFromWebEvent>, IDoWorkAsyncronously
     {
         const string ShowSettingsState = "ShowSettings";
         const string NewDocumentDefaultName = "New Document";
@@ -54,6 +59,7 @@ namespace MarkPad
             this.dialogService = dialogService;
             MDI = mdi;
             Updater = updaterViewModel;
+            Updater.Initialise(this);
             this.documentViewModelFactory = documentViewModelFactory;
             this.documentFactory = documentFactory;
             this.fileSystem = fileSystem;
