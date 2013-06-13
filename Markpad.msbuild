@@ -66,7 +66,11 @@
     
     <!--To build and publish to azure: msbuild MarkPad.msbuild /p:BlobTargetUrl=https://myaccount.blob.core.windows.net/mycontainer/ /p:BlobTargetKey=key /target:PublishInstallToAzure-->
     <!--$(BlobTargetUrl) = https://myaccount.blob.core.windows.net/mycontainer/ -->
+
+    <!--Upload everything except the application manifest as it should be done last (once everything else is uploaded)-->
+    <Move SourceFiles="$(ClickOnceFolder)MarkPad.application" DestinationFolder="$(ClickOnceFolder).." />
     <Exec Command="$(Root)tools\AzCopy.exe $(ClickOnceFolder) $(BlobTargetUrl) /destkey:$(BlobTargetKey) /S /V /Y" />
+    <Exec Command="$(Root)tools\AzCopy.exe $(ClickOnceFolder)..\MarkPad.application $(BlobTargetUrl) /destkey:$(BlobTargetKey) /S /V /Y" />
   </Target>
 
   <Target Name="Chocolatey" DependsOnTargets="Build">
