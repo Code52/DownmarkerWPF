@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix
+  xmlns="http://schemas.microsoft.com/wix/2006/wi"
+  xmlns:util="http://schemas.microsoft.com/wix/UtilExtension"
+>
+
+  <?define NetFx40RedistLink =  http://go.microsoft.com/fwlink/?LinkId=247729 ?>
+  <?define NetFx40EulaLink =  http://go.microsoft.com/fwlink/?LinkID=188993 ?>
+
+  <Fragment>
+    <util:RegistrySearchRef Id="NETFRAMEWORK40" />
+
+    <WixVariable Id="WixMbaPrereqPackageId" Value="LocalNetFx40Redist" />
+    <WixVariable Id="WixMbaPrereqLicenseUrl" Value="$(var.NetFx40EulaLink)" />
+
+    <PackageGroup Id="LocalNetFx40Redist">
+      <ExePackage
+          InstallCommand="/q /norestart /ChainingPackage &quot;[WixBundleName]&quot;"
+          RepairCommand="/q /norestart /repair /ChainingPackage &quot;[WixBundleName]&quot;"
+          UninstallCommand="/uninstall /q /norestart /ChainingPackage &quot;[WixBundleName]&quot;"
+          PerMachine="yes"
+          DetectCondition="NETFRAMEWORK40"
+          Id="LocalNetFx40Redist"
+          Vital="yes"
+          Permanent="yes"
+          Protocol="netfx4"
+          SourceFile="$(env.ProgramFiles)\Microsoft SDKs\Windows\v7.0A\Bootstrapper\Packages\DotNetFX40\dotNetFx40_Full_x86_x64.exe"
+          Compressed="no"
+          Name="dotNetFx40_Full_x86_x64.exe"
+          DownloadUrl="$(var.NetFx40RedistLink)"
+        />
+    </PackageGroup>
+  </Fragment>
+
+</Wix>

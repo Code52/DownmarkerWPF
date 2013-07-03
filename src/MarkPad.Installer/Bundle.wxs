@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+  <Bundle
+    Name="MarkPad Installer"
+    Version="1.0.0.0"
+    Manufacturer="Code52"
+    UpgradeCode="d55f1cc3-ce40-444f-b43e-ba195748a17d"
+    DisableModify="yes"
+  >
+
+    <BootstrapperApplicationRef Id="ManagedBootstrapperApplicationHost">
+      <Payload SourceFile="..\MarkPad.InstallerBA\BootstrapperCore.config" />
+      <Payload SourceFile="..\MarkPad.InstallerBA\bin\$(var.BUILD)\MarkPad.InstallerBA.dll" />
+      <Payload SourceFile="C:\Program Files (x86)\WiX Toolset v3.7\SDK\Microsoft.Deployment.WindowsInstaller.dll" />
+    </BootstrapperApplicationRef>
+
+    <Chain>
+
+      <PackageGroupRef Id="LocalNetFx40Redist" />
+
+      <RollbackBoundary />
+
+      <MsiPackage SourceFile="..\MarkPad.Setup\bin\$(var.BUILD)\MarkPad.msi" Id="MarkPadPackageId" Cache="yes" Visible="no" />
+
+    </Chain>
+  </Bundle>
+</Wix>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix
+  xmlns="http://schemas.microsoft.com/wix/2006/wi"
+  xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension"
+>
+
+  <?include Config.wxi?>
+
+  <Fragment>
+
+    <ComponentGroup Id="ProductComponents" Directory="MarkPadFolder">
+
+      <Component Guid="4ac9e15b-89c1-4fde-84c9-286ef9d24af8">
+        <File Source="$(var.BUILDPATH)\MarkPad.exe">
+          <Shortcut
+            Id="startMenuItem"
+            Icon="icon.ico"
+            Name="MarkPad"
+            Directory="MarkPadMenuFolder"
+            WorkingDirectory="MarkPadFolder"
+          />
+
+          <netfx:NativeImage Id="ngen_MarkPad.exe" Priority="0" AppBaseDirectory="MarkPadFolder" />
+        </File>
+
+        <File Source="$(var.BUILDPATH)\MarkPad.exe.config" />
+
+        <RemoveFolder Id="RemoveMarkPadFolder" Directory="MarkPadFolder" On="uninstall" />
+        <RemoveFolder Id="RemoveThemeFolder" Directory="ThemeFolder" On="uninstall" />
+        <RemoveFolder Id="RemoveProgramMenuFolder" Directory="ProgramMenuFolder" On="uninstall" />
+        <RemoveFolder Id="RemoveMarkPadMenuFolder" Directory="MarkPadMenuFolder" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\Code52\MarkPad" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+
+      <Component>
+        <RegistryKey Root="HKCU" Key="Software\Code52\MarkPad">
+          <RegistryValue Name="Version" Value="[ProductVersion]" Type="string" KeyPath="yes" />
+        </RegistryKey>
+      </Component>
+
+    </ComponentGroup>
+
+  </Fragment>
+</Wix>
