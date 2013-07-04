@@ -14,6 +14,8 @@
     <BootstrapperApplicationRef Id="ManagedBootstrapperApplicationHost">
       <Payload SourceFile="..\MarkPad.InstallerBA\BootstrapperCore.config" />
       <Payload SourceFile="..\MarkPad.InstallerBA\bin\$(var.BUILD)\MarkPad.InstallerBA.dll" />
+      <Payload SourceFile="..\MarkPad.InstallerBA\bin\$(var.BUILD)\MahApps.Metro.dll" />
+      <Payload SourceFile="..\MarkPad.InstallerBA\bin\$(var.BUILD)\System.Windows.Interactivity.dll" />
       <Payload SourceFile="C:\Program Files (x86)\WiX Toolset v3.7\SDK\Microsoft.Deployment.WindowsInstaller.dll" />
     </BootstrapperApplicationRef>
 
