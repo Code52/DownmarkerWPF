@@ -18,7 +18,7 @@
     <RestorePackages>true</RestorePackages>
     <IsWebBootstrapper Condition="$(IsWebBootstrapper) == '' Or $(IsWebBootstrapper) == '*Undefined*'">false</IsWebBootstrapper>
     <PublishUrl Condition="$(PublishUrl) == '' Or $(PublishUrl) == '*Undefined*'">publish\</PublishUrl>
-    <FodyPath>..\packages\Fody.1.13.6.1</FodyPath>
+    <FodyPath>..\packages\Fody.1.13.8.0</FodyPath>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled Condition="$(UpdateEnabled) == '' Or $(UpdateEnabled) == '*Undefined*'">false</UpdateEnabled>
@@ -134,9 +134,8 @@
     <Reference Include="Ookii.Dialogs.Wpf">
       <HintPath>..\packages\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="PropertyChanged, Version=1.36.2.3, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\PropertyChanged.Fody.1.36.2.3\lib\NET40\PropertyChanged.dll</HintPath>
+    <Reference Include="PropertyChanged">
+      <HintPath>..\packages\PropertyChanged.Fody.1.40.0.0\Lib\NET35\PropertyChanged.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -183,6 +182,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Behaviors\StateHelper.cs" />
     <Compile Include="Converters\BoolToPreviewBackgroundConverter.cs" />
     <Compile Include="Converters\BoolToPreviewForegroundConverter.cs" />
@@ -568,6 +570,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <Import Project="$(SolutionDir)\..\tools\GenerateCommonAssemblyInfo.targets" />
   <PropertyGroup>
     <PreBuildEvent>
       copy $(SolutionDir)..\lib\Awesomium* $(TargetDir)
@@ -581,7 +584,8 @@
       copy $(SolutionDir)..\lib\libGLESv2.dll $(TargetDir)
       copy $(SolutionDir)..\lib\xinput9_1_0.dll $(TargetDir)
 
-      copy $(SolutionDir)..\lib\icudt.dll $(TargetDir)</PreBuildEvent>
+      copy $(SolutionDir)..\lib\icudt.dll $(TargetDir)
+    </PreBuildEvent>
     <PostBuildEvent>
       xcopy /s /y "$(SolutionDir)packages\NHunspell.1.1.0\native\*.*" "$(TargetDir)"
       copy $(SolutionDir)MarkPad\markpad.ico $(TargetDir)

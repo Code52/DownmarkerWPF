@@ -5,6 +5,7 @@
 >
 
   <?include Config.wxi?>
+  <?include CommonWixInfo.wxi?>
 
   <Fragment>
 
@@ -65,11 +66,11 @@
         <RemoveFolder Id="RemoveMarkPadFolder" Directory="MarkPadFolder" On="uninstall" />
         <RemoveFolder Id="RemoveProgramMenuFolder" Directory="ProgramMenuFolder" On="uninstall" />
         <RemoveFolder Id="RemoveMarkPadMenuFolder" Directory="MarkPadMenuFolder" On="uninstall" />
-        <RegistryValue Root="HKCU" Key="Software\Code52\MarkPad" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+        <RegistryValue Root="HKCU" Key="Software\$(var.COMPANY)\MarkPad" Name="installed" Type="integer" Value="1" KeyPath="yes" />
       </Component>
 
       <Component>
-        <RegistryKey Root="HKCU" Key="Software\Code52\MarkPad">
+        <RegistryKey Root="HKCU" Key="Software\$(var.COMPANY)\MarkPad">
           <RegistryValue Name="Version" Value="[ProductVersion]" Type="string" KeyPath="yes" />
         </RegistryKey>
       </Component>

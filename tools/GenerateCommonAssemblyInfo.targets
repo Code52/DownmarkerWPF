@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+
+    <CurrentVersion Condition=" '$(CurrentVersion)' == '' ">0.11.0</CurrentVersion>
+    <Company Condition=" '$(Company)' == '' ">Code52</Company>
+    <BuildNumber></BuildNumber>
+    <Prerelease></Prerelease>
+
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">$(MSBuildProjectDirectory)..\</SolutionDir>
+
+    <ApplicationVersion>$(CurrentVersion).$(BuildNumber)</ApplicationVersion>
+
+    <MSBuildCommunityTasksPath>$(SolutionDir)..\Tools</MSBuildCommunityTasksPath>
+
+    <BuildDependsOn>
+      GenerateCommonAssemblyInfo;
+      $(BuildDependsOn);
+    </BuildDependsOn>
+  </PropertyGroup>
+
+  <Import Project="MSBuild.Community.Tasks.targets" />
+
+  <Target Name="GenerateCommonAssemblyInfo">
+    <PropertyGroup>
+      <FileBuildNumber>$(BuildNumber)</FileBuildNumber>
+      <FileBuildNumber Condition=" '$(FileBuildNumber)' == '' ">0</FileBuildNumber>
+      <SemanticBuildNumber Condition=" '$(BuildNumber)' != '' ">+build$(BuildNumber)</SemanticBuildNumber>
+      <Prerelease Condition=" '$(Prerelease)' != '' ">-$(Prerelease)</Prerelease>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Line Include="line01"><Text>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</Text></Line>
+      <Line Include="line02"><Text>&lt;Include&gt;</Text></Line>
+      <Line Include="line03"><Text>&lt;?define COMPANY=&quot;$(Company)&quot;?&gt;</Text></Line>
+      <Line Include="line04"><Text>&lt;?define VERSION=&quot;$(CurrentVersion)$(FileVersionBuildNumber)&quot;?&gt;</Text></Line>
+      <Line Include="line05"><Text>&lt;/Include&gt;</Text></Line>
+    </ItemGroup>
+
+    <Time>
+      <Output TaskParameter="Year" PropertyName="Year" />
+    </Time>
+    <AssemblyInfo
+      CodeLanguage="CS"
+      OutputFile="$(SolutionDir)CommonAssemblyInfo.cs"
+      AssemblyCompany="$(Company)"
+      AssemblyCopyright="Copyright © $(Company) $(Year)"
+      AssemblyTrademark=""
+      AssemblyConfiguration="$(AssemblyConfig)"
+      AssemblyVersion="$(CurrentVersion)"
+      AssemblyFileVersion="$(CurrentVersion).$(FileBuildNumber)"
+      AssemblyInformationalVersion="$(CurrentVersion)$(Prerelease)$(SemanticBuildNumber)"
+    />
+    <WriteLinesToFile
+      File="$(SolutionDir)MarkPad.Setup\CommonWixInfo.wxi"
+      Lines="@(Line->'%(Text)')"
+      Overwrite="true"
+    />
+    <WriteLinesToFile
+      File="$(SolutionDir)MarkPad.Installer\CommonWixInfo.wxi"
+      Lines="@(Line->'%(Text)')"
+      Overwrite="true"
+    />
+  </Target>
+</Project>

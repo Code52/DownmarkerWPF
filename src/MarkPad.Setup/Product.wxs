@@ -5,21 +5,20 @@
 >
 
   <?include Config.wxi?>
-
-  <?define VERSION="!(bind.FileVersion.MarkPad.exe)"?>
+  <?include CommonWixInfo.wxi?>
 
   <Product
     Id="*"
     Name="MarkPad"
     Language="1033"
     Version="$(var.VERSION)"
-    Manufacturer="Code52"
+    Manufacturer="$(var.COMPANY)"
     UpgradeCode="a57239ae-b389-4d48-bc6e-6cb96b34b7a6"
   >
 
     <Package
       Description="MarkPad"
-      Manufacturer="Code52"
+      Manufacturer="$(var.COMPANY)"
       InstallerVersion="200"
       Compressed="yes"
       InstallPrivileges="limited"

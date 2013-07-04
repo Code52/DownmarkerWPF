@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
+  <?include CommonWixInfo.wxi?>
+
   <Bundle
-    Name="MarkPad Installer"
-    Version="1.0.0.0"
-    Manufacturer="Code52"
+    Name="MarkPad"
+    Version="$(var.VERSION)"
+    Manufacturer="$(var.COMPANY)"
     UpgradeCode="d55f1cc3-ce40-444f-b43e-ba195748a17d"
     DisableModify="yes"
   >
