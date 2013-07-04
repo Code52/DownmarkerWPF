@@ -14,7 +14,7 @@ namespace MarkPad.InstallerBA
         // entry point for our custom UI
         protected override void Run()
         {
-            Engine.Log(LogLevel.Verbose, "Launching custom OrelogyBA UX");
+            Engine.Log(LogLevel.Verbose, "Launching custom MarkPad Installer UX");
 
             BootstrapperDispatcher = Dispatcher.CurrentDispatcher;
             SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(BootstrapperDispatcher));
