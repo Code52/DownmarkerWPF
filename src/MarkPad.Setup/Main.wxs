@@ -36,13 +36,11 @@
         <File Source="$(var.BUILDPATH)\Caliburn.Micro.Autofac.dll" />
         <File Source="$(var.BUILDPATH)\Caliburn.Micro.dll" />
         <File Source="$(var.BUILDPATH)\CookComputing.XmlRpcV2.dll" />
-        <File Source="$(var.BUILDPATH)\en-US.dll" />
         <File Source="$(var.BUILDPATH)\ExportToHtmlPlugin.dll" />
         <File Source="$(var.BUILDPATH)\Hunspellx64.dll" />
         <File Source="$(var.BUILDPATH)\Hunspellx86.dll" />
         <File Source="$(var.BUILDPATH)\ICSharpCode.AvalonEdit.dll" />
         <File Source="$(var.BUILDPATH)\icudt.dll" />
-        <File Source="$(var.BUILDPATH)\icudt42.dll" />
         <File Source="$(var.BUILDPATH)\libEGL.dll" />
         <File Source="$(var.BUILDPATH)\libGLESv2.dll" />
         <File Source="$(var.BUILDPATH)\MahApps.Metro.dll" />
@@ -61,7 +59,6 @@
         <File Source="$(var.BUILDPATH)\UITextBlock.dll" />
         <File Source="$(var.BUILDPATH)\xinput9_1_0.dll" />
         <File Source="$(var.BUILDPATH)\awesomium_process" />
-        <File Source="$(var.BUILDPATH)\AwesomiumProcess" />
 
         <RemoveFolder Id="RemoveMarkPadFolder" Directory="MarkPadFolder" On="uninstall" />
         <RemoveFolder Id="RemoveProgramMenuFolder" Directory="ProgramMenuFolder" On="uninstall" />

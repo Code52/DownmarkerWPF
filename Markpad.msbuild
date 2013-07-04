@@ -92,5 +92,9 @@
     <Exec Command='$(NuGet) pack "%(NuSpec.Identity)" $(OutputDirectory) $(VersionArg) $(ConfigArg)' />
   </Target>
 
+  <Target Name="WixBuild" DependsOnTargets="Clean">
+    <MSBuild Projects="$(Root)src\MarkPad.Setup.sln" Targets="Rebuild" Properties="Configuration=$(Configuration);Platform=x86" />
+  </Target>
+
 </Project>
   

@@ -13,6 +13,6 @@ SET platform="Mixed Platforms"
 %msbuild% src/MarkPad.Setup.sln /nologo /property:Platform=%platform% /property:Configuration=%configuration% /verbosity:minimal /flp:verbosity=diagnostic
 
 :: get build output and copy out to root 
-CALL xcopy "%~dp0src\MarkPad.Setup\bin\Release\*.msi" "%~dp0artifacts\" /s /e /Y
+CALL xcopy "%~dp0src\MarkPad.Installer\bin\Release\*.exe" "%~dp0artifacts\" /s /e /Y
 
 IF NOT ERRORLEVEL 0 EXIT /B %ERRORLEVEL%

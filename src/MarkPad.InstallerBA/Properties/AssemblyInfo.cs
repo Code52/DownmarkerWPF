@@ -1,13 +1,13 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("MarkPad")]
+[assembly: AssemblyTitle("MarkPad.InstallerBA")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyProduct("MarkPad")]
+[assembly: AssemblyProduct("MarkPad.InstallerBA")]
 [assembly: AssemblyCompany("Code52")]
 [assembly: AssemblyCopyright("Copyright © Code52 2013")]
 [assembly: AssemblyVersion("0.0.0.0")]
