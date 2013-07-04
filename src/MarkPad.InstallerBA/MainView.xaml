@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xaml="clr-namespace:MarkPad.InstallerBA.XAML"
-    Title="MainView"
+    Title="{Binding DisplayName}"
     Height="450"
     Width="800"
     WindowStartupLocation="CenterScreen"

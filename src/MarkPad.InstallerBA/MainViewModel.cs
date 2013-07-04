@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using MarkPad.InstallerBA.Screens;
 using Microsoft.Tools.WindowsInstallerXml.Bootstrapper;
@@ -16,6 +18,13 @@ namespace MarkPad.InstallerBA
 
         public MainViewModel(BootstrapperApplication bootstrapper)
         {
+            var info = Assembly.GetAssembly(typeof(MainViewModel))
+                 .GetCustomAttributes(true)
+                 .OfType<AssemblyInformationalVersionAttribute>()
+                 .FirstOrDefault() ?? new AssemblyInformationalVersionAttribute("(unknown version)");
+
+            DisplayName = string.Format("MarkPad {0} Installer", info.InformationalVersion);
+
             this.bootstrapper = bootstrapper;
 
             this.bootstrapper.DetectBegin += this.OnDetectBegin;
@@ -33,6 +42,7 @@ namespace MarkPad.InstallerBA
             this.bootstrapper.Engine.Detect();
         }
 
+        public string DisplayName { get; set; }
         public object CurrentSlide { get; set; }
 
         private void OnDetectBegin(object sender, DetectBeginEventArgs e)
