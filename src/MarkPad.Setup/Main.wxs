@@ -24,9 +24,45 @@
         </File>
 
         <File Source="$(var.BUILDPATH)\MarkPad.exe.config" />
+        <File Source="$(var.BUILDPATH)\Autofac.Configuration.dll" />
+        <File Source="$(var.BUILDPATH)\Autofac.dll" />
+        <File Source="$(var.BUILDPATH)\avcodec-53.dll" />
+        <File Source="$(var.BUILDPATH)\avformat-53.dll" />
+        <File Source="$(var.BUILDPATH)\avutil-51.dll" />
+        <File Source="$(var.BUILDPATH)\Awesomium.Core.dll" />
+        <File Source="$(var.BUILDPATH)\Awesomium.dll" />
+        <File Source="$(var.BUILDPATH)\Awesomium.Windows.Controls.dll" />
+        <File Source="$(var.BUILDPATH)\Caliburn.Micro.Autofac.dll" />
+        <File Source="$(var.BUILDPATH)\Caliburn.Micro.dll" />
+        <File Source="$(var.BUILDPATH)\CookComputing.XmlRpcV2.dll" />
+        <File Source="$(var.BUILDPATH)\en-US.dll" />
+        <File Source="$(var.BUILDPATH)\ExportToHtmlPlugin.dll" />
+        <File Source="$(var.BUILDPATH)\Hunspellx64.dll" />
+        <File Source="$(var.BUILDPATH)\Hunspellx86.dll" />
+        <File Source="$(var.BUILDPATH)\ICSharpCode.AvalonEdit.dll" />
+        <File Source="$(var.BUILDPATH)\icudt.dll" />
+        <File Source="$(var.BUILDPATH)\icudt42.dll" />
+        <File Source="$(var.BUILDPATH)\libEGL.dll" />
+        <File Source="$(var.BUILDPATH)\libGLESv2.dll" />
+        <File Source="$(var.BUILDPATH)\MahApps.Metro.dll" />
+        <File Source="$(var.BUILDPATH)\MarkdownDeep.dll" />
+        <File Source="$(var.BUILDPATH)\MarkPad.Plugins.dll" />
+        <File Source="$(var.BUILDPATH)\MarkPad.PreviewControl.dll" />
+        <File Source="$(var.BUILDPATH)\Microsoft.CompilerServices.AsyncTargetingPack.Net4.dll" />
+        <File Source="$(var.BUILDPATH)\Microsoft.Expression.Interactions.dll" />
+        <File Source="$(var.BUILDPATH)\Newtonsoft.Json.dll" />
+        <File Source="$(var.BUILDPATH)\NHunspell.dll" />
+        <File Source="$(var.BUILDPATH)\Ookii.Dialogs.Wpf.dll" />
+        <File Source="$(var.BUILDPATH)\System.Net.Http.dll" />
+        <File Source="$(var.BUILDPATH)\System.Net.Http.Formatting.dll" />
+        <File Source="$(var.BUILDPATH)\System.Net.Http.WebRequest.dll" />
+        <File Source="$(var.BUILDPATH)\System.Windows.Interactivity.dll" />
+        <File Source="$(var.BUILDPATH)\UITextBlock.dll" />
+        <File Source="$(var.BUILDPATH)\xinput9_1_0.dll" />
+        <File Source="$(var.BUILDPATH)\awesomium_process" />
+        <File Source="$(var.BUILDPATH)\AwesomiumProcess" />
 
         <RemoveFolder Id="RemoveMarkPadFolder" Directory="MarkPadFolder" On="uninstall" />
-        <RemoveFolder Id="RemoveThemeFolder" Directory="ThemeFolder" On="uninstall" />
         <RemoveFolder Id="RemoveProgramMenuFolder" Directory="ProgramMenuFolder" On="uninstall" />
         <RemoveFolder Id="RemoveMarkPadMenuFolder" Directory="MarkPadMenuFolder" On="uninstall" />
         <RegistryValue Root="HKCU" Key="Software\Code52\MarkPad" Name="installed" Type="integer" Value="1" KeyPath="yes" />

@@ -8,7 +8,30 @@
 
   <Fragment>
 
-    <ComponentGroup Id="ThemesComponents" Directory="ThemeFolder">
+    <ComponentGroup Id="ThemesComponents">
+
+      <Component Guid="7025D9BB-0762-45B0-A544-4C732DF9973A" Directory="ThemeFolder">
+        <RemoveFolder Id="RemoveThemeFolder" Directory="ThemeFolder" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\Code52\MarkPad\Themes" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+
+      <Component Guid="1117BE3B-50C9-47FC-B0B7-B566D2CAC3DF" Directory="ChaosSquirrelFolder">
+        <File Id="style1.css" Source="$(var.BUILDPATH)\Themes\ChaosSquirrel\style.css" />
+
+        <RemoveFolder Id="RemoveChaosSquirrelFolder" Directory="ChaosSquirrelFolder" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\Code52\MarkPad\ChaosSquirrel" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+
+      <Component Guid="3D66811A-80C4-47EA-BD36-CBA69FC704E2" Directory="FunnelWebFolder">
+        <File Source="$(var.BUILDPATH)\Themes\FunnelWeb\Base.css" />
+        <File Source="$(var.BUILDPATH)\Themes\FunnelWeb\jquery-1.7.min.js" />
+        <File Source="$(var.BUILDPATH)\Themes\FunnelWeb\prettify.js" />
+        <File Source="$(var.BUILDPATH)\Themes\FunnelWeb\site.js" />
+        <File Id="style2.css" Source="$(var.BUILDPATH)\Themes\FunnelWeb\style.css" />
+
+        <RemoveFolder Id="RemoveFunnelWebFolder" Directory="FunnelWebFolder" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\Code52\MarkPad\FunnelWeb" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
 
     </ComponentGroup>
 

@@ -58,7 +58,10 @@
 
       <Directory Id="LocalAppDataFolder">
         <Directory Id="MarkPadFolder" Name="MarkPad">
-          <Directory Id="ThemeFolder" Name="Themes" />
+          <Directory Id="ThemeFolder" Name="Themes">
+            <Directory Id="ChaosSquirrelFolder" Name="ChaosSquirrel" />
+            <Directory Id="FunnelWebFolder" Name="FunnelWeb" />
+          </Directory>
         </Directory>
       </Directory>
 
