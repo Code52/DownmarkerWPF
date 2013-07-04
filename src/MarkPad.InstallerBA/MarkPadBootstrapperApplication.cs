@@ -24,10 +24,10 @@ namespace MarkPad.InstallerBA
             MainView view = new MainView();
             view.DataContext = viewModel;
             view.Closed += (sender, e) => BootstrapperDispatcher.InvokeShutdown();
-            //view.Closing += (sender, e) =>
-            //{
-            //    e.Cancel = !viewModel.TryClose();
-            //};
+            view.Closing += (sender, e) =>
+            {
+                e.Cancel = !viewModel.TryClose();
+            };
             view.Show();
 
             Dispatcher.Run();

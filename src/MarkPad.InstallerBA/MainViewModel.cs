@@ -1,12 +1,18 @@
-﻿using System.ComponentModel;
+﻿using System.Threading.Tasks;
+using System.Windows.Input;
+using MarkPad.InstallerBA.Screens;
 using Microsoft.Tools.WindowsInstallerXml.Bootstrapper;
 
 namespace MarkPad.InstallerBA
 {
-    public class MainViewModel : INotifyPropertyChanged
+    public class MainViewModel : ViewModelBase
     {
         private readonly BootstrapperApplication bootstrapper;
         private StateEnum state;
+
+        private readonly TaskFactory uiFactory;
+        private readonly StatusViewModel statusVM;
+        private readonly ProgressViewModel progressVM;
 
         public MainViewModel(BootstrapperApplication bootstrapper)
         {
@@ -20,18 +26,24 @@ namespace MarkPad.InstallerBA
 
             state = StateEnum.None;
 
+            uiFactory = new TaskFactory(TaskScheduler.FromCurrentSynchronizationContext());
+            statusVM = new StatusViewModel(new NextCommand(this));
+            progressVM = new ProgressViewModel(bootstrapper);
+
             this.bootstrapper.Engine.Detect();
         }
 
+        public object CurrentSlide { get; set; }
+
         private void OnDetectBegin(object sender, DetectBeginEventArgs e)
         {
-            state = e.Installed ? StateEnum.Installed : StateEnum.NotInstalled;
+            ChangeState(e.Installed ? StateEnum.Installed : StateEnum.NotInstalled);
         }
 
         private void OnDetectPackageComplete(object sender, DetectPackageCompleteEventArgs e)
         {
-            //if (e.PackageId == "evORElutionPackageId")
-            //    statusVM.EvorelutionState = e.State;
+            if (e.PackageId == "MarkPadPackageId")
+                statusVM.MarkPadInstallState = e.State;
         }
 
         private void OnPlanComplete(object sender, PlanCompleteEventArgs e)
@@ -42,7 +54,7 @@ namespace MarkPad.InstallerBA
 
         private void OnApplyComplete(object sender, ApplyCompleteEventArgs e)
         {
-            MoveNext(null);
+            MoveNext();
         }
 
         private void InstallExecute()
@@ -60,23 +72,23 @@ namespace MarkPad.InstallerBA
             MarkPadBootstrapperApplication.BootstrapperDispatcher.InvokeShutdown();
         }
 
-        public void MoveNext(object o)
+        private void MoveNext()
         {
             switch (state)
             {
                 case StateEnum.NotInstalled:
-                    this.state = StateEnum.Installing;
+                    ChangeState(StateEnum.Installing);
                     InstallExecute();
                     break;
 
                 case StateEnum.Installed:
-                    this.state = StateEnum.Uninstalling;
+                    ChangeState(StateEnum.Uninstalling);
                     UninstallExecute();
                     break;
 
                 case StateEnum.Installing:
                 case StateEnum.Uninstalling:
-                    this.state = StateEnum.Exit;
+                    ChangeState(StateEnum.Exit);
                     break;
 
                 case StateEnum.Exit:
@@ -85,11 +97,41 @@ namespace MarkPad.InstallerBA
             }
         }
 
-#pragma warning disable 67
+        public bool TryClose()
+        {
+            return state != StateEnum.Installing && state != StateEnum.Uninstalling;
+        }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        private void ChangeState(StateEnum newState)
+        {
+            state = newState;
 
-#pragma warning restore 67
+            uiFactory.StartNew(() =>
+            {
+                switch (state)
+                {
+                    case StateEnum.NotInstalled:
+                    case StateEnum.Installed:
+                        var status = new StatusView();
+                        status.DataContext = statusVM;
+                        CurrentSlide = status;
+                        break;
+
+                    case StateEnum.Installing:
+                    case StateEnum.Uninstalling:
+                        progressVM.Uninstalling = state == StateEnum.Uninstalling;
+                        var progress = new ProgressView();
+                        progress.DataContext = progressVM;
+                        CurrentSlide = progress;
+                        break;
+
+                    case StateEnum.Exit:
+                        var exit = new ExitView();
+                        CurrentSlide = exit;
+                        break;
+                }
+            });
+        }
 
         public enum StateEnum
         {
@@ -99,6 +141,28 @@ namespace MarkPad.InstallerBA
             Installed,
             Uninstalling,
             Exit,
+        }
+
+        private class NextCommand : ICommand
+        {
+            private readonly MainViewModel main;
+
+            public NextCommand(MainViewModel main)
+            {
+                this.main = main;
+            }
+
+            public bool CanExecute(object parameter)
+            {
+                return true;
+            }
+
+            public event System.EventHandler CanExecuteChanged;
+
+            public void Execute(object parameter)
+            {
+                main.MoveNext();
+            }
         }
     }
 }

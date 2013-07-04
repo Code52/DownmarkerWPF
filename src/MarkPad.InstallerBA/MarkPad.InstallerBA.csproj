@@ -55,11 +55,26 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Screens\ProgressView.xaml.cs">
+      <DependentUpon>ProgressView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Screens\ProgressViewModel.cs" />
+    <Compile Include="Screens\ExitView.xaml.cs">
+      <DependentUpon>ExitView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="XAML\BoolToVisibilityConverter.cs" />
+    <Compile Include="XAML\MarkupConverter.cs" />
+    <Compile Include="XAML\StateManager.cs" />
     <Compile Include="MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainViewModel.cs" />
     <Compile Include="MarkPadBootstrapperApplication.cs" />
+    <Compile Include="Screens\StatusView.xaml.cs">
+      <DependentUpon>StatusView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Screens\StatusViewModel.cs" />
+    <Compile Include="ViewModelBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
@@ -71,6 +86,18 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Screens\ExitView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Screens\ProgressView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Screens\StatusView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
