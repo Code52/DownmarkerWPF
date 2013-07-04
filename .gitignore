@@ -93,6 +93,8 @@ ClientBin
 ~$*
 *.dbmdl
 *.orig
+Storage.dat
+Index.dat
 Generated_Code #added for RIA/Silverlight projects
 
 # Backup & report files from converting an old project file to a newer
