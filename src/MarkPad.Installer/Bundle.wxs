@@ -19,7 +19,7 @@
 
     <Chain>
 
-      <PackageGroupRef Id="LocalNetFx40Redist" />
+      <PackageGroupRef Id="NetFx40Web" />
 
       <RollbackBoundary />
 
