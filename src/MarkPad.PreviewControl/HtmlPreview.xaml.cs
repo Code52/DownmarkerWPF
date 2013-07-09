@@ -166,11 +166,11 @@ namespace MarkPad.PreviewControl
                     Dispatcher.BeginInvoke(new Action(() =>
                     {
                         hwndContentHost = new HwndContentHost(controlHandle);
-                        //Without the border we don't get the dropshadows
+                        // BUGFIX: the borders now appear to be working as designed
                         Content = new Border
                         {
                             Background = Brushes.White,
-                            Padding = new Thickness(3),
+                            Padding = new Thickness(0),
                             Child = hwndContentHost
                         };
                     }));
