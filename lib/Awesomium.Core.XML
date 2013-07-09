@@ -308,6 +308,11 @@
             Raised when the value of a property of this class, has changed.
             </summary>
         </member>
+        <member name="M:Awesomium.Core.NativeViewModel.Dispose">
+            <summary>
+            Perform cleanup of managed resources.
+            </summary>
+        </member>
         <member name="M:Awesomium.Core.NativeViewModel.OnDispose">
             <summary>
             Called when an instance of this class is being disposed.
@@ -324,11 +329,6 @@
             <exception cref="T:System.MethodAccessException">
             C++ destructor does not have public access.
             </exception>
-        </member>
-        <member name="M:Awesomium.Core.NativeViewModel.Dispose">
-            <summary>
-            Perform cleanup of managed resources.
-            </summary>
         </member>
         <member name="E:Awesomium.Core.NativeViewModel.Disposed">
             <summary>
@@ -457,6 +457,27 @@
             When set to <c>false</c> (default), a technology specific <c>WebControl</c> may display 
             its predefined dialog (if any).
             </remarks>
+        </member>
+        <member name="M:Awesomium.Web.HttpUtility.HtmlDecode(System.String)">
+            <summary>
+            Decodes an HTML-encoded string and returns the decoded string.
+            </summary>
+            <param name="s">The HTML string to decode. </param>
+            <returns>The decoded text.</returns>
+        </member>
+        <member name="M:Awesomium.Web.HttpUtility.HtmlDecode(System.String,System.IO.TextWriter)">
+            <summary>
+            Decodes an HTML-encoded string and sends the resulting output to a TextWriter output stream.
+            </summary>
+            <param name="s">The HTML string to decode</param>
+            <param name="output">The TextWriter output stream containing the decoded string. </param>
+        </member>
+        <member name="M:Awesomium.Web.HttpUtility.HtmlEncode(System.String,System.IO.TextWriter)">
+            <summary>
+            HTML-encodes a string and sends the resulting output to a TextWriter output stream.
+            </summary>
+            <param name="s">The string to encode. </param>
+            <param name="output">The TextWriter output stream containing the encoded string. </param>
         </member>
         <member name="T:Awesomium.Core.NavigationRequest">
             <summary>
@@ -786,7 +807,8 @@
             (usually the result of <c>window.open</c> or an external link).
             </summary><remarks>
             <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/> occurs when an <see cref="T:Awesomium.Core.IWebView"/> instance creates a new child view 
-            (usually the result of <c>window.open</c> or clicking on a link with <c>target="_blank"</c>). 
+            (usually the result of <c>window.open</c>, clicking on a link with <c>target="_blank"</c> or submitting a <c>form</c>
+            with <c>target="_blank"</c>). 
             <p/>
             It is your responsibility to wrap and display this new view in your application.
             <note type="caution">
@@ -826,7 +848,14 @@
             </item>
             <item>
             <description>
-            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>false</c>, it most possibly indicates that the event is the result of
+            If <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/> is fired as a result of an HTML form with <c>target="_blank"</c> and
+            <c>method="post"</c>, <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> will be <c>true</c>. In this scenario, <b>you should always wrap</b>
+            the created child view instance (<see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.NewViewInstance"/>), to allow <c>POST</c> data be properly passed.
+            </description>
+            </item>
+            <item>
+            <description>
+            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> or <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> are <c>false</c>, it most possibly indicates that the event is the result of
             a user clicking on a link with <c>target="_blank"</c>. Since maintaining a parent-child relationship is not important
             in this scenario, <b>you should cancel the event</b> by setting <see cref="P:System.ComponentModel.CancelEventArgs.Cancel"/> to <c>true</c> (this tells the core 
             to destroy the unused web-view instance), then create a new <see cref="T:Awesomium.Core.WebView"/> (using <see cref="M:Awesomium.Core.WebCore.CreateWebView(System.Int32,System.Int32,Awesomium.Core.WebSession,Awesomium.Core.WebViewType)"/>)
@@ -840,10 +869,11 @@
             </item>
             <item>
             <description>
-            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>true</c>, navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, is already queued on 
-            the created child view. Therefore you should not attempt to set the <see cref="P:Awesomium.Core.IWebView.Source"/> when you are wrapping 
-            the child view, as this would again break the parent-child relationship (<c>window.opener</c> on the child page and the 
-            <c>window</c> object returned from the <c>window.open</c> call on the parent page, will be rendered invalid).
+            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> or <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> is <c>true</c>, navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, 
+            is already queued on the created child view. Therefore you should not attempt to set the <see cref="P:Awesomium.Core.IWebView.Source"/> when you 
+            are wrapping the child view, as this would again break the parent-child relationship (<c>window.opener</c> on the child page and the 
+            <c>window</c> object returned from the <c>window.open</c> call on the parent page, will be rendered invalid) or prevent passing
+            <c>POST</c> data to the server respectively.
             <note>
             Also note that since navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, has already started by the moment the child
             view is wrapped, <see cref="E:Awesomium.Core.IWebView.LoadingFrame"/> will not be fired for the main frame of the new <see cref="T:Awesomium.Core.IWebView"/>
@@ -853,17 +883,21 @@
             </item>
             <item>
             <description>
-            Navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, is blocked on the created child view, when <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>false</c>.
-            As applications will generally choose to cancel the event and create a new <see cref="T:Awesomium.Core.IWebView"/> instance to navigate to
-            the target URL (or even choose to navigate to the target URL on the same <see cref="T:Awesomium.Core.IWebView"/> instance that fired the event),
-            Awesomium.NET does this to prevent <i>false hits</i> to the target URL, that would have occurred by the time the event handler
-            returns and the unused child view instance, is destroyed. Therefore, if your application chooses to wrap the created 
-            child view even though it is most possibly the result of a user clicking on a link with <c>target="_blank"</c> and maintaining 
-            the parent-child relationship is not important, you should in this scenario only, after wrapping the child view, set the 
-            <see cref="P:Awesomium.Core.IWebView.Source"/> property to <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/> to resume navigation to the target URL.
+            Navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, is blocked on the created child view, when <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> and 
+            <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> are <c>false</c>. As applications will generally choose to cancel the event and create a new <see cref="T:Awesomium.Core.IWebView"/> 
+            instance to navigate to the target URL (or even choose to navigate to the target URL on the same <see cref="T:Awesomium.Core.IWebView"/> instance that 
+            fired the event), Awesomium.NET does this to prevent <i>false hits</i> to the target URL, that would have occurred by the time the 
+            event handler returns and the unused child view instance, is destroyed. What's more, users may also implement 
+            <see cref="T:Awesomium.Core.IResourceInterceptor"/> and cancel requests to new views that are the result of JavaScript <c>window.open</c>
+            (see <see cref="P:Awesomium.Core.ResourceRequest.IsWindowOpen"/>). Therefore, if your application chooses to wrap the created 
+            child view even though it is most possibly the result of a user clicking on a link with <c>target="_blank"</c> or navigation
+            to the target URL has already been canceled by an <see cref="T:Awesomium.Core.IResourceInterceptor"/> (see <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsNavigationCanceled"/>), 
+            you should in this scenario only, after wrapping the child view, set the <see cref="P:Awesomium.Core.IWebView.Source"/> property to 
+            <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/> to resume navigation to the target URL.
             <note>
-            Applications can occasionally choose to wrap a child view even when <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>false</c>, if they want
-            to apply a <i>single process</i> architecture where all new views created will be rendered by the same <c>awesomium_process</c>.
+            Applications can occasionally choose to wrap a child view even when <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>false</c> or 
+            <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsNavigationCanceled"/> is <c>true</c>, if they want to apply a <i>single process</i> architecture where all new 
+            views created will be rendered by the same <c>awesomium_process</c>.
             </note>
             </description>
             </item>
@@ -901,9 +935,15 @@
             </item>
             <item>
             <description>
+            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> is <c>true</c>, <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.PostData"/> returns an array of <see cref="T:Awesomium.Core.UploadElement"/>,
+            representing the <i>upload</i> data passed to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/> using <c>POST</c>.
+            </description>
+            </item>
+            <item>
+            <description>
             Finally note that only an empty <i>name</i> parameter or a <c>_blank</c> target attribute specified as the <i>name</i> parameter 
-            in a <c>window.open</c> call or on a link, will fire a <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/> event. Other target attributes 
-            (such as <c>_top</c>), passed to either a <c>window.open</c> call or specified on a link, are handled by Awesomium internally.
+            in a <c>window.open</c> call or in a link or <c>form</c>, will fire a <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/> event. Other target 
+            attributes (such as <c>_top</c>), passed to either a <c>window.open</c> call, a link or a <c>form</c>, are handled by Awesomium internally.
             </description>
             </item>
             </list>
@@ -1268,21 +1308,23 @@
                                 newWindow.Left = screenRect.X;
                             }
                         }
-                        else if ( e.IsWindowOpen )
+                        else if ( e.IsWindowOpen || e.IsPost )
                         {
                             // No specs or only non-standard specs were specified, but the event is still 
-                            // the result of 'window.open'. We will open a normal window but we will still wrap 
-                            // the new native child view, maintaining its relationship with the parent window.
+                            // the result of 'window.open', or of an HTML form with tagret="_blank" and method="post". 
+                            // We will open a normal window but we will still wrap the new native child view, 
+                            // maintaining its relationship with the parent window.
                             newWindow.NativeView = e.NewViewInstance;
                             // Show the window.
                             newWindow.Show();
                         }
                         else
                         {
-                            // The event is not the result of 'window.open', therefore it's most probably
-                            // the result of a link with target='_blank'. We will not be wrapping the created view; 
-                            // we let the WebControl hosted in ChildWindow create its own underlying view. 
-                            // Setting Cancel to true tells the core to destroy the created child view.
+                            // The event is not the result of 'window.open' or of an HTML form with tagret="_blank" 
+                            // and method="post"., therefore it's most probably the result of a link with target='_blank'.
+                            // We will not be wrapping the created view; we let the WebControl hosted in ChildWindow 
+                            // create its own underlying view. Setting Cancel to true tells the core to destroy the 
+                            // created child view.
                             //
                             // Why don't we always wrap the native view passed to ShowCreatedWebView?
                             //
@@ -1384,18 +1426,20 @@
             					newWindow.Top = screenRect.Y
             					newWindow.Left = screenRect.X
             				End If
-            			ElseIf e.IsWindowOpen Then
+            			ElseIf (e.IsWindowOpen OrElse e.IsPost) Then
             				' No specs or only non-standard specs were specified, but the event is still 
-            				' the result of 'window.open'. We will open a normal window but we will still wrap 
-            				' the new native child view, maintaining its relationship with the parent window.
+            				' the result of 'window.open' or of an HTML form with tagret="_blank" and method="post".
+            				' We will open a normal window but we will still wrap the new native child view, 
+            				' maintaining its relationship with the parent window.
             				newWindow.NativeView = e.NewViewInstance
             				' Show the window.
             				newWindow.Show()
             			Else
-            				' The event is not the result of 'window.open', therefore it's most probably
-            				' the result of a link with target='_blank'. We will not be wrapping the created view; 
-            				' we let the WebControl hosted in ChildWindow create its own underlying view. 
-            				' Setting Cancel to true tells the core to destroy the created child view.
+            				' The event is not the result of 'window.open' or of an HTML form with tagret="_blank" 
+            				' and method="post"., therefore it's most probably the result of a link with target='_blank'.
+            				' We will not be wrapping the created view; we let the WebControl hosted in ChildWindow 
+            				' create its own underlying view. Setting Cancel to true tells the core to destroy the 
+            				' created child view.
             				'
             				' Why don't we always wrap the native view passed to ShowCreatedWebView?
             				'
@@ -3418,14 +3462,14 @@
             Triggers the <see cref="E:Awesomium.Core.DownloadItem.ProgressChanged"/> event.
             </summary>
         </member>
-        <member name="M:Awesomium.Core.DownloadItem.OnCompleted(System.Object,System.EventArgs)">
-            <summary>
-            Triggers the <see cref="E:Awesomium.Core.DownloadItem.Completed"/> event.
-            </summary>
-        </member>
         <member name="M:Awesomium.Core.DownloadItem.OnCanceling(System.Object,System.ComponentModel.CancelEventArgs)">
             <summary>
             Triggers the <see cref="E:Awesomium.Core.DownloadItem.Canceling"/> event.
+            </summary>
+        </member>
+        <member name="M:Awesomium.Core.DownloadItem.OnCompleted(System.Object,System.EventArgs)">
+            <summary>
+            Triggers the <see cref="E:Awesomium.Core.DownloadItem.Completed"/> event.
             </summary>
         </member>
         <member name="M:Awesomium.Core.DownloadItem.OnCanceled(System.Object,System.EventArgs)">
@@ -3437,6 +3481,16 @@
             <summary>
             Cancels this download operation.
             </summary>
+        </member>
+        <member name="M:Awesomium.Core.DownloadItem.CanCancel">
+            <summary>
+            Determines if the download operation can be canceled.
+            </summary>
+            <returns>
+            <c>true</c> if the operation is active and can be canceled;
+            <c>false</c> otherwise.
+            </returns>
+            <seealso cref="P:Awesomium.Core.DownloadItem.IsActive"/>
         </member>
         <member name="M:Awesomium.Core.DownloadItem.OpenDownloadedFile">
             <summary>
@@ -3460,6 +3514,15 @@
         <member name="M:Awesomium.Core.DownloadItem.CanOpenDownloadedFile">
             <summary>
             Determines if the downloaded file can be opened.
+            </summary>
+            <returns>
+            <c>true</c> if the operation is complete and the file exists on disk;
+            <c>false</c> otherwise.
+            </returns>
+        </member>
+        <member name="M:Awesomium.Core.DownloadItem.CanOpenDownloadedFileFolder">
+            <summary>
+            Determines if the folder containing the downloaded file can be opened.
             </summary>
             <returns>
             <c>true</c> if the operation is complete and the file exists on disk;
@@ -3505,11 +3568,14 @@
             Occurs when the status of this download operation has
             changed.
             </summary>
-        </member>
-        <member name="E:Awesomium.Core.DownloadItem.Completed">
-            <summary>
-            Occurs when this download operation is complete.
-            </summary>
+            <remarks>
+            Setting <see cref="P:System.ComponentModel.CancelEventArgs.Cancel"/> to <c>true</c>,
+            allows you to cancel the operation.
+            </remarks>
+            <seealso cref="P:Awesomium.Core.DownloadItem.Progress"/>
+            <seealso cref="P:Awesomium.Core.DownloadItem.ReceivedBytes"/>
+            <seealso cref="P:Awesomium.Core.DownloadItem.CurrentSpeed"/>
+            <seealso cref="M:Awesomium.Core.DownloadItem.Cancel"/>
         </member>
         <member name="E:Awesomium.Core.DownloadItem.Canceling">
             <summary>
@@ -3520,11 +3586,22 @@
             Setting <see cref="P:System.ComponentModel.CancelEventArgs.Cancel"/> to <c>true</c>,
             allows you to abort the cancellation and resume downloading.
             </remarks>
+            <seealso cref="M:Awesomium.Core.DownloadItem.Cancel"/>
+        </member>
+        <member name="E:Awesomium.Core.DownloadItem.Completed">
+            <summary>
+            Occurs when this download operation is complete.
+            </summary>
+            <seealso cref="P:Awesomium.Core.DownloadItem.IsComplete"/>
+            <seealso cref="P:Awesomium.Core.DownloadItem.IsActive"/>
         </member>
         <member name="E:Awesomium.Core.DownloadItem.Canceled">
             <summary>
             Occurs when this download operation is canceled.
             </summary>
+            <seealso cref="P:Awesomium.Core.DownloadItem.IsCanceled"/>
+            <seealso cref="P:Awesomium.Core.DownloadItem.IsActive"/>
+            <seealso cref="M:Awesomium.Core.DownloadItem.Cancel"/>
         </member>
         <member name="P:Awesomium.Core.DownloadItem.IsActive">
             <summary>
@@ -3594,6 +3671,27 @@
             Gets the operation's progress percentage.
             </summary>
         </member>
+        <member name="P:Awesomium.Core.DownloadItem.CurrentSpeed">
+            <summary>
+            Gets the current downloading speed, or <c>0</c> if 
+            the operation is canceled or complete.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Core.DownloadItem.WebSession">
+            <summary>
+            Gets the <see cref="P:Awesomium.Core.DownloadItem.WebSession"/> instance that controls this
+            download operation.
+            </summary>
+            <remarks>
+            This property is only valid when a download operation is active (see <see cref="P:Awesomium.Core.DownloadItem.IsActive"/>).
+            It will be <c>null</c> (<c>Nothing</c> in Visual Basic), when the operation is complete
+            or canceled.
+            <note>
+            Due to being responsible in maintaining authentication contexts, <see cref="P:Awesomium.Core.DownloadItem.WebSession"/> instances
+            are also responsible for controlling download operations that are then maintained by the <see cref="T:Awesomium.Core.WebCore"/>.
+            </note>
+            </remarks>
+        </member>
         <member name="T:Awesomium.Core.EditFlags">
             <summary>
             Used with <see cref="T:Awesomium.Core.WebContextMenuInfo"/>.
@@ -3627,6 +3725,9 @@
             <param name="dataPath">
             The path to the directory that the <see cref="T:Awesomium.Core.WebSession"/> to seek for, stores data.
             </param>
+            <remarks>
+            
+            </remarks>
             <returns>
             Gets the <see cref="T:Awesomium.Core.WebSession"/> that synchronizes data to the specified <paramref name="dataPath"/>,
             or <c>null</c> (<c>Nothing</c> in Visual Basic), is no <see cref="T:Awesomium.Core.WebSession"/> that synchronizes 
@@ -4811,6 +4912,12 @@
             Provides data for the <see cref="E:Awesomium.Core.WebCore.Download"/> event.
             </summary>
         </member>
+        <member name="P:Awesomium.Core.DownloadEventArgs.ViewId">
+            <summary>
+            Gets the unique identifier of the view that the download request
+            originates from. This corresponds to <see cref="P:Awesomium.Core.IWebView.Identifier"/>.
+            </summary>
+        </member>
         <member name="P:Awesomium.Core.DownloadEventArgs.SuggestedFileName">
             <summary>
             Gets the suggested name of the file being downloaded.
@@ -5021,14 +5128,14 @@
                 {
                     // Get the window object. This call is synchronous but it can be called 
                     // from inside an asynchronous handler.
-                    JSObject window = webView.ExecuteJavascriptWithResult( "myGlobalObject" );
+                    dynamic window = (JSObject)webView.ExecuteJavascriptWithResult( "myGlobalObject" );
                     
                     // Make sure we have the object.
                     if ( window == null )
                         return;
-                    
+                        
                     // Make another synchronous call.
-                    window.Invoke( "alert", "Called from an asynchronous handler" );
+                    var res = window.confirm( "Called from an asynchronous handler.\nDo you confirm?" );
                 }
             }
             </code>
@@ -5053,6 +5160,14 @@
             <summary>
             Gets an array of arguments passed to the method.
             </summary>
+            <remarks>
+            <note>
+            <see cref="T:Awesomium.Core.JSObject"/> instances passed as arguments to a <see cref="T:Awesomium.Core.JavascriptMethodEventHandler"/>,
+            are destroyed by default when the <see cref="T:Awesomium.Core.JavascriptMethodEventHandler"/> exits. To cache
+            a <see cref="T:Awesomium.Core.JSObject"/> instance passed as argument to a <see cref="T:Awesomium.Core.JavascriptMethodEventHandler"/>
+            and keep it alive, create a copy of it using <see cref="M:Awesomium.Core.JSObject.Clone"/>.
+            </note>
+            </remarks>
         </member>
         <member name="P:Awesomium.Core.JavascriptMethodEventArgs.MustReturnValue">
             <summary>
@@ -5062,7 +5177,7 @@
             <note type="caution">
             Methods that return a value are called synchronously (the view process is blocked until the handler returns).
             Therefore, you cannot make synchronous invocations from inside a synchronous <see cref="T:Awesomium.Core.JavascriptMethodEventHandler"/>,
-            as this would cause a deadlock. For the same reason, no JS objects can be passed to a <see cref="T:Awesomium.Core.JavascriptMethodEventHandler"/>
+            as this would cause a deadlock. For the same reason, JavaScript objects cannot be passed to a <see cref="T:Awesomium.Core.JavascriptMethodEventHandler"/>
             that is called synchronously. Any such objects passed from JavaScript, will be replaced with <c>undefined</c> in the
             <see cref="P:Awesomium.Core.JavascriptMethodEventArgs.Arguments"/> array.
             </note>
@@ -5867,7 +5982,8 @@
             </summary>
             <remarks>
             <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/> occurs when an <see cref="T:Awesomium.Core.IWebView"/> instance creates a new child view 
-            (usually the result of <c>window.open</c> or clicking on a link with <c>target="_blank"</c>). 
+            (usually the result of <c>window.open</c>, clicking on a link with <c>target="_blank"</c> or submitting a <c>form</c>
+            with <c>target="_blank"</c>). 
             <p/>
             It is your responsibility to wrap and display this new view in your application.
             <note type="caution">
@@ -5907,7 +6023,14 @@
             </item>
             <item>
             <description>
-            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>false</c>, it most possibly indicates that the event is the result of
+            If <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/> is fired as a result of an HTML form with <c>target="_blank"</c> and
+            <c>method="post"</c>, <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> will be <c>true</c>. In this scenario, <b>you should always wrap</b>
+            the created child view instance (<see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.NewViewInstance"/>), to allow <c>POST</c> data be properly passed.
+            </description>
+            </item>
+            <item>
+            <description>
+            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> or <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> are <c>false</c>, it most possibly indicates that the event is the result of
             a user clicking on a link with <c>target="_blank"</c>. Since maintaining a parent-child relationship is not important
             in this scenario, <b>you should cancel the event</b> by setting <see cref="P:System.ComponentModel.CancelEventArgs.Cancel"/> to <c>true</c> (this tells the core 
             to destroy the unused web-view instance), then create a new <see cref="T:Awesomium.Core.WebView"/> (using <see cref="M:Awesomium.Core.WebCore.CreateWebView(System.Int32,System.Int32,Awesomium.Core.WebSession,Awesomium.Core.WebViewType)"/>)
@@ -5921,10 +6044,11 @@
             </item>
             <item>
             <description>
-            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>true</c>, navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, is already queued on 
-            the created child view. Therefore you should not attempt to set the <see cref="P:Awesomium.Core.IWebView.Source"/> when you are wrapping 
-            the child view, as this would again break the parent-child relationship (<c>window.opener</c> on the child page and the 
-            <c>window</c> object returned from the <c>window.open</c> call on the parent page, will be rendered invalid).
+            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> or <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> is <c>true</c>, navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, 
+            is already queued on the created child view. Therefore you should not attempt to set the <see cref="P:Awesomium.Core.IWebView.Source"/> when you 
+            are wrapping the child view, as this would again break the parent-child relationship (<c>window.opener</c> on the child page and the 
+            <c>window</c> object returned from the <c>window.open</c> call on the parent page, will be rendered invalid) or prevent passing
+            <c>POST</c> data to the server respectively.
             <note>
             Also note that since navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, has already started by the moment the child
             view is wrapped, <see cref="E:Awesomium.Core.IWebView.LoadingFrame"/> will not be fired for the main frame of the new <see cref="T:Awesomium.Core.IWebView"/>
@@ -5934,17 +6058,21 @@
             </item>
             <item>
             <description>
-            Navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, is blocked on the created child view, when <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>false</c>.
-            As applications will generally choose to cancel the event and create a new <see cref="T:Awesomium.Core.IWebView"/> instance to navigate to
-            the target URL (or even choose to navigate to the target URL on the same <see cref="T:Awesomium.Core.IWebView"/> instance that fired the event),
-            Awesomium.NET does this to prevent <i>false hits</i> to the target URL, that would have occurred by the time the event handler
-            returns and the unused child view instance, is destroyed. Therefore, if your application chooses to wrap the created 
-            child view even though it is most possibly the result of a user clicking on a link with <c>target="_blank"</c> and maintaining 
-            the parent-child relationship is not important, you should in this scenario only, after wrapping the child view, set the 
-            <see cref="P:Awesomium.Core.IWebView.Source"/> property to <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/> to resume navigation to the target URL.
+            Navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, is blocked on the created child view, when <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> and 
+            <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> are <c>false</c>. As applications will generally choose to cancel the event and create a new <see cref="T:Awesomium.Core.IWebView"/> 
+            instance to navigate to the target URL (or even choose to navigate to the target URL on the same <see cref="T:Awesomium.Core.IWebView"/> instance that 
+            fired the event), Awesomium.NET does this to prevent <i>false hits</i> to the target URL, that would have occurred by the time the 
+            event handler returns and the unused child view instance, is destroyed. What's more, users may also implement 
+            <see cref="T:Awesomium.Core.IResourceInterceptor"/> and cancel requests to new views that are the result of JavaScript <c>window.open</c>
+            (see <see cref="P:Awesomium.Core.ResourceRequest.IsWindowOpen"/>). Therefore, if your application chooses to wrap the created 
+            child view even though it is most possibly the result of a user clicking on a link with <c>target="_blank"</c> or navigation
+            to the target URL has already been canceled by an <see cref="T:Awesomium.Core.IResourceInterceptor"/> (see <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsNavigationCanceled"/>), 
+            you should in this scenario only, after wrapping the child view, set the <see cref="P:Awesomium.Core.IWebView.Source"/> property to 
+            <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/> to resume navigation to the target URL.
             <note>
-            Applications can occasionally choose to wrap a child view even when <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>false</c>, if they want
-            to apply a <i>single process</i> architecture where all new views created will be rendered by the same <c>awesomium_process</c>.
+            Applications can occasionally choose to wrap a child view even when <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>false</c> or 
+            <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsNavigationCanceled"/> is <c>true</c>, if they want to apply a <i>single process</i> architecture where all new 
+            views created will be rendered by the same <c>awesomium_process</c>.
             </note>
             </description>
             </item>
@@ -5982,9 +6110,15 @@
             </item>
             <item>
             <description>
+            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> is <c>true</c>, <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.PostData"/> returns an array of <see cref="T:Awesomium.Core.UploadElement"/>,
+            representing the <i>upload</i> data passed to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/> using <c>POST</c>.
+            </description>
+            </item>
+            <item>
+            <description>
             Finally note that only an empty <i>name</i> parameter or a <c>_blank</c> target attribute specified as the <i>name</i> parameter 
-            in a <c>window.open</c> call or on a link, will fire a <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/> event. Other target attributes 
-            (such as <c>_top</c>), passed to either a <c>window.open</c> call or specified on a link, are handled by Awesomium internally.
+            in a <c>window.open</c> call or in a link or <c>form</c>, will fire a <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/> event. Other target 
+            attributes (such as <c>_top</c>), passed to either a <c>window.open</c> call, a link or a <c>form</c>, are handled by Awesomium internally.
             </description>
             </item>
             </list>
@@ -6350,21 +6484,23 @@
                                 newWindow.Left = screenRect.X;
                             }
                         }
-                        else if ( e.IsWindowOpen )
+                        else if ( e.IsWindowOpen || e.IsPost )
                         {
                             // No specs or only non-standard specs were specified, but the event is still 
-                            // the result of 'window.open'. We will open a normal window but we will still wrap 
-                            // the new native child view, maintaining its relationship with the parent window.
+                            // the result of 'window.open', or of an HTML form with tagret="_blank" and method="post". 
+                            // We will open a normal window but we will still wrap the new native child view, 
+                            // maintaining its relationship with the parent window.
                             newWindow.NativeView = e.NewViewInstance;
                             // Show the window.
                             newWindow.Show();
                         }
                         else
                         {
-                            // The event is not the result of 'window.open', therefore it's most probably
-                            // the result of a link with target='_blank'. We will not be wrapping the created view; 
-                            // we let the WebControl hosted in ChildWindow create its own underlying view. 
-                            // Setting Cancel to true tells the core to destroy the created child view.
+                            // The event is not the result of 'window.open' or of an HTML form with tagret="_blank" 
+                            // and method="post"., therefore it's most probably the result of a link with target='_blank'.
+                            // We will not be wrapping the created view; we let the WebControl hosted in ChildWindow 
+                            // create its own underlying view. Setting Cancel to true tells the core to destroy the 
+                            // created child view.
                             //
                             // Why don't we always wrap the native view passed to ShowCreatedWebView?
                             //
@@ -6466,18 +6602,20 @@
             					newWindow.Top = screenRect.Y
             					newWindow.Left = screenRect.X
             				End If
-            			ElseIf e.IsWindowOpen Then
+            			ElseIf (e.IsWindowOpen OrElse e.IsPost) Then
             				' No specs or only non-standard specs were specified, but the event is still 
-            				' the result of 'window.open'. We will open a normal window but we will still wrap 
-            				' the new native child view, maintaining its relationship with the parent window.
+            				' the result of 'window.open' or of an HTML form with tagret="_blank" and method="post".
+            				' We will open a normal window but we will still wrap the new native child view, 
+            				' maintaining its relationship with the parent window.
             				newWindow.NativeView = e.NewViewInstance
             				' Show the window.
             				newWindow.Show()
             			Else
-            				' The event is not the result of 'window.open', therefore it's most probably
-            				' the result of a link with target='_blank'. We will not be wrapping the created view; 
-            				' we let the WebControl hosted in ChildWindow create its own underlying view. 
-            				' Setting Cancel to true tells the core to destroy the created child view.
+            				' The event is not the result of 'window.open' or of an HTML form with tagret="_blank" 
+            				' and method="post"., therefore it's most probably the result of a link with target='_blank'.
+            				' We will not be wrapping the created view; we let the WebControl hosted in ChildWindow 
+            				' create its own underlying view. Setting Cancel to true tells the core to destroy the 
+            				' created child view.
             				'
             				' Why don't we always wrap the native view passed to ShowCreatedWebView?
             				'
@@ -6554,6 +6692,20 @@
             </note>
             </remarks>
         </member>
+        <member name="P:Awesomium.Core.ShowCreatedWebViewEventArgs.PostData">
+            <summary>
+            Gets the <i>upload</i> data passed to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>
+            using <c>POST</c> method.
+            </summary>
+            <remarks>
+            Only valid when <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> is <c>true</c>.
+            <note type="caution">
+            This will be <c>null</c> (<c>Nothing</c> in Visual Basic) if
+            <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> is <c>true</c> but the <c>POST</c> request
+            has been canceled and <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsNavigationCanceled"/> is <c>true</c>.
+            </note>
+            </remarks>
+        </member>
         <member name="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPopup">
             <summary>
             Gets if this must be a popup <c>window</c>.
@@ -6594,6 +6746,34 @@
             in a regular new window or tab, depending on the application's design.
             </note>
             </remarks>
+        </member>
+        <member name="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost">
+            <summary>
+            Gets if the <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/>
+            event is the result of an HTML form with <c>target="_blank"</c> and
+            <c>method="post"</c>.
+            </summary>
+            <seealso cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.PostData"/>
+        </member>
+        <member name="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsNavigationCanceled">
+            <summary>
+            Gets if navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, is already
+            canceled to the new view (<see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.NewViewInstance"/>).
+            </summary>
+            <remarks>
+            Navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, is canceled by default
+            when <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/> is the result of
+            links with target <c>_blank</c> or the submission of HTML forms with 
+            target <c>_blank</c> and method <c>GET</c>. What's more, users may also
+            implement <see cref="T:Awesomium.Core.IResourceInterceptor"/> and cancel requests to
+            new views that are the result of JavaScript <c>window.open</c>
+            (see <see cref="P:Awesomium.Core.ResourceRequest.IsWindowOpen"/>).
+            <p/>
+            You can still wrap the new view if <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsNavigationCanceled"/> is <c>true</c>, 
+            but you must then manually load the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/> to the new view.
+            </remarks>
+            <seealso cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.NewViewInstance"/>
+            <seealso cref="P:Awesomium.Core.ResourceRequest.IsWindowOpen"/>
         </member>
         <member name="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsUserSpecsOnly">
             <summary>
@@ -7663,6 +7843,28 @@
             <exception cref="T:System.InvalidOperationException">
             The member is called on an invalid view. (See: <see cref="P:Awesomium.Core.IWebView.IsLive"/>)
             </exception>
+            <exception cref="T:System.IO.DirectoryNotFoundException">
+            The specified output directory <paramref name="outputDirectory"/>, does not exist.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            <paramref name="outputDirectory"/> is a zero-length string, contains only white space, or contains one
+            or more of the invalid characters defined in <see cref="M:System.IO.Path.GetInvalidPathChars"/>. -OR- 
+            The system could not retrieve the absolute path.
+            </exception>
+            <exception cref="T:System.Security.SecurityException">
+            The caller does not have the required permissions.
+            </exception>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="outputDirectory"/> is <c>null</c> (<c>Nothing</c> in Visual Basic).
+            </exception>
+            <exception cref="T:System.NotSupportedException">
+            <paramref name="outputDirectory"/> contains a colon (":") that is not part of a volume identifier (for example, "c:\").
+            </exception>
+            <exception cref="T:System.IO.PathTooLongException">
+            The acquired full path to the specified <paramref name="outputDirectory"/>, exceeds the system-defined maximum
+            length. For example, on Windows-based platforms, paths must be less than 248 characters, 
+            and file names must be less than 260 characters.
+            </exception>
             <seealso cref="T:Awesomium.Core.PrintConfig"/>
             <seealso cref="E:Awesomium.Core.IWebView.PrintRequest"/>
             <seealso cref="E:Awesomium.Core.IWebView.Printing"/>
@@ -8017,7 +8219,8 @@
             </summary>
             <remarks>
             <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/> occurs when an <see cref="T:Awesomium.Core.IWebView"/> instance creates a new child view 
-            (usually the result of <c>window.open</c> or clicking on a link with <c>target="_blank"</c>). 
+            (usually the result of <c>window.open</c>, clicking on a link with <c>target="_blank"</c> or submitting a <c>form</c>
+            with <c>target="_blank"</c>). 
             <p/>
             It is your responsibility to wrap and display this new view in your application.
             <note type="caution">
@@ -8057,7 +8260,14 @@
             </item>
             <item>
             <description>
-            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>false</c>, it most possibly indicates that the event is the result of
+            If <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/> is fired as a result of an HTML form with <c>target="_blank"</c> and
+            <c>method="post"</c>, <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> will be <c>true</c>. In this scenario, <b>you should always wrap</b>
+            the created child view instance (<see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.NewViewInstance"/>), to allow <c>POST</c> data be properly passed.
+            </description>
+            </item>
+            <item>
+            <description>
+            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> or <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> are <c>false</c>, it most possibly indicates that the event is the result of
             a user clicking on a link with <c>target="_blank"</c>. Since maintaining a parent-child relationship is not important
             in this scenario, <b>you should cancel the event</b> by setting <see cref="P:System.ComponentModel.CancelEventArgs.Cancel"/> to <c>true</c> (this tells the core 
             to destroy the unused web-view instance), then create a new <see cref="T:Awesomium.Core.WebView"/> (using <see cref="M:Awesomium.Core.WebCore.CreateWebView(System.Int32,System.Int32,Awesomium.Core.WebSession,Awesomium.Core.WebViewType)"/>)
@@ -8071,10 +8281,11 @@
             </item>
             <item>
             <description>
-            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>true</c>, navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, is already queued on 
-            the created child view. Therefore you should not attempt to set the <see cref="P:Awesomium.Core.IWebView.Source"/> when you are wrapping 
-            the child view, as this would again break the parent-child relationship (<c>window.opener</c> on the child page and the 
-            <c>window</c> object returned from the <c>window.open</c> call on the parent page, will be rendered invalid).
+            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> or <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> is <c>true</c>, navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, 
+            is already queued on the created child view. Therefore you should not attempt to set the <see cref="P:Awesomium.Core.IWebView.Source"/> when you 
+            are wrapping the child view, as this would again break the parent-child relationship (<c>window.opener</c> on the child page and the 
+            <c>window</c> object returned from the <c>window.open</c> call on the parent page, will be rendered invalid) or prevent passing
+            <c>POST</c> data to the server respectively.
             <note>
             Also note that since navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, has already started by the moment the child
             view is wrapped, <see cref="E:Awesomium.Core.IWebView.LoadingFrame"/> will not be fired for the main frame of the new <see cref="T:Awesomium.Core.IWebView"/>
@@ -8084,17 +8295,21 @@
             </item>
             <item>
             <description>
-            Navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, is blocked on the created child view, when <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>false</c>.
-            As applications will generally choose to cancel the event and create a new <see cref="T:Awesomium.Core.IWebView"/> instance to navigate to
-            the target URL (or even choose to navigate to the target URL on the same <see cref="T:Awesomium.Core.IWebView"/> instance that fired the event),
-            Awesomium.NET does this to prevent <i>false hits</i> to the target URL, that would have occurred by the time the event handler
-            returns and the unused child view instance, is destroyed. Therefore, if your application chooses to wrap the created 
-            child view even though it is most possibly the result of a user clicking on a link with <c>target="_blank"</c> and maintaining 
-            the parent-child relationship is not important, you should in this scenario only, after wrapping the child view, set the 
-            <see cref="P:Awesomium.Core.IWebView.Source"/> property to <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/> to resume navigation to the target URL.
+            Navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, is blocked on the created child view, when <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> and 
+            <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> are <c>false</c>. As applications will generally choose to cancel the event and create a new <see cref="T:Awesomium.Core.IWebView"/> 
+            instance to navigate to the target URL (or even choose to navigate to the target URL on the same <see cref="T:Awesomium.Core.IWebView"/> instance that 
+            fired the event), Awesomium.NET does this to prevent <i>false hits</i> to the target URL, that would have occurred by the time the 
+            event handler returns and the unused child view instance, is destroyed. What's more, users may also implement 
+            <see cref="T:Awesomium.Core.IResourceInterceptor"/> and cancel requests to new views that are the result of JavaScript <c>window.open</c>
+            (see <see cref="P:Awesomium.Core.ResourceRequest.IsWindowOpen"/>). Therefore, if your application chooses to wrap the created 
+            child view even though it is most possibly the result of a user clicking on a link with <c>target="_blank"</c> or navigation
+            to the target URL has already been canceled by an <see cref="T:Awesomium.Core.IResourceInterceptor"/> (see <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsNavigationCanceled"/>), 
+            you should in this scenario only, after wrapping the child view, set the <see cref="P:Awesomium.Core.IWebView.Source"/> property to 
+            <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/> to resume navigation to the target URL.
             <note>
-            Applications can occasionally choose to wrap a child view even when <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>false</c>, if they want
-            to apply a <i>single process</i> architecture where all new views created will be rendered by the same <c>awesomium_process</c>.
+            Applications can occasionally choose to wrap a child view even when <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>false</c> or 
+            <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsNavigationCanceled"/> is <c>true</c>, if they want to apply a <i>single process</i> architecture where all new 
+            views created will be rendered by the same <c>awesomium_process</c>.
             </note>
             </description>
             </item>
@@ -8132,9 +8347,15 @@
             </item>
             <item>
             <description>
+            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> is <c>true</c>, <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.PostData"/> returns an array of <see cref="T:Awesomium.Core.UploadElement"/>,
+            representing the <i>upload</i> data passed to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/> using <c>POST</c>.
+            </description>
+            </item>
+            <item>
+            <description>
             Finally note that only an empty <i>name</i> parameter or a <c>_blank</c> target attribute specified as the <i>name</i> parameter 
-            in a <c>window.open</c> call or on a link, will fire a <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/> event. Other target attributes 
-            (such as <c>_top</c>), passed to either a <c>window.open</c> call or specified on a link, are handled by Awesomium internally.
+            in a <c>window.open</c> call or in a link or <c>form</c>, will fire a <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/> event. Other target 
+            attributes (such as <c>_top</c>), passed to either a <c>window.open</c> call, a link or a <c>form</c>, are handled by Awesomium internally.
             </description>
             </item>
             </list>
@@ -8500,21 +8721,23 @@
                                 newWindow.Left = screenRect.X;
                             }
                         }
-                        else if ( e.IsWindowOpen )
+                        else if ( e.IsWindowOpen || e.IsPost )
                         {
                             // No specs or only non-standard specs were specified, but the event is still 
-                            // the result of 'window.open'. We will open a normal window but we will still wrap 
-                            // the new native child view, maintaining its relationship with the parent window.
+                            // the result of 'window.open', or of an HTML form with tagret="_blank" and method="post". 
+                            // We will open a normal window but we will still wrap the new native child view, 
+                            // maintaining its relationship with the parent window.
                             newWindow.NativeView = e.NewViewInstance;
                             // Show the window.
                             newWindow.Show();
                         }
                         else
                         {
-                            // The event is not the result of 'window.open', therefore it's most probably
-                            // the result of a link with target='_blank'. We will not be wrapping the created view; 
-                            // we let the WebControl hosted in ChildWindow create its own underlying view. 
-                            // Setting Cancel to true tells the core to destroy the created child view.
+                            // The event is not the result of 'window.open' or of an HTML form with tagret="_blank" 
+                            // and method="post"., therefore it's most probably the result of a link with target='_blank'.
+                            // We will not be wrapping the created view; we let the WebControl hosted in ChildWindow 
+                            // create its own underlying view. Setting Cancel to true tells the core to destroy the 
+                            // created child view.
                             //
                             // Why don't we always wrap the native view passed to ShowCreatedWebView?
                             //
@@ -8616,18 +8839,20 @@
             					newWindow.Top = screenRect.Y
             					newWindow.Left = screenRect.X
             				End If
-            			ElseIf e.IsWindowOpen Then
+            			ElseIf (e.IsWindowOpen OrElse e.IsPost) Then
             				' No specs or only non-standard specs were specified, but the event is still 
-            				' the result of 'window.open'. We will open a normal window but we will still wrap 
-            				' the new native child view, maintaining its relationship with the parent window.
+            				' the result of 'window.open' or of an HTML form with tagret="_blank" and method="post".
+            				' We will open a normal window but we will still wrap the new native child view, 
+            				' maintaining its relationship with the parent window.
             				newWindow.NativeView = e.NewViewInstance
             				' Show the window.
             				newWindow.Show()
             			Else
-            				' The event is not the result of 'window.open', therefore it's most probably
-            				' the result of a link with target='_blank'. We will not be wrapping the created view; 
-            				' we let the WebControl hosted in ChildWindow create its own underlying view. 
-            				' Setting Cancel to true tells the core to destroy the created child view.
+            				' The event is not the result of 'window.open' or of an HTML form with tagret="_blank" 
+            				' and method="post"., therefore it's most probably the result of a link with target='_blank'.
+            				' We will not be wrapping the created view; we let the WebControl hosted in ChildWindow 
+            				' create its own underlying view. Setting Cancel to true tells the core to destroy the 
+            				' created child view.
             				'
             				' Why don't we always wrap the native view passed to ShowCreatedWebView?
             				'
@@ -9436,7 +9661,7 @@
             </item>
             <item>
             <description>
-            <see cref="P:Awesomium.Core.IWebView.SynchronousMessageTimout"/> is ignored.
+            <see cref="P:Awesomium.Core.IWebView.SynchronousMessageTimeout"/> is ignored.
             </description>
             </item>
             <item>
@@ -9483,6 +9708,68 @@
             </summary>
             <seealso cref="P:Awesomium.Core.IWebView.CurrentCertificateError"/>
             <seealso cref="E:Awesomium.Core.IWebView.CertificateError"/>
+        </member>
+        <member name="P:Awesomium.Core.IWebView.IsSourceView">
+            <summary>
+            Gets if this is a source view that displays the source of
+            loaded pages.
+            </summary>
+            <remarks>
+            The following table presents how to create managed web-view components
+            that display the source code of loaded pages:
+            <list type="table">
+            <listheader>
+            <term>
+            Component
+            </term>
+            <description>
+            Method
+            </description>
+            </listheader>
+            <item>
+            <term>
+            <see cref="T:Awesomium.Core.WebView"/>
+            </term>
+            <description>
+            Use <see cref="M:Awesomium.Core.WebCore.CreateSourceWebView(System.Int32,System.Int32)"/>.
+            </description>
+            </item>
+            <item>
+            <term>
+            <see cref="T:Awesomium.Windows.Controls.WebControl"/> (WPF)<br/>
+            <see cref="T:Awesomium.Windows.Forms.WebControl"/> (Windows Forms)<br/>
+            <see cref="T:Awesomium.Windows.Unity.WebUIComponent"/> (Unity)
+            </term>
+            <description>
+            The <see cref="P:Awesomium.Core.IWebView.IsSourceView"/> property is implemented as read-write
+            property on these controls. You have to set the property before
+            the control goes <i>live</i> (see <see cref="P:Awesomium.Core.IWebView.IsLive"/>).
+            <p/>
+            Either:
+            <list type="bullet">
+            <item>
+            <description>
+            Set the property at design-time.
+            </description>
+            </item>
+            </list>
+            - OR -
+            <list type="bullet">
+            <item>
+            <description>
+            Handle the <see cref="E:Awesomium.Core.IWebView.InitializeView"/> event, the last fired
+            before the control goes <i>live</i>, to set the property.
+            </description>
+            </item>
+            </list>
+            </description>
+            </item>
+            </list>
+            <note>
+            You cannot change this property on technology specific web-view controls,
+            once they go <i>live</i> (see <see cref="P:Awesomium.Core.IWebView.IsLive"/>).
+            </note>
+            </remarks>
         </member>
         <member name="P:Awesomium.Core.IWebView.FocusedElementType">
             <summary>
@@ -9670,7 +9957,7 @@
             </note>
             </remarks>
         </member>
-        <member name="P:Awesomium.Core.IWebView.SynchronousMessageTimout">
+        <member name="P:Awesomium.Core.IWebView.SynchronousMessageTimeout">
             <summary>
             Gets or sets the maximum amount of time (in milliseconds) to wait for a response
             from a synchronous IPC message dispatched to the view's renderer process.
@@ -11282,21 +11569,23 @@
                                 newWindow.Left = screenRect.X;
                             }
                         }
-                        else if ( e.IsWindowOpen )
+                        else if ( e.IsWindowOpen || e.IsPost )
                         {
                             // No specs or only non-standard specs were specified, but the event is still 
-                            // the result of 'window.open'. We will open a normal window but we will still wrap 
-                            // the new native child view, maintaining its relationship with the parent window.
+                            // the result of 'window.open', or of an HTML form with tagret="_blank" and method="post". 
+                            // We will open a normal window but we will still wrap the new native child view, 
+                            // maintaining its relationship with the parent window.
                             newWindow.NativeView = e.NewViewInstance;
                             // Show the window.
                             newWindow.Show();
                         }
                         else
                         {
-                            // The event is not the result of 'window.open', therefore it's most probably
-                            // the result of a link with target='_blank'. We will not be wrapping the created view; 
-                            // we let the WebControl hosted in ChildWindow create its own underlying view. 
-                            // Setting Cancel to true tells the core to destroy the created child view.
+                            // The event is not the result of 'window.open' or of an HTML form with tagret="_blank" 
+                            // and method="post"., therefore it's most probably the result of a link with target='_blank'.
+                            // We will not be wrapping the created view; we let the WebControl hosted in ChildWindow 
+                            // create its own underlying view. Setting Cancel to true tells the core to destroy the 
+                            // created child view.
                             //
                             // Why don't we always wrap the native view passed to ShowCreatedWebView?
                             //
@@ -11398,18 +11687,20 @@
             					newWindow.Top = screenRect.Y
             					newWindow.Left = screenRect.X
             				End If
-            			ElseIf e.IsWindowOpen Then
+            			ElseIf (e.IsWindowOpen OrElse e.IsPost) Then
             				' No specs or only non-standard specs were specified, but the event is still 
-            				' the result of 'window.open'. We will open a normal window but we will still wrap 
-            				' the new native child view, maintaining its relationship with the parent window.
+            				' the result of 'window.open' or of an HTML form with tagret="_blank" and method="post".
+            				' We will open a normal window but we will still wrap the new native child view, 
+            				' maintaining its relationship with the parent window.
             				newWindow.NativeView = e.NewViewInstance
             				' Show the window.
             				newWindow.Show()
             			Else
-            				' The event is not the result of 'window.open', therefore it's most probably
-            				' the result of a link with target='_blank'. We will not be wrapping the created view; 
-            				' we let the WebControl hosted in ChildWindow create its own underlying view. 
-            				' Setting Cancel to true tells the core to destroy the created child view.
+            				' The event is not the result of 'window.open' or of an HTML form with tagret="_blank" 
+            				' and method="post"., therefore it's most probably the result of a link with target='_blank'.
+            				' We will not be wrapping the created view; we let the WebControl hosted in ChildWindow 
+            				' create its own underlying view. Setting Cancel to true tells the core to destroy the 
+            				' created child view.
             				'
             				' Why don't we always wrap the native view passed to ShowCreatedWebView?
             				'
@@ -12276,6 +12567,36 @@
             <param name="index">The index of the upload element to seek.</param>
             <returns>An <see cref="T:Awesomium.Core.UploadElement"/> instance.</returns>
         </member>
+        <member name="P:Awesomium.Core.ResourceRequest.IsWindowOpen">
+            <summary>
+            Gets if this is the first request sent by a new view that is the
+            result of JavaScript <c>window.open</c>.
+            </summary>
+            <remarks>
+            The initial request (<see cref="M:Awesomium.Core.IResourceInterceptor.OnRequest(Awesomium.Core.ResourceRequest)"/>) of new views that are the result 
+            of JavaScript <c>window.open</c>, is always issued before the <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/>
+            event is fired. 
+            <p/>
+            By default, Requests that are the result of JavaScript <c>window.open</c> or are <c>POST</c> requests 
+            (such as the submission of HTML forms with method <c>POST</c> and target <c>_blank</c>), are not canceled. The user is 
+            expected to wrap the new view (see: <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.NewViewInstance"/>) when 
+            <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/> occurs, without reloading the target URL since navigation to the target URL 
+            is already queued on the new view.
+            <p/>
+            In order to avoid double requests issued to a target URL, any other requests (most possibly links with target 
+            <c>_blank</c> or the submission of HTML forms with target <c>_blank</c> and method <c>GET</c> where data is passed through 
+            the URL therefore there's no danger of loosing data), <b>are canceled by default</b>, before <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/>,
+            and the user must then load the target URL manually.
+            <p/>
+            <c>POST</c> or <c>window.open</c> requests cannot be canceled in advance, as we do not know if the user chooses to wrap 
+            the new view (which is the expected behavior). This however can cause implications in certain scenarios (such as in a 
+            <i>popup blocker</i> scenario), where users may want to cancel such requests too.
+            <p/>
+            <see cref="P:Awesomium.Core.ResourceRequest.IsWindowOpen"/> allows you to implement an <see cref="T:Awesomium.Core.IResourceInterceptor"/> and cancel such requests yourself
+            prior to <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/>, if you do not intend to wrap the new view at <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/>.
+            </remarks>
+            <seealso cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsNavigationCanceled"/>
+        </member>
         <member name="T:Awesomium.Core.ResourceResponse">
             <summary>
             Represents a wrapper around a raw block of data and a specified mime-type. It can be used with
@@ -12316,6 +12637,40 @@
             An empty <see cref="T:Awesomium.Core.UploadElement"/>.
             </summary>
         </member>
+        <member name="M:Awesomium.Core.UploadElement.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="M:Awesomium.Core.UploadElement.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:Awesomium.Core.UploadElement.op_Equality(Awesomium.Core.UploadElement,Awesomium.Core.UploadElement)">
+            <summary>
+            Tests whether two specified <see cref="T:Awesomium.Core.UploadElement"/> instances are equivalent.
+            </summary>
+            <param name="ue1">
+            The <see cref="T:Awesomium.Core.UploadElement"/> instance that is to the left of the equality operator.
+            </param>
+            <param name="ue2">
+            The <see cref="T:Awesomium.Core.UploadElement"/> instance that is to the right of the equality operator.
+            </param>
+            <returns>
+            <c>true</c> if <paramref name="ue1"/> and <paramref name="ue2"/> are equal; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:Awesomium.Core.UploadElement.op_Inequality(Awesomium.Core.UploadElement,Awesomium.Core.UploadElement)">
+            <summary>
+            Tests whether two specified <see cref="T:Awesomium.Core.UploadElement"/> instances are not equal.
+            </summary>
+            <param name="ue1">
+            The <see cref="T:Awesomium.Core.UploadElement"/> instance that is to the left of the inequality operator.
+            </param>
+            <param name="ue2">
+            The <see cref="T:Awesomium.Core.UploadElement"/> instance that is to the right of the inequality operator.
+            </param>
+            <returns>
+            <c>true</c> if <paramref name="ue1"/> and <paramref name="ue2"/> are unequal; otherwise, <c>false</c>.
+            </returns>
+        </member>
         <member name="P:Awesomium.Core.UploadElement.IsFilePath">
             <summary>
             Gets is this <see cref="T:Awesomium.Core.UploadElement"/> is a file.
@@ -12334,6 +12689,12 @@
         <member name="P:Awesomium.Core.UploadElement.FilePath">
             <summary>
             Gets the file path associated with this <see cref="T:Awesomium.Core.UploadElement"/>.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Core.UploadElement.IsEmpty">
+            <summary>
+            Gets if this is an empty <see cref="T:Awesomium.Core.UploadElement"/>
+            instance.
             </summary>
         </member>
         <member name="T:Awesomium.Core.Wildcard">
@@ -12403,7 +12764,7 @@
         </member>
         <member name="P:Awesomium.Core.CoreResources.ERR_CannotDisposeWebSession">
             <summary>
-              Looks up a localized string similar to Cannot dispose a WebSession that is assigned to active views. Make sure that no view is using this session before disposing it..
+              Looks up a localized string similar to Cannot dispose a WebSession that is assigned to active views or controls active download operations. Make sure that no view and no download operation is using this session before disposing it..
             </summary>
         </member>
         <member name="P:Awesomium.Core.CoreResources.ERR_CoreAlreadyInitialized">
@@ -12419,6 +12780,11 @@
         <member name="P:Awesomium.Core.CoreResources.ERR_CoreReInitialize">
             <summary>
               Looks up a localized string similar to You are attempting to re-initialize the WebCore. The WebCore must only be initialized once per process and must be shut down only when the process exits..
+            </summary>
+        </member>
+        <member name="P:Awesomium.Core.CoreResources.ERR_DataPathUsed">
+            <summary>
+              Looks up a localized string similar to A WebSession using the same cache, has already been initialized on this system..
             </summary>
         </member>
         <member name="P:Awesomium.Core.CoreResources.ERR_DataSourceIsAssigned">
@@ -12471,6 +12837,11 @@
               Looks up a localized string similar to Javascript is disabled on the WebSession of this IWebView instance..
             </summary>
         </member>
+        <member name="P:Awesomium.Core.CoreResources.ERR_OutputDirectoryDoesNotExist">
+            <summary>
+              Looks up a localized string similar to The specified output directory ({0}), does not exist..
+            </summary>
+        </member>
         <member name="P:Awesomium.Core.CoreResources.ERR_SurfaceDisposed">
             <summary>
               Looks up a localized string similar to The specified ISurface instance, has been disposed..
@@ -12493,25 +12864,30 @@
         </member>
         <member name="P:Awesomium.Core.CoreResources.JS_WindowFrames">
             <summary>
-              Looks up a localized string similar to awesomium.getAllFrames(window);.
+              Looks up a localized string similar to awejif.getAllFrames(window);.
             </summary>
         </member>
         <member name="P:Awesomium.Core.CoreResources.JS_WindowHandlers">
-            <summary>
-              Looks up a localized string similar to var awesomium = new function() {{
-               var windowOpen = window.open;
-               var windowClose = window.close;
-               var windowAlert = window.alert;
-               var windowConfirm = window.confirm;
-               var windowPrompt = window.prompt;
-               
-               this.init = function() {{
-                   document.addEventListener(&apos;selectionchange&apos;, selectionChange, true);
-                   window.addEventListener(&apos;unload&apos;, onUnload, true);
-                   window.open = awesomium.open;
-                   window.close = awesomium.close;
-                   window.alert = awesomium. [rest of string was truncated]&quot;;.
-            </summary>
+             <summary>
+               Looks up a localized string similar to function AweJIF(frame, isMainFrame) {{
+                var windowOpen;
+                var windowClose;
+                var windowAlert;
+                var windowConfirm;
+                var windowPrompt;
+                
+                this.init = function() {{
+                    if (frame.assignedAwesomiumHandlers) {{
+                        this.log(&apos;Handlers already assigned: &apos; + document.URL || &apos;No Source&apos;);
+                        return;
+                    }}
+            
+                    // Prevent re-entrancy.
+                    frame.assignedAwesomiumHandlers = true;
+                    
+                    if (windowOpen !== frame.open)
+                        windowOpen  [rest of string was truncated]&quot;;.
+             </summary>
         </member>
         <member name="P:Awesomium.Core.CoreResources.TempCache">
             <summary>
@@ -12609,24 +12985,19 @@
             Must be called once when the view is created.
             </summary>
         </member>
-        <member name="M:Awesomium.Core.JavascriptHelper.InjectHandlers">
-            <summary>
-            Must be called every time a new page is being loaded, at <b>DOM ready</b>.
-            </summary>
-        </member>
         <member name="M:Awesomium.Core.JavascriptHelper.InjectHandlers(System.Boolean)">
             <summary>
             Must be called every time a new frame is being loaded, <b>after DOM ready</b>,
             specifying <c>true</c> for <paramref name="frames"/>.
             </summary>
         </member>
-        <member name="M:Awesomium.Core.JavascriptHelper.IsInternalObject(Awesomium.Core.JSObject)">
+        <member name="M:Awesomium.Core.JavascriptHelper.IsJIFObject(Awesomium.Core.JSObject)">
             <summary>
             Gets if the specified <see cref="T:Awesomium.Core.JSObject"/> is the
             global interoperation object.
             </summary>
         </member>
-        <member name="M:Awesomium.Core.JavascriptHelper.IsInternalObject(System.UInt32)">
+        <member name="M:Awesomium.Core.JavascriptHelper.IsJIFObject(System.UInt32)">
             <summary>
             Gets if the specified remote object identifier is the
             one of the global interoperation object.
@@ -12663,6 +13034,11 @@
             <summary>
             Gets the current selection in the page loaded to the <see cref="P:Awesomium.Core.JavascriptHelper.View"/>
             this <see cref="T:Awesomium.Core.JavascriptHelper"/> is assigned to.
+            </summary>
+        </member>
+        <member name="P:Awesomium.Core.JavascriptHelper.IsMainFrameworkInjected">
+            <summary>
+            Gets or sets if the framework has been injected to the main frame.
             </summary>
         </member>
         <member name="P:Awesomium.Core.JavascriptHelper.IsDisposed">
@@ -12796,6 +13172,33 @@
             A <see cref="T:System.Uri"/> instance for the string provided,
             or a <see cref="T:System.Uri"/> representing <c>about:blank</c>,
             if the string provided was not a well formatted URI.
+            </returns>
+        </member>
+        <member name="M:Awesomium.Core.Utilities.ParseQueryString(System.Uri)">
+            <summary>
+            Parses a given URI's query string into a <see cref="T:System.Collections.Specialized.NameValueCollection"/> 
+            using <see cref="P:System.Text.Encoding.UTF8"/> encoding.
+            </summary>
+            <param name="url">
+            The <see cref="T:System.Uri"/> whose <see cref="P:System.Uri.Query"/> will be parsed.
+            </param>
+            <returns>
+            A <see cref="T:System.Collections.Specialized.NameValueCollection"/> of query parameters and values.
+            </returns>
+        </member>
+        <member name="M:Awesomium.Core.Utilities.ParseQueryString(System.Uri,System.Text.Encoding)">
+            <summary>
+            Parses a given URI's query string into a <see cref="T:System.Collections.Specialized.NameValueCollection"/> 
+            using the specified <see cref="T:System.Text.Encoding"/>.
+            </summary>
+            <param name="url">
+            The <see cref="T:System.Uri"/> whose <see cref="P:System.Uri.Query"/> will be parsed.
+            </param>
+            <param name="encoding">
+            The <see cref="T:System.Text.Encoding"/> to use.
+            </param>
+            <returns>
+            A <see cref="T:System.Collections.Specialized.NameValueCollection"/> of query parameters and values.
             </returns>
         </member>
         <member name="P:Awesomium.Core.Utilities.BlankUri">
@@ -13020,6 +13423,17 @@
             <summary>
             Triggers the <see cref="E:Awesomium.Core.Surface.Resized"/> event.
             </summary>
+        </member>
+        <member name="M:Awesomium.Core.Surface.Dispose">
+            <summary>
+            Perform cleanup of managed resources.
+            </summary>
+            <remarks>
+            <note>
+            Surfaces are destroyed either manually when they are not needed or internally, when assigned to a view, 
+            when the view they are assigned to, is destroyed.
+            </note> 
+            </remarks>
         </member>
         <member name="M:Awesomium.Core.Surface.OnDispose">
             <inheritdoc/>
@@ -13478,6 +13892,8 @@
             to a <see cref="T:Awesomium.Core.JavascriptMethodEventHandler"/> that is called synchronously. Any such objects passed from JavaScript, 
             will be replaced with <c>undefined</c> in the <see cref="P:Awesomium.Core.JavascriptMethodEventArgs.Arguments"/> array.
             </note>
+            <b>For details about how to create an <i>asynchronous</i> custom method using <c>dynamic</c>, read the documentation of:
+            <see cref="T:Awesomium.Core.JavascriptAsynchMethodEventHandler"/></b>
             </remarks>
             <example>
             You can create and bind custom methods, using both the regular and the dynamic
@@ -13573,6 +13989,10 @@
             End Using
             </code>
             </example>
+            <exception cref="T:System.InvalidOperationException">
+            This operation is only supported on valid <see cref="F:Awesomium.Core.JSObjectType.Remote"/> and 
+            <see cref="F:Awesomium.Core.JSObjectType.RemoteGlobal"/> objects."
+            </exception>
         </member>
         <member name="M:Awesomium.Core.JSObject.Invoke(System.String,Awesomium.Core.JSValue[])">
             <summary>
@@ -13583,8 +14003,11 @@
             <returns>Returns the result of the method call.</returns>
             <remarks>
             <note>
-            Only valid for <c>Remote</c> objects.
+            This is only valid for <c>Remote</c> objects.
             </note>
+            To invoke a JavaScript method synchronously when using <c>dynamic</c>, all you
+            need to do is make sure you use/cache the returned value, even if the JavaScript
+            method is not expected to return a useful one.
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             This operation is only supported on valid <see cref="F:Awesomium.Core.JSObjectType.Remote"/> and 
@@ -13602,8 +14025,10 @@
             <param name="args">The arguments to pass.</param>
             <remarks>
             <note>
-            Only valid for <c>Remote</c> objects.
+            This is only valid for <c>Remote</c> objects.
             </note>
+            To invoke a JavaScript method asynchronously when using <c>dynamic</c>, all you
+            need to do is make sure you discard any returned value.
             </remarks>
             <exception cref="T:System.InvalidOperationException">
             This operation is only supported on valid <see cref="F:Awesomium.Core.JSObjectType.Remote"/> and 
@@ -13614,6 +14039,15 @@
             <summary>
             Creates a copy of this <see cref="T:Awesomium.Core.JSObject"/> instance.
             </summary>
+            <remarks>
+            This is useful if you intend to cache a <see cref="T:Awesomium.Core.JSObject"/> instance
+            passed as argument to a JavaScript method handler (see <see cref="M:Awesomium.Core.JSObject.Bind(System.String,System.Boolean,Awesomium.Core.JavascriptMethodEventHandler)"/>).
+            <p/>
+            <see cref="T:Awesomium.Core.JSObject"/> instances passed as arguments to a <see cref="T:Awesomium.Core.JavascriptMethodEventHandler"/>,
+            are destroyed by default when the <see cref="T:Awesomium.Core.JavascriptMethodEventHandler"/> exits. To cache
+            a <see cref="T:Awesomium.Core.JSObject"/> instance passed as argument to a <see cref="T:Awesomium.Core.JavascriptMethodEventHandler"/>
+            and keep it alive, create a copy of it using <see cref="M:Awesomium.Core.JSObject.Clone"/>.
+            </remarks>
         </member>
         <member name="M:Awesomium.Core.JSObject.ToString">
             <summary>
@@ -13825,6 +14259,18 @@
             You cannot set a property synchronously from inside a synchronous JS method handler. (See: <see cref="M:Awesomium.Core.JSObject.Bind(System.String,System.Boolean,Awesomium.Core.JavascriptMethodEventHandler)"/>)
             </exception>
         </member>
+        <member name="P:Awesomium.Core.JSObject.GlobalObjectName">
+            <summary>
+            Gets the name of the remote global object.
+            <p/>
+            Only valid if this is a global JavaScript object created with
+            <see cref="M:Awesomium.Core.IWebView.CreateGlobalJavascriptObject(System.String)"/> (see <see cref="P:Awesomium.Core.JSObject.Type"/>).
+            </summary>
+            <returns>
+            The name of the global JavaScript object, or an empty string if this is
+            not an object of type <see cref="F:Awesomium.Core.JSObjectType.RemoteGlobal"/>.
+            </returns>
+        </member>
         <member name="T:Awesomium.Core.JSValue">
             <summary>
             Represents a value in Javascript.
@@ -13884,7 +14330,7 @@
             <description>
             <see cref="T:Awesomium.Core.JSValue"/><c>[]</c>
             <p/>
-            You can explicitly or implicitly cast from and to a <see cref="T:Awesomium.Core.JSValue"/>.
+            You can explicitly cast from and explicitly or implicitly cast to, a <see cref="T:Awesomium.Core.JSValue"/>.
             </description>
             </item>
             <item>
@@ -14026,19 +14472,87 @@
         <member name="M:Awesomium.Core.JSValue.ToString">
             <inheritdoc />
         </member>
-        <member name="M:Awesomium.Core.JSValue.op_Explicit(Awesomium.Core.JSValue)~System.Boolean">
+        <member name="M:Awesomium.Core.JSValue.op_Implicit(Awesomium.Core.JSValue)~System.Boolean">
             <summary>
-            Converts a <see cref="T:Awesomium.Core.JSValue"/> to a <see cref="T:System.Boolean"/> value.
+            Implicitly converts a <see cref="T:Awesomium.Core.JSValue"/> to a <see cref="T:System.Boolean"/> value.
             </summary>
             <param name="value">
             The value to convert.
             </param>
             <returns>
-            The boolean value represented by this <see cref="T:Awesomium.Core.JSValue"/>.
+            The following table presents the boolean value returned by this operator,
+            depending on the JavaScript value this <see cref="T:Awesomium.Core.JSValue"/> instance wraps:
+            <list type="table">
+            <listheader>
+            <term>
+            JavaScript value
+            </term>
+            <description>
+            Returns
+            </description>
+            </listheader>
+            <item>
+            <term>
+            JavaScript <c>Boolean</c>.
+            </term>
+            <description>
+            The managed equivalent <see cref="T:System.Boolean"/> value.
+            </description>
+            </item>
+            <item>
+            <term>
+            JavaScript <c>undefined</c> or <c>null</c>.
+            </term>
+            <description>
+            <c>False</c>
+            </description>
+            </item>
+            <item>
+            <term>
+            Any other valid JavaScript value or <c>Object</c> (see <see cref="T:Awesomium.Core.JSObject"/>).
+            </term>
+            <description>
+            <c>True</c>
+            </description>
+            </item>
+            <item>
+            <term>
+            An uninitialized instance of <see cref="T:Awesomium.Core.JSValue"/>.
+            </term>
+            <description>
+            <c>False</c>
+            </description>
+            </item>
+            </list>
             </returns>
-            <exception cref="T:System.InvalidCastException">
-            The <see cref="T:Awesomium.Core.JSValue"/> does not represent a boolean value. (See <see cref="P:Awesomium.Core.JSValue.IsBoolean"/>)
-            </exception>
+            <remarks>
+            In addition to getting JavaScript <c>Boolean</c> values, this operator is very
+            useful if you want to check the validity of the JavaScript value or <c>Object</c> 
+            a JavaScript Interoperation API call returns.
+            <p/>
+            For an example, see the <b>Examples</b> section below.
+            </remarks>
+            <example>
+            <code>
+            JSValue windowVal = webView.ExecuteJavascriptWithResult( "window" );
+            
+            if ( !windowVal )
+                return;
+                
+            using ( dynamic window = (JSObject)windowVal )
+            {
+                JSValue childVal = window.open( "", "", "width=300, height=200, top=50, left=50" );
+                
+                if ( !childVal )
+                    return;
+                    
+                using ( dynamic childWindow = (JSObject)childVal )
+                {
+                    //
+                }
+            }
+            </code>
+            </example>
         </member>
         <member name="M:Awesomium.Core.JSValue.op_Implicit(System.Boolean)~Awesomium.Core.JSValue">
             <summary>
@@ -14152,9 +14666,9 @@
             The <see cref="T:Awesomium.Core.JSObject"/> instance is disposed.
             </exception>
         </member>
-        <member name="M:Awesomium.Core.JSValue.op_Implicit(Awesomium.Core.JSValue)~Awesomium.Core.JSValue[]">
+        <member name="M:Awesomium.Core.JSValue.op_Explicit(Awesomium.Core.JSValue)~Awesomium.Core.JSValue[]">
             <summary>
-            Implicitly converts a <see cref="T:Awesomium.Core.JSValue"/> to an array of <see cref="T:Awesomium.Core.JSValue"/>.
+            Converts a <see cref="T:Awesomium.Core.JSValue"/> to an array of <see cref="T:Awesomium.Core.JSValue"/>.
             </summary>
             <param name="value">
             The value to convert.
@@ -14162,6 +14676,9 @@
             <returns>
             The array of <see cref="T:Awesomium.Core.JSValue"/> represented by this <see cref="T:Awesomium.Core.JSValue"/>.
             </returns>
+            <exception cref="T:System.InvalidCastException">
+            The <see cref="T:Awesomium.Core.JSValue"/> does not represent a JavaScript <c>Array</c>. (See <see cref="P:Awesomium.Core.JSValue.IsArray"/>)
+            </exception>
         </member>
         <member name="M:Awesomium.Core.JSValue.op_Implicit(Awesomium.Core.JSValue[])~Awesomium.Core.JSValue">
             <summary>
@@ -14392,8 +14909,12 @@
             specifying <c>true</c> for the <c>start</c> parameter. In several scenarios, 
             this may seriously affect the auto-update feature's availability. For more
             information see <see cref="M:Awesomium.Core.WebCore.Initialize(Awesomium.Core.WebConfig,System.Boolean)"/>.
-            <note>
+            <note type="caution">
             These setting cannot be changed after the <see cref="T:Awesomium.Core.WebCore"/> has started.
+            </note>
+            <note>
+            You can access (but not change) the configuration settings used to initialize the core,
+            after the core has started, through <see cref="P:Awesomium.Core.WebCore.Configuration"/>.
             </note>
             </remarks>
             <example>
@@ -14459,7 +14980,7 @@
         <member name="P:Awesomium.Core.WebConfig.LogPath">
             <summary>
             Gets or sets the file path to the log file (should include filename, for example:
-            <c>C:\\my_path\\out.log</c>). This is <c>.\\debug.log</c> by default.
+            <c>C:\\my_path\\out.log</c>). This is <c>.\\awesomium.log</c> by default.
             </summary>
         </member>
         <member name="P:Awesomium.Core.WebConfig.PluginsPath">
@@ -14486,8 +15007,8 @@
             Gets or sets the port that the Awesomium Inspector's HTTP server should listen on.
             </summary>
             <remarks>
-            To enable the inspector, set this value to any non-zero port (ex, 1337)
-            and then go to http://127.0.0.1:1337 (or whatever port you specified)
+            To enable the inspector, set this value to any non-zero port (ex, <c>1337</c>)
+            and then go to <c>http://127.0.0.1:1337</c> (or whatever port you specified)
             in some other browser.
             <note>
             Please note you must have <b>inspector.pak</b> in your working directory
@@ -14516,9 +15037,9 @@
         </member>
         <member name="P:Awesomium.Core.WebConfig.AutoUpdatePeriod">
             <summary>
-            Gets or sets the default <see cref="M:Awesomium.Core.WebCore.Update"/>
+            Gets or sets the <see cref="M:Awesomium.Core.WebCore.Update"/>
             frequency, when <see cref="P:Awesomium.Core.WebCore.IsAutoUpdateEnabled"/>
-            is <c>true</c>.
+            is <c>true</c>. The default is 20ms.
             </summary>
             <seealso cref="M:Awesomium.Core.WebCore.Update"/>
             <seealso cref="P:Awesomium.Core.WebCore.IsAutoUpdateEnabled"/>
@@ -14793,10 +15314,16 @@
             <p/>
             <see cref="T:Awesomium.Core.IWebView"/> instances that share the same <see cref="T:Awesomium.Core.WebSession"/>, share the same cookies, cache, 
             certificates, local databases as well as the same preferences (see <see cref="T:Awesomium.Core.WebPreferences"/>).
+            <p/>
+            <see cref="T:Awesomium.Core.WebSession"/> is a disposable object. You can dispose <see cref="T:Awesomium.Core.WebSession"/> instances that are no longer associated with a view. 
+            If you forget to do this, all <see cref="T:Awesomium.Core.WebSession"/> instances maintained by the <see cref="T:Awesomium.Core.WebCore"/>, are disposed at <see cref="M:Awesomium.Core.WebCore.Shutdown"/>. 
             <note>
-            You are responsible for disposing this <see cref="T:Awesomium.Core.WebSession"/> when you are done using it however note
-            that you cannot dispose a <see cref="T:Awesomium.Core.WebSession"/> instance that is assigned to active views.
+            A session cannot not be destroyed until all <see cref="T:Awesomium.Core.IWebView"/> instances associated with it have been destroyed, and all download
+            operations controlled by it are either complete or canceled. Attempting to dispose a <see cref="T:Awesomium.Core.WebSession"/> instance that is still associated with views
+            or active download operations, will throw an exception in Awesomium.NET.
             </note>
+            For details on how to use a <see cref="T:Awesomium.Core.WebSession"/>, read the documentation of <see cref="T:Awesomium.Core.WebSession"/>, or the following article:
+            <b><a href="http://wiki.awesomium.net/general-use/using-web-sessions.html">Using Web-Sessions</a></b>
             </remarks>
             <returns>
             Returns a new <see cref="T:Awesomium.Core.WebSession"/> instance that you can use with
@@ -14872,16 +15399,47 @@
             <p/>
             <see cref="T:Awesomium.Core.IWebView"/> instances that share the same <see cref="T:Awesomium.Core.WebSession"/>, share the same cookies, cache, 
             certificates, local databases as well as the same preferences (see <see cref="T:Awesomium.Core.WebPreferences"/>).
-            <note>
-            You are responsible for disposing this <see cref="T:Awesomium.Core.WebSession"/> when you are done using it however note
-            that you cannot dispose a <see cref="T:Awesomium.Core.WebSession"/> instance that is assigned to active views.
+            <note type="caution">
+            Before you attempt to create an <i>on-disk</i> <see cref="T:Awesomium.Core.WebSession"/>, you should always be sure that
+            another session is not using the same <paramref name="dataPath"/>. Only a single <see cref="T:Awesomium.Core.WebSession"/>
+            can use the same <paramref name="dataPath"/> at a time. To check if another <see cref="T:Awesomium.Core.WebSession"/>
+            is currently using the specified <paramref name="dataPath"/>, use:
+            <list type="bullet">
+            <item>
+            <description>
+            <see cref="M:Awesomium.Core.WebSessionCollection.Contains(System.String)"/> (accessed through <see cref="P:Awesomium.Core.WebCore.Sessions"/>).
+            </description>
+            </item>
+            <item>
+            <description>
+            <see cref="P:Awesomium.Core.WebSessionCollection.Item(System.String)"/> (accessed through <see cref="P:Awesomium.Core.WebCore.Sessions"/>).
+            </description>
+            </item>
+            </list>
+            A fast and secure way to create a new, or acquire an existing <see cref="T:Awesomium.Core.WebSession"/>, is:
+            <code>
+            string dataPath = @"C:\SomePath";
+            WebSession session = WebCore.Sessions[ dataPath ] ?? WebCore.CreateWebSession( dataPath, WebPreferences.Default );
+            </code>
+            Technology specific <c>WebSessionProviders</c> provide existing sessions by default.
             </note>
+            <see cref="T:Awesomium.Core.WebSession"/> is a disposable object. You can dispose <see cref="T:Awesomium.Core.WebSession"/> instances that are no longer associated with a view. 
+            If you forget to do this, all <see cref="T:Awesomium.Core.WebSession"/> instances maintained by the <see cref="T:Awesomium.Core.WebCore"/>, are disposed at <see cref="M:Awesomium.Core.WebCore.Shutdown"/>. 
+            This ensures that the <see cref="T:Awesomium.Core.WebSession"/> will be saved to disk upon application exit.
+            <note>
+            A session cannot not be destroyed until all <see cref="T:Awesomium.Core.IWebView"/> instances associated with it have been destroyed, and all download
+            operations controlled by it are either complete or canceled. Attempting to dispose a <see cref="T:Awesomium.Core.WebSession"/> instance that is still associated with views
+            or active download operations, will throw an exception in Awesomium.NET.
+            </note>
+            For details on how to use a <see cref="T:Awesomium.Core.WebSession"/>, read the documentation of <see cref="T:Awesomium.Core.WebSession"/>, or the following article:
+            <b><a href="http://wiki.awesomium.net/general-use/using-web-sessions.html">Using Web-Sessions</a></b>
             </remarks>
             <returns>
             Returns a new <see cref="T:Awesomium.Core.WebSession"/> instance that you can use with
             any number of <see cref="T:Awesomium.Core.IWebView"/> instances.
             </returns>
             <example>
+            This example demonstrates creating and using a <see cref="T:Awesomium.Core.WebSession"/> with the <i>windowless</i> <see cref="T:Awesomium.Core.WebView"/>.
             <code>
             using ( WebSession session = WebCore.CreateWebSession( "C:\\MyCache", new WebPreferences() { CustomCSS = "::-webkit-scrollbar { visibility: hidden; }" } ) )
             {
@@ -14930,6 +15488,10 @@
             End Using
             </code>
             </example>
+            <exception cref="T:System.InvalidOperationException">
+            A <see cref="T:Awesomium.Core.WebSession"/> using the same cache (<paramref name="dataPath"/>), 
+            has already been initialized on this system.
+            </exception>
             <exception cref="T:System.IO.IOException">
             The directory specified by <paramref name="dataPath"/> is read-only.
             </exception>
@@ -15056,6 +15618,47 @@
             <exception cref="T:System.InvalidOperationException">
             The member is called on a <see cref="T:Awesomium.Core.WebCore"/> that has previously been shut down.
             </exception>
+            <seealso cref="M:Awesomium.Core.WebCore.Initialize(Awesomium.Core.WebConfig)"/>
+        </member>
+        <member name="M:Awesomium.Core.WebCore.CreateSourceWebView(System.Int32,System.Int32)">
+            <summary>
+            Create a <see cref="T:Awesomium.Core.WebView"/> that displays the source code of loaded pages.
+            </summary>
+            <param name="width">The initial width of the view in pixels.</param>
+            <param name="height">The initial height of the view in pixels.</param>
+            <returns>
+            A new <see cref="T:Awesomium.Core.WebView"/> instance.
+            </returns>
+            <remarks>
+            If you call this method before initializing the <see cref="T:Awesomium.Core.WebCore"/>, Awesomium
+            will automatically start with default configuration settings.
+            </remarks>
+            <exception cref="T:System.InvalidOperationException">
+            The member is called on a <see cref="T:Awesomium.Core.WebCore"/> that has previously been shut down.
+            </exception>
+            <seealso cref="P:Awesomium.Core.IWebView.IsSourceView"/>
+            <seealso cref="M:Awesomium.Core.WebCore.Initialize(Awesomium.Core.WebConfig)"/>
+        </member>
+        <member name="M:Awesomium.Core.WebCore.CreateSourceWebView(System.Int32,System.Int32,Awesomium.Core.WebViewType)">
+            <summary>
+            Create a <see cref="T:Awesomium.Core.WebView"/> that displays the source code of loaded pages.
+            </summary>
+            <param name="width">The initial width of the view in pixels.</param>
+            <param name="height">The initial height of the view in pixels.</param>
+            <param name="type">
+            The type of WebView to create. See <see cref="T:Awesomium.Core.WebViewType"/> for more information.
+            </param>
+            <returns>
+            A new <see cref="T:Awesomium.Core.WebView"/> instance.
+            </returns>
+            <remarks>
+            If you call this method before initializing the <see cref="T:Awesomium.Core.WebCore"/>, Awesomium
+            will automatically start with default configuration settings.
+            </remarks>
+            <exception cref="T:System.InvalidOperationException">
+            The member is called on a <see cref="T:Awesomium.Core.WebCore"/> that has previously been shut down.
+            </exception>
+            <seealso cref="P:Awesomium.Core.IWebView.IsSourceView"/>
             <seealso cref="M:Awesomium.Core.WebCore.Initialize(Awesomium.Core.WebConfig)"/>
         </member>
         <member name="M:Awesomium.Core.WebCore.DestroyUnwrappedViews">
@@ -15367,6 +15970,14 @@
             <summary>
             Synchronization object.
             </summary>
+        </member>
+        <member name="M:Awesomium.Core.ChildWebView.MarshalToWrapper(Awesomium.Core.IWebViewListener)">
+            <summary>
+            Performs necessary internal operations when a child view is being wrapped.
+            </summary>
+            <param name="listener">
+            The final wrapper.
+            </param>
         </member>
         <member name="M:Awesomium.Core.WebViewIMEComposition.OnUpdate(System.Object,Awesomium.Core.IMEUpdateEventArgs)">
             <summary>
@@ -15863,6 +16474,22 @@
             May return <c>0</c> if this method fails prematurely.
             </returns><exception cref="T:System.InvalidOperationException">
             The member is called on an invalid view. (See: <see cref="P:Awesomium.Core.IWebView.IsLive"/>)
+            </exception><exception cref="T:System.IO.DirectoryNotFoundException">
+            The specified output directory <paramref name="outputDirectory"/>, does not exist.
+            </exception><exception cref="T:System.ArgumentException">
+            <paramref name="outputDirectory"/> is a zero-length string, contains only white space, or contains one
+            or more of the invalid characters defined in <see cref="M:System.IO.Path.GetInvalidPathChars"/>. -OR- 
+            The system could not retrieve the absolute path.
+            </exception><exception cref="T:System.Security.SecurityException">
+            The caller does not have the required permissions.
+            </exception><exception cref="T:System.ArgumentNullException">
+            <paramref name="outputDirectory"/> is <c>null</c> (<c>Nothing</c> in Visual Basic).
+            </exception><exception cref="T:System.NotSupportedException">
+            <paramref name="outputDirectory"/> contains a colon (":") that is not part of a volume identifier (for example, "c:\").
+            </exception><exception cref="T:System.IO.PathTooLongException">
+            The acquired full path to the specified <paramref name="outputDirectory"/>, exceeds the system-defined maximum
+            length. For example, on Windows-based platforms, paths must be less than 248 characters, 
+            and file names must be less than 260 characters.
             </exception><seealso cref="T:Awesomium.Core.PrintConfig"/><seealso cref="E:Awesomium.Core.IWebView.PrintRequest"/><seealso cref="E:Awesomium.Core.IWebView.Printing"/><seealso cref="E:Awesomium.Core.IWebView.PrintFailed"/><seealso cref="E:Awesomium.Core.IWebView.PrintComplete"/><seealso cref="P:Awesomium.Core.IWebView.IsPrinting"/>
         </member>
         <member name="M:Awesomium.Core.WebView.ZoomIn">
@@ -16430,7 +17057,7 @@
             </item>
             <item>
             <description>
-            <see cref="P:Awesomium.Core.IWebView.SynchronousMessageTimout"/> is ignored.
+            <see cref="P:Awesomium.Core.IWebView.SynchronousMessageTimeout"/> is ignored.
             </description>
             </item>
             <item>
@@ -16531,7 +17158,7 @@
             </list>
             </remarks>
         </member>
-        <member name="P:Awesomium.Core.WebView.SynchronousMessageTimout">
+        <member name="P:Awesomium.Core.WebView.SynchronousMessageTimeout">
             <summary>
             Gets or sets the maximum amount of time (in milliseconds) to wait for a response
             from a synchronous IPC message dispatched to the view's renderer process.
@@ -16576,6 +17203,67 @@
             You can use the setter to specify your <see cref="P:Awesomium.Core.IWebView.WebSession"/>, right after instantiating
             the <c>WebControl</c> or at design time. You cannot change this setting after the control
             has been fully loaded and its underlying web-view, has been created.
+            </note>
+            </remarks>
+        </member>
+        <member name="P:Awesomium.Core.WebView.IsSourceView">
+            <summary>
+            Gets if this is a source view that displays the source of
+            loaded pages.
+            </summary><remarks>
+            The following table presents how to create managed web-view components
+            that display the source code of loaded pages:
+            <list type="table">
+            <listheader>
+            <term>
+            Component
+            </term>
+            <description>
+            Method
+            </description>
+            </listheader>
+            <item>
+            <term>
+            <see cref="T:Awesomium.Core.WebView"/>
+            </term>
+            <description>
+            Use <see cref="M:Awesomium.Core.WebCore.CreateSourceWebView(System.Int32,System.Int32)"/>.
+            </description>
+            </item>
+            <item>
+            <term>
+            <see cref="T:Awesomium.Windows.Controls.WebControl"/> (WPF)<br/>
+            <see cref="T:Awesomium.Windows.Forms.WebControl"/> (Windows Forms)<br/>
+            <see cref="T:Awesomium.Windows.Unity.WebUIComponent"/> (Unity)
+            </term>
+            <description>
+            The <see cref="P:Awesomium.Core.IWebView.IsSourceView"/> property is implemented as read-write
+            property on these controls. You have to set the property before
+            the control goes <i>live</i> (see <see cref="P:Awesomium.Core.IWebView.IsLive"/>).
+            <p/>
+            Either:
+            <list type="bullet">
+            <item>
+            <description>
+            Set the property at design-time.
+            </description>
+            </item>
+            </list>
+            - OR -
+            <list type="bullet">
+            <item>
+            <description>
+            Handle the <see cref="E:Awesomium.Core.IWebView.InitializeView"/> event, the last fired
+            before the control goes <i>live</i>, to set the property.
+            </description>
+            </item>
+            </list>
+            </description>
+            </item>
+            </list>
+            <note>
+            You cannot change this property on technology specific web-view controls,
+            once they go <i>live</i> (see <see cref="P:Awesomium.Core.IWebView.IsLive"/>).
             </note>
             </remarks>
         </member>
@@ -17017,7 +17705,8 @@
             (usually the result of <c>window.open</c> or an external link).
             </summary><remarks>
             <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/> occurs when an <see cref="T:Awesomium.Core.IWebView"/> instance creates a new child view 
-            (usually the result of <c>window.open</c> or clicking on a link with <c>target="_blank"</c>). 
+            (usually the result of <c>window.open</c>, clicking on a link with <c>target="_blank"</c> or submitting a <c>form</c>
+            with <c>target="_blank"</c>). 
             <p/>
             It is your responsibility to wrap and display this new view in your application.
             <note type="caution">
@@ -17057,7 +17746,14 @@
             </item>
             <item>
             <description>
-            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>false</c>, it most possibly indicates that the event is the result of
+            If <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/> is fired as a result of an HTML form with <c>target="_blank"</c> and
+            <c>method="post"</c>, <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> will be <c>true</c>. In this scenario, <b>you should always wrap</b>
+            the created child view instance (<see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.NewViewInstance"/>), to allow <c>POST</c> data be properly passed.
+            </description>
+            </item>
+            <item>
+            <description>
+            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> or <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> are <c>false</c>, it most possibly indicates that the event is the result of
             a user clicking on a link with <c>target="_blank"</c>. Since maintaining a parent-child relationship is not important
             in this scenario, <b>you should cancel the event</b> by setting <see cref="P:System.ComponentModel.CancelEventArgs.Cancel"/> to <c>true</c> (this tells the core 
             to destroy the unused web-view instance), then create a new <see cref="T:Awesomium.Core.WebView"/> (using <see cref="M:Awesomium.Core.WebCore.CreateWebView(System.Int32,System.Int32,Awesomium.Core.WebSession,Awesomium.Core.WebViewType)"/>)
@@ -17071,10 +17767,11 @@
             </item>
             <item>
             <description>
-            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>true</c>, navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, is already queued on 
-            the created child view. Therefore you should not attempt to set the <see cref="P:Awesomium.Core.IWebView.Source"/> when you are wrapping 
-            the child view, as this would again break the parent-child relationship (<c>window.opener</c> on the child page and the 
-            <c>window</c> object returned from the <c>window.open</c> call on the parent page, will be rendered invalid).
+            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> or <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> is <c>true</c>, navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, 
+            is already queued on the created child view. Therefore you should not attempt to set the <see cref="P:Awesomium.Core.IWebView.Source"/> when you 
+            are wrapping the child view, as this would again break the parent-child relationship (<c>window.opener</c> on the child page and the 
+            <c>window</c> object returned from the <c>window.open</c> call on the parent page, will be rendered invalid) or prevent passing
+            <c>POST</c> data to the server respectively.
             <note>
             Also note that since navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, has already started by the moment the child
             view is wrapped, <see cref="E:Awesomium.Core.IWebView.LoadingFrame"/> will not be fired for the main frame of the new <see cref="T:Awesomium.Core.IWebView"/>
@@ -17084,17 +17781,21 @@
             </item>
             <item>
             <description>
-            Navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, is blocked on the created child view, when <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>false</c>.
-            As applications will generally choose to cancel the event and create a new <see cref="T:Awesomium.Core.IWebView"/> instance to navigate to
-            the target URL (or even choose to navigate to the target URL on the same <see cref="T:Awesomium.Core.IWebView"/> instance that fired the event),
-            Awesomium.NET does this to prevent <i>false hits</i> to the target URL, that would have occurred by the time the event handler
-            returns and the unused child view instance, is destroyed. Therefore, if your application chooses to wrap the created 
-            child view even though it is most possibly the result of a user clicking on a link with <c>target="_blank"</c> and maintaining 
-            the parent-child relationship is not important, you should in this scenario only, after wrapping the child view, set the 
-            <see cref="P:Awesomium.Core.IWebView.Source"/> property to <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/> to resume navigation to the target URL.
+            Navigation to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/>, if any, is blocked on the created child view, when <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> and 
+            <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> are <c>false</c>. As applications will generally choose to cancel the event and create a new <see cref="T:Awesomium.Core.IWebView"/> 
+            instance to navigate to the target URL (or even choose to navigate to the target URL on the same <see cref="T:Awesomium.Core.IWebView"/> instance that 
+            fired the event), Awesomium.NET does this to prevent <i>false hits</i> to the target URL, that would have occurred by the time the 
+            event handler returns and the unused child view instance, is destroyed. What's more, users may also implement 
+            <see cref="T:Awesomium.Core.IResourceInterceptor"/> and cancel requests to new views that are the result of JavaScript <c>window.open</c>
+            (see <see cref="P:Awesomium.Core.ResourceRequest.IsWindowOpen"/>). Therefore, if your application chooses to wrap the created 
+            child view even though it is most possibly the result of a user clicking on a link with <c>target="_blank"</c> or navigation
+            to the target URL has already been canceled by an <see cref="T:Awesomium.Core.IResourceInterceptor"/> (see <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsNavigationCanceled"/>), 
+            you should in this scenario only, after wrapping the child view, set the <see cref="P:Awesomium.Core.IWebView.Source"/> property to 
+            <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/> to resume navigation to the target URL.
             <note>
-            Applications can occasionally choose to wrap a child view even when <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>false</c>, if they want
-            to apply a <i>single process</i> architecture where all new views created will be rendered by the same <c>awesomium_process</c>.
+            Applications can occasionally choose to wrap a child view even when <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsWindowOpen"/> is <c>false</c> or 
+            <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsNavigationCanceled"/> is <c>true</c>, if they want to apply a <i>single process</i> architecture where all new 
+            views created will be rendered by the same <c>awesomium_process</c>.
             </note>
             </description>
             </item>
@@ -17132,9 +17833,15 @@
             </item>
             <item>
             <description>
+            When <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.IsPost"/> is <c>true</c>, <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.PostData"/> returns an array of <see cref="T:Awesomium.Core.UploadElement"/>,
+            representing the <i>upload</i> data passed to the <see cref="P:Awesomium.Core.ShowCreatedWebViewEventArgs.TargetURL"/> using <c>POST</c>.
+            </description>
+            </item>
+            <item>
+            <description>
             Finally note that only an empty <i>name</i> parameter or a <c>_blank</c> target attribute specified as the <i>name</i> parameter 
-            in a <c>window.open</c> call or on a link, will fire a <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/> event. Other target attributes 
-            (such as <c>_top</c>), passed to either a <c>window.open</c> call or specified on a link, are handled by Awesomium internally.
+            in a <c>window.open</c> call or in a link or <c>form</c>, will fire a <see cref="E:Awesomium.Core.IWebView.ShowCreatedWebView"/> event. Other target 
+            attributes (such as <c>_top</c>), passed to either a <c>window.open</c> call, a link or a <c>form</c>, are handled by Awesomium internally.
             </description>
             </item>
             </list>
@@ -17499,21 +18206,23 @@
                                 newWindow.Left = screenRect.X;
                             }
                         }
-                        else if ( e.IsWindowOpen )
+                        else if ( e.IsWindowOpen || e.IsPost )
                         {
                             // No specs or only non-standard specs were specified, but the event is still 
-                            // the result of 'window.open'. We will open a normal window but we will still wrap 
-                            // the new native child view, maintaining its relationship with the parent window.
+                            // the result of 'window.open', or of an HTML form with tagret="_blank" and method="post". 
+                            // We will open a normal window but we will still wrap the new native child view, 
+                            // maintaining its relationship with the parent window.
                             newWindow.NativeView = e.NewViewInstance;
                             // Show the window.
                             newWindow.Show();
                         }
                         else
                         {
-                            // The event is not the result of 'window.open', therefore it's most probably
-                            // the result of a link with target='_blank'. We will not be wrapping the created view; 
-                            // we let the WebControl hosted in ChildWindow create its own underlying view. 
-                            // Setting Cancel to true tells the core to destroy the created child view.
+                            // The event is not the result of 'window.open' or of an HTML form with tagret="_blank" 
+                            // and method="post"., therefore it's most probably the result of a link with target='_blank'.
+                            // We will not be wrapping the created view; we let the WebControl hosted in ChildWindow 
+                            // create its own underlying view. Setting Cancel to true tells the core to destroy the 
+                            // created child view.
                             //
                             // Why don't we always wrap the native view passed to ShowCreatedWebView?
                             //
@@ -17615,18 +18324,20 @@
             					newWindow.Top = screenRect.Y
             					newWindow.Left = screenRect.X
             				End If
-            			ElseIf e.IsWindowOpen Then
+            			ElseIf (e.IsWindowOpen OrElse e.IsPost) Then
             				' No specs or only non-standard specs were specified, but the event is still 
-            				' the result of 'window.open'. We will open a normal window but we will still wrap 
-            				' the new native child view, maintaining its relationship with the parent window.
+            				' the result of 'window.open' or of an HTML form with tagret="_blank" and method="post".
+            				' We will open a normal window but we will still wrap the new native child view, 
+            				' maintaining its relationship with the parent window.
             				newWindow.NativeView = e.NewViewInstance
             				' Show the window.
             				newWindow.Show()
             			Else
-            				' The event is not the result of 'window.open', therefore it's most probably
-            				' the result of a link with target='_blank'. We will not be wrapping the created view; 
-            				' we let the WebControl hosted in ChildWindow create its own underlying view. 
-            				' Setting Cancel to true tells the core to destroy the created child view.
+            				' The event is not the result of 'window.open' or of an HTML form with tagret="_blank" 
+            				' and method="post"., therefore it's most probably the result of a link with target='_blank'.
+            				' We will not be wrapping the created view; we let the WebControl hosted in ChildWindow 
+            				' create its own underlying view. Setting Cancel to true tells the core to destroy the 
+            				' created child view.
             				'
             				' Why don't we always wrap the native view passed to ShowCreatedWebView?
             				'
@@ -18839,8 +19550,100 @@
             <remarks>
             <see cref="T:Awesomium.Core.IWebView"/> instances that share the same <see cref="T:Awesomium.Core.WebSession"/>, share the same cookies, cache, 
             certificates, local databases as well as the same preferences (see <see cref="T:Awesomium.Core.WebPreferences"/>).
+            <note>
+            Due to being responsible in maintaining authentication contexts, <see cref="T:Awesomium.Core.WebSession"/> instances
+            are also responsible for controlling download operations that are then maintained by the <see cref="T:Awesomium.Core.WebCore"/>.
+            This is why a <see cref="T:Awesomium.Core.WebSession"/> cannot be released while a download operation is in progress.
+            </note>
+            <h1 class="heading">
+            Assigning a WebSession
+            </h1>
+            The following table presents the various ways of assigning a <see cref="T:Awesomium.Core.WebSession"/> to an <see cref="T:Awesomium.Core.IWebView"/>
+            instance, depending on the technology:
+            <list type="table">
+            <listheader>
+            <term>
+            Technology
+            </term>
+            <description>
+            Methods
+            </description>
+            </listheader>
+            <item>
+            <term>
+            Core (<see cref="T:Awesomium.Core.WebView"/>)
+            </term>
+            <description>
+            <list type="number">
+            <item>
+            <description>
+            Create a <see cref="T:Awesomium.Core.WebSession"/> using <see cref="M:Awesomium.Core.WebCore.CreateWebSession(Awesomium.Core.WebPreferences)"/>.
+            </description>
+            </item>
+            <item>
+            <description>
+            Assign the session to a new <see cref="T:Awesomium.Core.WebView"/> during instantiation (see <see cref="M:Awesomium.Core.WebCore.CreateWebView(System.Int32,System.Int32,Awesomium.Core.WebSession,Awesomium.Core.WebViewType)"/>).
+            </description>
+            </item>
+            </list>
+            </description>
+            </item>
+            <item>
+            <term>
+            WPF (<see cref="T:Awesomium.Windows.Controls.WebControl"/>)
+            </term>
+            <description>
+            <list type="bullet">
+            <item>
+            <description>
+            Assign a <see cref="T:Awesomium.Core.WebSession"/> to the WPF <see cref="T:Awesomium.Windows.Controls.WebControl"/> by using a
+            <see cref="T:Awesomium.Windows.Controls.WebSessionProvider"/> in XAML. For an example, see: 
+            <b><a href="http://wiki.awesomium.net/general-use/using-web-sessions.html">Using Web-Sessions</a></b>
+            </description>
+            </item>
+            <item>
+            <description>
+            Assign a <see cref="T:Awesomium.Core.WebSession"/> to the WPF <see cref="T:Awesomium.Windows.Controls.WebControl"/>
+            programmatically, by using the <see cref="P:Awesomium.Windows.Controls.WebControl.WebSession"/> property.
+            <note>
+            The session must be assigned to the control before the control goes <i>live</i> (see <see cref="P:Awesomium.Windows.Controls.WebControl.IsLive"/>),
+            usually in the container's constructor, right after <c>InitializeComponent</c>.
+            </note>
+            </description>
+            </item>
+            </list>
+            </description>
+            </item>
+            <item>
+            <term>
+            Windows Forms (<see cref="T:Awesomium.Windows.Forms.WebControl"/>)
+            </term>
+            <description>
+            <list type="bullet">
+            <item>
+            <description>
+            Assign a <see cref="T:Awesomium.Core.WebSession"/> to the Windows Forms <see cref="T:Awesomium.Windows.Forms.WebControl"/> by using a
+            <see cref="T:Awesomium.Windows.Forms.WebSessionProvider"/> in XAML. For an example, see: 
+            <b><a href="http://wiki.awesomium.net/general-use/using-web-sessions.html">Using Web-Sessions</a></b>
+            </description>
+            </item>
+            <item>
+            <description>
+            Assign a <see cref="T:Awesomium.Core.WebSession"/> to the WPF <see cref="T:Awesomium.Windows.Forms.WebControl"/>
+            programmatically, by using the <see cref="P:Awesomium.Windows.Forms.WebControl.WebSession"/> property.
+            <note>
+            The session must be assigned to the control before the control goes <i>live</i> (see <see cref="P:Awesomium.Windows.Forms.WebControl.IsLive"/>),
+            usually in the container's constructor, right after <c>InitializeComponent</c>.
+            </note>
+            </description>
+            </item>
+            </list>
+            </description>
+            </item>
+            </list>
             </remarks>
             <example>
+            This example demonstrates creating and using a <see cref="T:Awesomium.Core.WebSession"/> with the <i>windowless</i> <see cref="T:Awesomium.Core.WebView"/>.
             <code>
             using ( WebSession session = WebCore.CreateWebSession( "C:\\MyCache", new WebPreferences() { CustomCSS = "::-webkit-scrollbar { visibility: hidden; }" } ) )
             {
@@ -18892,17 +19695,26 @@
             <seealso cref="M:Awesomium.Core.WebCore.CreateWebSession(Awesomium.Core.WebPreferences)"/>
             <seealso cref="M:Awesomium.Core.WebCore.CreateWebView(System.Int32,System.Int32,Awesomium.Core.WebSession,Awesomium.Core.WebViewType)"/>
         </member>
-        <member name="M:Awesomium.Core.WebSession.OnDispose">
+        <member name="M:Awesomium.Core.WebSession.Dispose">
+            <summary>
+            Releases this <see cref="T:Awesomium.Core.WebSession"/> instance.
+            </summary>
             <remarks>
+            You can dispose <see cref="T:Awesomium.Core.WebSession"/> instances that are no longer associated with a view. If you forget to do this, 
+            all <see cref="T:Awesomium.Core.WebSession"/> instances maintained by the <see cref="T:Awesomium.Core.WebCore"/>, are disposed at <see cref="M:Awesomium.Core.WebCore.Shutdown"/>. 
+            This ensures that the <see cref="T:Awesomium.Core.WebSession"/> will be saved to disk upon application exit.
             <note type="caution">
-            Attempting to dispose a <see cref="T:Awesomium.Core.WebSession"/> instance that is assigned
-            to active views, will fail.
+            A session cannot not be destroyed until all <see cref="T:Awesomium.Core.IWebView"/> instances associated with it have been destroyed
+            and all download operations controlled by this session, are either complete or canceled.
             </note>
             </remarks>
             <exception cref="T:System.InvalidOperationException">
-            Cannot dispose a WebSession that is assigned to active views. 
-            Make sure no view is using this session before disposing it.
+            Cannot dispose a WebSession that is assigned to active views or controls active download operations. 
+            Make sure that no view and no download operation is using this session before disposing it.
             </exception>
+        </member>
+        <member name="M:Awesomium.Core.WebSession.OnDispose">
+            <inheritdoc />
         </member>
         <member name="M:Awesomium.Core.WebSession.AddDataSource(System.String,Awesomium.Core.Data.DataSource)">
             <summary>
@@ -19006,10 +19818,54 @@
             certificates, local databases as well as the same preferences (see <see cref="T:Awesomium.Core.WebPreferences"/>).
             </remarks>
         </member>
+        <member name="P:Awesomium.Core.WebSession.HasViews">
+            <summary>
+            Gets if this <see cref="T:Awesomium.Core.WebSession"/> is currently assigned to <see cref="T:Awesomium.Core.IWebView"/>
+            instances.
+            </summary>
+            <remarks>
+            You can access the views this session is associated with, through the <see cref="P:Awesomium.Core.WebSession.Views"/>
+            property.
+            <note type="caution">
+            A session cannot not be destroyed until all <see cref="T:Awesomium.Core.IWebView"/> instances associated with it have been destroyed.
+            You should always check this property before attempting to call <see cref="M:Awesomium.Core.WebSession.Dispose"/>.
+            </note>
+            </remarks>
+        </member>
         <member name="P:Awesomium.Core.WebSession.Views">
             <summary>
             Gets the <see cref="T:Awesomium.Core.IWebView"/> instances that share this <see cref="T:Awesomium.Core.WebSession"/>.
             </summary>
+            <remarks>
+            <note type="caution">
+            A session cannot not be destroyed until all <see cref="T:Awesomium.Core.IWebView"/> instances associated with it have been destroyed.
+            You should always check <see cref="P:Awesomium.Core.WebSession.HasViews"/> before attempting to call <see cref="M:Awesomium.Core.WebSession.Dispose"/>.
+            </note>
+            </remarks>
+        </member>
+        <member name="P:Awesomium.Core.WebSession.HasDownloads">
+            <summary>
+            Gets if this <see cref="T:Awesomium.Core.WebSession"/> is currently controlling active download operations.
+            </summary>
+            <remarks>
+            You can access the download operations controlled by this session, through the <see cref="P:Awesomium.Core.WebSession.ActiveDownloads"/>
+            property.
+            <note type="caution">
+            A session cannot not be destroyed until all download operations controlled by this session, are either complete or canceled.
+            You should always check this property before attempting to call <see cref="M:Awesomium.Core.WebSession.Dispose"/>.
+            </note>
+            </remarks>
+        </member>
+        <member name="P:Awesomium.Core.WebSession.ActiveDownloads">
+            <summary>
+            Gets a list of active download operations controlled by this <see cref="T:Awesomium.Core.WebSession"/>.
+            </summary>
+            <remarks>
+            <note type="caution">
+            A session cannot not be destroyed until all download operations controlled by this session, are either complete or canceled.
+            You should always check <see cref="P:Awesomium.Core.WebSession.HasDownloads"/> before attempting to call <see cref="M:Awesomium.Core.WebSession.Dispose"/>.
+            </note>
+            </remarks>
         </member>
         <member name="P:Awesomium.Core.WebSession.DataSources">
             <summary>
@@ -19097,7 +19953,8 @@
             Determines a <see cref="T:Awesomium.Core.IWebView"/> instance with the specified unique identifier, exist in the collection.
             </summary>
             <param name="id">
-            The identifier for the corresponding <see cref="T:Awesomium.Core.IWebView"/> instance to seek for.
+            The unique identifier for the corresponding <see cref="T:Awesomium.Core.IWebView"/> instance to seek for
+            (See <see cref="P:Awesomium.Core.IWebView.Identifier"/>).
             </param>
             <returns>
             <c>true</c> if an <see cref="T:Awesomium.Core.IWebView"/> instance with the specified unique identifier exists in the collection; otherwise, <c>false</c>.
@@ -19116,10 +19973,7 @@
             (<c>Nothing</c> in Visual Basic), if a view with the specified identifier does not exist.
             </returns>
             <exception cref="T:System.ArgumentOutOfRangeException">
-            A valid identifier must be bigger than <c>0</c>.
-            </exception>
-            <exception cref="T:System.ArgumentOutOfRangeException">
-            A valid identifier must be bigger than <c>0</c>.
+            A valid identifier must be greater than <c>0</c>.
             </exception>
         </member>
         <member name="M:Awesomium.Core.WebViewCollection.GetByHandle(System.IntPtr)">
@@ -19151,7 +20005,7 @@
             identifier does not exist.
             </returns>
             <exception cref="T:System.ArgumentOutOfRangeException">
-            A valid identifier must be bigger than <c>0</c>.
+            A valid identifier must be greater than <c>0</c>.
             </exception>
         </member>
         <member name="P:Awesomium.Core.WebViewCollection.SyncRoot">
