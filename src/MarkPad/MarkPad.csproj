@@ -347,6 +347,7 @@
       <DependentUpon>MdiView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MdiViewModel.cs" />
+    <Compile Include="Settings\IsolatedStorageSettingsStore.cs" />
     <Compile Include="Settings\Models\WebSourceType.cs" />
     <Compile Include="Settings\SettingsProvider.cs" />
     <Compile Include="Settings\UI\BlogSettingsView.xaml.cs">
@@ -357,7 +358,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Settings\UI\ExtensionViewModel.cs" />
-    <Compile Include="Settings\IsolatedStorageSettingsStore.cs" />
     <Compile Include="Settings\Models\BlogInfo.cs" />
     <Compile Include="Settings\Models\BlogSetting.cs" />
     <Compile Include="Settings\Models\FetchedBlogInfo.cs" />

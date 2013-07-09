@@ -15,11 +15,7 @@ namespace MarkPad.Settings
             using (var isoStore = IsolatedStorageFile.GetStore(Scope, null, null))
             {
                 using (var stream = new IsolatedStorageFileStream(filename, FileMode.Create, isoStore))
-                using (var streamWriter = new StreamWriter(stream))
-                {
-                    streamWriter.Write(fileContents);
-                    streamWriter.Flush();
-                }
+                    new StreamWriter(stream).Write(fileContents);
             }
         }
 
@@ -43,7 +39,7 @@ namespace MarkPad.Settings
         public string SerializeList(List<string> listOfItems)
         {
             var ms = new MemoryStream();
-            var writer = JsonReaderWriterFactory.CreateJsonWriter(ms);
+            var writer = JsonReaderWriterFactory.CreateJsonWriter(ms, Encoding.Unicode);
             new DataContractJsonSerializer(typeof(List<string>)).WriteObject(ms, listOfItems);
             writer.Flush();
             var jsonString = Encoding.Default.GetString(ms.ToArray());
@@ -63,7 +59,7 @@ namespace MarkPad.Settings
 
             var serializer = new DataContractJsonSerializer(typeof(Dictionary<string, string>));
             var ms = new MemoryStream();
-            var writer = JsonReaderWriterFactory.CreateJsonWriter(ms);
+            var writer = JsonReaderWriterFactory.CreateJsonWriter(ms, Encoding.Unicode);
             serializer.WriteObject(ms, settings);
             writer.Flush();
             var jsonString = Encoding.Default.GetString(ms.ToArray());
@@ -80,7 +76,7 @@ namespace MarkPad.Settings
             if (!string.IsNullOrEmpty(readTextFile))
             {
                 var serializer = new DataContractJsonSerializer(typeof(Dictionary<string, string>));
-                return (Dictionary<string, string>)serializer.ReadObject(new MemoryStream(Encoding.Default.GetBytes(readTextFile)));
+                serializer.ReadObject(new MemoryStream(Encoding.Default.GetBytes(readTextFile)));
             }
 
             return new Dictionary<string, string>();
