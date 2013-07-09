@@ -76,7 +76,7 @@ namespace MarkPad.Settings
             if (!string.IsNullOrEmpty(readTextFile))
             {
                 var serializer = new DataContractJsonSerializer(typeof(Dictionary<string, string>));
-                serializer.ReadObject(new MemoryStream(Encoding.Default.GetBytes(readTextFile)));
+                return (Dictionary<string, string>)serializer.ReadObject(new MemoryStream(Encoding.Default.GetBytes(readTextFile)));
             }
 
             return new Dictionary<string, string>();
