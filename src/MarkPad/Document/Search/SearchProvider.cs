@@ -115,7 +115,7 @@ namespace MarkPad.Document.Search
             TextSegment newFoundHit = null;
             var startLookingFrom = view.Editor.CaretOffset;
             // consider the already selected text when searching, skip it on SearchType.Next
-            if (!view.Editor.TextArea.Selection.IsEmpty && searchType != SearchType.Next)
+            if (!view.Editor.TextArea.Selection.IsEmpty && searchType != SearchType.Next && searchType != SearchType.Replace)
             {
                 startLookingFrom = view.Editor.SelectionStart;
             }
@@ -168,6 +168,33 @@ namespace MarkPad.Document.Search
             if (!searchSettings.SearchingWithBar || !searchRenderer.SearchHitsSegments.Any() || (!selectSearch && newFoundHit != null && !newFoundHit.EqualsByValue(selectedText)))
             {
                 CurrentHitIndex = 0;
+            }
+
+            var replaceTerm = searchSettings.ReplaceTerm;
+
+            if (searchType == SearchType.Replace && !view.Editor.TextArea.Selection.IsEmpty)
+            {
+                view.Editor.TextArea.Selection.ReplaceSelectionWithText(replaceTerm.Trim());
+
+                newFoundHit = (from hit in SearchHits
+                               let hitDistance = hit.StartOffset - startLookingFrom
+                               where hitDistance >= 0
+                               orderby hitDistance
+                               select hit)
+                              .FirstOrDefault() ?? SearchHits.FirstOrDefault();
+
+                newFoundHit.ExecuteSafely(hit =>
+                {
+                    // special case: don't select text when CTRL+F pressed with an old, existing search, just highlight
+                    if (selectSearch)
+                    {
+                        view.Editor.Select(hit.StartOffset, hit.Length);
+                        view.Editor.ScrollToLine(view.Editor.Document.GetLineByOffset(view.Editor.SelectionStart).LineNumber);
+                    }
+
+                    lastCaretPosition = view.Editor.CaretOffset;
+                    CurrentHitIndex = SearchHits.Select((v, i) => new { hit = v, index = i }).First(arg => arg.hit.Equals(newFoundHit)).index + 1;
+                });
             }
 
             // don't highlight matches when searching without the search bar

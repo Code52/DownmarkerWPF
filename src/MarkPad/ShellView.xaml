@@ -453,6 +453,15 @@
               Visibility="{Binding SearchingWithBar, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Border Background="#f0f0f0" BorderBrush="#999999" BorderThickness="1" CornerRadius="0" Padding="3,2,3,2" Margin="0">
                 <DockPanel Margin="2">
+                    <Button Content="Replace" Width="75" DockPanel.Dock="Right" Margin="5,0,0,0" ToolTip="Replace">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <cm:ActionMessage MethodName="Search">
+                                    <cm:Parameter Value="{x:Static search:SearchType.Replace}" />
+                                </cm:ActionMessage>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
                     <Button Content="Find prev" Width="75" DockPanel.Dock="Right" Margin="5,0,0,0" ToolTip="SHIFT + F3">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Click">
@@ -499,7 +508,7 @@
                         </i:Interaction.Triggers>
                     </ToggleButton>
                     <TextBox Name="SearchTextBox" Text="{Binding SearchSettings.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             Margin="5,0,0,0" VerticalContentAlignment="Center">
+                             Margin="5,0,0,0" MinWidth="300" TextWrapping="Wrap" VerticalContentAlignment="Center">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="TextChanged">
                                 <cm:ActionMessage MethodName="Search">
@@ -512,6 +521,24 @@
                                 </s:InputBindingTrigger.InputBinding>
                                 <cm:ActionMessage MethodName="Search">
                                     <cm:Parameter Value="{x:Static search:SearchType.Next}" />
+                                </cm:ActionMessage>
+                            </s:InputBindingTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+                    <TextBox Name="ReplaceTextBox" Text="{Binding SearchSettings.ReplaceTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Margin="5,0,0,0" MinWidth="300" TextWrapping="Wrap" VerticalContentAlignment="Center">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="TextChanged">
+                                <cm:ActionMessage MethodName="Search">
+                                    <cm:Parameter Value="{x:Static search:SearchType.Normal}" />
+                                </cm:ActionMessage>
+                            </i:EventTrigger>
+                            <s:InputBindingTrigger>
+                                <s:InputBindingTrigger.InputBinding>
+                                    <KeyBinding Key="Enter" />
+                                </s:InputBindingTrigger.InputBinding>
+                                <cm:ActionMessage MethodName="Search">
+                                    <cm:Parameter Value="{x:Static search:SearchType.Replace}" />
                                 </cm:ActionMessage>
                             </s:InputBindingTrigger>
                         </i:Interaction.Triggers>
