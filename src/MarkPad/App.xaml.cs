@@ -18,6 +18,8 @@ namespace MarkPad
         {
             InitializeComponent();
 
+            CefSharp.CEF.Initialize(new CefSharp.Settings());
+
             bootstrapper = new AppBootstrapper();
         }
 

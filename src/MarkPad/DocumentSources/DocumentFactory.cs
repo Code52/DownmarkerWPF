@@ -12,7 +12,6 @@ using MarkPad.DocumentSources.WebSources;
 using MarkPad.Infrastructure;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Plugins;
-using MarkPad.PreviewControl;
 using MarkPad.Settings.Models;
 
 namespace MarkPad.DocumentSources

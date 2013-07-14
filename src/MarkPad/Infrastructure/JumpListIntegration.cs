@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Shell;
 using Caliburn.Micro;
 using MarkPad.Events;
-using MarkPad.PreviewControl;
 using MarkPad.Settings;
 using MarkPad.Settings.Models;
 

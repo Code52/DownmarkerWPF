@@ -3,7 +3,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using Caliburn.Micro;
 using MarkPad.Document;
-using MarkPad.PreviewControl;
+using MarkPad.Preview;
 
 namespace MarkPad
 {
@@ -37,8 +37,8 @@ namespace MarkPad
                 };
                 HtmlPreview.SetBinding(HtmlPreview.HtmlProperty, new Binding("CurrentDocument.Render"));
                 HtmlPreview.SetBinding(HtmlPreview.FileNameProperty, new Binding("CurrentDocument.MarkpadDocument.Title"));
-                HtmlPreview.SetBinding(HtmlPreview.BrowserFontSizeProperty, new Binding("CurrentDocument.FontSize"));
-                HtmlPreview.SetBinding(HtmlPreview.ScrollPercentageProperty, new Binding("CurrentDocument.View.ScrollPercentage"));
+                //HtmlPreview.SetBinding(HtmlPreview.BrowserFontSizeProperty, new Binding("CurrentDocument.FontSize"));
+                //HtmlPreview.SetBinding(HtmlPreview.ScrollPercentageProperty, new Binding("CurrentDocument.View.ScrollPercentage"));
 
                 view.previewHost.Child = HtmlPreview;
             }

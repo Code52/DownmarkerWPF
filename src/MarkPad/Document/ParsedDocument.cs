@@ -2,10 +2,10 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using MarkPad.Plugins;
-using MarkPad.PreviewControl;
 using MarkPad.Settings.Models;
 using MarkdownDeep;
 using MarkPad.Settings;
+using MarkPad.Preview;
 
 namespace MarkPad.Document
 {

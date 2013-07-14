@@ -13,8 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamplePlugin", "Plugins\Ex
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportToHtmlPlugin", "Plugins\ExportToHtmlPlugin\ExportToHtmlPlugin.csproj", "{F5EF3169-748F-4C96-A4A1-F33381572619}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.PreviewControl", "MarkPad.PreviewControl\MarkPad.PreviewControl.csproj", "{D1EF806F-2DAF-47B3-AA55-EB841ADBD4EF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaWebLogSite", "MetaWebLogSite\MetaWebLogSite.csproj", "{08CA3FA4-A510-4279-A2B1-ECD5CD5A2CB3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad.UITests", "Markpad.UITests\MarkPad.UITests.csproj", "{3F6B0B72-DC75-4B4E-8361-8AB257F4048E}"
@@ -60,10 +58,6 @@ Global
 		{F5EF3169-748F-4C96-A4A1-F33381572619}.Debug|x86.Build.0 = Debug|x86
 		{F5EF3169-748F-4C96-A4A1-F33381572619}.Release|x86.ActiveCfg = Release|x86
 		{F5EF3169-748F-4C96-A4A1-F33381572619}.Release|x86.Build.0 = Release|x86
-		{D1EF806F-2DAF-47B3-AA55-EB841ADBD4EF}.Debug|x86.ActiveCfg = Debug|x86
-		{D1EF806F-2DAF-47B3-AA55-EB841ADBD4EF}.Debug|x86.Build.0 = Debug|x86
-		{D1EF806F-2DAF-47B3-AA55-EB841ADBD4EF}.Release|x86.ActiveCfg = Release|x86
-		{D1EF806F-2DAF-47B3-AA55-EB841ADBD4EF}.Release|x86.Build.0 = Release|x86
 		{08CA3FA4-A510-4279-A2B1-ECD5CD5A2CB3}.Debug|x86.ActiveCfg = Debug|x86
 		{08CA3FA4-A510-4279-A2B1-ECD5CD5A2CB3}.Debug|x86.Build.0 = Debug|x86
 		{08CA3FA4-A510-4279-A2B1-ECD5CD5A2CB3}.Release|x86.ActiveCfg = Release|x86

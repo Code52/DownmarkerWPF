@@ -18,7 +18,6 @@ using MarkPad.Events;
 using MarkPad.Infrastructure;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Plugins;
-using MarkPad.PreviewControl;
 using MarkPad.Settings.UI;
 using MarkPad.Updater;
 
