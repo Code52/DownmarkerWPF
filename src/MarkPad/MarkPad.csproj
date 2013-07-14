@@ -357,6 +357,7 @@
       <DependentUpon>MdiView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MdiViewModel.cs" />
+    <Compile Include="Preview\ThemeScheme.cs" />
     <Compile Include="Preview\HtmlPreview.xaml.cs">
       <DependentUpon>HtmlPreview.xaml</DependentUpon>
     </Compile>
@@ -411,7 +412,7 @@
       <DependentUpon>DocumentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Document\DocumentViewModel.cs" />
-    <Compile Include="Document\ParsedDocument.cs" />
+    <Compile Include="Document\DocumentParser.cs" />
     <Compile Include="ShellViewModel.cs" />
     <Page Include="DocumentSources\MetaWeblog\OpenFromWebView.xaml">
       <Generator>MSBuild:Compile</Generator>

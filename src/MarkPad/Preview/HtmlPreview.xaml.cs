@@ -12,6 +12,7 @@ namespace MarkPad.Preview
             CefSharp.Settings settings = new CefSharp.Settings();
             if (CEF.Initialize(settings))
             {
+                CEF.RegisterScheme("theme", new ThemeSchemeHandlerFactory());
                 //CEF.RegisterScheme("test", new SchemeHandlerFactory());
                 //CEF.RegisterJsObject("bound", new BoundObject());
             }

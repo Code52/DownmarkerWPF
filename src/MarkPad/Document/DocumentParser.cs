@@ -77,17 +77,17 @@ namespace MarkPad.Document
 
         private static string ToHtml(string header, string contents, string extraScripts)
         {
-			var body = MarkdownConvert(contents);
+		    var body = MarkdownConvert(contents);
 
 			var stylesheets = GetResources(
 				header,
 				"*.css",
-				"<link rel=\"stylesheet\" type=\"text/css\" href=\"{0}/{1}\" />\r\n");
+				"<link rel=\"stylesheet\" type=\"text/css\" href=\"theme://css/{0}/{1}\" />\r\n");
 
 			var scripts = GetResources(
 				header,
 				"*.js",
-				"<script type=\"text/javascript\" src=\"{0}/{1}\"></script>\r\n");
+                "<script type=\"text/javascript\" src=\"theme://script/{0}/{1}\"></script>\r\n");
 
 			var document = String.Format(
                 @"<html>
