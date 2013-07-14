@@ -90,7 +90,22 @@ namespace MarkPad.Document
 				"<script type=\"text/javascript\" src=\"{0}/{1}\"></script>\r\n");
 
 			var document = String.Format(
-				"<html>\r\n<head>\r\n{0}\r\n</head>\r\n<body>\r\n{1}\r\n{2}{3}\r\n</body>\r\n</html>",
+                @"<html>
+<head>
+<style>
+body {{ font-family: Segoe UI, sans-serif; font-size:0.8em; }}
+::-webkit-scrollbar {{ width: 12px; height: 12px; }}
+::-webkit-scrollbar-track {{ background-color: white; }}
+::-webkit-scrollbar-thumb {{ background-color: #B9B9B9; }}
+::-webkit-scrollbar-thumb:hover {{ background-color: #000000; }}
+</style>
+{0}
+</head>
+<body>
+{1}
+{2}{3}
+</body>
+</html>",
 				stylesheets,
 				body,
 				scripts,

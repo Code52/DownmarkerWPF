@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using MarkPad.Events;
 using MarkPad.Infrastructure;
+using MarkPad.Preview;
 
 namespace MarkPad
 {
@@ -18,7 +19,7 @@ namespace MarkPad
         {
             InitializeComponent();
 
-            CefSharp.CEF.Initialize(new CefSharp.Settings());
+            HtmlPreview.Init();
 
             bootstrapper = new AppBootstrapper();
         }
