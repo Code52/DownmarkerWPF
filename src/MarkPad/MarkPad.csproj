@@ -586,7 +586,7 @@
     <PreBuildEvent>
       copy "$(SolutionDir)..\lib\*" "$(TargetDir)"
 
-      mkdir "$(SolutionDir)..\lib\locales"
+      mkdir "$(TargetDir)locales\"
       copy "$(SolutionDir)..\lib\locales\*" "$(TargetDir)locales\"
       
       copy "$(SolutionDir)packages\NHunspell.1.1.0\native\*" "$(TargetDir)"</PreBuildEvent>
