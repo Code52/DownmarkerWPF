@@ -38,7 +38,7 @@ namespace MarkPad
                 HtmlPreview.SetBinding(HtmlPreview.HtmlProperty, new Binding("CurrentDocument.Render"));
                 HtmlPreview.SetBinding(HtmlPreview.FileNameProperty, new Binding("CurrentDocument.MarkpadDocument.Title"));
                 //HtmlPreview.SetBinding(HtmlPreview.BrowserFontSizeProperty, new Binding("CurrentDocument.FontSize"));
-                //HtmlPreview.SetBinding(HtmlPreview.ScrollPercentageProperty, new Binding("CurrentDocument.View.ScrollPercentage"));
+                HtmlPreview.SetBinding(HtmlPreview.ScrollPercentageProperty, new Binding("CurrentDocument.View.ScrollPercentage"));
 
                 view.previewHost.Child = HtmlPreview;
             }

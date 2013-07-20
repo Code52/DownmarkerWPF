@@ -46,6 +46,19 @@ namespace MarkPad.Preview
 
         #endregion public string FileName
 
+        #region public double ScrollPercentage
+
+        public static DependencyProperty ScrollPercentageProperty =
+            DependencyProperty.Register("ScrollPercentage", typeof(double), typeof(HtmlPreview), new PropertyMetadata(0d, ScrollPercentageChanged));
+
+        public string ScrollPercentage
+        {
+            get { return (string)GetValue(ScrollPercentageProperty); }
+            set { SetValue(ScrollPercentageProperty, value); }
+        }
+
+        #endregion public double ScrollPercentage
+
         public HtmlPreview()
         {
             InitializeComponent();
@@ -69,6 +82,16 @@ namespace MarkPad.Preview
             var htmlPreview = (HtmlPreview)d;
             if (htmlPreview.host != null && htmlPreview.host.IsBrowserInitialized)
                 htmlPreview.host.Title = (string)e.NewValue;
+        }
+
+        private static void ScrollPercentageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var htmlPreview = (HtmlPreview)d;
+            if (htmlPreview.host != null && htmlPreview.host.IsBrowserInitialized)
+            {
+                var javascript = string.Format("window.scrollTo(0,{0} * (document.body.scrollHeight - document.body.clientHeight));", e.NewValue);
+                htmlPreview.host.ExecuteScript(javascript);
+            }
         }
 
         public override void OnApplyTemplate()
