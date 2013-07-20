@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.IsolatedStorage;
@@ -75,8 +76,15 @@ namespace MarkPad.Settings
             var readTextFile = ReadTextFile(filename);
             if (!string.IsNullOrEmpty(readTextFile))
             {
-                var serializer = new DataContractJsonSerializer(typeof(Dictionary<string, string>));
-                return (Dictionary<string, string>)serializer.ReadObject(new MemoryStream(Encoding.Default.GetBytes(readTextFile)));
+                try
+                {
+                    var serializer = new DataContractJsonSerializer(typeof(Dictionary<string, string>));
+                    return (Dictionary<string, string>)serializer.ReadObject(new MemoryStream(Encoding.Default.GetBytes(readTextFile)));
+                }
+                catch
+                {
+                    return new Dictionary<string, string>();
+                }
             }
 
             return new Dictionary<string, string>();
