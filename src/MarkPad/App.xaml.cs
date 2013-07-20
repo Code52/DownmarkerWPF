@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using MarkPad.Events;
 using MarkPad.Infrastructure;
+using MarkPad.Preview;
 
 namespace MarkPad
 {
@@ -17,6 +18,8 @@ namespace MarkPad
         public App()
         {
             InitializeComponent();
+
+            HtmlPreview.Init();
 
             bootstrapper = new AppBootstrapper();
         }

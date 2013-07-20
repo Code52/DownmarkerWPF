@@ -9,7 +9,6 @@ using MarkPad.DocumentSources.MetaWeblog;
 using MarkPad.Events;
 using MarkPad.Framework;
 using MarkPad.Plugins;
-using MarkPad.PreviewControl;
 using MarkPad.Settings.Models;
 
 namespace MarkPad.Settings.UI

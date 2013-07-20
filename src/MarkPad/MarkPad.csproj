@@ -100,6 +100,14 @@
     <Reference Include="Caliburn.Micro.Autofac">
       <HintPath>..\packages\Caliburn.Micro.Autofac.1.5.0\lib\net40\Caliburn.Micro.Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="CefSharp, Version=1.25.0.25466, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\CefSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="CefSharp.Wpf, Version=1.25.0.25471, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\CefSharp.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="CookComputing.XmlRpcV2, Version=3.0.0.0, Culture=neutral, PublicKeyToken=a7d6e17aa302004d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\xmlrpcnet.3.0.0.266\lib\net20\CookComputing.XmlRpcV2.dll</HintPath>
@@ -120,8 +128,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.CompilerServices.AsyncTargetingPack.1.0.0\lib\net40\Microsoft.CompilerServices.AsyncTargetingPack.Net4.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\Microsoft.Expression.Interactions.dll</HintPath>
+    <Reference Include="Microsoft.Expression.Interactions">
+      <HintPath>..\packages\Unofficial.Blend.Interactivity.1.0.0\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -157,8 +165,8 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.0.10.1.1\lib\net40\System.Windows.Interactivity.dll</HintPath>
+    <Reference Include="System.Windows.Interactivity">
+      <HintPath>..\packages\Unofficial.Blend.Interactivity.1.0.0\lib\net40\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -184,6 +192,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\StateHelper.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="FontSizes.cs" />
     <Compile Include="Converters\BoolToPreviewBackgroundConverter.cs" />
     <Compile Include="Converters\BoolToPreviewForegroundConverter.cs" />
     <Compile Include="DocumentSources\IOpenDocumentFromWeb.cs" />
@@ -347,6 +357,10 @@
       <DependentUpon>MdiView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MdiViewModel.cs" />
+    <Compile Include="Preview\ThemeScheme.cs" />
+    <Compile Include="Preview\HtmlPreview.xaml.cs">
+      <DependentUpon>HtmlPreview.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Settings\IsolatedStorageSettingsStore.cs" />
     <Compile Include="Settings\Models\WebSourceType.cs" />
     <Compile Include="Settings\SettingsProvider.cs" />
@@ -398,7 +412,7 @@
       <DependentUpon>DocumentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Document\DocumentViewModel.cs" />
-    <Compile Include="Document\ParsedDocument.cs" />
+    <Compile Include="Document\DocumentParser.cs" />
     <Compile Include="ShellViewModel.cs" />
     <Page Include="DocumentSources\MetaWeblog\OpenFromWebView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -433,6 +447,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MdiView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Preview\HtmlPreview.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -502,10 +520,6 @@
       <Project>{E780D0E3-37A4-43D3-89C1-76053FA63752}</Project>
       <Name>MarkPad.Plugins</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MarkPad.PreviewControl\MarkPad.PreviewControl.csproj">
-      <Project>{d1ef806f-2daf-47b3-aa55-eb841adbd4ef}</Project>
-      <Name>MarkPad.PreviewControl</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Plugins\ExportToHtmlPlugin\ExportToHtmlPlugin.csproj">
       <Project>{F5EF3169-748F-4C96-A4A1-F33381572619}</Project>
       <Name>ExportToHtmlPlugin</Name>
@@ -570,21 +584,13 @@
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>
     <PreBuildEvent>
-      copy $(SolutionDir)..\lib\Awesomium* $(TargetDir)
+      copy "$(SolutionDir)..\lib\*" "$(TargetDir)"
 
-      copy $(SolutionDir)..\lib\avcodec-53.dll $(TargetDir)
-      copy $(SolutionDir)..\lib\avformat-53.dll $(TargetDir)
-      copy $(SolutionDir)..\lib\avutil-51.dll $(TargetDir)
-      copy $(SolutionDir)..\lib\avcodec-53.dll $(TargetDir)
-      copy $(SolutionDir)..\lib\inspector.pak $(TargetDir)
-      copy $(SolutionDir)..\lib\libEGL.dll $(TargetDir)
-      copy $(SolutionDir)..\lib\libGLESv2.dll $(TargetDir)
-      copy $(SolutionDir)..\lib\xinput9_1_0.dll $(TargetDir)
-
-      copy $(SolutionDir)..\lib\icudt.dll $(TargetDir)</PreBuildEvent>
+      mkdir "$(SolutionDir)..\lib\locales"
+      copy "$(SolutionDir)..\lib\locales\*" "$(TargetDir)locales\"
+      
+      copy "$(SolutionDir)packages\NHunspell.1.1.0\native\*" "$(TargetDir)"</PreBuildEvent>
     <PostBuildEvent>
-      xcopy /s /y "$(SolutionDir)packages\NHunspell.1.1.0\native\*.*" "$(TargetDir)"
-      copy $(SolutionDir)MarkPad\markpad.ico $(TargetDir)
     </PostBuildEvent>
   </PropertyGroup>
   <Import Project="Fody.targets" />

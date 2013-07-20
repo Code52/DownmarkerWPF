@@ -6,7 +6,6 @@ using System.Windows.Input;
 using MarkPad.Document.Commands;
 using MarkPad.Framework;
 using MarkPad.Plugins;
-using MarkPad.PreviewControl;
 
 namespace MarkPad
 {
@@ -161,13 +160,6 @@ namespace MarkPad
             var isFileDrop = e.Data.GetDataPresent(DataFormats.FileDrop);
             e.Effects = isFileDrop ? DragDropEffects.Move : DragDropEffects.None;
             e.Handled = true;
-        }
-
-        private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            HtmlPreview htmlPreview = ((ShellViewModel) DataContext).MDI.HtmlPreview;
-            if (htmlPreview != null)
-                htmlPreview.Close();
         }
 
         private void PressedEsc()
