@@ -7,7 +7,7 @@
         x:Class="MarkPad.ShellView" xmlns:converters="clr-namespace:MarkPad.Converters" xmlns:commands="clr-namespace:MarkPad.Document.Commands"
         xmlns:search="clr-namespace:MarkPad.Document.Search" mc:Ignorable="d" MouseLeftButtonDown="DragMoveWindow" MouseMove="MouseMoveWindow"
         MouseDoubleClick="ShellViewMouseDoubleClick" DragOver="WindowDragOver" Icon="markpad.ico" SnapsToDevicePixels="True" AllowDrop="True"
-        x:Name="Window" d:DataContext="{d:DesignInstance {x:Type markPad:ShellViewModel}}" Closing="WindowClosing">
+        x:Name="Window" d:DataContext="{d:DesignInstance {x:Type markPad:ShellViewModel}}">
 
     <Window.Resources>
         <ResourceDictionary>

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using MarkPad.PreviewControl;
 using MarkPad.Settings.UI;
 using Microsoft.Win32;
 

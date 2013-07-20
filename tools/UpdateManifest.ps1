@@ -4,7 +4,7 @@ write-host $ManifestFile
 
 [xml]$xml = get-content $ManifestFile
 
-$elementsToRewrite = $xml.assembly.dependency | where {$_.dependentAssembly.codebase -ne $null -and ($_.dependentAssembly.codebase.Contains("Awesomium") -or $_.dependentAssembly.codebase.Contains("NHunspell")) }
+$elementsToRewrite = $xml.assembly.dependency | where {$_.dependentAssembly.codebase -ne $null -and ($_.dependentAssembly.codebase.Contains("CefSharp") -or $_.dependentAssembly.codebase.Contains("NHunspell")) }
 foreach ($elementToRewrite in $elementsToRewrite)
 {
 	$fileNode = $xml.CreateElement("file", "urn:schemas-microsoft-com:asm.v2")

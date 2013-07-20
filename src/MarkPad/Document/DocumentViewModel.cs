@@ -11,7 +11,6 @@ using MarkPad.Document.SpellCheck;
 using MarkPad.Events;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Plugins;
-using MarkPad.PreviewControl;
 using MarkPad.Settings;
 using MarkPad.Settings.Models;
 using Ookii.Dialogs.Wpf;

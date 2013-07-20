@@ -9,7 +9,6 @@ using MarkPad.Infrastructure;
 using MarkPad.Infrastructure.Abstractions;
 using MarkPad.Infrastructure.DialogService;
 using MarkPad.Plugins;
-using MarkPad.PreviewControl;
 
 namespace MarkPad.DocumentSources.FileSystem
 {

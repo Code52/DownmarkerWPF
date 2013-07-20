@@ -9,7 +9,7 @@ using Caliburn.Micro;
 using Caliburn.Micro.Autofac;
 using MarkPad.Events;
 using MarkPad.Infrastructure.CaliburnExtensions;
-using MarkPad.PreviewControl;
+using MarkPad.Preview;
 
 namespace MarkPad.Infrastructure
 {
