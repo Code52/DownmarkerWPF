@@ -424,7 +424,7 @@ namespace MarkPad
         {
             if (ActiveDocumentViewModel == null) return;
 
-            var selectSearch = SearchSettings.SelectSearch || (searchType == SearchType.Next || searchType == SearchType.Prev);
+            var selectSearch = SearchSettings.SelectSearch || (searchType == SearchType.Next || searchType == SearchType.Prev || searchType == SearchType.Replace);
 
             ActiveDocumentViewModel.SearchProvider.DoSearch(searchType, selectSearch);
 

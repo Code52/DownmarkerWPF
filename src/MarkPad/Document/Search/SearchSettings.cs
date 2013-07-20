@@ -5,9 +5,12 @@
         public SearchSettings()
         {
             SearchTerm = string.Empty;
+            ReplaceTerm = string.Empty;
         }
 
         public string SearchTerm { get; set; }
+
+        public string ReplaceTerm { get; set; }
 
         public bool Regex { get; set; }
 
