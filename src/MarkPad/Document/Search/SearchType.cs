@@ -5,6 +5,7 @@ namespace MarkPad.Document.Search
         Normal,
         Next,
         Prev,
+        Replace,
         NoSelect // used when the visual lines refresh
     }
 }
