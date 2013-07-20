@@ -584,14 +584,14 @@
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>
     <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
       copy "$(SolutionDir)..\lib\*" "$(TargetDir)"
 
       mkdir "$(TargetDir)locales\"
       copy "$(SolutionDir)..\lib\locales\*" "$(TargetDir)locales\"
       
-      copy "$(SolutionDir)packages\NHunspell.1.1.0\native\*" "$(TargetDir)"</PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+      copy "$(SolutionDir)packages\NHunspell.1.1.0\native\*" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <Import Project="Fody.targets" />
 </Project>
