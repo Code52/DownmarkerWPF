@@ -18,7 +18,7 @@
     <RestorePackages>true</RestorePackages>
     <IsWebBootstrapper Condition="$(IsWebBootstrapper) == '' Or $(IsWebBootstrapper) == '*Undefined*'">false</IsWebBootstrapper>
     <PublishUrl Condition="$(PublishUrl) == '' Or $(PublishUrl) == '*Undefined*'">publish\</PublishUrl>
-    <FodyPath>..\packages\Fody.1.13.6.1</FodyPath>
+    <FodyPath>..\packages\Fody.1.13.12</FodyPath>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled Condition="$(UpdateEnabled) == '' Or $(UpdateEnabled) == '*Undefined*'">false</UpdateEnabled>
