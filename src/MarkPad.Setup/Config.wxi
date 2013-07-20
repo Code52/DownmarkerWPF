@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Include>
-
-  <?define PROJECTPATH = "../MarkPad"?>
-  
-  <?define BUILDPATH = "$(var.PROJECTPATH)/bin/$(var.BUILD)"?>
-
-</Include>
