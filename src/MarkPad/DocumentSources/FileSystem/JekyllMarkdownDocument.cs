@@ -23,14 +23,17 @@ namespace MarkPad.DocumentSources.FileSystem
 
         public override FileReference SaveImage(Bitmap image)
         {
-            var imageFileName = GetFileNameBasedOnTitle(Title, siteContext.SiteBasePath);
+            var pathToFile = Path.GetDirectoryName(FileName).Replace(siteContext.SiteBasePath, string.Empty).Trim('\\', '/');
+            if (pathToFile.StartsWith("_")) pathToFile = string.Empty;
+            var directory = Path.Combine(siteContext.SiteBasePath, "img", pathToFile);
+            var imageFileName = GetFileNameBasedOnTitle(Title, directory);
 
             using (var stream = new FileStream(imageFileName, FileMode.Create))
-            {
                 image.Save(stream, ImageFormat.Png);
-            }
 
-            var relativePath = "/" + ToRelativePath(siteContext.SiteBasePath, FileName, imageFileName).TrimStart('\\', '/');
+            var relativePath = ToRelativePath(siteContext.SiteBasePath, FileName, imageFileName)
+                .TrimStart('\\', '/')
+                .Replace('\\', '/');
             var fileReference = new FileReference(imageFileName, relativePath, true);
             AddFile(fileReference);
 
