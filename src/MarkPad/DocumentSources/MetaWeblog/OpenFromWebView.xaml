@@ -57,7 +57,7 @@
             </ComboBox>
             <Button x:Name="Fetch" Content="Fetch" Margin="5 5 0 5" Width="50" VerticalAlignment="Center" Grid.Column="2" />
 
-            <Controls:ProgressRing IsActive="{Binding IsFetching}" Grid.Column="3" MinWidth="40" MinHeight="40"
+            <Controls:ProgressRing IsActive="{Binding IsFetching, Mode=OneWay}" Grid.Column="3" MinWidth="40" MinHeight="40"
                                    Visibility="{Binding IsFetching, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Controls:ProgressRing.RenderTransform>
                     <TransformGroup>

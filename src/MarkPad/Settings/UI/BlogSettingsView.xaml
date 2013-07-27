@@ -144,7 +144,7 @@
 						<Button x:Name="FetchBlogs" Content="Fetch" Height="25" VerticalAlignment="Top"
                                 IsEnabled="{Binding CurrentBlog.IsWebAPICompleted}"/>
 
-                        <Controls:ProgressRing IsActive="{Binding IsFetching}" MinWidth="40" MinHeight="40"
+                        <Controls:ProgressRing IsActive="{Binding IsFetching, Mode=OneTime}" MinWidth="40" MinHeight="40"
                                    Visibility="{Binding IsFetching, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <Controls:ProgressRing.RenderTransform>
                                 <TransformGroup>
