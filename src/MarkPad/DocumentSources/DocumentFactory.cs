@@ -71,6 +71,12 @@ namespace MarkPad.DocumentSources
 
             var associatedImages = GetAssociatedImages(contents, siteContext);
 
+            var context = siteContext as JekyllSiteContext;
+            if (context != null)
+            {
+                return new JekyllMarkdownDocument(path, contents, context, associatedImages, this, eventAggregator,
+                    dialogService, fileSystem);
+            }
             return new FileMarkdownDocument(path, contents, siteContext, associatedImages, this, eventAggregator, dialogService, fileSystem);
         }
 
