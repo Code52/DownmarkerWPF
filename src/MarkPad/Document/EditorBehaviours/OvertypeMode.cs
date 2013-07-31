@@ -10,7 +10,7 @@ namespace MarkPad.Document.EditorBehaviours
     {
         public void Handle(EditorPreviewKeyDownEvent e)
         {
-            if (e.Args.Key != Key.Insert) return;
+            if (e.Args.Key != Key.Insert || Keyboard.Modifiers != ModifierKeys.None) return;
 
             e.ViewModel.Overtype = !e.ViewModel.Overtype;
             e.Args.Handled = true;
