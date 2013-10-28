@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.IsolatedStorage;
@@ -9,7 +8,7 @@ namespace MarkPad.Settings
 {
     public class IsolatedStorageSettingsStore : JsonSettingsStoreBase
     {
-        const IsolatedStorageScope Scope = IsolatedStorageScope.Assembly | IsolatedStorageScope.User | IsolatedStorageScope.Roaming;
+        const IsolatedStorageScope Scope = IsolatedStorageScope.User | IsolatedStorageScope.Roaming;
 
         protected override void WriteTextFile(string filename, string fileContents)
         {
@@ -76,15 +75,8 @@ namespace MarkPad.Settings
             var readTextFile = ReadTextFile(filename);
             if (!string.IsNullOrEmpty(readTextFile))
             {
-                try
-                {
-                    var serializer = new DataContractJsonSerializer(typeof(Dictionary<string, string>));
-                    return (Dictionary<string, string>)serializer.ReadObject(new MemoryStream(Encoding.Default.GetBytes(readTextFile)));
-                }
-                catch
-                {
-                    return new Dictionary<string, string>();
-                }
+                var serializer = new DataContractJsonSerializer(typeof(Dictionary<string, string>));
+                return (Dictionary<string, string>)serializer.ReadObject(new MemoryStream(Encoding.Default.GetBytes(readTextFile)));
             }
 
             return new Dictionary<string, string>();

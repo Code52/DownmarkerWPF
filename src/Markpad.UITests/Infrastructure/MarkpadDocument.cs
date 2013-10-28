@@ -1,8 +1,8 @@
 using System.IO;
-using White.Core.UIItems;
-using White.Core.UIItems.Finders;
-using White.Core.UIItems.TabItems;
-using White.Core.WindowsAPI;
+using TestStack.White.UIItems;
+using TestStack.White.UIItems.Finders;
+using TestStack.White.UIItems.TabItems;
+using TestStack.White.WindowsAPI;
 
 namespace MarkPad.UITests.Infrastructure
 {

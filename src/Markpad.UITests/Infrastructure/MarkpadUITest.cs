@@ -1,4 +1,4 @@
-﻿using White.Core;
+﻿using TestStack.White;
 using Xunit;
 using log4net.Config;
 

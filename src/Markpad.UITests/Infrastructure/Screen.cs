@@ -1,5 +1,5 @@
-using White.Core;
-using White.Core.UIItems.WindowItems;
+using TestStack.White;
+using TestStack.White.UIItems.WindowItems;
 
 namespace MarkPad.UITests.Infrastructure
 {

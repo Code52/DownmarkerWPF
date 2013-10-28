@@ -39,7 +39,7 @@ namespace MarkPad.Document
             IDialogService dialogService, 
             IWindowManager windowManager,
             ISettingsProvider settingsProvider,
-			IDocumentParser documentParser,
+            IDocumentParser documentParser,
             ISpellCheckProvider spellCheckProvider,
             ISearchProvider searchProvider,
             IShell shell)
@@ -74,7 +74,7 @@ namespace MarkPad.Document
                 return;
             timer.Stop();
 
-			Task.Factory.StartNew(text => documentParser.Parse(text.ToString()), Document.Text)
+            Task.Factory.StartNew(text => documentParser.Parse(text.ToString()), Document.Text)
             .ContinueWith(s =>
             {
                 if (s.IsFaulted)

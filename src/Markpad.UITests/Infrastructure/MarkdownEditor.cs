@@ -1,8 +1,8 @@
 using System.Threading;
 using System.Windows.Automation;
-using White.Core.UIItems;
-using White.Core.Utility;
-using White.Core.WindowsAPI;
+using TestStack.White.UIItems;
+using TestStack.White.Utility;
+using TestStack.White.WindowsAPI;
 
 namespace MarkPad.UITests.Infrastructure
 {

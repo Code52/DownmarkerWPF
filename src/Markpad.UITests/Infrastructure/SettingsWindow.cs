@@ -1,11 +1,11 @@
 using System.Threading;
-using White.Core;
-using White.Core.Configuration;
-using White.Core.UIItems;
-using White.Core.UIItems.Finders;
-using White.Core.UIItems.ListBoxItems;
-using White.Core.UIItems.WPFUIItems;
-using White.Core.UIItems.WindowItems;
+using TestStack.White;
+using TestStack.White.Configuration;
+using TestStack.White.UIItems;
+using TestStack.White.UIItems.Finders;
+using TestStack.White.UIItems.ListBoxItems;
+using TestStack.White.UIItems.WPFUIItems;
+using TestStack.White.UIItems.WindowItems;
 
 namespace MarkPad.UITests.Infrastructure
 {

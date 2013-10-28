@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 using MarkPad.UITests.Infrastructure;
-using White.Core.WindowsAPI;
+using TestStack.White.WindowsAPI;
 using Xunit;
 
 namespace MarkPad.UITests

@@ -1,12 +1,12 @@
 using System;
 using System.Windows.Automation;
-using White.Core;
-using White.Core.UIItems;
-using White.Core.UIItems.Actions;
-using White.Core.UIItems.Custom;
-using White.Core.UIItems.Finders;
-using White.Core.UIItems.WindowItems;
-using White.Core.Utility;
+using TestStack.White;
+using TestStack.White.UIItems;
+using TestStack.White.UIItems.Actions;
+using TestStack.White.UIItems.Custom;
+using TestStack.White.UIItems.Finders;
+using TestStack.White.UIItems.WindowItems;
+using TestStack.White.Utility;
 
 namespace MarkPad.UITests.Infrastructure
 {
