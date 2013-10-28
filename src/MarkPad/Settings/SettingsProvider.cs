@@ -40,7 +40,7 @@ namespace MarkPad.Settings
 
         public SettingsProvider(ISettingsStorage settingsRepository = null)
         {
-            this.settingsRepository = settingsRepository ?? new IsolatedStorageSettingsStore();
+            this.settingsRepository = settingsRepository ?? new FileSystemStorageSettingsStore();
         }
 
         public T GetSettings<T>(bool fresh = false) where T : new()

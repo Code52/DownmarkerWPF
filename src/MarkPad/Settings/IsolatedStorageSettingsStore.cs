@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.IsolatedStorage;
@@ -6,31 +7,31 @@ using System.Text;
 
 namespace MarkPad.Settings
 {
-    public class IsolatedStorageSettingsStore : JsonSettingsStoreBase
+    public class FileSystemStorageSettingsStore : JsonSettingsStoreBase
     {
-        const IsolatedStorageScope Scope = IsolatedStorageScope.User | IsolatedStorageScope.Roaming;
-
         protected override void WriteTextFile(string filename, string fileContents)
         {
-            using (var isoStore = IsolatedStorageFile.GetStore(Scope, null, null))
-            {
-                using (var stream = new IsolatedStorageFileStream(filename, FileMode.Create, isoStore))
-                    new StreamWriter(stream).Write(fileContents);
-            }
+            var dir = GetSettingsDirectory();
+            File.WriteAllText(Path.Combine(dir, filename), fileContents, Encoding.UTF8);
         }
 
         protected override string ReadTextFile(string filename)
         {
-            using (var isoStore = IsolatedStorageFile.GetStore(Scope, null, null))
-            {
-                if (isoStore.FileExists(filename))
-                {
-                    using (var stream = new IsolatedStorageFileStream(filename, FileMode.Open, isoStore))
-                        return new StreamReader(stream).ReadToEnd();
-                }
-            }
+            var dir = GetSettingsDirectory();
+            var settingsFile = Path.Combine(dir, filename);
 
-            return null;
+            if (!File.Exists(settingsFile))
+                return null;
+
+            return File.ReadAllText(settingsFile, Encoding.UTF8);
+        }
+
+        static string GetSettingsDirectory()
+        {
+            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var settingsDir = Path.Combine(appData, "Markpad");
+            Directory.CreateDirectory(settingsDir);
+            return settingsDir;
         }
     }
 
