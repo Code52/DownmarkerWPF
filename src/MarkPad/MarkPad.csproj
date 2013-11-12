@@ -522,9 +522,9 @@
   <ItemGroup>
     <Resource Include="Fonts\Entypo.ttf" />
     <Resource Include="icon.png" />
-    <None Include="markpad.ico">
+    <Resource Include="markpad.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="markpaddoc.ico" />
@@ -581,6 +581,7 @@
     </PreBuildEvent>
     <PostBuildEvent>
       copy "$(SolutionDir)..\lib\*" "$(TargetDir)"
+      copy "$(MSBuildProjectDirectory)\markpad.ico" "$(TargetDir)"
 
       mkdir "$(TargetDir)locales\"
       copy "$(SolutionDir)..\lib\locales\*" "$(TargetDir)locales\"
