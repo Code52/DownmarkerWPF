@@ -522,9 +522,9 @@
   <ItemGroup>
     <Resource Include="Fonts\Entypo.ttf" />
     <Resource Include="icon.png" />
-    <Resource Include="markpad.ico">
+    <None Include="markpad.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="markpaddoc.ico" />
