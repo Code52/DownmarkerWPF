@@ -67,7 +67,13 @@ namespace MarkPad.Infrastructure
             Container.Resolve<IEventAggregator>().Publish(new AppReadyEvent());
 
             // Handle the original arguments from the first run of this app.
-            ((App)Application).HandleArguments(Environment.GetCommandLineArgs());
+            var activationArguments = AppDomain.CurrentDomain.SetupInformation.ActivationArguments;
+            if (activationArguments == null || activationArguments.ActivationData == null)
+                ((App)Application).HandleArguments(Environment.GetCommandLineArgs());
+            else
+            {
+                ((App)Application).HandleArguments(activationArguments.ActivationData);
+            }
         }
                 
         protected override void OnExit(object sender, EventArgs e)

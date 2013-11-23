@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Deployment.Application;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -52,7 +54,27 @@ namespace MarkPad.Settings
                             if (openKey == null) return;
                             using (var commandKey = openKey.CreateSubKey("command"))
                             {
-                                if (commandKey != null) commandKey.SetValue("", "\"" + exePath + "\" \"%1\"");
+                                if (commandKey != null)
+                                {
+                                    if (ApplicationDeployment.IsNetworkDeployed)
+                                    {
+                                        var path =
+                                            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs),
+                                                "Code52");
+
+                                        var files = Directory.GetFiles(path, "*.appref-ms");
+                                        if (files.Length == 0)
+                                            commandKey.SetValue("", "\"" + exePath + "\" \"%1\"");
+                                        else
+                                        {
+                                            commandKey.SetValue("", "cmd /c \"\"" + files[0] + "\" \"%1\"\"");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        commandKey.SetValue("", "\"" + exePath + "\" \"%1\"");
+                                    }
+                                }
                             }
                         }
                     }

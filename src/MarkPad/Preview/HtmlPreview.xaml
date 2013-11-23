@@ -9,5 +9,6 @@
     d:DesignHeight="300"
     d:DesignWidth="300"
 >
-    <cs:WebView x:Name="host" />
+  <cs:WebView x:Name="host" UseLayoutRounding="True" 
+       RenderOptions.BitmapScalingMode="NearestNeighbor" />
 </UserControl>
