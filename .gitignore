@@ -109,3 +109,4 @@ artifacts/ClickOnce/
 src/GlobalAssemblyInfo.cs
 
 Thumbs.db
+src/MarkPad.sln.ide/*

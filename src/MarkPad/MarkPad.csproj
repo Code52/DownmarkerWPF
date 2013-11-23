@@ -85,9 +85,8 @@
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Autofac.3.1.3\lib\net40\Autofac.dll</HintPath>
+    <Reference Include="Autofac">
+      <HintPath>..\packages\Autofac.3.1.5\lib\net40\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Caliburn.Micro, Version=1.5.1.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -585,7 +584,7 @@
 
       mkdir "$(TargetDir)locales\"
       copy "$(SolutionDir)..\lib\locales\*" "$(TargetDir)locales\"
-      
+
       copy "$(SolutionDir)packages\NHunspell.1.1.0\native\*" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <Import Project="Fody.targets" />
