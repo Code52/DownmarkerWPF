@@ -136,18 +136,18 @@ div.nav div.search
 	margin-top: 40px;
 	float: right;
 	width: 200px;
-	-moz-background-clip: border;
+	-moz-background-clip: border-box;
 	-moz-background-inline-policy: continuous;
-	-moz-background-origin: padding;
+	-moz-background-origin: padding-box;
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
-	-webkit-background-clip: border;
+	-webkit-background-clip: border-box;
 	-webkit-background-inline-policy: continuous;
-	-webkit-background-origin: padding;
+	-webkit-background-origin: padding-box;
 	border-radius: 5px;
-	background-clip: border;
+	background-clip: border-box;
 	background-inline-policy: continuous;
-	background-origin: padding;
+	background-origin: padding-box;
 }
 .intro h1
 {
@@ -1150,7 +1150,7 @@ pre.prettyprint
 }
 .box3
 {
-	width: 216;
+	width: 216px;
 	margin-right: 20px;
 	float: left;
 }
