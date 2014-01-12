@@ -2,6 +2,7 @@ using Autofac;
 using MarkPad.Document;
 using MarkPad.Document.Search;
 using MarkPad.Document.SpellCheck;
+using MarkPad.Document.EditorBehaviours;
 using MarkPad.DocumentSources;
 using MarkPad.DocumentSources.MetaWeblog;
 using MarkPad.Infrastructure.Abstractions;
@@ -35,6 +36,7 @@ namespace MarkPad.Infrastructure
 			});
             builder.RegisterType<SearchProvider>().As<ISearchProvider>();
             builder.RegisterType<SearchSettings>().SingleInstance();
+            builder.RegisterType<PairedCharsHighlightProvider>().As<IPairedCharsHighlightProvider>();
 		}
 	}
 }
