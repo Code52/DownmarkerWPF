@@ -30,6 +30,7 @@ namespace MarkPad.Document.Controls
 
         readonly IEnumerable<IHandle<EditorPreviewKeyDownEvent>> editorPreviewKeyDownHandlers;
         readonly IEnumerable<IHandle<EditorTextEnteringEvent>> editorTextEnteringHandlers;
+        readonly IEnumerable<IHandle<EditorTextEnteredEvent>> editorTextEnteredHandlers;
 
         public MarkdownEditor()
         {
@@ -43,6 +44,7 @@ namespace MarkPad.Document.Controls
 
             Editor.MouseMove += (s, e) => e.Handled = true;
             Editor.TextArea.TextEntering += TextAreaTextEntering;
+            Editor.TextArea.TextEntered += TextAreaTextEntered;
 
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleBold, (x, y) => ToggleBold(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleItalic, (x, y) => ToggleItalic(), CanEditDocument));
@@ -51,6 +53,7 @@ namespace MarkPad.Document.Controls
             CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
 
             var overtypeMode = new OvertypeMode();
+            var autoPairedCharacters = new AutoPairedCharacters();
 
             editorPreviewKeyDownHandlers = new IHandle<EditorPreviewKeyDownEvent>[] {
                 new CopyLeadingWhitespaceOnNewLine(),
@@ -60,10 +63,15 @@ namespace MarkPad.Document.Controls
                 new HardLineBreak(),
                 overtypeMode,
                 new AutoContinueLists(),
-                new IndentLists(()=>IndentType)
+                new IndentLists(()=>IndentType),
+                autoPairedCharacters
             };
             editorTextEnteringHandlers = new IHandle<EditorTextEnteringEvent>[] {
-                overtypeMode
+                overtypeMode,
+                autoPairedCharacters
+            };
+            editorTextEnteredHandlers = new IHandle<EditorTextEnteredEvent>[] {
+                autoPairedCharacters
             };
         }
 
@@ -210,6 +218,14 @@ namespace MarkPad.Document.Controls
             foreach (var handler in editorTextEnteringHandlers)
             {
                 handler.Handle(new EditorTextEnteringEvent(DataContext as DocumentViewModel, Editor, e));
+            }
+        }
+
+        void TextAreaTextEntered(object sender, TextCompositionEventArgs e)
+        {
+            foreach (var handler in editorTextEnteredHandlers)
+            {
+                handler.Handle(new EditorTextEnteredEvent(DataContext as DocumentViewModel, Editor, e));
             }
         }
 
@@ -363,6 +379,15 @@ namespace MarkPad.Document.Controls
         {
             get { return (ISpellCheckProvider) GetValue(SpellcheckProviderProperty); }
             set { SetValue(SpellcheckProviderProperty, value); }
+        }
+
+        public static readonly DependencyProperty PairedCharsHighlightProviderProperty =
+            DependencyProperty.Register("PairedCharsHighlightProvider", typeof(IPairedCharsHighlightProvider), typeof(MarkdownEditor), new PropertyMetadata(default(IPairedCharsHighlightProvider)));
+
+        public IPairedCharsHighlightProvider PairedCharacterHighlightingProvider
+        {
+            get { return (IPairedCharsHighlightProvider)GetValue(PairedCharsHighlightProviderProperty); }
+            set { SetValue(PairedCharsHighlightProviderProperty, value); }
         }
 
         public static readonly DependencyProperty IsColorsInvertedProperty =

@@ -15,6 +15,7 @@ using MarkPad.Settings;
 using MarkPad.Settings.Models;
 using Ookii.Dialogs.Wpf;
 using Action = System.Action;
+using MarkPad.Document.EditorBehaviours;
 
 namespace MarkPad.Document
 {
@@ -42,9 +43,11 @@ namespace MarkPad.Document
             IDocumentParser documentParser,
             ISpellCheckProvider spellCheckProvider,
             ISearchProvider searchProvider,
-            IShell shell)
+            IShell shell,
+            IPairedCharsHighlightProvider pairedCharsHighlightProvider)
         {
             SpellCheckProvider = spellCheckProvider;
+            PairedCharsHighlightProvider = pairedCharsHighlightProvider;
             this.dialogService = dialogService;
             this.windowManager = windowManager;
             this.settingsProvider = settingsProvider;
@@ -252,6 +255,8 @@ namespace MarkPad.Document
         {
             if (SpellCheckProvider != null)
                 SpellCheckProvider.Disconnect();
+            if (PairedCharsHighlightProvider != null)
+                PairedCharsHighlightProvider.Disconnect();
             var disposableSiteContext = MarkpadDocument.SiteContext as IDisposable;
             if (disposableSiteContext != null)
                 disposableSiteContext.Dispose();
@@ -373,9 +378,12 @@ namespace MarkPad.Document
 
         public ISpellCheckProvider SpellCheckProvider { get; private set; }
 
+        public IPairedCharsHighlightProvider PairedCharsHighlightProvider { get; private set; }
+
         protected override void OnViewLoaded(object view)
         {
             SpellCheckProvider.Initialise((DocumentView)view);
+            PairedCharsHighlightProvider.Initialise((DocumentView)view);
             SearchProvider.Initialise((DocumentView)view);
             base.OnViewLoaded(view);
             NotifyOfPropertyChange(()=>View);
