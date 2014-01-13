@@ -6,6 +6,7 @@ using System.Windows.Threading;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit.Document;
 using MarkPad.Document.Controls;
+using MarkPad.Document.EditorBehaviours;
 using MarkPad.Document.Search;
 using MarkPad.Document.SpellCheck;
 using MarkPad.Events;
@@ -15,7 +16,6 @@ using MarkPad.Settings;
 using MarkPad.Settings.Models;
 using Ookii.Dialogs.Wpf;
 using Action = System.Action;
-using MarkPad.Document.EditorBehaviours;
 
 namespace MarkPad.Document
 {

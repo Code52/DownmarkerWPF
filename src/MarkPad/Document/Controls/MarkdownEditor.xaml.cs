@@ -30,7 +30,6 @@ namespace MarkPad.Document.Controls
 
         readonly IEnumerable<IHandle<EditorPreviewKeyDownEvent>> editorPreviewKeyDownHandlers;
         readonly IEnumerable<IHandle<EditorTextEnteringEvent>> editorTextEnteringHandlers;
-        readonly IEnumerable<IHandle<EditorTextEnteredEvent>> editorTextEnteredHandlers;
 
         public MarkdownEditor()
         {
@@ -44,7 +43,6 @@ namespace MarkPad.Document.Controls
 
             Editor.MouseMove += (s, e) => e.Handled = true;
             Editor.TextArea.TextEntering += TextAreaTextEntering;
-            Editor.TextArea.TextEntered += TextAreaTextEntered;
 
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleBold, (x, y) => ToggleBold(), CanEditDocument));
             CommandBindings.Add(new CommandBinding(FormattingCommands.ToggleItalic, (x, y) => ToggleItalic(), CanEditDocument));
@@ -68,9 +66,6 @@ namespace MarkPad.Document.Controls
             };
             editorTextEnteringHandlers = new IHandle<EditorTextEnteringEvent>[] {
                 overtypeMode,
-                autoPairedCharacters
-            };
-            editorTextEnteredHandlers = new IHandle<EditorTextEnteredEvent>[] {
                 autoPairedCharacters
             };
         }
@@ -218,14 +213,6 @@ namespace MarkPad.Document.Controls
             foreach (var handler in editorTextEnteringHandlers)
             {
                 handler.Handle(new EditorTextEnteringEvent(DataContext as DocumentViewModel, Editor, e));
-            }
-        }
-
-        void TextAreaTextEntered(object sender, TextCompositionEventArgs e)
-        {
-            foreach (var handler in editorTextEnteredHandlers)
-            {
-                handler.Handle(new EditorTextEnteredEvent(DataContext as DocumentViewModel, Editor, e));
             }
         }
 

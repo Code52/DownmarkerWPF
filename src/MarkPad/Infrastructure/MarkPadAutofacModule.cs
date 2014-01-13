@@ -1,8 +1,8 @@
 using Autofac;
 using MarkPad.Document;
+using MarkPad.Document.EditorBehaviours;
 using MarkPad.Document.Search;
 using MarkPad.Document.SpellCheck;
-using MarkPad.Document.EditorBehaviours;
 using MarkPad.DocumentSources;
 using MarkPad.DocumentSources.MetaWeblog;
 using MarkPad.Infrastructure.Abstractions;

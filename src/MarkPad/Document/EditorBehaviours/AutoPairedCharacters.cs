@@ -1,19 +1,13 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using System.Windows.Input;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using ICSharpCode.AvalonEdit;
 using MarkPad.Document.Events;
 using System.Collections.Generic;
-using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.Rendering;
-using System.Windows;
-using System.Windows.Media;
 using System.Linq;
+using System.Windows.Input;
 
 namespace MarkPad.Document.EditorBehaviours
 {
-    class AutoPairedCharacters : IHandle<EditorTextEnteredEvent>, IHandle<EditorTextEnteringEvent>, IHandle<EditorPreviewKeyDownEvent>
+    class AutoPairedCharacters : IHandle<EditorTextEnteringEvent>, IHandle<EditorPreviewKeyDownEvent>
     {
         private static Dictionary<string, string> pairedChars = new Dictionary<string, string>()
         {
@@ -33,10 +27,6 @@ namespace MarkPad.Document.EditorBehaviours
             pairedCharacterRenderer = new PairedCharacterRenderer();
             validFollowingChars = new HashSet<string>() { "", " " };
             pairedChars.Values.ToList().ForEach(v => validFollowingChars.Add(v));
-        }
-
-        public void Handle(EditorTextEnteredEvent e)
-        {
         }
 
         public void Handle(EditorTextEnteringEvent e)

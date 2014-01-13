@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Input;
-using ICSharpCode.AvalonEdit;
-using MarkPad.Document.Events;
-using ICSharpCode.AvalonEdit.Document;
+﻿using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
+using System;
 
 namespace MarkPad.Document.EditorBehaviours
 {
     class PairedCharsHighlightProvider : IPairedCharsHighlightProvider
     {
-        readonly PairedCharacterRenderer pairedCharacterRenderer;
-        DocumentView view;
+        private readonly PairedCharacterRenderer pairedCharacterRenderer;
+        private DocumentView view;
 
         public PairedCharsHighlightProvider()
         {

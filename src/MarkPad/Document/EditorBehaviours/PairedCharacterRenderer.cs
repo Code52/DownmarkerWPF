@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using ICSharpCode.AvalonEdit.Document;
+﻿using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 
@@ -14,6 +11,8 @@ namespace MarkPad.Document.EditorBehaviours
         private Brush highlightBrush;
         private Pen highlightPen;
 
+        public TextSegmentCollection<TextSegment> PairedCharacters { get; private set; }
+
         public PairedCharacterRenderer()
         {
             highlightBrush = new SolidColorBrush(Colors.LightBlue);
@@ -21,8 +20,6 @@ namespace MarkPad.Document.EditorBehaviours
 
             PairedCharacters = new TextSegmentCollection<TextSegment>();
         }
-
-        public TextSegmentCollection<TextSegment> PairedCharacters { get; private set; }
 
         private IEnumerable<Point> CreatePoints(Point start, Point end, double offset, int count)
         {
