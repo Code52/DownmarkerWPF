@@ -43,27 +43,5 @@ namespace MarkPad.Document.EditorBehaviours
             if (editor.Document.TextLength == position) return "";
             return editor.Document.GetText(position, 1);
         }
-
-        /*public static void MoveToPrevInstanceOfString(TextEditor editor, string match)
-        {
-            if (match.Equals(TextEditorExtensions.GetNextCharacter(editor))) return;
-            if (editor.IsCaratAtEndOfLine()) return;
-            if (editor.CaretOffset >= editor.Document.TextLength) return;
-
-            editor.CaretOffset++;
-
-            MoveToPrevInstanceOfString(editor, match);
-        }
-
-        public static void MoveToNextInstanceOfString(TextEditor editor, string match)
-        {
-            if (match.Equals(TextEditorExtensions.GetNextCharacter(editor))) return;
-            if (editor.IsCaratAtEndOfLine()) return;
-            if (editor.CaretOffset >= editor.Document.TextLength) return;
-
-            editor.CaretOffset++;
-
-            MoveToNextInstanceOfString(editor, match);
-        }*/
     }
 }
