@@ -1,5 +1,6 @@
 using Autofac;
 using MarkPad.Document;
+using MarkPad.Document.EditorBehaviours;
 using MarkPad.Document.Search;
 using MarkPad.Document.SpellCheck;
 using MarkPad.DocumentSources;
@@ -35,6 +36,7 @@ namespace MarkPad.Infrastructure
 			});
             builder.RegisterType<SearchProvider>().As<ISearchProvider>();
             builder.RegisterType<SearchSettings>().SingleInstance();
+            builder.RegisterType<PairedCharsHighlightProvider>().As<IPairedCharsHighlightProvider>();
 		}
 	}
 }

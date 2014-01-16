@@ -21,5 +21,27 @@ namespace MarkPad.Document.EditorBehaviours
             return editor.Document.GetText(currentLine.Offset, editor.CaretOffset - currentLine.Offset);
         }
 
+        public static string GetPrevCharacter(this TextEditor editor)
+        {
+            return GetPrevCharacter(editor, editor.CaretOffset);
+        }
+
+        public static string GetPrevCharacter(this TextEditor editor, int position)
+        {
+            if (position < 1) return "";
+            return editor.Document.GetText(position - 1, 1);
+        }
+
+        public static string GetNextCharacter(this TextEditor editor)
+        {
+            return GetNextCharacter(editor, editor.CaretOffset);
+        }
+
+        public static string GetNextCharacter(this TextEditor editor, int position)
+        {
+            if (position < 0) return "";
+            if (editor.Document.TextLength == position) return "";
+            return editor.Document.GetText(position, 1);
+        }
     }
 }

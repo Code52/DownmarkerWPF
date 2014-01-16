@@ -51,6 +51,7 @@ namespace MarkPad.Document.Controls
             CommandBindings.Add(new CommandBinding(FormattingCommands.SetHyperlink, (x, y) => SetHyperlink(), CanEditDocument));
 
             var overtypeMode = new OvertypeMode();
+            var autoPairedCharacters = new AutoPairedCharacters();
 
             editorPreviewKeyDownHandlers = new IHandle<EditorPreviewKeyDownEvent>[] {
                 new CopyLeadingWhitespaceOnNewLine(),
@@ -60,10 +61,12 @@ namespace MarkPad.Document.Controls
                 new HardLineBreak(),
                 overtypeMode,
                 new AutoContinueLists(),
-                new IndentLists(()=>IndentType)
+                new IndentLists(()=>IndentType),
+                autoPairedCharacters
             };
             editorTextEnteringHandlers = new IHandle<EditorTextEnteringEvent>[] {
-                overtypeMode
+                overtypeMode,
+                autoPairedCharacters
             };
         }
 
@@ -363,6 +366,15 @@ namespace MarkPad.Document.Controls
         {
             get { return (ISpellCheckProvider) GetValue(SpellcheckProviderProperty); }
             set { SetValue(SpellcheckProviderProperty, value); }
+        }
+
+        public static readonly DependencyProperty PairedCharsHighlightProviderProperty =
+            DependencyProperty.Register("PairedCharsHighlightProvider", typeof(IPairedCharsHighlightProvider), typeof(MarkdownEditor), new PropertyMetadata(default(IPairedCharsHighlightProvider)));
+
+        public IPairedCharsHighlightProvider PairedCharacterHighlightingProvider
+        {
+            get { return (IPairedCharsHighlightProvider)GetValue(PairedCharsHighlightProviderProperty); }
+            set { SetValue(PairedCharsHighlightProviderProperty, value); }
         }
 
         public static readonly DependencyProperty IsColorsInvertedProperty =
