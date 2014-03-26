@@ -234,7 +234,10 @@ namespace MarkPad.Document
                     {
                         finishedWork.Dispose();
                         if (t.IsCompleted)
+                        {
                             CheckAndCloseView();
+                            callback(true);
+                        }
                         else
                             callback(false);
                     }, TaskScheduler.FromCurrentSynchronizationContext());
