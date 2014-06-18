@@ -77,6 +77,28 @@ namespace MarkPad.Tests.DocumentSources
         }
 
         [Fact]
+        public async Task OpenDocument_RestoresAssociatedFilesWithOptionalTitlesDefined()
+        {
+            // arrange
+            const string toOpen = @"c:\Path\File.md";
+            const string content = @"Some text
+![Alt](File_images\File1.png ""Optional Title"")
+![Alt](File_images\File2.png)
+";
+            fileSystem.File.Exists(@"c:\Path\File_images\File1.png").Returns(true);
+            fileSystem.File.Exists(@"c:\Path\File_images\File2.png").Returns(true);
+
+            fileSystem.File.ReadAllTextAsync(toOpen).Returns(TaskEx.FromResult(content));
+            siteContextGenerator.GetContext(toOpen).Returns(new SingleFileContext(toOpen));
+
+            // act
+            var document = await documentFactory.OpenDocument(toOpen);
+
+            // assert
+            Assert.Equal(2, document.AssociatedFiles.Count());
+        }
+
+        [Fact]
         public async Task SaveDocumentAs_CopiesAssociatedFiles()
         {
             // arrange
