@@ -187,10 +187,12 @@
   <ItemGroup>
     <Compile Include="Behaviors\StateHelper.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Document\Commands\DelegateCommand.cs" />
     <Compile Include="Document\EditorBehaviours\AutoPairedCharacters.cs" />
     <Compile Include="Document\EditorBehaviours\PairedCharsHighlightProvider.cs" />
     <Compile Include="Document\EditorBehaviours\PairedCharacterRenderer.cs" />
     <Compile Include="Document\EditorBehaviours\IPairedCharsHighlightProvider.cs" />
+    <Compile Include="Document\SpellCheck\MultiHunspell.cs" />
     <Compile Include="FontSizes.cs" />
     <Compile Include="Converters\BoolToPreviewBackgroundConverter.cs" />
     <Compile Include="Converters\BoolToPreviewForegroundConverter.cs" />

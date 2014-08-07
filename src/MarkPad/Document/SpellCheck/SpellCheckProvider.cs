@@ -101,7 +101,12 @@ namespace MarkPad.Document.SpellCheck
         {
             if (spellCheckRenderer == null) return Enumerable.Empty<string>();
             return spellingService.Suggestions(word);
-        } 
-    }
+        }
 
+        public void AddWordToCustomDictionary(string word)
+        {
+            spellingService.AddWordToCustomDictionary(word);
+            DoSpellCheck();
+        }
+    }
 }

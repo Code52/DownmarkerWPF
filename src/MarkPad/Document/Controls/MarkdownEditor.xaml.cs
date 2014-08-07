@@ -347,17 +347,33 @@ namespace MarkPad.Document.Controls
                 return;
             }
 
+            var misspelledWord = editor.Document.GetText(misspelledSegment);
+            var contextMenuItems = new List<object>(SpellCheckProvider.GetSpellcheckSuggestions(misspelledWord));
+            contextMenuItems.Add(new Separator());
+            contextMenuItems.Add(new DelegateCommand("Add to dictionary", obj =>
+                {
+                    SpellCheckProvider.AddWordToCustomDictionary(misspelledWord);
+                    Editor.TextArea.TextView.Redraw();
+                }));
+
+            EditorContextMenu.ItemsSource = contextMenuItems;
             EditorContextMenu.Tag = misspelledSegment;
-            EditorContextMenu.ItemsSource = SpellCheckProvider.GetSpellcheckSuggestions(editor.Document.GetText(misspelledSegment));
             e.Handled = false;
         }
 
         void SpellcheckerWordClick(object sender, RoutedEventArgs e)
         {
-            var word = (string)(e.OriginalSource as FrameworkElement).DataContext;
-            var segment = (TextSegment)EditorContextMenu.Tag;
-            Editor.Document.Replace(segment, word);
-         }
+            var clicked = (e.OriginalSource as FrameworkElement).DataContext;
+            if (clicked is ICommand)
+            {
+                ((ICommand)clicked).Execute(null);
+            }
+            else if (clicked is string)
+            {
+                var segment = (TextSegment)EditorContextMenu.Tag;
+                Editor.Document.Replace(segment, (string)clicked);
+            }
+        }
 
         public static readonly DependencyProperty SpellcheckProviderProperty =
             DependencyProperty.Register("SpellCheckProvider", typeof (ISpellCheckProvider), typeof (MarkdownEditor), new PropertyMetadata(default(ISpellCheckProvider)));
