@@ -1,29 +1,59 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Threading;
 
 namespace MarkPad.Settings
 {
     public class FileSystemStorageSettingsStore : JsonSettingsStoreBase
     {
+        private readonly SemaphoreSlim fileReadWriteMutex = new SemaphoreSlim(1);
+
         protected override void WriteTextFile(string filename, string fileContents)
         {
-            var dir = GetSettingsDirectory();
-            File.WriteAllText(Path.Combine(dir, filename), fileContents, Encoding.UTF8);
+            fileReadWriteMutex.Wait();
+            try
+            {
+                var dir = GetSettingsDirectory();
+                File.WriteAllText(Path.Combine(dir, filename), fileContents, Encoding.UTF8);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                fileReadWriteMutex.Release();
+            }
+
         }
 
         protected override string ReadTextFile(string filename)
         {
-            var dir = GetSettingsDirectory();
-            var settingsFile = Path.Combine(dir, filename);
+            fileReadWriteMutex.Wait();
+            try
+            {
+                var dir = GetSettingsDirectory();
+                var settingsFile = Path.Combine(dir, filename);
 
-            if (!File.Exists(settingsFile))
-                return null;
+                if (!File.Exists(settingsFile))
+                    return null;
 
-            return File.ReadAllText(settingsFile, Encoding.UTF8);
+                return File.ReadAllText(settingsFile, Encoding.UTF8);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                fileReadWriteMutex.Release();
+            }
+
         }
 
         static string GetSettingsDirectory()
