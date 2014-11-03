@@ -11,31 +11,23 @@ namespace MarkPad.Settings
 {
     public class FileSystemStorageSettingsStore : JsonSettingsStoreBase
     {
-        private readonly SemaphoreSlim fileReadWriteMutex = new SemaphoreSlim(1);
+        private object fileLock = new Object();
 
         protected override void WriteTextFile(string filename, string fileContents)
         {
-            fileReadWriteMutex.Wait();
-            try
-            {
-                var dir = GetSettingsDirectory();
-                File.WriteAllText(Path.Combine(dir, filename), fileContents, Encoding.UTF8);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                fileReadWriteMutex.Release();
-            }
+            
+                lock (fileLock)
+                {
+                    var dir = GetSettingsDirectory();
+                    File.WriteAllText(Path.Combine(dir, filename), fileContents, Encoding.UTF8);
+                }
+            
 
         }
 
         protected override string ReadTextFile(string filename)
         {
-            fileReadWriteMutex.Wait();
-            try
+            lock (fileLock)
             {
                 var dir = GetSettingsDirectory();
                 var settingsFile = Path.Combine(dir, filename);
@@ -44,14 +36,6 @@ namespace MarkPad.Settings
                     return null;
 
                 return File.ReadAllText(settingsFile, Encoding.UTF8);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                fileReadWriteMutex.Release();
             }
 
         }
