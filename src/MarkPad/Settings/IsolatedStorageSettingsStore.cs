@@ -1,29 +1,43 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Threading;
 
 namespace MarkPad.Settings
 {
     public class FileSystemStorageSettingsStore : JsonSettingsStoreBase
     {
+        private object fileLock = new Object();
+
         protected override void WriteTextFile(string filename, string fileContents)
         {
-            var dir = GetSettingsDirectory();
-            File.WriteAllText(Path.Combine(dir, filename), fileContents, Encoding.UTF8);
+            
+                lock (fileLock)
+                {
+                    var dir = GetSettingsDirectory();
+                    File.WriteAllText(Path.Combine(dir, filename), fileContents, Encoding.UTF8);
+                }
+            
+
         }
 
         protected override string ReadTextFile(string filename)
         {
-            var dir = GetSettingsDirectory();
-            var settingsFile = Path.Combine(dir, filename);
+            lock (fileLock)
+            {
+                var dir = GetSettingsDirectory();
+                var settingsFile = Path.Combine(dir, filename);
 
-            if (!File.Exists(settingsFile))
-                return null;
+                if (!File.Exists(settingsFile))
+                    return null;
 
-            return File.ReadAllText(settingsFile, Encoding.UTF8);
+                return File.ReadAllText(settingsFile, Encoding.UTF8);
+            }
+
         }
 
         static string GetSettingsDirectory()
