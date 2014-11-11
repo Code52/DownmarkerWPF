@@ -179,6 +179,8 @@
     <EmbeddedResource Include="Document\SpellCheck\Dictionaries\en_GB.dic" />
     <EmbeddedResource Include="Document\SpellCheck\Dictionaries\de_DE.aff" />
     <EmbeddedResource Include="Document\SpellCheck\Dictionaries\de_DE.dic" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\fr_FR.aff" />
+    <EmbeddedResource Include="Document\SpellCheck\Dictionaries\fr_FR.dic" />
     <None Include="Fody.targets" />
     <None Include="FodyWeavers.xml">
       <SubType>Designer</SubType>
