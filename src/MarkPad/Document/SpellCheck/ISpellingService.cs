@@ -8,5 +8,6 @@ namespace MarkPad.Document.SpellCheck
 		void SetLanguage(SpellingLanguages language);
 		bool Spell(string word);
         IEnumerable<string> Suggestions(string word);
-	}
+        void AddWordToCustomDictionary(string word);
+    }
 }

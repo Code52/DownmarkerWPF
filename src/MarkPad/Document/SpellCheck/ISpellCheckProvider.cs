@@ -8,6 +8,7 @@ namespace MarkPad.Document.SpellCheck
 	    void Initialise(DocumentView documentView);
 	    IEnumerable<TextSegment> GetSpellCheckErrors();
 	    IEnumerable<string> GetSpellcheckSuggestions(string word);
+        void AddWordToCustomDictionary(string word);
 	    void Disconnect();
 	}
 }

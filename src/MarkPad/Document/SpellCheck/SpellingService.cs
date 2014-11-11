@@ -9,7 +9,8 @@ namespace MarkPad.Document.SpellCheck
     public class SpellingService : ISpellingService
     {
         static readonly Dictionary<SpellingLanguages, string> LangLookup;
-        Hunspell speller;
+        readonly MultiHunspell speller = new MultiHunspell();
+        SpellingLanguages currentLanguage;
 
         static SpellingService()
         {
@@ -27,22 +28,23 @@ namespace MarkPad.Document.SpellCheck
 
         public bool Spell(string word)
         {
-            return speller == null || speller.Spell(word);
+            return speller.Spell(word);
         }
 
         public IEnumerable<string> Suggestions(string word)
         {
-            return speller.Suggest(word);
+            return speller.Suggestions(word);
         }
 
         public void ClearLanguages()
         {
-            speller = null;
+            speller.Clear();
         }
 
         public void SetLanguage(SpellingLanguages language)
         {
-            speller = new Hunspell();
+            currentLanguage = language;
+            speller.Clear();
 
             var languageKey = LangLookup[language];
 
@@ -69,10 +71,45 @@ namespace MarkPad.Document.SpellCheck
                         var affBytes = new BinaryReader(affStream).ReadBytes((int)affStream.Length);
                         var dicBytes = new BinaryReader(dicStream).ReadBytes((int)dicStream.Length);
 
-                        speller.Load(affBytes, dicBytes);
+                        var newSpeller = new Hunspell(affBytes, dicBytes);
+                        speller.AddHunspell(newSpeller);
                     }
                 }
             }
+
+            var customDictionaryPath = GetCustomDictionaryPath();
+            if (File.Exists(customDictionaryPath))
+            {
+                var newSpeller = new Hunspell(new byte[] {}, File.ReadAllBytes(customDictionaryPath));
+                speller.AddHunspell(newSpeller);
+            }
+        }
+
+        public void AddWordToCustomDictionary(string word)
+        {
+            var customDictionaryPath = GetCustomDictionaryPath();
+
+            IList<string> lines = File.Exists(customDictionaryPath)
+                ? File.ReadAllLines(customDictionaryPath).Skip(1).ToList() // first line is count
+                : new List<string>();
+
+            if (!lines.Contains(word))
+            {
+                lines.Add(word);
+
+                File.WriteAllText(
+                    customDictionaryPath,
+                    lines.Count() + "\n" + string.Join("\n", lines).TrimEnd('\n') + "\n");
+
+                SetLanguage(currentLanguage); // reloads dictionary
+            }
+        }
+
+        private static string GetCustomDictionaryPath()
+        {
+            return Path.Combine(
+                Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                "custom.dic");
         }
     }
 }
