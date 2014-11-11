@@ -82,7 +82,7 @@ namespace MarkPad.DocumentSources
 
         IEnumerable<FileReference> GetAssociatedImages(string markdownFileContents, ISiteContext siteContext)
         {
-            const string imageRegex = @"!\[(?<AltText>.*?)\]\((?<Link>.*?)\)";
+            const string imageRegex = @"!\[(?<AltText>.*?)\]\((?<Link>\S+?)\s*(?<OptionalTitle>("".*""){0,1}?)\)";
             var images = Regex.Matches(markdownFileContents, imageRegex);
             var associatedImages = new List<FileReference>();
 
