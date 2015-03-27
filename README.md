@@ -11,7 +11,7 @@ Our aim is to create a useably, stylish new version of the project utilising Mic
 ## Install
 [Nightly](http://ginnivan.blob.core.windows.net/markpadnightly/MarkPad.application) | [Stable](http://ginnivan.blob.core.windows.net/markpadrelease/MarkPad.application)
 
-Updates will be installed directly through MarkPad
+Updates will be installed directly through MarkPad.
 
 ## Dependencies
 
@@ -20,9 +20,9 @@ Updates will be installed directly through MarkPad
 
 ## Tools required to develop
 
- - Visual Studio 2012
- - WiX - to generate the installer (optional)
- - 7-Zip - to generate a zip version of the tool (optional)
+ - [Visual Studio](https://www.visualstudio.com/)
+ - [WiX](http://wixtoolset.org/releases/v3.9/stable) - to generate the installer (optional)
+ - [7-Zip](http://www.7-zip.org/download.html) - to generate a zip version of the tool (optional)
 
 ## Contributing
 
