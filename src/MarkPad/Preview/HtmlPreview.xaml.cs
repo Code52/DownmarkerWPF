@@ -57,6 +57,8 @@ namespace MarkPad.Preview
             set { SetValue(ScrollPercentageProperty, value); }
         }
 
+        public double LastScrollPercentage;
+
         #endregion public double ScrollPercentage
 
         public HtmlPreview()
@@ -70,11 +72,19 @@ namespace MarkPad.Preview
                 host.Print();
         }
 
+        public void RestoreLastScrollPercentage()
+        {
+            ExecuteScroll(this, LastScrollPercentage);
+        }
+
         private static void HtmlChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var htmlPreview = (HtmlPreview)d;
             if (htmlPreview.host != null && htmlPreview.host.IsBrowserInitialized)
+            {
                 htmlPreview.host.LoadHtml((string)e.NewValue);
+                htmlPreview.RestoreLastScrollPercentage();
+            }
         }
 
         private static void FileNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -84,13 +94,19 @@ namespace MarkPad.Preview
                 htmlPreview.host.Title = (string)e.NewValue;
         }
 
+        private static void ExecuteScroll(HtmlPreview htmlPreview, object scrollPercentage)
+        {
+            var javascript = string.Format("window.scrollTo(0,{0} * (document.body.scrollHeight - document.body.clientHeight));", scrollPercentage);
+            htmlPreview.host.ExecuteScript(javascript);
+        }
+
         private static void ScrollPercentageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var htmlPreview = (HtmlPreview)d;
             if (htmlPreview.host != null && htmlPreview.host.IsBrowserInitialized)
             {
-                var javascript = string.Format("window.scrollTo(0,{0} * (document.body.scrollHeight - document.body.clientHeight));", e.NewValue);
-                htmlPreview.host.ExecuteScript(javascript);
+                ExecuteScroll(htmlPreview, e.NewValue);
+                htmlPreview.LastScrollPercentage = (double)e.NewValue;
             }
         }
 
