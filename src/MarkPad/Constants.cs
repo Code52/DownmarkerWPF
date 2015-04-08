@@ -27,7 +27,7 @@ namespace MarkPad
             {
                 var assemblyName = Assembly.GetEntryAssembly().GetName();
 
-                return Path.Combine(Path.GetTempPath(), String.Format("{0}.{1}", assemblyName.Name, assemblyName.Version));
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), assemblyName.Name);
             }
         }
 
