@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkPad", "MarkPad\MarkPad.csproj", "{393EB1F9-F80F-4B78-BEB3-11DD6714DA53}"
 EndProject
@@ -75,5 +75,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{B780B8AD-169E-4300-A29F-713471EF3056} = {930C63A3-C919-4AA1-9292-DB3C4B81F4DA}
 		{F5EF3169-748F-4C96-A4A1-F33381572619} = {930C63A3-C919-4AA1-9292-DB3C4B81F4DA}
+	EndGlobalSection
+	GlobalSection(CodealikeProperties) = postSolution
+		SolutionGuid = 8190bbda-1bdf-4c93-8755-82a739c1061e
 	EndGlobalSection
 EndGlobal
