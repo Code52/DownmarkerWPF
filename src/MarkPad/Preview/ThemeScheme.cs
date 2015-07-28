@@ -15,7 +15,7 @@ namespace MarkPad.Preview
 
     public class ThemeSchemeHandler : ISchemeHandler
     {
-        public bool ProcessRequest(IRequest request, ref string mimeType, ref System.IO.Stream stream)
+        public bool ProcessRequestAsync(IRequest request, ISchemeHandlerResponse response, OnRequestCompletedHandler requestCompletedCallback)
         {
             var uri = new Uri(request.Url);
             var segments = uri.Segments;
@@ -27,8 +27,8 @@ namespace MarkPad.Preview
 
             if (file.Exists)
             {
-                stream = file.OpenRead();
-                mimeType = "text/html";
+                response.ResponseStream = file.OpenRead();
+                response.MimeType = "text/html";
                 return true;
             }
 

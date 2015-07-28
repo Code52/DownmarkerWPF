@@ -1,8 +1,3 @@
-using System;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Threading;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit.Document;
 using MarkPad.Document.Controls;
@@ -15,29 +10,34 @@ using MarkPad.Plugins;
 using MarkPad.Settings;
 using MarkPad.Settings.Models;
 using Ookii.Dialogs.Wpf;
+using System;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows.Threading;
 using Action = System.Action;
 
 namespace MarkPad.Document
 {
     public class DocumentViewModel : Screen, IHandle<SettingsChangedEvent>
     {
-        static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
-        const double ZoomDelta = 0.1;
-        double zoomLevel = 1;
+        private static readonly ILog Log = LogManager.GetLog(typeof(DocumentViewModel));
+        private const double ZoomDelta = 0.1;
+        private double zoomLevel = 1;
 
-        readonly IDialogService dialogService;
-        readonly IWindowManager windowManager;
-        readonly ISettingsProvider settingsProvider;
-        readonly IDocumentParser documentParser;
-        readonly IShell shell;
+        private readonly IDialogService dialogService;
+        private readonly IWindowManager windowManager;
+        private readonly ISettingsProvider settingsProvider;
+        private readonly IDocumentParser documentParser;
+        private readonly IShell shell;
 
-        readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
-        readonly DispatcherTimer timer;
+        private readonly TimeSpan delay = TimeSpan.FromSeconds(0.5);
+        private readonly DispatcherTimer timer;
 
-        readonly Regex wordCountRegex = new Regex(@"[\S]+", RegexOptions.Compiled);
+        private readonly Regex wordCountRegex = new Regex(@"[\S]+", RegexOptions.Compiled);
 
         public DocumentViewModel(
-            IDialogService dialogService, 
+            IDialogService dialogService,
             IWindowManager windowManager,
             ISettingsProvider settingsProvider,
             IDocumentParser documentParser,
@@ -58,7 +58,7 @@ namespace MarkPad.Document
             FontSize = GetFontSize();
             IsColorsInverted = GetIsColorsInverted();
             IndentType = settingsProvider.GetSettings<MarkPadSettings>().IndentType;
-            
+
             Original = "";
             Document = new TextDocument();
             timer = new DispatcherTimer();
@@ -115,7 +115,7 @@ namespace MarkPad.Document
             MarkpadDocument.MarkdownContent = Document.Text;
             return MarkpadDocument
                 .SaveAs()
-                .ContinueWith(t=>
+                .ContinueWith(t =>
                 {
                     if (t.IsFaulted || t.IsCanceled)
                         return false;
@@ -160,14 +160,14 @@ namespace MarkPad.Document
 
                     if (t.IsFaulted)
                     {
-                        var saveResult = (bool?) dispatcher.Invoke(new Action(() =>
-                        {
-                            dialogService.ShowConfirmation(
-                                "MarkPad", "Cannot save file",
-                                "You may not have permission to save this file to the selected location, or the location may not be currently available. Error: " + t.Exception.InnerException.Message,
-                                new ButtonExtras(ButtonType.Yes, "Select a different location", "Save this file to a different location."),
-                                new ButtonExtras(ButtonType.No, "Cancel", ""));
-                        }));
+                        var saveResult = (bool?)dispatcher.Invoke(new Action(() =>
+                       {
+                           dialogService.ShowConfirmation(
+                               "MarkPad", "Cannot save file",
+                               "You may not have permission to save this file to the selected location, or the location may not be currently available. Error: " + t.Exception.InnerException.Message,
+                               new ButtonExtras(ButtonType.Yes, "Select a different location", "Save this file to a different location."),
+                               new ButtonExtras(ButtonType.No, "Cancel", ""));
+                       }));
 
                         return saveResult == true && SaveAs().Result;
                     }
@@ -183,7 +183,7 @@ namespace MarkPad.Document
         }
 
         public TextDocument Document { get; private set; }
-		public string MarkdownContent { get { return Document.Text; } }
+        public string MarkdownContent { get { return Document.Text; } }
 
         public string Original { get; set; }
 
@@ -279,7 +279,7 @@ namespace MarkPad.Document
             set
             {
                 zoomLevel = value;
-                FontSize = GetFontSize()*value;
+                FontSize = GetFontSize() * value;
             }
         }
 
@@ -332,7 +332,7 @@ namespace MarkPad.Document
             if (newZoom > MaxZoom)
             {
                 //Don't cause a change if we don't have to
-                if (Math.Abs(ZoomLevel - MaxZoom) < 0.1)return;
+                if (Math.Abs(ZoomLevel - MaxZoom) < 0.1) return;
                 newZoom = MaxZoom;
             }
 
@@ -347,9 +347,9 @@ namespace MarkPad.Document
         public MarkPadHyperlink GetHyperlink(MarkPadHyperlink hyperlink)
         {
             var viewModel = new HyperlinkEditorViewModel(hyperlink.Text, hyperlink.Url)
-                                {
-                                    IsUrlFocussed = !String.IsNullOrWhiteSpace(hyperlink.Text)
-                                };
+            {
+                IsUrlFocussed = !String.IsNullOrWhiteSpace(hyperlink.Text)
+            };
             windowManager.ShowDialog(viewModel);
             if (!viewModel.WasCancelled)
             {
@@ -361,7 +361,7 @@ namespace MarkPad.Document
 
         public void RefreshFont()
         {
-            FontSize = GetFontSize()*ZoomLevel;
+            FontSize = GetFontSize() * ZoomLevel;
         }
 
         public void RefreshColors()
@@ -371,7 +371,7 @@ namespace MarkPad.Document
 
         public void Handle(SettingsChangedEvent message)
         {
-            IndentType = settingsProvider.GetSettings<MarkPadSettings>().IndentType;            
+            IndentType = settingsProvider.GetSettings<MarkPadSettings>().IndentType;
         }
 
         public DocumentView View
@@ -389,7 +389,7 @@ namespace MarkPad.Document
             PairedCharsHighlightProvider.Initialise((DocumentView)view);
             SearchProvider.Initialise((DocumentView)view);
             base.OnViewLoaded(view);
-            NotifyOfPropertyChange(()=>View);
+            NotifyOfPropertyChange(() => View);
         }
 
         protected override void OnDeactivate(bool close)
