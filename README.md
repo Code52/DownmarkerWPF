@@ -1,5 +1,7 @@
 # DownmarkerWPF
 
+[![Build status](https://ci.appveyor.com/api/projects/status/8nyixeikl67jh305/branch/master?svg=true)](https://ci.appveyor.com/project/shiftkey/downmarkerwpf/branch/master)
+
 This codebase contains the [DownmarkerWPF](http://code52.org/DownmarkerWPF/) project, by [Code52](http://code52.org/)
 
 ## About DownmarkerWPF
