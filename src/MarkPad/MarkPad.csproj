@@ -18,7 +18,6 @@
     <RestorePackages>true</RestorePackages>
     <IsWebBootstrapper Condition="$(IsWebBootstrapper) == '' Or $(IsWebBootstrapper) == '*Undefined*'">false</IsWebBootstrapper>
     <PublishUrl Condition="$(PublishUrl) == '' Or $(PublishUrl) == '*Undefined*'">publish\</PublishUrl>
-    <FodyPath>..\..\</FodyPath>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled Condition="$(UpdateEnabled) == '' Or $(UpdateEnabled) == '*Undefined*'">false</UpdateEnabled>
