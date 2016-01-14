@@ -3,3 +3,5 @@ os: Visual Studio 2015
 configuration: Release
 build:
   verbosity: minimal
+test:
+  assemblies: '**/*.Tests.dll'
