@@ -102,15 +102,17 @@ namespace MarkPad.Preview
             var htmlPreview = (HtmlPreview)d;
             if (htmlPreview.host != null && htmlPreview.host.IsBrowserInitialized)
             {
-                var newValue = (string)e.NewValue;
+                var fileName = (htmlPreview.FileName ?? "blank").Replace(" ", "-");
+                var fileUrl = string.Format("http://{0}/", fileName);
+
+                var newValue = e.NewValue as string;
                 if (newValue == null)
-                    htmlPreview.host.LoadHtml(string.Empty, string.Empty);
+                    htmlPreview.host.LoadHtml(string.Empty, fileUrl);
                 else
                 {
                     // fixes an issue where FileName contains a space, e.g. "New Document"
                     // and the web browser control won't render out the content as expected
-                    var fileName = htmlPreview.FileName.Replace(" ", "-");
-                    htmlPreview.host.LoadHtml(newValue, string.Format("http://{0}/", fileName));
+                    htmlPreview.host.LoadHtml(newValue, fileUrl);
                     htmlPreview.RestoreLastScrollPercentage();
                 }
             }
@@ -154,7 +156,12 @@ namespace MarkPad.Preview
 
         private void InitializeData()
         {
-            host.LoadHtml(Html, string.Format("http://{0}/", FileName));
+            var fileName = (FileName ?? "blank").Replace(" ", "-");
+            var fileUrl = string.Format("http://{0}/", fileName);
+
+            var html = Html ?? string.Empty;
+
+            host.LoadHtml(html, fileUrl);
             host.Title = FileName;
         }
 
