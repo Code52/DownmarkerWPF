@@ -614,7 +614,7 @@
             <Slider Maximum="{Binding MDI.ActiveItem.MaxZoom}" Minimum="{Binding MDI.ActiveItem.MinZoom}" VerticalAlignment="Bottom"
                     HorizontalAlignment="Right" Width="100" Margin="0,0,20,0"
                     Visibility="{Binding MDI.ActiveItem, Converter={StaticResource NullToVisibilityConverter}}"
-                    Value="{Binding MDI.ActiveItem.ZoomLevel}" />
+                    Value="{Binding MDI.ActiveItem.ZoomLevel}" LargeChange="0.1" SmallChange="0.05" />
         </Grid>
     </Grid>
 </Window>
