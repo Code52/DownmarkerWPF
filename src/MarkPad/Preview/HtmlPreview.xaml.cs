@@ -107,7 +107,10 @@ namespace MarkPad.Preview
                     htmlPreview.host.LoadHtml(string.Empty, string.Empty);
                 else
                 {
-                    htmlPreview.host.LoadHtml(newValue, string.Format("http://{0}/", htmlPreview.FileName));
+                    // fixes an issue where FileName contains a space, e.g. "New Document"
+                    // and the web browser control won't render out the content as expected
+                    var fileName = htmlPreview.FileName.Replace(" ", "-");
+                    htmlPreview.host.LoadHtml(newValue, string.Format("http://{0}/", fileName));
                     htmlPreview.RestoreLastScrollPercentage();
                 }
             }
