@@ -11,10 +11,19 @@ namespace MarkPad.UITests.Infrastructure
         {
             var directoryName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var environmentLocation = Environment.GetEnvironmentVariable("MarkpadLocation");
+#if DEBUG
             var markpadLocation = environmentLocation ?? Path.Combine(directoryName, @"..\..\..\Markpad\bin\Debug\Markpad.exe");
+#else
+            var markpadLocation = environmentLocation ?? Path.Combine(directoryName, @"..\..\..\Markpad\bin\Release\Markpad.exe");
+#endif
+
             if (!File.Exists(markpadLocation))
             {
+#if DEBUG
                 markpadLocation = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Markpad\bin\Debug\Markpad.exe");
+#else
+                markpadLocation = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Markpad\bin\Release\Markpad.exe");
+#endif
             }
             Application = Application.Launch(markpadLocation);
             MainWindow = new MarkpadWindow(Application, Application.GetWindow("MarkPad"));

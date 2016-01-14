@@ -13,6 +13,9 @@ TestResults
 *.user
 *.sln.docstates
 
+# Visual Studio cache
+.vs/
+
 # Build results
 [Dd]ebug/
 [Rr]elease/
