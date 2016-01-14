@@ -1,56 +1,75 @@
 <UserControl
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
-             xmlns:cal="http://www.caliburnproject.org"
-             xmlns:Commands="clr-namespace:MarkPad.Document.Commands"
-             xmlns:controls="clr-namespace:MarkPad.Document.Controls"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:UI="clr-namespace:MarkPad.Settings.UI" xmlns:Converters="clr-namespace:MarkPad.Converters" x:Class="MarkPad.Document.Controls.MarkdownEditor"
-             x:Name="editor"
-             d:DesignHeight="300"
-             d:DesignWidth="300"
-             Loaded="EditorLoaded"
-             mc:Ignorable="d">
+    x:Class="MarkPad.Document.Controls.MarkdownEditor"
+    x:Name="editor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:Commands="clr-namespace:MarkPad.Document.Commands"
+    xmlns:Converters="clr-namespace:MarkPad.Converters"
+    xmlns:UI="clr-namespace:MarkPad.Settings.UI"
+    xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
+    xmlns:cal="http://www.caliburnproject.org"
+    xmlns:controls="clr-namespace:MarkPad.Document.Controls"
+    Loaded="EditorLoaded"
+    d:DesignHeight="300"
+    d:DesignWidth="300"
+    mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
-            <Converters:BoolToPreviewBackgroundConverter x:Key="BoolToPreviewBackgroundConverter"/>
-            <Converters:BoolToPreviewForegroundConverter x:Key="BoolToPreviewForegroundConverter"/>
+            <Converters:BoolToPreviewBackgroundConverter x:Key="BoolToPreviewBackgroundConverter" />
+            <Converters:BoolToPreviewForegroundConverter x:Key="BoolToPreviewForegroundConverter" />
             <Style TargetType="{x:Type avalonedit:TextArea}">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                <Setter
+                    Property="FocusVisualStyle"
+                    Value="{x:Null}" />
                 <Setter Property="SelectionBrush">
                     <Setter.Value>
-                        <SolidColorBrush Opacity="0.7" Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}" />
+                        <SolidColorBrush
+                            Color="{DynamicResource
+                                {x:Static SystemColors.HighlightColorKey}}"
+                            Opacity="0.7" />
                     </Setter.Value>
                 </Setter>
                 <Setter Property="SelectionBorder">
                     <Setter.Value>
-                        <Pen Brush="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Thickness="1" />
+                        <Pen
+                            Brush="{DynamicResource
+                                {x:Static SystemColors.HighlightBrushKey}}"
+                            Thickness="1" />
                     </Setter.Value>
                 </Setter>
-                <Setter Property="SelectionForeground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
+                <Setter
+                    Property="SelectionForeground"
+                    Value="{DynamicResource
+                        {x:Static SystemColors.HighlightTextBrushKey}}" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type avalonedit:TextArea}">
                             <DockPanel Focusable="False">
-                                <ItemsControl Margin="0,0,5,0"
-                                              Background="#adDEDEDE"
-                                              DockPanel.Dock="Left"
-                                              Focusable="False"
-                                              FontFamily="Segoe UI"
-                                              FontSize="10"
-                                              ItemsSource="{Binding LeftMargins, RelativeSource={RelativeSource TemplatedParent}}"
-                                              Padding="10,0,0,0">
+                                <ItemsControl
+                                    DockPanel.Dock="Left"
+                                    Margin="0,0,5,0"
+                                    Padding="10,0,0,0"
+                                    Background="#adDEDEDE"
+                                    Focusable="False"
+                                    FontFamily="Segoe UI"
+                                    FontSize="10"
+                                    ItemsSource="{Binding
+                                        LeftMargins,
+                                        RelativeSource={RelativeSource TemplatedParent}}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <StackPanel Orientation="Horizontal" />
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
                                 </ItemsControl>
-                                <ContentPresenter Panel.ZIndex="-1"
-                                                  Content="{Binding TextView, RelativeSource={RelativeSource TemplatedParent}}"
-                                                  Focusable="False" />
+                                <ContentPresenter
+                                    Panel.ZIndex="-1"
+                                    Content="{Binding
+                                        TextView,
+                                        RelativeSource={RelativeSource TemplatedParent}}"
+                                    Focusable="False" />
                             </DockPanel>
                         </ControlTemplate>
                     </Setter.Value>
@@ -59,74 +78,103 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <UserControl.InputBindings>
-        <KeyBinding Key="B"
-                    Command="Commands:FormattingCommands.ToggleBold"
-                    Modifiers="Control" />
-        <KeyBinding Key="I"
-                    Command="Commands:FormattingCommands.ToggleItalic"
-                    Modifiers="Control" />
-        <KeyBinding Key="J"
-                    Command="Commands:FormattingCommands.ToggleCode"
-                    Modifiers="Control" />
-        <KeyBinding Key="K"
-                    Command="Commands:FormattingCommands.SetHyperlink"
-                    Modifiers="Control" />
+        <KeyBinding
+            Command="Commands:FormattingCommands.ToggleBold"
+            Key="B"
+            Modifiers="Control" />
+        <KeyBinding
+            Command="Commands:FormattingCommands.ToggleItalic"
+            Key="I"
+            Modifiers="Control" />
+        <KeyBinding
+            Command="Commands:FormattingCommands.ToggleCode"
+            Key="J"
+            Modifiers="Control" />
+        <KeyBinding
+            Command="Commands:FormattingCommands.SetHyperlink"
+            Key="K"
+            Modifiers="Control" />
     </UserControl.InputBindings>
     <Grid>
-        <controls:FloatingToolBar x:Name="floatingToolBar"
-			HorizontalOffset="-30"
-			PlacementTarget="{Binding ElementName=Editor}"
-			VerticalOffset="-60">
-            <Border Background="#f0f0f0"
-				BorderBrush="#999999"
-				BorderThickness="1"
-				CornerRadius="1"
-				Padding="3,2,3,2">
+        <controls:FloatingToolBar
+            x:Name="floatingToolBar"
+            HorizontalOffset="-30"
+            PlacementTarget="{Binding ElementName=Editor}"
+            VerticalOffset="-60">
+            <Border
+                Padding="3,2,3,2"
+                Background="#f0f0f0"
+                BorderBrush="#999999"
+                BorderThickness="1"
+                CornerRadius="1">
                 <StackPanel Orientation="Horizontal">
-                    <Button Width="22"
-						Command="Commands:FormattingCommands.ToggleBold"
-						ToolTip="Bold" Content="B"/>
-                    <Button Width="22"
-						Command="Commands:FormattingCommands.ToggleItalic"
-						ToolTip="Italic" Content="I"/>
-                    <Button Width="44"
-						Margin="5,0,0,0"
-						Command="Commands:FormattingCommands.ToggleCode"
-						ToolTip="Code" Content="Code"/>
-                    <Button Width="78"
-						Command="Commands:FormattingCommands.ToggleCodeBlock"
-						ToolTip="Code block" Content="Code block"/>
-                    <Button Width="42"
-						Command="Commands:FormattingCommands.SetHyperlink"
-						ToolTip="Hyperlink" Content="www"/>
+                    <Button
+                        Width="22"
+                        Command="Commands:FormattingCommands.ToggleBold"
+                        Content="B"
+                        ToolTip="Bold" />
+                    <Button
+                        Width="22"
+                        Command="Commands:FormattingCommands.ToggleItalic"
+                        Content="I"
+                        ToolTip="Italic" />
+                    <Button
+                        Width="44"
+                        Margin="5,0,0,0"
+                        Command="Commands:FormattingCommands.ToggleCode"
+                        Content="Code"
+                        ToolTip="Code" />
+                    <Button
+                        Width="78"
+                        Command="Commands:FormattingCommands.ToggleCodeBlock"
+                        Content="Code block"
+                        ToolTip="Code block" />
+                    <Button
+                        Width="42"
+                        Command="Commands:FormattingCommands.SetHyperlink"
+                        Content="www"
+                        ToolTip="Hyperlink" />
                 </StackPanel>
             </Border>
         </controls:FloatingToolBar>
 
-        <avalonedit:TextEditor x:Name="Editor"
-			Grid.Column="0"
-			Margin="10,0,10,10"
-			HorizontalAlignment="Stretch"
-			VerticalAlignment="Stretch"
-			cal:Message.Attach="[Event TextChanged]=[Action Update]"
-			ContextMenuOpening="EditorContextMenuOpening"
-			Document="{Binding Document, ElementName=editor}"
-			Padding="0,0,10,0"
-			PreviewKeyDown="EditorPreviewKeyDown"
-			RenderOptions.BitmapScalingMode="NearestNeighbor"
-			ShowLineNumbers="True"
-			TextOptions.TextFormattingMode="Display"
-			WordWrap="True"
-			Foreground="{Binding IsColorsInverted, Converter={StaticResource BoolToPreviewForegroundConverter}}"
-            Background="{Binding IsColorsInverted, Converter={StaticResource BoolToPreviewBackgroundConverter}}">
+        <avalonedit:TextEditor
+            x:Name="Editor"
+            Grid.Column="0"
+            Margin="10,0,10,10"
+            Padding="0,0,10,0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="{Binding
+                IsColorsInverted,
+                Converter={StaticResource BoolToPreviewBackgroundConverter}}"
+            ContextMenuOpening="EditorContextMenuOpening"
+            Document="{Binding
+                Document,
+                ElementName=editor}"
+            FontSize="{Binding
+                EditorFontSize,
+                ElementName=editor}"
+            Foreground="{Binding
+                IsColorsInverted,
+                Converter={StaticResource BoolToPreviewForegroundConverter}}"
+            PreviewKeyDown="EditorPreviewKeyDown"
+            RenderOptions.BitmapScalingMode="NearestNeighbor"
+            ShowLineNumbers="True"
+            TextOptions.TextFormattingMode="Display"
+            WordWrap="True"
+            cal:Message.Attach="[Event TextChanged]=[Action Update]">
             <avalonedit:TextEditor.Effect>
-                <DropShadowEffect BlurRadius="10"
-					Direction="270"
-					Opacity="0.25"
-					Color="Black" />
+                <DropShadowEffect
+                    BlurRadius="10"
+                    Color="Black"
+                    Direction="270"
+                    Opacity="0.25" />
             </avalonedit:TextEditor.Effect>
             <avalonedit:TextEditor.ContextMenu>
-                <ContextMenu x:Name="EditorContextMenu" MenuItem.Click="SpellcheckerWordClick" />
+                <ContextMenu
+                    x:Name="EditorContextMenu"
+                    MenuItem.Click="SpellcheckerWordClick" />
             </avalonedit:TextEditor.ContextMenu>
         </avalonedit:TextEditor>
     </Grid>

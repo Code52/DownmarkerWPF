@@ -1,7 +1,7 @@
-﻿using System;
+﻿using CefSharp;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using CefSharp;
 
 namespace MarkPad.Preview
 {
@@ -9,10 +9,14 @@ namespace MarkPad.Preview
     {
         public static void Init()
         {
-            CefSharp.Settings settings = new CefSharp.Settings();
-            if (CEF.Initialize(settings))
+            CefSharp.CefSettings settings = new CefSharp.CefSettings();
+            settings.RegisterScheme(new CefCustomScheme
             {
-                CEF.RegisterScheme("theme", new ThemeSchemeHandlerFactory());
+                SchemeName = "theme",
+                SchemeHandlerFactory = new ThemeSchemeHandlerFactory()
+            });
+            if (Cef.Initialize(settings))
+            {
                 //CEF.RegisterScheme("test", new SchemeHandlerFactory());
                 //CEF.RegisterJsObject("bound", new BoundObject());
             }
@@ -61,6 +65,22 @@ namespace MarkPad.Preview
 
         #endregion public double ScrollPercentage
 
+        #region FontSize
+
+        private static void FonSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var htmlPreview = (HtmlPreview)d;
+            if (htmlPreview.host != null && htmlPreview.host.IsBrowserInitialized)
+                htmlPreview.UpdateZoomLevel((double)e.NewValue);
+        }
+
+        #endregion
+
+        static HtmlPreview()
+        {
+            FontSizeProperty.OverrideMetadata(typeof(HtmlPreview), new FrameworkPropertyMetadata(FonSizeChanged));
+        }
+
         public HtmlPreview()
         {
             InitializeComponent();
@@ -82,8 +102,19 @@ namespace MarkPad.Preview
             var htmlPreview = (HtmlPreview)d;
             if (htmlPreview.host != null && htmlPreview.host.IsBrowserInitialized)
             {
-                htmlPreview.host.LoadHtml((string)e.NewValue);
-                htmlPreview.RestoreLastScrollPercentage();
+                var fileName = (htmlPreview.FileName ?? "blank").Replace(" ", "-");
+                var fileUrl = string.Format("http://{0}/", fileName);
+
+                var newValue = e.NewValue as string;
+                if (newValue == null)
+                    htmlPreview.host.LoadHtml(string.Empty, fileUrl);
+                else
+                {
+                    // fixes an issue where FileName contains a space, e.g. "New Document"
+                    // and the web browser control won't render out the content as expected
+                    htmlPreview.host.LoadHtml(newValue, fileUrl);
+                    htmlPreview.RestoreLastScrollPercentage();
+                }
             }
         }
 
@@ -97,7 +128,7 @@ namespace MarkPad.Preview
         private static void ExecuteScroll(HtmlPreview htmlPreview, object scrollPercentage)
         {
             var javascript = string.Format("window.scrollTo(0,{0} * (document.body.scrollHeight - document.body.clientHeight));", scrollPercentage);
-            htmlPreview.host.ExecuteScript(javascript);
+            htmlPreview.host.ExecuteScriptAsync(javascript);
         }
 
         private static void ScrollPercentageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -114,24 +145,41 @@ namespace MarkPad.Preview
         {
             base.OnApplyTemplate();
 
-            host.PropertyChanged += host_PropertyChanged;
+            host.IsBrowserInitializedChanged += Host_IsBrowserInitializedChanged;
         }
 
-        private void host_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void Host_IsBrowserInitializedChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            switch (e.PropertyName)
-            {
-                case "IsBrowserInitialized":
-                    if (host.IsBrowserInitialized)
-                        Dispatcher.BeginInvoke((Action)InitializeData);
-                    break;
-            }
+            if (host.IsBrowserInitialized)
+                Dispatcher.BeginInvoke((Action)InitializeData);
         }
 
         private void InitializeData()
         {
-            host.LoadHtml(Html);
+            var fileName = (FileName ?? "blank").Replace(" ", "-");
+            var fileUrl = string.Format("http://{0}/", fileName);
+
+            var html = Html ?? string.Empty;
+
+            host.LoadHtml(html, fileUrl);
             host.Title = FileName;
+        }
+
+        private async void host_FrameLoadStart(object sender, FrameLoadStartEventArgs e)
+        {
+            var fontSize = await Dispatcher.InvokeAsync(() => FontSize);
+            UpdateZoomLevel(fontSize);
+        }
+
+        public async void UpdateZoomLevel(double fontSize)
+        {
+            double scale = await Dispatcher.InvokeAsync(() =>
+            {
+                // TODO: Can be optimized
+                PresentationSource source = PresentationSource.FromVisual(this);
+                return source.CompositionTarget.TransformToDevice.M11;
+            });
+            host.SetZoomLevel(fontSize * scale * 2 / Constants.FONT_SIZE_ENUM_ADJUSTMENT);
         }
     }
 }

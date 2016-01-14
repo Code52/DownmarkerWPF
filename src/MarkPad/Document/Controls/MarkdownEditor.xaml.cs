@@ -104,8 +104,8 @@ namespace MarkPad.Document.Controls
         #endregion
 
         #region public double EditorFontSize
-        public static DependencyProperty EditorFontSizeProperty = DependencyProperty.Register("EditorFontSize", typeof (double), typeof (MarkdownEditor), 
-            new PropertyMetadata(default(double), EditorFontSizeChanged));
+        public static DependencyProperty EditorFontSizeProperty = DependencyProperty.Register("EditorFontSize", typeof (double), typeof (MarkdownEditor),
+            new PropertyMetadata(default(double)));
 
 
         public double EditorFontSize
@@ -114,11 +114,6 @@ namespace MarkPad.Document.Controls
             set { SetValue(EditorFontSizeProperty, value); }
         }
         #endregion
-
-        private static void EditorFontSizeChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
-        {
-            ((MarkdownEditor) dependencyObject).Editor.FontSize = (double)dependencyPropertyChangedEventArgs.NewValue;
-        }
 
         void EditorLoaded(object sender, RoutedEventArgs e)
         {
@@ -220,7 +215,7 @@ namespace MarkPad.Document.Controls
         {
             var selectedText = GetSelectedText();
             if (string.IsNullOrWhiteSpace(selectedText)) return;
-            
+
             Editor.SelectedText = selectedText.ToggleBold(!selectedText.IsBold());
         }
 
@@ -268,7 +263,7 @@ namespace MarkPad.Document.Controls
             {
                 var spacer = IndentType == IndentType.Spaces ? Spaces : "\t";
 
-                Editor.SelectedText = spacer + Editor.SelectedText.Replace(Environment.NewLine, Environment.NewLine + spacer);                
+                Editor.SelectedText = spacer + Editor.SelectedText.Replace(Environment.NewLine, Environment.NewLine + spacer);
             }
         }
 
@@ -398,7 +393,7 @@ namespace MarkPad.Document.Controls
 
         public bool IsColorsInverted
         {
-            get { return (bool) GetValue(IsColorsInvertedProperty); } 
+            get { return (bool) GetValue(IsColorsInvertedProperty); }
             set { SetValue(IsColorsInvertedProperty, value);}
         }
     }

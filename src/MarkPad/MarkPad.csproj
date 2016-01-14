@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\CefSharp.Wpf.41.0.0\build\CefSharp.Wpf.props" Condition="Exists('..\packages\CefSharp.Wpf.41.0.0\build\CefSharp.Wpf.props')" />
+  <Import Project="..\packages\CefSharp.Common.41.0.0\build\CefSharp.Common.props" Condition="Exists('..\packages\CefSharp.Common.41.0.0\build\CefSharp.Common.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -96,13 +98,9 @@
     <Reference Include="Caliburn.Micro.Autofac">
       <HintPath>..\packages\Caliburn.Micro.Autofac.1.5.0\lib\net40\Caliburn.Micro.Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="CefSharp, Version=1.25.0.25466, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="CefSharp.Core, Version=41.0.0.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\CefSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="CefSharp.Wpf, Version=1.25.0.25471, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\CefSharp.Wpf.dll</HintPath>
+      <HintPath>..\packages\CefSharp.Common.41.0.0\CefSharp\x86\CefSharp.Core.dll</HintPath>
     </Reference>
     <Reference Include="CookComputing.XmlRpcV2, Version=3.0.0.0, Culture=neutral, PublicKeyToken=a7d6e17aa302004d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -137,9 +135,9 @@
     <Reference Include="Ookii.Dialogs.Wpf">
       <HintPath>..\packages\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="PropertyChanged">
-      <HintPath>..\packages\PropertyChanged.Fody.1.41.0.0\Lib\NET35\PropertyChanged.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="PropertyChanged, Version=1.50.1.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
+      <HintPath>..\packages\PropertyChanged.Fody.1.50.1\Lib\portable-net4+sl4+wp8+win8+wpa81+MonoAndroid16+MonoTouch40\PropertyChanged.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -500,7 +498,9 @@
     <EmbeddedResource Include="Document\SpellCheck\Dictionaries\en_US.dic" />
     <EmbeddedResource Include="Document\SpellCheck\Dictionaries\es_ES.aff" />
     <EmbeddedResource Include="Document\SpellCheck\Dictionaries\es_ES.dic" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <AppDesigner Include="Properties\" />
     <EmbeddedResource Include="Syntax\Markdown.xshd" />
   </ItemGroup>
@@ -597,10 +597,19 @@
       copy "$(SolutionDir)packages\NHunspell.1.1.0\native\*" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets" Condition="Exists('..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets')" />
+  <Import Project="..\packages\Fody.1.29.0\build\Fody.targets" Condition="Exists('..\packages\Fody.1.29.0\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\cef.redist.x64.3.2272.32\build\cef.redist.x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x64.3.2272.32\build\cef.redist.x64.targets'))" />
+    <Error Condition="!Exists('..\packages\cef.redist.x86.3.2272.32\build\cef.redist.x86.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x86.3.2272.32\build\cef.redist.x86.targets'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Common.41.0.0\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.41.0.0\build\CefSharp.Common.props'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Common.41.0.0\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.41.0.0\build\CefSharp.Common.targets'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Wpf.41.0.0\build\CefSharp.Wpf.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Wpf.41.0.0\build\CefSharp.Wpf.props'))" />
   </Target>
+  <Import Project="..\packages\cef.redist.x64.3.2272.32\build\cef.redist.x64.targets" Condition="Exists('..\packages\cef.redist.x64.3.2272.32\build\cef.redist.x64.targets')" />
+  <Import Project="..\packages\cef.redist.x86.3.2272.32\build\cef.redist.x86.targets" Condition="Exists('..\packages\cef.redist.x86.3.2272.32\build\cef.redist.x86.targets')" />
+  <Import Project="..\packages\CefSharp.Common.41.0.0\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.41.0.0\build\CefSharp.Common.targets')" />
 </Project>
