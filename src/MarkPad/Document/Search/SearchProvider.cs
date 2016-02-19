@@ -172,29 +172,10 @@ namespace MarkPad.Document.Search
 
             var replaceTerm = searchSettings.ReplaceTerm;
 
+            // in case a Replace event was fired
             if (searchType == SearchType.Replace && !view.Editor.TextArea.Selection.IsEmpty)
             {
-                view.Editor.TextArea.Selection.ReplaceSelectionWithText(replaceTerm.Trim());
-
-                newFoundHit = (from hit in SearchHits
-                               let hitDistance = hit.StartOffset - startLookingFrom
-                               where hitDistance >= 0
-                               orderby hitDistance
-                               select hit)
-                              .FirstOrDefault() ?? SearchHits.FirstOrDefault();
-
-                newFoundHit.ExecuteSafely(hit =>
-                {
-                    // special case: don't select text when CTRL+F pressed with an old, existing search, just highlight
-                    if (selectSearch)
-                    {
-                        view.Editor.Select(hit.StartOffset, hit.Length);
-                        view.Editor.ScrollToLine(view.Editor.Document.GetLineByOffset(view.Editor.SelectionStart).LineNumber);
-                    }
-
-                    lastCaretPosition = view.Editor.CaretOffset;
-                    CurrentHitIndex = SearchHits.Select((v, i) => new { hit = v, index = i }).First(arg => arg.hit.Equals(newFoundHit)).index + 1;
-                });
+                newFoundHit = Replace(replaceTerm, startLookingFrom, selectSearch);
             }
 
             // don't highlight matches when searching without the search bar
@@ -202,6 +183,39 @@ namespace MarkPad.Document.Search
             {
                 ClearSearchHits();
             }
+        }
+
+        private void CorrectOffset(TextSegment foundHit, int correctionOffset)
+        {
+            foundHit.StartOffset += correctionOffset;
+            foundHit.EndOffset += correctionOffset;
+        }
+
+        private TextSegment Replace(string replaceTerm, int startLookingFrom, bool selectSearch)
+        {
+            view.Editor.TextArea.Selection.ReplaceSelectionWithText(replaceTerm.Trim());
+
+            var foundHit = (from hit in SearchHits
+                           let hitDistance = hit.StartOffset - startLookingFrom
+                           where hitDistance >= 0
+                           orderby hitDistance
+                           select hit)
+                          .FirstOrDefault() ?? SearchHits.FirstOrDefault();
+
+            foundHit.ExecuteSafely(hit =>
+            {
+                // special case: don't select text when CTRL+F pressed with an old, existing search, just highlight
+                if (selectSearch)
+                {
+                    view.Editor.Select(hit.StartOffset, hit.Length);
+                    view.Editor.ScrollToLine(view.Editor.Document.GetLineByOffset(view.Editor.SelectionStart).LineNumber);
+                }
+
+                lastCaretPosition = view.Editor.CaretOffset;
+                CurrentHitIndex = SearchHits.Select((v, i) => new { hit = v, index = i }).First(arg => arg.hit.Equals(foundHit)).index + 1;
+            });
+
+            return foundHit;
         }
 
         private void ClearSearchHits()
