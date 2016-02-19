@@ -193,21 +193,19 @@ namespace MarkPad.Document.Search
 
         private TextSegment Replace(string replaceTerm, int startLookingFrom, bool selectSearch)
         {
+            // Compute the selection offset BEFORE performing the replacement
+            var correctionOffset = replaceTerm.Trim().Length - view.Editor.TextArea.Selection.Length;
+
             view.Editor.TextArea.Selection.ReplaceSelectionWithText(replaceTerm.Trim());
 
-            var foundHit = (from hit in SearchHits
-                           let hitDistance = hit.StartOffset - startLookingFrom
-                           where hitDistance >= 0
-                           orderby hitDistance
-                           select hit)
-                          .FirstOrDefault() ?? SearchHits.FirstOrDefault();
+            var foundHit = (SearchHits as TextSegmentCollection<TextSegment>).FindFirstSegmentWithStartAfter(startLookingFrom);
 
             foundHit.ExecuteSafely(hit =>
             {
                 // special case: don't select text when CTRL+F pressed with an old, existing search, just highlight
                 if (selectSearch)
                 {
-                    view.Editor.Select(hit.StartOffset, hit.Length);
+                    view.Editor.Select(hit.StartOffset + correctionOffset, hit.Length);
                     view.Editor.ScrollToLine(view.Editor.Document.GetLineByOffset(view.Editor.SelectionStart).LineNumber);
                 }
 
