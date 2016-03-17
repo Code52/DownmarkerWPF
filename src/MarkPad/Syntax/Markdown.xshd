@@ -5,16 +5,10 @@
 
 
   <RuleSet ignoreCase="false">
-    <Import ruleSet="HTML/"/>
     <Span>
       <Begin color="String">\*</Begin>
       <End color="String">\*</End>
     </Span>
-    <Span color="Code">
-      <Begin>`</Begin>
-      <End>`</End>
-    </Span>
-    <Span color="Code" begin="\t" />
     <Span>
       <Begin color="Url">\!\[</Begin>
       <End color="Url">\]</End>
