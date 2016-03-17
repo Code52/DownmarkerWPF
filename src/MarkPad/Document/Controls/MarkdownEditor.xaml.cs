@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Xml;
 using Caliburn.Micro;
 using ICSharpCode.AvalonEdit;
@@ -68,6 +69,9 @@ namespace MarkPad.Document.Controls
                 overtypeMode,
                 autoPairedCharacters
             };
+
+            Editor.TextArea.TextView.LinkTextForegroundBrush = new SolidColorBrush(
+                Color.FromRgb(0xA4, 0xA4, 0xA4));
         }
 
         #region public IndentType IndentType
