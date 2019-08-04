@@ -1,5 +1,6 @@
 ﻿using CefSharp;
 using System;
+using System.Web;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -103,7 +104,7 @@ namespace MarkPad.Preview
             if (htmlPreview.host != null && htmlPreview.host.IsBrowserInitialized)
             {
                 var fileName = (htmlPreview.FileName ?? "blank").Replace(" ", "-");
-                var fileUrl = string.Format("http://{0}/", fileName);
+                var fileUrl = string.Format("http://{0}/", MakeUrlSegmentSafe(fileName));
 
                 var newValue = e.NewValue as string;
                 if (newValue == null)
@@ -157,7 +158,7 @@ namespace MarkPad.Preview
         private void InitializeData()
         {
             var fileName = (FileName ?? "blank").Replace(" ", "-");
-            var fileUrl = string.Format("http://{0}/", fileName);
+            var fileUrl = string.Format("http://{0}/", MakeUrlSegmentSafe(fileName));
 
             var html = Html ?? string.Empty;
 
@@ -180,6 +181,13 @@ namespace MarkPad.Preview
                 return source.CompositionTarget.TransformToDevice.M11;
             });
             host.SetZoomLevel(fontSize * scale * 2 / Constants.FONT_SIZE_ENUM_ADJUSTMENT);
+        }
+
+        private static string MakeUrlSegmentSafe(string urlSegment)
+        {
+            // it appears that the chromium web browser does not like parens or exclamations in a url
+            // replace these chars and also do a url path encode to try to avoid other potential problem chars
+            return HttpUtility.UrlEncode(urlSegment).Replace("(", "%28").Replace(")", "%29").Replace("!", "%21");
         }
     }
 }
